@@ -1,0 +1,14 @@
+# Core runtime.  The server already has compatible CUDA builds of torch;
+# install this file into a fresh environment only when needed.
+torch>=2.2
+torchvision>=0.17
+numpy>=1.24
+opencv-python-headless>=4.8
+rasterio>=1.3
+Pillow>=10
+PyYAML>=6
+transformers>=4.40
+tqdm>=4.66
+
+# Test-only
+pytest>=8

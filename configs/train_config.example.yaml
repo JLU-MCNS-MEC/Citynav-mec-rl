@@ -1,0 +1,36 @@
+# Smoke-test / future-training template.  No server paths are stored here;
+# data paths come from configs/data_config.local.yaml or environment variables.
+seed: 0
+device: cpu
+
+observation:
+  image_size: 336
+  depth_size: 336
+  goal_crop_size: 96
+  goal_scales: [14, 28, 56]
+  altitude_m: 50.0
+  fix_altitude: true
+  map_cache_size: 2
+
+teacher:
+  forward_step_m: 5.0
+  turn_step_deg: 15.0
+  stop_radius_m: 20.0
+  lookahead_m: 12.0
+  turn_threshold_deg: 7.5
+  max_steps: 1000
+  resample_step_m: 1.0
+
+text:
+  backend: auto            # auto | bert | hashing
+  model_name: bert-base-uncased
+  local_files_only: true
+  max_length: 48
+
+training:
+  batch_size: 4
+  lr: 0.0001
+  weight_decay: 0.0001
+  arrival_loss_weight: 1.0
+  grad_clip: 1.0
+  amp: false

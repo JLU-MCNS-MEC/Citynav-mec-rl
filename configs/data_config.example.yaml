@@ -1,0 +1,16 @@
+# Copy this file to configs/data_config.local.yaml (git-ignored) and fill in
+# the read-only paths on the server, or export the two environment variables.
+#
+# The tracked repository intentionally contains no server absolute paths.
+data_root: ${CITYNAV_DATA_ROOT}
+ply_root: ${CITYNAV_PLY_ROOT}
+
+# Sub-directories below data_root.  These names match the shared CityNav tree.
+citynav_subdir: original_citynav
+cityrefer_subdir: cityrefer
+rgbd_subdir: rgbd
+
+# Development splits.  test_unseen is only allowed with an explicit flag.
+train_split: train_seen
+val_splits: [val_seen, val_unseen]
+test_split: test_unseen
