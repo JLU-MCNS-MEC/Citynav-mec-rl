@@ -13,14 +13,19 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 @pytest.mark.skipif(shutil.which("git") is None, reason="git is not installed")
 def test_git_root_is_the_project_directory() -> None:
-    top_level = subprocess.check_output(
-        ["git", "-C", str(PROJECT_ROOT), "rev-parse", "--show-toplevel"],
-        text=True,
-    ).strip()
-    git_dir = subprocess.check_output(
-        ["git", "-C", str(PROJECT_ROOT), "rev-parse", "--absolute-git-dir"],
-        text=True,
-    ).strip()
+    try:
+        top_level = subprocess.check_output(
+            ["git", "-C", str(PROJECT_ROOT), "rev-parse", "--show-toplevel"],
+            text=True,
+            stderr=subprocess.DEVNULL,
+        ).strip()
+        git_dir = subprocess.check_output(
+            ["git", "-C", str(PROJECT_ROOT), "rev-parse", "--absolute-git-dir"],
+            text=True,
+            stderr=subprocess.DEVNULL,
+        ).strip()
+    except subprocess.CalledProcessError:
+        pytest.skip("not a git checkout (for example, a source archive)")
     assert Path(top_level).resolve() == PROJECT_ROOT
     assert Path(git_dir).resolve() == (PROJECT_ROOT / ".git").resolve()
 
