@@ -3,14 +3,14 @@
 from __future__ import annotations
 
 import math
-from typing import Optional
+from typing import Iterable, Optional
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 from src.config import TrainingConfig
-from src.data.trajectory_adapter import NUM_MOVE_ACTIONS, STOP
+from src.data.actions import ACTION_NAMES, NUM_ACTIONS, STOP
 from src.models.mec_common import combine_move_and_arrival
 
 
@@ -53,14 +53,23 @@ def factorized_loss(
     ).view(-1)
     if actions.numel() != move_logits.size(0):
         raise ValueError("actions and model outputs have different batch sizes")
+    if bool(((actions < 0) | (actions >= NUM_ACTIONS)).any()):
+        raise ValueError(f"actions must be in [0, {NUM_ACTIONS - 1}]")
+    if move_logits.size(-1) != NUM_ACTIONS - 1:
+        raise ValueError(
+            "movement head must have five classes for the six-action interface"
+        )
 
-    move_mask = actions != STOP
+    move_mask = actions != int(STOP)
     if bool(move_mask.any()):
-        move_loss = F.cross_entropy(move_logits[move_mask], actions[move_mask])
+        # Movement head order: Forward, Right, Left, Up, Down.  Official action
+        # IDs are 1..5, so subtract one to obtain the head target.
+        move_targets = actions[move_mask] - 1
+        move_loss = F.cross_entropy(move_logits[move_mask], move_targets)
     else:
         move_loss = move_logits.sum() * 0.0
 
-    arrival_target = (actions == STOP).float()
+    arrival_target = (actions == int(STOP)).float()
     arrival_loss = F.binary_cross_entropy_with_logits(arrival_logit, arrival_target)
     loss = move_loss + float(arrival_loss_weight) * arrival_loss
 
@@ -75,13 +84,32 @@ def factorized_loss(
     else:
         move_accuracy = 0.0
 
-    stop_target = actions == STOP
-    stop_predictions = predictions == STOP
+    stop_target = actions == int(STOP)
+    stop_predictions = predictions == int(STOP)
     tp = int((stop_predictions & stop_target).sum().item())
     fp = int((stop_predictions & ~stop_target).sum().item())
     fn = int((~stop_predictions & stop_target).sum().item())
     precision = tp / (tp + fp) if tp + fp else 0.0
     recall = tp / (tp + fn) if tp + fn else 0.0
+
+    per_class_counts = {
+        ACTION_NAMES[action]: int((actions == int(action)).sum().item())
+        for action in ACTION_NAMES
+    }
+    per_class_correct = {
+        ACTION_NAMES[action]: int(
+            ((actions == int(action)) & (predictions == int(action))).sum().item()
+        )
+        for action in ACTION_NAMES
+    }
+    per_class_accuracy = {
+        name: (
+            per_class_correct[name] / per_class_counts[name]
+            if per_class_counts[name]
+            else 0.0
+        )
+        for name in per_class_counts
+    }
 
     return {
         "loss": loss,
@@ -95,6 +123,9 @@ def factorized_loss(
         "stop_recall": recall,
         "num_stop": int(stop_target.sum().item()),
         "num_move": int((~stop_target).sum().item()),
+        "per_class_counts": per_class_counts,
+        "per_class_correct": per_class_correct,
+        "per_class_accuracy": per_class_accuracy,
     }
 
 
@@ -127,8 +158,14 @@ def train_step(
     config: TrainingConfig | None = None,
     *,
     scaler: Optional[torch.cuda.amp.GradScaler] = None,
+    clip_parameters: Optional[Iterable[torch.nn.Parameter]] = None,
 ) -> dict:
     config = config or TrainingConfig()
+    clip_parameters = (
+        list(clip_parameters)
+        if clip_parameters is not None
+        else list(model.parameters())
+    )
     model.train()
     optimizer.zero_grad(set_to_none=True)
     components = model.forward_components(**model_inputs_from_batch(batch))
@@ -144,14 +181,14 @@ def train_step(
         scaler.scale(loss).backward()
         scaler.unscale_(optimizer)
         norm = torch.nn.utils.clip_grad_norm_(
-            model.parameters(), float(config.grad_clip)
+            clip_parameters, float(config.grad_clip)
         )
         scaler.step(optimizer)
         scaler.update()
     else:
         loss.backward()
         norm = torch.nn.utils.clip_grad_norm_(
-            model.parameters(), float(config.grad_clip)
+            clip_parameters, float(config.grad_clip)
         )
         optimizer.step()
     if not gradients_are_finite(model):
@@ -167,6 +204,9 @@ def train_step(
         "grad_norm": float(norm.detach().item() if torch.is_tensor(norm) else norm),
         "num_stop": losses["num_stop"],
         "num_move": losses["num_move"],
+        "per_class_counts": losses["per_class_counts"],
+        "per_class_correct": losses["per_class_correct"],
+        "per_class_accuracy": losses["per_class_accuracy"],
     }
 
 
@@ -181,4 +221,7 @@ def evaluate_components(model: nn.Module, batch: dict) -> dict:
         "move_accuracy": losses["move_accuracy"],
         "stop_precision": losses["stop_precision"],
         "stop_recall": losses["stop_recall"],
+        "per_class_counts": losses["per_class_counts"],
+        "per_class_correct": losses["per_class_correct"],
+        "per_class_accuracy": losses["per_class_accuracy"],
     }

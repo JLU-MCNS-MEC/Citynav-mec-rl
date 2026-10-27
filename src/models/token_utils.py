@@ -1,4 +1,4 @@
-"""Frozen-encoder tokenization and heatmap construction.
+"""Visual-encoder tokenization and heatmap construction.
 
 This is the CityNav-side equivalent of ``MEC-V8.2/token_data.py``:
 
@@ -33,11 +33,23 @@ def images_to_tensor(
     return tensor.to(device)
 
 
-@torch.no_grad()
+def _run_encoder(
+    encoder: torch.nn.Module,
+    x: torch.Tensor,
+    requires_grad: bool,
+) -> torch.Tensor:
+    if requires_grad:
+        return encoder(x)
+    with torch.no_grad():
+        return encoder(x)
+
+
 def encode_current_tokens(
     encoder: torch.nn.Module,
     current_rgbs: np.ndarray,
     device: str | torch.device = "cpu",
+    *,
+    requires_grad: bool = False,
 ) -> torch.Tensor:
     x = images_to_tensor(current_rgbs, device)
     if x.shape[-2:] != (ENCODER.image_size, ENCODER.image_size):
@@ -47,14 +59,15 @@ def encode_current_tokens(
             mode="bilinear",
             align_corners=False,
         )
-    return encoder(x)
+    return _run_encoder(encoder, x, bool(requires_grad))
 
 
-@torch.no_grad()
 def encode_goal_tokens(
     encoder: torch.nn.Module,
     goal_rgbs: np.ndarray,
     device: str | torch.device = "cpu",
+    *,
+    requires_grad: bool = False,
 ) -> torch.Tensor:
     """Return [B,S,384] foreground-weighted Goal reference tokens."""
     array = np.asarray(goal_rgbs, dtype=np.uint8)
@@ -70,7 +83,7 @@ def encode_goal_tokens(
             mode="bilinear",
             align_corners=False,
         )
-    full_tokens = encoder(x)
+    full_tokens = _run_encoder(encoder, x, bool(requires_grad))
     full_tokens = full_tokens.reshape(b, s, ENCODER.num_tokens, ENCODER.token_dim)
 
     raw = torch.from_numpy(array).float().to(device) / 255.0
@@ -97,15 +110,20 @@ def encode_goal_tokens(
     return (full_tokens * weights.unsqueeze(-1)).sum(dim=2) / denominator
 
 
-@torch.no_grad()
 def encode_scene(
     encoder: torch.nn.Module,
     current_rgbs: np.ndarray,
     goal_rgbs: np.ndarray,
     device: str | torch.device = "cpu",
+    *,
+    requires_grad: bool = False,
 ) -> dict:
-    current_tokens = encode_current_tokens(encoder, current_rgbs, device)
-    goal_tokens = encode_goal_tokens(encoder, goal_rgbs, device)
+    current_tokens = encode_current_tokens(
+        encoder, current_rgbs, device, requires_grad=requires_grad
+    )
+    goal_tokens = encode_goal_tokens(
+        encoder, goal_rgbs, device, requires_grad=requires_grad
+    )
     heatmap = build_spatial_heatmap(current_tokens, goal_tokens)
     return {
         "current_tokens": current_tokens,

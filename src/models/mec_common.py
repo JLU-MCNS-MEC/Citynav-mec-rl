@@ -1,13 +1,14 @@
 """Shared MEC components copied from MEC-V8.2 ``gbs_model_v3.py``.
 
 The movement/arrival factorization, heatmap context encoder and arrival head are
-kept structurally identical.  The only new component is a frozen-language
-projection, which is attached by the Small and Transformer-M wrappers.
+kept structurally identical, except that the movement head now has five classes
+(Forward / Right / Left / Up / Down) and is combined with the binary arrival
+head into the official six-action CityNav interface.  The only other new
+component is a frozen-language projection attached by the Small and
+Transformer-M wrappers.
 """
 
 from __future__ import annotations
-
-import math
 
 import numpy as np
 import torch
@@ -15,7 +16,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from src.config import EncoderConfig, MECConfig
-from src.data.trajectory_adapter import NUM_ACTIONS, NUM_MOVE_ACTIONS, STOP
+from src.data.actions import MOVE_ACTION_IDS, STOP
 
 
 ENCODER = EncoderConfig()
@@ -158,10 +159,14 @@ class ArrivalReasoningHead(nn.Module):
 def combine_move_and_arrival(
     move_logits: torch.Tensor, arrival_logit: torch.Tensor
 ) -> torch.Tensor:
+    """Return six log-probabilities in official action-ID order.
+
+    Column 0 is STOP; columns 1..5 are Forward / Right / Left / Up / Down.
+    """
     log_move_gate = F.logsigmoid(-arrival_logit).unsqueeze(-1)
     log_stop = F.logsigmoid(arrival_logit).unsqueeze(-1)
     move_log_prob = F.log_softmax(move_logits, dim=-1) + log_move_gate
-    return torch.cat([move_log_prob, log_stop], dim=-1)
+    return torch.cat([log_stop, move_log_prob], dim=-1)
 
 
 def arrival_gated_decision(
@@ -174,12 +179,16 @@ def arrival_gated_decision(
         raise ValueError(f"stop_threshold must be in (0,1), got {threshold}")
     arrival_probability = torch.sigmoid(arrival_logit)
     move_probabilities = torch.softmax(move_logits, dim=-1)
-    move_action = move_probabilities.argmax(dim=-1)
-    stop_action = torch.full_like(move_action, NUM_MOVE_ACTIONS)
+    move_head = move_probabilities.argmax(dim=-1)
+    move_id_table = torch.as_tensor(
+        MOVE_ACTION_IDS, dtype=move_head.dtype, device=move_head.device
+    )
+    move_action = move_id_table[move_head]
+    stop_action = torch.full_like(move_action, int(STOP))
     action = torch.where(arrival_probability >= threshold, stop_action, move_action)
     joint_move = (1.0 - arrival_probability).unsqueeze(-1) * move_probabilities
     joint_probabilities = torch.cat(
-        [joint_move, arrival_probability.unsqueeze(-1)], dim=-1
+        [arrival_probability.unsqueeze(-1), joint_move], dim=-1
     )
     return {
         "action": action,

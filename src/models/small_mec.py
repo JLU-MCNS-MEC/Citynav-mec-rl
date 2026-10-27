@@ -1,10 +1,11 @@
 """Small MEC: the V8.2 late-fusion MLP with a frozen-language interface.
 
-Only change relative to MEC-V8.2 ``MeanPoolMLP``:
+Only changes relative to MEC-V8.2 ``MeanPoolMLP``:
+  * the movement head predicts five classes (Forward/Right/Left/Up/Down);
   * an optional projected language vector is concatenated with the existing
     Current / Goal / heatmap / network features before the movement head.
-The movement head still predicts Forward/Left/Right, and the binary Arrival
-head still predicts Stop.  No other architecture change is made.
+The binary Arrival head still predicts Stop, and the two heads are combined
+into the official six-action CityNav distribution.
 """
 
 from __future__ import annotations

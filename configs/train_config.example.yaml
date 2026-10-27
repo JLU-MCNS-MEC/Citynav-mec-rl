@@ -3,26 +3,40 @@
 seed: 0
 device: cpu
 
+encoder:
+  # Local-only MEC-V8.2 shared encoder checkpoint; never commit weights.
+  checkpoint: ""
+
 observation:
-  image_size: 336
+  image_size: 336          # visual-encoder input (RGB is resized from FPV)
   depth_size: 336
   goal_crop_size: 96
   goal_scales: [14, 28, 56]
-  altitude_m: 50.0
-  fix_altitude: true
   map_cache_size: 2
+  fpv_width: 512
+  fpv_height: 512
+  fpv_hfov_deg: 90.0
+  fpv_near_m: 0.5
+  fpv_far_m: 300.0
+  fpv_crop_radius_m: 300.0
+  fpv_splat_radius: 1
+  fpv_pitch_mode: trajectory  # trajectory | fixed
+  fpv_fixed_pitch_deg: -30.0
 
 teacher:
+  # Official CityNav lookahead teacher.
   forward_step_m: 5.0
-  turn_step_deg: 15.0
-  stop_radius_m: 20.0
-  lookahead_m: 12.0
-  turn_threshold_deg: 7.5
-  max_steps: 1000
-  resample_step_m: 1.0
+  turn_step_deg: 30.0
+  vertical_step_m: 2.0
+  lookahead: 1                # official episode generation uses 1
+  stop_distance_m: 5.0       # teacher stop threshold
+  success_radius_m: 20.0      # evaluation success radius, not the teacher
+  turn_threshold_deg: 30.0
+  vertical_threshold_m: 1.0
+  max_steps: 400
 
 text:
-  backend: auto            # auto | bert | hashing
+  backend: bert               # formal training: frozen bert-base-uncased
   model_name: bert-base-uncased
   local_files_only: true
   max_length: 48
@@ -30,7 +44,10 @@ text:
 training:
   batch_size: 4
   lr: 0.0001
+  encoder_lr: 0.00001
   weight_decay: 0.0001
   arrival_loss_weight: 1.0
   grad_clip: 1.0
   amp: false
+  train_vision_encoder: true
+  freeze_text_encoder: true

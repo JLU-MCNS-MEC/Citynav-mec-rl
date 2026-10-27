@@ -34,7 +34,8 @@ def _inputs(batch_size: int = 2) -> dict[str, torch.Tensor]:
 
 def _batch() -> dict:
     batch = _inputs()
-    batch["actions"] = torch.tensor([0, 3], dtype=torch.long)
+    # 1 = MOVE_FORWARD, 3 = TURN_LEFT in the official six-action table.
+    batch["actions"] = torch.tensor([1, 3], dtype=torch.long)
     return batch
 
 
@@ -45,7 +46,7 @@ def test_small_forward_and_predict() -> None:
         logits = model(**inputs)
         decision = model.predict_action(**inputs)
 
-    assert logits.shape == (2, 4)
+    assert logits.shape == (2, 6)
     assert torch.isfinite(logits).all()
     assert torch.allclose(
         logits.exp().sum(dim=-1), torch.ones(2), atol=1e-6
@@ -65,10 +66,10 @@ def test_transformer_m_forward_and_attention() -> None:
         components = model.forward_components(**inputs, return_attention=True)
         logits = model(**inputs)
 
-    assert components["move_logits"].shape == (2, 3)
+    assert components["move_logits"].shape == (2, 5)
     assert components["arrival_logit"].shape == (2,)
     assert components["attention"]["goal_to_current"].shape[0] == 2
-    assert logits.shape == (2, 4)
+    assert logits.shape == (2, 6)
     assert torch.isfinite(logits).all()
 
 
@@ -77,12 +78,14 @@ def test_factorized_loss_accepts_labels_and_returns_metrics() -> None:
     batch = _batch()
     with torch.no_grad():
         components = model.forward_components(**_inputs())
-        losses = factorized_loss(components, np.asarray([0, 3]))
+        losses = factorized_loss(components, np.asarray([1, 3]))
 
     assert losses["loss"].ndim == 0
     assert torch.isfinite(losses["loss"])
-    assert losses["num_stop"] == 1
-    assert losses["num_move"] == 1
+    assert losses["num_stop"] == 0
+    assert losses["num_move"] == 2
+    assert losses["per_class_counts"]["MoveForward"] == 1
+    assert losses["per_class_counts"]["TurnLeft"] == 1
     assert 0.0 <= losses["accuracy"] <= 1.0
 
 
@@ -100,8 +103,8 @@ def test_train_step_ignores_labels_and_updates_parameters() -> None:
     assert torch.isfinite(torch.tensor(result["loss"]))
     assert np.isfinite(result["grad_norm"])
     assert float((after - before).norm()) > 0.0
-    assert result["num_stop"] == 1
-    assert result["num_move"] == 1
+    assert result["num_stop"] == 0
+    assert result["num_move"] == 2
 
 
 def test_evaluate_components_is_no_grad_and_reports_metrics() -> None:
@@ -113,28 +116,34 @@ def test_evaluate_components_is_no_grad_and_reports_metrics() -> None:
         "move_accuracy",
         "stop_precision",
         "stop_recall",
+        "per_class_counts",
+        "per_class_correct",
+        "per_class_accuracy",
     }
-    assert all(np.isfinite(value) for value in metrics.values())
+    scalar_values = [
+        value for value in metrics.values() if isinstance(value, (int, float))
+    ]
+    assert all(np.isfinite(value) for value in scalar_values)
 
 
 def test_arrival_gated_decision_threshold() -> None:
-    move_logits = torch.zeros(1, 3)
+    move_logits = torch.zeros(1, 5)
     arrival_logit = torch.zeros(1)
     early = arrival_gated_decision(move_logits, arrival_logit, stop_threshold=0.5)
     late = arrival_gated_decision(move_logits, arrival_logit, stop_threshold=0.9)
 
-    assert early["action"].item() == 3
-    assert late["action"].item() in (0, 1, 2)
+    assert early["action"].item() == 0
+    assert late["action"].item() in (1, 2, 3, 4, 5)
     assert torch.allclose(
         early["joint_probabilities"].sum(dim=-1), torch.ones(1), atol=1e-6
     )
 
 
 def test_combine_move_and_arrival_is_normalized() -> None:
-    move_logits = torch.randn(4, 3)
+    move_logits = torch.randn(4, 5)
     arrival_logit = torch.randn(4)
     logits = combine_move_and_arrival(move_logits, arrival_logit)
-    assert logits.shape == (4, 4)
+    assert logits.shape == (4, 6)
     assert torch.allclose(logits.exp().sum(dim=-1), torch.ones(4), atol=1e-6)
 
 

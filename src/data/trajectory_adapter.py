@@ -1,27 +1,29 @@
-"""CityNav trajectory -> five-dimensional pose -> discrete-action adapter.
+"""CityNav trajectory -> five-dimensional pose -> six discrete actions.
 
 CityNav stores each trajectory point as six numbers::
 
     x, y, z, dx, dy, dz
 
-The official conversion (``citynav-official/vlnce/space.py``) is::
+Following the official ``vlnce/space.py`` conversion::
 
     yaw   = atan2(dy, dx)
-    pitch = atan2(dz, sqrt(dx^2 + dy^2))
+    pitch = atan2(dz, sqrt(dx**2 + dy**2))
 
 The six numbers are *not* six actions.  This module converts them to a
-five-dimensional pose and then to the four-action MEC interface
-``Forward / Left / Right / Stop`` using a pure-pursuit teacher over the human
-demonstration.  The teacher's simulated poses are compared with the original
-demonstration path, so the action labels are auditable.
+five-dimensional pose and then to the official six-action interface
+``STOP / MOVE_FORWARD / TURN_RIGHT / TURN_LEFT / GO_UP / GO_DOWN`` using the
+official lookahead teacher over the human demonstration.
 
-Degenerate directions
----------------------
-Many CityNav points look almost straight down (pitch near +/-90 degrees), so
-``dx`` and ``dy`` are nearly zero and yaw from the direction vector is
-undefined.  In that case we fall back to the local motion direction, then to
-the previous yaw.  This is a deterministic handling of the documented
-degeneracy, not a change of the coordinate convention.
+Important separation of distances
+---------------------------------
+* ``TeacherConfig.stop_distance_m`` (default 5 m) is the teacher's own stop
+  threshold, copied from the official ``LookaheadTeacherParams``.
+* ``TeacherConfig.success_radius_m`` (default 20 m) is the navigation success
+  radius, copied from the official ``--success_dist`` default.  It is used only
+  for evaluation, never to decide a teacher action.
+
+The original trajectory altitude is preserved.  No fixed 50 m altitude is
+applied anywhere in this module.
 """
 
 from __future__ import annotations
@@ -33,21 +35,16 @@ from typing import Iterable, Sequence
 import numpy as np
 
 from src.config import TeacherConfig
+from src.data.actions import (
+    ACTION_NAMES,
+    GO_DOWN,
+    GO_UP,
+    MOVE_FORWARD,
+    STOP,
+    TURN_LEFT,
+    TURN_RIGHT,
+)
 
-
-FORWARD = 0
-LEFT = 1
-RIGHT = 2
-STOP = 3
-
-ACTION_NAMES = {
-    FORWARD: "Forward",
-    LEFT: "Left",
-    RIGHT: "Right",
-    STOP: "Stop",
-}
-NUM_ACTIONS = 4
-NUM_MOVE_ACTIONS = 3
 
 _EPS = 1e-9
 
@@ -82,8 +79,15 @@ class Pose5D:
         return (self.x, self.y, self.z, self.yaw, self.pitch)
 
     @property
+    def xyz(self) -> np.ndarray:
+        return np.asarray([self.x, self.y, self.z], dtype=np.float64)
+
+    @property
     def xy(self) -> np.ndarray:
         return np.asarray([self.x, self.y], dtype=np.float64)
+
+    def with_pitch(self, pitch: float) -> "Pose5D":
+        return Pose5D(self.x, self.y, self.z, self.yaw, float(pitch))
 
 
 def _motion_yaw(raw_trajectory: Sequence[Sequence[float]], index: int) -> float | None:
@@ -121,17 +125,10 @@ def yaw_from_direction_or_motion(
     return float(previous_yaw)
 
 
-def load_trajectory(
-    raw_trajectory: Sequence[Sequence[float]],
-    *,
-    fix_altitude_m: float | None = None,
-    ground_level_m: float | None = None,
-) -> list[Pose5D]:
+def load_trajectory(raw_trajectory: Sequence[Sequence[float]]) -> list[Pose5D]:
     """Convert CityNav six-number points to :class:`Pose5D`.
 
-    If ``fix_altitude_m`` and ``ground_level_m`` are given, all z values are set
-    to ``ground_level_m + fix_altitude_m``.  This matches the fixed-altitude
-    MEC navigation setting; the original z is preserved by the caller for audit.
+    The original z is preserved.  No fixed altitude is applied.
     """
     if not raw_trajectory:
         raise ValueError("trajectory must not be empty")
@@ -149,10 +146,6 @@ def load_trajectory(
         x, y, z, dx, dy, dz = (float(value) for value in point)
         yaw = yaw_from_direction_or_motion(raw_trajectory, index, previous_yaw)
         pitch = math.atan2(dz, math.hypot(dx, dy))
-        if fix_altitude_m is not None:
-            if ground_level_m is None:
-                raise ValueError("ground_level_m is required when fixing altitude")
-            z = float(ground_level_m) + float(fix_altitude_m)
         poses.append(Pose5D(x, y, z, yaw, pitch))
         previous_yaw = yaw
     return poses
@@ -163,21 +156,43 @@ def transition_pose(
     action: int,
     config: TeacherConfig,
 ) -> Pose5D:
-    if action == STOP:
+    """Apply one official discrete action to a pose.
+
+    TURN_LEFT increases yaw, TURN_RIGHT decreases yaw, matching the official
+    CityNav action table.  GO_UP/GO_DOWN change z by 2 m.  Camera pitch is not
+    changed by these navigation actions; the teacher rollout replaces it with
+    the pitch of the nearest demonstration point.
+    """
+    action = int(action)
+    if action == int(STOP):
         return pose
-    if action == FORWARD:
-        x = pose.x + config.forward_step_m * math.cos(pose.yaw)
-        y = pose.y + config.forward_step_m * math.sin(pose.yaw)
-        return Pose5D(x, y, pose.z, pose.yaw, pose.pitch)
-    if action == LEFT:
+    if action == int(MOVE_FORWARD):
+        return Pose5D(
+            pose.x + float(config.forward_step_m) * math.cos(pose.yaw),
+            pose.y + float(config.forward_step_m) * math.sin(pose.yaw),
+            pose.z,
+            pose.yaw,
+            pose.pitch,
+        )
+    if action == int(TURN_RIGHT):
+        return Pose5D(
+            pose.x, pose.y, pose.z,
+            wrap_angle(pose.yaw - config.turn_step_rad), pose.pitch,
+        )
+    if action == int(TURN_LEFT):
         return Pose5D(
             pose.x, pose.y, pose.z,
             wrap_angle(pose.yaw + config.turn_step_rad), pose.pitch,
         )
-    if action == RIGHT:
+    if action == int(GO_UP):
         return Pose5D(
-            pose.x, pose.y, pose.z,
-            wrap_angle(pose.yaw - config.turn_step_rad), pose.pitch,
+            pose.x, pose.y, pose.z + float(config.vertical_step_m),
+            pose.yaw, pose.pitch,
+        )
+    if action == int(GO_DOWN):
+        return Pose5D(
+            pose.x, pose.y, pose.z - float(config.vertical_step_m),
+            pose.yaw, pose.pitch,
         )
     raise ValueError(f"unknown action: {action}")
 
@@ -204,25 +219,70 @@ def resample_polyline(
     return np.asarray(out, dtype=np.float64)
 
 
+def _straight_line_points(
+    src: np.ndarray,
+    dst: np.ndarray,
+    stride_m: float = 5.0,
+) -> list[np.ndarray]:
+    """Official ``straight_line_trajectory`` point sampling."""
+    distance = float(np.linalg.norm(dst - src))
+    if distance < _EPS:
+        return []
+    stride_vector = (dst - src) / (distance + 0.01) * float(stride_m)
+    count = int(distance / float(stride_m))
+    points = [src + index * stride_vector for index in range(count)]
+    points.append(dst)
+    return points
+
+
+def interpolate_demonstration_path(
+    poses: Sequence[Pose5D],
+    marker_xyz: Sequence[float],
+    *,
+    stride_m: float = 5.0,
+) -> np.ndarray:
+    """Build the official extended/interpolated demonstration path.
+
+    The official teacher appends ``marker_positions[-1]`` to the demonstration
+    and samples each segment every 5 m, keeping points more than 5 m from the
+    previous kept point.  The marker, not ``target_positions[-1]``, is the
+    teacher's stopping goal.
+    """
+    marker = np.asarray(marker_xyz, dtype=np.float64)
+    if marker.shape != (3,):
+        raise ValueError("marker_xyz must have shape [3]")
+    extended = [pose.xyz for pose in poses] + [marker]
+    out = [extended[0]]
+    for src, dst in zip(extended[:-1], extended[1:]):
+        for point in _straight_line_points(src, dst, stride_m=stride_m):
+            if float(np.linalg.norm(point - out[-1])) > 5.0:
+                out.append(point)
+    return np.asarray(out, dtype=np.float64)
+
+
 @dataclass
 class TeacherResult:
     actions: list[int]
     poses: list[Pose5D]
     success: bool
     stop_reason: str
-    final_distance_m: float
+    final_target_distance_m: float
+    final_marker_distance_m: float
     steps: int
     cross_track_median_m: float
     cross_track_p95_m: float
     cross_track_max_m: float
     yaw_error_median_deg: float
+    stop_distance_m: float
+    success_radius_m: float
+
+    @property
+    def final_distance_m(self) -> float:
+        """Backward-compatible name for the evaluation-target distance."""
+        return self.final_target_distance_m
 
     def supervision_steps(self) -> list[tuple[Pose5D, int]]:
-        """Pair each executed pose with its action.
-
-        Successful rollouts have ``len(actions) == len(poses)``; the final pair
-        is the Stop action at the stopping pose.
-        """
+        """Pair each state with the action taken from it."""
         return list(zip(self.poses, self.actions))
 
     def as_dict(self) -> dict:
@@ -230,20 +290,27 @@ class TeacherResult:
             "success": bool(self.success),
             "stop_reason": self.stop_reason,
             "steps": int(self.steps),
-            "final_distance_m": round(float(self.final_distance_m), 3),
+            "final_target_distance_m": round(
+                float(self.final_target_distance_m), 3
+            ),
+            "final_marker_distance_m": round(
+                float(self.final_marker_distance_m), 3
+            ),
+            "stop_distance_m": round(float(self.stop_distance_m), 3),
+            "success_radius_m": round(float(self.success_radius_m), 3),
             "cross_track_median_m": round(float(self.cross_track_median_m), 3),
             "cross_track_p95_m": round(float(self.cross_track_p95_m), 3),
             "cross_track_max_m": round(float(self.cross_track_max_m), 3),
             "yaw_error_median_deg": round(float(self.yaw_error_median_deg), 3),
             "action_histogram": {
-                ACTION_NAMES[index]: int(self.actions.count(index))
-                for index in range(NUM_ACTIONS)
+                ACTION_NAMES[action]: int(self.actions.count(int(action)))
+                for action in ACTION_NAMES
             },
         }
 
 
 class TrajectoryAdapter:
-    """Pure-pursuit teacher for the four-action MEC interface."""
+    """Official CityNav lookahead teacher for the six-action interface."""
 
     def __init__(self, config: TeacherConfig | None = None):
         self.config = config or TeacherConfig()
@@ -251,97 +318,126 @@ class TrajectoryAdapter:
     def rollout(
         self,
         poses: Sequence[Pose5D],
-        target_xy: Sequence[float],
+        marker_xyz: Sequence[float],
+        target_xyz: Sequence[float] | None = None,
     ) -> TeacherResult:
+        """Replay the official lookahead teacher.
+
+        ``marker_xyz`` (``marker_positions[-1]``) is the teacher's stopping goal,
+        appended to the demonstration before interpolation.  ``target_xyz``
+        (``target_positions[-1]``) is the evaluation goal used only for the
+        success radius.  They are intentionally not interchangeable.
+        """
         if not poses:
             raise ValueError("poses must not be empty")
         cfg = self.config
-        target = np.asarray(target_xy, dtype=np.float64)
-        if target.shape != (2,):
-            raise ValueError("target_xy must have shape [2]")
-
-        demo_xy = np.asarray([[pose.x, pose.y] for pose in poses], dtype=np.float64)
-        path = resample_polyline(demo_xy, cfg.resample_step_m)
-        segment_lengths = (
-            np.linalg.norm(np.diff(path, axis=0), axis=1)
-            if len(path) > 1
-            else np.zeros(0, dtype=np.float64)
+        marker = np.asarray(marker_xyz, dtype=np.float64)
+        if marker.shape != (3,):
+            raise ValueError("marker_xyz must have shape [3]")
+        evaluation_target = (
+            marker
+            if target_xyz is None
+            else np.asarray(target_xyz, dtype=np.float64)
         )
-        cumulative = np.concatenate(
-            [np.zeros(1, dtype=np.float64), np.cumsum(segment_lengths)]
-        )
-        total_length = float(cumulative[-1])
+        if evaluation_target.shape != (3,):
+            raise ValueError("target_xyz must have shape [3]")
 
-        start = poses[0]
-        sim_poses: list[Pose5D] = [start]
+        demo_xyz = np.asarray([pose.xyz for pose in poses], dtype=np.float64)
+        demo_xy = demo_xyz[:, :2]
+        path = interpolate_demonstration_path(poses, marker)
+        goal = path[-1]
+        current = poses[0]
+        trajectory = path.copy()
+        offset = 0
+        sim_poses: list[Pose5D] = [current]
         actions: list[int] = []
-        progress = 0
-        success = False
         stop_reason = "max_steps"
 
         for _ in range(int(cfg.max_steps)):
-            current = sim_poses[-1]
-            current_xy = current.xy
-            distance_to_target = float(np.linalg.norm(target - current_xy))
-            if distance_to_target <= float(cfg.stop_radius_m):
-                actions.append(STOP)
-                success = True
-                stop_reason = "target_radius"
+            distance_to_goal = float(np.linalg.norm(goal - current.xyz))
+            if distance_to_goal < float(cfg.stop_distance_m):
+                actions.append(int(STOP))
+                stop_reason = "teacher_stop_distance"
                 break
-
-            remaining = path[progress:]
-            if len(remaining) == 0:
+            if len(trajectory) == 0:
+                actions.append(int(STOP))
                 stop_reason = "empty_path"
                 break
-            nearest_offset = int(
-                np.argmin(np.linalg.norm(remaining - current_xy, axis=1))
-            )
-            progress = min(progress + nearest_offset, len(path) - 1)
 
-            waypoint_index = int(
-                np.searchsorted(
-                    cumulative,
-                    cumulative[progress] + float(cfg.lookahead_m),
-                    side="left",
-                )
+            distances = np.linalg.norm(trajectory - current.xyz, axis=1)
+            closest_local = int(np.argmin(distances))
+            next_local = min(closest_local + int(cfg.lookahead), len(trajectory) - 1)
+            waypoint = trajectory[next_local]
+            dx, dy, dz = waypoint - current.xyz
+            horizontal = float(math.hypot(dx, dy))
+            next_yaw = math.atan2(float(dy), float(dx))
+            dyaw = (
+                0.0
+                if horizontal < 0.01
+                else wrap_angle(next_yaw - current.yaw)
             )
-            waypoint_index = min(waypoint_index, len(path) - 1)
-            if (
-                cumulative[waypoint_index] >= total_length - float(cfg.lookahead_m)
-                or waypoint_index == len(path) - 1
-            ):
-                waypoint = target
-            else:
-                waypoint = path[waypoint_index]
 
-            delta = waypoint - current_xy
-            if float(np.linalg.norm(delta)) < 1e-6:
-                progress = min(progress + 1, len(path) - 1)
-                continue
-            bearing = math.atan2(float(delta[1]), float(delta[0]))
-            yaw_error = wrap_angle(bearing - current.yaw)
-            if abs(yaw_error) <= float(cfg.turn_threshold_rad):
-                action = FORWARD
-            elif yaw_error > 0:
-                action = LEFT
+            if dz > float(cfg.vertical_threshold_m):
+                action = int(GO_UP)
+            elif dz < -float(cfg.vertical_threshold_m):
+                action = int(GO_DOWN)
+            elif dyaw > float(cfg.turn_threshold_rad):
+                action = int(TURN_LEFT)
+            elif dyaw < -float(cfg.turn_threshold_rad):
+                action = int(TURN_RIGHT)
             else:
-                action = RIGHT
+                action = int(MOVE_FORWARD)
+
+            if abs(dx) < _EPS and abs(dy) < _EPS and abs(dz) < _EPS:
+                actions.append(int(STOP))
+                stop_reason = "zero_displacement"
+                break
+
             actions.append(action)
-            sim_poses.append(transition_pose(current, action, cfg))
+            moved = transition_pose(current, action, cfg)
+            new_xyz = moved.xyz
 
-        final_distance = float(
-            np.linalg.norm(target - sim_poses[-1].xy)
+            # No looking back: the next step only sees the remaining
+            # interpolated demonstration from its nearest waypoint onward.
+            remaining_distances = np.linalg.norm(trajectory - new_xyz, axis=1)
+            nearest_local = int(np.argmin(remaining_distances))
+            offset += nearest_local
+            trajectory = path[offset:]
+            nearest_raw = int(
+                np.argmin(np.linalg.norm(demo_xyz - new_xyz, axis=1))
+            )
+            current = Pose5D(
+                moved.x,
+                moved.y,
+                moved.z,
+                moved.yaw,
+                poses[nearest_raw].pitch,
+            )
+            sim_poses.append(current)
+
+        else:
+            # Safety limit reached.  The official loop is unbounded and always
+            # appends a terminal STOP; mark the reason so this is not mistaken
+            # for the 5 m teacher-stop rule.
+            actions.append(int(STOP))
+            stop_reason = "max_steps"
+
+        if not actions:
+            actions.append(int(STOP))
+
+        final_pose = sim_poses[-1]
+        final_target_distance = float(
+            np.linalg.norm(evaluation_target - final_pose.xyz)
         )
+        final_marker_distance = float(np.linalg.norm(goal - final_pose.xyz))
+        success = final_target_distance < float(cfg.success_radius_m)
 
         sim_xy = np.asarray([[pose.x, pose.y] for pose in sim_poses])
-        nearest_distances = np.min(
-            np.linalg.norm(sim_xy[:, None, :] - demo_xy[None, :, :], axis=2),
-            axis=1,
+        distance_matrix = np.linalg.norm(
+            sim_xy[:, None, :] - demo_xy[None, :, :], axis=2
         )
-        nearest_indices = np.argmin(
-            np.linalg.norm(sim_xy[:, None, :] - demo_xy[None, :, :], axis=2),
-            axis=1,
-        )
+        nearest_distances = distance_matrix.min(axis=1)
+        nearest_indices = distance_matrix.argmin(axis=1)
         yaw_errors = [
             abs(wrap_angle(sim_poses[i].yaw - poses[int(nearest_indices[i])].yaw))
             for i in range(len(sim_poses))
@@ -350,9 +446,10 @@ class TrajectoryAdapter:
         return TeacherResult(
             actions=actions,
             poses=sim_poses,
-            success=success,
+            success=bool(success),
             stop_reason=stop_reason,
-            final_distance_m=final_distance,
+            final_target_distance_m=final_target_distance,
+            final_marker_distance_m=final_marker_distance,
             steps=len(actions),
             cross_track_median_m=float(np.median(nearest_distances)),
             cross_track_p95_m=float(np.percentile(nearest_distances, 95)),
@@ -360,6 +457,8 @@ class TrajectoryAdapter:
             yaw_error_median_deg=float(
                 np.degrees(np.median(yaw_errors)) if yaw_errors else 0.0
             ),
+            stop_distance_m=float(cfg.stop_distance_m),
+            success_radius_m=float(cfg.success_radius_m),
         )
 
 
