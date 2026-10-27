@@ -39,7 +39,7 @@ Smoke 只做一次前向和一次优化步，batch=1，不能用于判断准确�
 
 ```bash
 pytest -q
-# 50 passed
+# 72 passed
 ```
 
 覆盖：
@@ -51,6 +51,8 @@ pytest -q
 - 第一视角针孔投影/深度 z-buffer/PLY memmap；
 - 冻结本地 BERT（参数 requires_grad=False、无梯度）；
 - 真实 val_unseen FPV 观测与 Small 前向；
+- T5+Language 六模态前向/一步训练、候选零填充、因果历史；
+- 推理接口不接受目标坐标/ID/裁剪/教师动作/成功标签；
 - Git 根目录边界。
 
 ## 3. 本轮修复/变更

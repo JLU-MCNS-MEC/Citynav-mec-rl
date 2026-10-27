@@ -149,6 +149,40 @@ class FPVObservationAdapter:
         )
         return result, crop
 
+    def render_current(
+        self,
+        map_name: str,
+        pose: Pose5D,
+        *,
+        crop_radius_m: float | None = None,
+    ) -> dict:
+        """Render only the egocentric current RGB/Depth.
+
+        This is the T5 path.  It deliberately has no CityRefer object_info
+        argument and never produces a Ground-Truth goal crop.
+        """
+        result, crop = self.render_parts(
+            map_name, pose, crop_radius_m=crop_radius_m
+        )
+        return {
+            "map_name": map_name,
+            "pose": np.asarray(pose.as_tuple(), dtype=np.float32),
+            "current_rgb": result.rgb,
+            "depth": result.depth[..., None],
+            "depth_valid_mask": result.valid_mask,
+            "depth_quality": render_quality(result),
+            "observation_source": self.source,
+            "point_count_in_crop": int(crop.point_count),
+            "camera": {
+                **self.camera.as_dict(),
+                "pitch_rad": float(camera_pitch(pose, self.config)),
+                "pitch_mode": str(self.config.fpv_pitch_mode),
+                "near_m": float(self.config.fpv_near_m),
+                "far_m": float(self.config.fpv_far_m),
+                "depth_definition": "camera_forward_depth_m",
+            },
+        }
+
     def render(
         self,
         map_name: str,

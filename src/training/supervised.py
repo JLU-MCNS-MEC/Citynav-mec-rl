@@ -20,6 +20,12 @@ _MODEL_INPUT_KEYS = (
     "heatmap",
     "network_state",
     "language_features",
+    "history_vis",
+    "history_pose",
+    "history_action",
+    "history_mask",
+    "gab",
+    "map_feat",
 )
 
 
@@ -30,10 +36,23 @@ def model_inputs_from_batch(batch: dict) -> dict:
     forwarded to ``forward_components``.  Keeping this filtering in one place
     prevents a supervision-only key from reaching the model signature.
     """
-    missing = [
-        key for key in ("current_tokens", "goal_tokens", "heatmap", "network_state")
-        if key not in batch
-    ]
+    if "history_vis" in batch:
+        required = (
+            "current_tokens",
+            "history_vis",
+            "history_pose",
+            "history_action",
+            "history_mask",
+            "language_features",
+        )
+    else:
+        required = (
+            "current_tokens",
+            "goal_tokens",
+            "heatmap",
+            "network_state",
+        )
+    missing = [key for key in required if key not in batch]
     if missing:
         raise KeyError("batch is missing model input(s): " + ", ".join(missing))
     return {key: batch[key] for key in _MODEL_INPUT_KEYS if key in batch}

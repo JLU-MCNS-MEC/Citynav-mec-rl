@@ -3,8 +3,8 @@
 CityNav / CityRefer 数据适配、SensatUrban PLY 第一视角 RGB/Depth 渲染、官方
 六动作监督，以及 MEC-V8.2 Small / Transformer-M 的最小训练验证。
 
-当前阶段**只做数据、观测、六动作标签与过拟合验证**：不启动完整训练集训练，
-不实现完整 RL 闭环，不采用 CityNav 论文的 GSM 语义地图增强。
+当前阶段**只做数据、观测、六动作标签、T5+语言候选检索与过拟合/Smoke 验证**：
+不启动完整训练集训练，不实现完整 RL 闭环，不采用 CityNav 论文的 GSM 语义地图增强。
 
 ## 当前协议
 
@@ -30,6 +30,37 @@ CityNav / CityRefer 数据适配、SensatUrban PLY 第一视角 RGB/Depth 渲染
 移动头输出 5 类，顺序为 Forward / Right / Left / Up / Down；Stop 来自 Arrival
 头。`combine_move_and_arrival` 组合成 `[Stop, Forward, Right, Left, Up, Down]`
 的 6 类联合分布，与官方动作 ID 对齐。
+
+## T5 + 语言检索
+
+ToyEnv V8.2 T5 六模态 + 冻结 BERT：
+
+| 模态 | 维度 |
+|---|---|
+| Current RGB tokens | 576 × 384 |
+| Goal RGB tokens（Top-3 检索候选） | 3 × 384 |
+| History visual | 16 × 768 |
+| Pose history | 16 × 12（6 连续 + 6 动作 one-hot） |
+| Action history | 16 × 6 |
+| History mask | 16 |
+| GAB | 20 |
+| Top-5 map retrieval | 22 |
+| Language（冻结 BERT） | 768 |
+
+候选库只从官方正射图按固定网格（stride 48 m）和多尺度（32/64/128 m）
+生成；**不使用 CityRefer 目标框、目标 ID、`object_ids`、`ann_ids` 或目标裁剪**。
+训练阶段只用 train_seen 的 `target_positions` 给网格候选取正负标签；推理端
+`retrieve_candidates` 只接收语言特征、候选视觉特征和 Top-K，不接受目标坐标、
+ID、裁剪、教师动作或成功标签。
+
+- full：Top-3 候选视觉 token 作为 Goal RGB，Top-5 用于 22-D map 特征；
+- map-free baseline：去掉 Goal/GAB 地图证据和 Top-5 map 分支，使用
+  current/history/pose/language；
+- 检索不足时 Goal/Map 零填充并记录 `goal_valid`；不回落使用真实目标。
+
+本次小规模结果：val_seen Recall@1/5/10 = 0.348/0.652/0.739，val_unseen =
+0.021/0.146/0.292；full 相对 map-free **没有显示正增益**。这是必须保留的负结果，
+详见 [`docs/T5_RETRIEVAL_REPORT.md`](docs/T5_RETRIEVAL_REPORT.md)。
 
 ## 第一视角渲染
 
@@ -84,6 +115,7 @@ scripts/
   audit_dataset.py       # 只读数据审计
   render_fpv_examples.py # 少量真实 FPV 样例 + 方向校验
   overfit_fpv_smoke.py   # 128–256 轨迹六动作过拟合验证
+  t5_smoke.py            # T5+语言候选检索/Token/短训练 Smoke
   smoke_test.py          # 单 episode 前向/单步训练 Smoke
 src/
   data/
@@ -93,11 +125,16 @@ src/
     observation_adapter.py # top-down 诊断、目标裁剪、PLY memmap/裁剪
     fpv_renderer.py      # CPU 点云针孔渲染与深度
     fpv_observation.py   # 第一视角观测适配器
+    candidates.py        # 固定网格/多尺度正射候选库、Top-K/Recall
+    gab.py               # 8-bin 因果 GAB
+    t5_features.py       # 16 步历史/位姿/动作/语言维度
     language_adapter.py  # 冻结 BERT（含离线 hashing 测试回退）
     paths.py             # 写入隔离与原始数据快照
-  models/                # 视觉编码器、Small、Transformer-M
-  training/supervised.py # 因子化六动作损失与单步训练
-tests/                   # 单元/契约/真实数据测试
+  models/                # 视觉编码器、Small、Transformer-M、T5 MEC
+  training/
+    supervised.py        # 因子化六动作损失与单步训练
+    retrieval.py         # 语言→地图候选检索器
+tests/                   # 单元/契约/防泄漏/真实数据测试
 ```
 
 ## 环境
@@ -155,7 +192,22 @@ python scripts/overfit_fpv_smoke.py \
   --render-size 336 --crop-radius 120 \
   --max-points 4000000 --splat-radius 0
 
-# 5. 单 episode FPV Smoke（hashing 仅用于快速离线检查）
+# 5. T5 + 冻结 BERT 候选检索/Token/短训练 Smoke
+python scripts/t5_smoke.py \
+  --device cuda \
+  --retrieval-steps 80 \
+  --retrieval-train-per-map 16 \
+  --retrieval-val-per-map 12 \
+  --train-trajectories 24 \
+  --val-seen-trajectories 6 \
+  --val-unseen-trajectories 8 \
+  --steps-per-trajectory 6 \
+  --mec-steps 150 \
+  --mec-batch-size 8 \
+  --render-size 336 --crop-radius 120 \
+  --candidate-stride 48 --candidate-scales 32 64 128
+
+# 6. 单 episode FPV Smoke（hashing 仅用于快速离线检查）
 python scripts/smoke_test.py \
   --split val_unseen --episodes 1 --observation fpv \
   --render-size 336 --crop-radius 120 --device cpu --text-backend hashing
@@ -166,7 +218,7 @@ python scripts/smoke_test.py \
 
 ## 已验证结果
 
-- `pytest -q`：50 passed；
+- `pytest -q`：72 passed；
 - FPV 样例：4 个不同地图的 512×512 RGB/Depth/overlay，见
   `figures/fpv_examples/`；
 - 方向校验：pitch=-90 点云 vs 官方正射，yaw=0 相关最高（birmingham_block_11：
@@ -176,11 +228,15 @@ python scripts/smoke_test.py \
   - Transformer-M：0.125 → 0.598，Stop P/R 0.742/0.719；
   - BERT 梯度 0、参数不变；视觉编码器与 MEC 参数均更新；
   - 峰值显存约 1.31–1.44 GB（RTX 5090，batch=8）；
-- 原始数据元数据摘要运行前后一致。
+- 原始数据元数据摘要运行前后一致；
+- T5+语言 Smoke：12 个地图、1,602 个候选、456 帧；val_seen R@1/5/10 =
+  0.348/0.652/0.739，val_unseen = 0.021/0.146/0.292；full 相对 map-free
+  **未显示正增益**（负结果，不能声称地图辅助提升）。
 
 详细结果：
 [`docs/FPV_RENDER_REPORT.md`](docs/FPV_RENDER_REPORT.md)、
 [`docs/OVERFIT_REPORT.md`](docs/OVERFIT_REPORT.md)、
+[`docs/T5_RETRIEVAL_REPORT.md`](docs/T5_RETRIEVAL_REPORT.md)、
 [`docs/DATA_AUDIT.md`](docs/DATA_AUDIT.md)、
 [`docs/SMOKE_TEST_REPORT.md`](docs/SMOKE_TEST_REPORT.md)。
 
@@ -202,6 +258,7 @@ python scripts/smoke_test.py \
 - 点云 FPV 有空洞、无表面重建/光照，不等于 AirSim；
 - 部分地图的点云与正射颜色相关性较低，正式实验前需逐地图几何配准；
 - 过拟合验证只使用 128 条 train_seen 轨迹和 256 帧，不代表 val 泛化；
+- T5 候选检索在 val_unseen 上很弱（R@1 0.021），当前不足以支持地图增益；
 - 网络状态为确定性 5 维占位向量；
 - 尚未移植 V8.2 完整训练配方（movement class balance、arrival hard states、
   checkpoint 选择）；
@@ -209,10 +266,11 @@ python scripts/smoke_test.py \
 
 下一步：
 
-1. 逐地图检查 PLY/轨迹/目标/语言/FPV 对齐，排除低相关地图；
-2. 在完整 `train_seen` 上跑监督基线，在 `val_seen` / `val_unseen` 评测；
-3. 移植 V8.2 训练配方与真实网络状态；
-4. 再决定 RL 闭环与全量 FPV 缓存。
+1. 改进无泄漏候选检索：更多 train episodes/训练步、更强的跨模态表示和候选覆盖，重新评估 R@1/5/10；
+2. 逐地图检查 PLY/轨迹/目标/语言/FPV 对齐，排除低相关地图；
+3. 在完整 `train_seen` 上跑监督基线，在 `val_seen` / `val_unseen` 评测；
+4. 移植 V8.2 训练配方与真实网络状态；
+5. 再决定 RL 闭环与全量 FPV 缓存。
 
 ## Git
 

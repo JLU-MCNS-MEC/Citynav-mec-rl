@@ -206,6 +206,51 @@ class TopDownObservationAdapter:
         )
         return patch
 
+    def render_center_crop(
+        self,
+        map_name: str,
+        center_xy: Sequence[float],
+        side_m: float,
+        output_size: int = 96,
+    ) -> np.ndarray:
+        """Render a fixed map-centered crop, independent of any object ID.
+
+        This is the candidate-library primitive: the center and side length
+        come from a fixed grid and scale list, never from CityRefer targets.
+        """
+        center = np.asarray(center_xy, dtype=np.float64)
+        if center.shape != (2,):
+            raise ValueError("center_xy must have shape [2]")
+        side = float(side_m)
+        if side <= 0:
+            raise ValueError("side_m must be positive")
+        output_size = int(output_size)
+        if output_size <= 0:
+            raise ValueError("output_size must be positive")
+        data = self.store.get(map_name)
+        pixel_size_m = abs(float(data.dataset.transform.a))
+        side_px = max(2, int(round(side / max(pixel_size_m, 1e-9))))
+        row, col = data.dataset.index(float(center[0]), float(center[1]))
+        x0 = float(col) - side_px / 2.0
+        y0 = float(row) - side_px / 2.0
+        matrix = np.asarray(
+            [[1.0, 0.0, -x0], [0.0, 1.0, -y0]], dtype=np.float32
+        )
+        patch = cv2.warpAffine(
+            data.rgb,
+            matrix,
+            (side_px, side_px),
+            flags=cv2.INTER_LINEAR,
+            borderMode=cv2.BORDER_CONSTANT,
+            borderValue=(0, 0, 0),
+        )
+        interpolation = (
+            cv2.INTER_AREA if side_px > output_size else cv2.INTER_LINEAR
+        )
+        return cv2.resize(
+            patch, (output_size, output_size), interpolation=interpolation
+        )
+
     def render_goal_crops(
         self,
         map_name: str,
