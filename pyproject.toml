@@ -1,0 +1,10 @@
+[project]
+name = "citynav-mec-rl"
+version = "0.1.0"
+description = "CityNav data adaptation for heterogeneous MEC navigation research"
+requires-python = ">=3.9"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+pythonpath = ["."]

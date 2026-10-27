@@ -1,0 +1,56 @@
+# ---- Local data paths / secrets -------------------------------------------
+configs/*.local.yaml
+configs/*.local.yml
+.env
+.env.*
+
+# ---- Raw / large data (never commit) --------------------------------------
+data/
+data_cache/*
+!data_cache/.gitkeep
+weights/
+checkpoints/
+*.ply
+*.las
+*.laz
+*.tif
+*.tiff
+*.h5
+*.hdf5
+
+# ---- Training products ----------------------------------------------------
+runs/*
+!runs/.gitkeep
+logs/
+tb/
+tensorboard/
+reports/*
+!reports/.gitkeep
+events.out.tfevents.*
+*.log
+nohup.out
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.safetensors
+
+# ---- Python / tooling -----------------------------------------------------
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+
+# ---- Local editor / OS / agent state --------------------------------------
+.DS_Store
+.vscode/
+.idea/
+.claude/
+.codex/
