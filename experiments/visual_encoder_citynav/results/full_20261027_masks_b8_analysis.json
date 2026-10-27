@@ -1,0 +1,75 @@
+{
+  "run_name": "full_20261027_masks_b8",
+  "best_step": 2751,
+  "best_score_val_seen": 0.24502641767195144,
+  "best_encoder": {
+    "path": "runs/visual_encoder_citynav/full_20261027_masks_b8/best_encoder.pt",
+    "sha256": "322cfa82a06ee926b74541ecde30f7ecd20b15c0a6ddd687647a0cd80d27b23b",
+    "parameters": 3997056
+  },
+  "final_encoder": {
+    "path": "runs/visual_encoder_citynav/full_20261027_masks_b8/encoder_final.pt",
+    "sha256": "b66862b84cbfc97cf5a91f72a74890319d3a82380a77273ec8b2c4ef17b0f569",
+    "parameters": 3997056
+  },
+  "initialization": {
+    "checkpoint": "data_cache/weights/shared_encoder.pt",
+    "sha256": "8ee6194e83ea6c6845f22d0ad271066fb82401d781906da9d4c624ab0a556f56",
+    "loaded_parameter_ratio": 1.0,
+    "loaded_parameters": 3997056,
+    "total_parameters": 3997056,
+    "missing_keys": [],
+    "unexpected_keys": [],
+    "shape_mismatch": []
+  },
+  "action_counts": {
+    "Stop": 3667,
+    "MoveForward": 4242,
+    "TurnRight": 3653,
+    "TurnLeft": 3624,
+    "GoUp": 2466,
+    "GoDown": 4350
+  },
+  "class_weights": {
+    "Stop": 1.0,
+    "MoveForward": 0.8644507527351379,
+    "TurnRight": 1.003832459449768,
+    "TurnLeft": 1.0118653774261475,
+    "GoUp": 1.4870234727859497,
+    "GoDown": 0.8429884910583496
+  },
+  "elapsed_seconds": 2348.937,
+  "gpu_max_allocated_mb": 5612.14,
+  "figures": [
+    "full_20261027_masks_b8_encoder_grad_norm.png",
+    "full_20261027_masks_b8_encoder_param_delta.png",
+    "full_20261027_masks_b8_gpu_memory.png",
+    "full_20261027_masks_b8_loss_components.png",
+    "full_20261027_masks_b8_loss_total.png",
+    "full_20261027_masks_b8_lr_encoder.png",
+    "full_20261027_masks_b8_per_class.png",
+    "full_20261027_masks_b8_render_seconds.png",
+    "full_20261027_masks_b8_throughput.png",
+    "full_20261027_masks_b8_valid_pixel_ratio.png",
+    "full_20261027_masks_b8_validation.png",
+    "full_20261027_masks_b8_validation_losses.png"
+  ],
+  "validation_csv": "experiments/visual_encoder_citynav/results/full_20261027_masks_b8_validation_summary.csv",
+  "loss_components_csv": "experiments/visual_encoder_citynav/results/full_20261027_masks_b8_loss_components.csv",
+  "resource_summary": {
+    "steps": 2751,
+    "total_steps_planned": 2751,
+    "batch_size": 8,
+    "train_records": 22002,
+    "elapsed_seconds": 2348.937,
+    "gpu_max_allocated_mb": 5612.14,
+    "render_seconds_mean": 0.17109903566539286,
+    "valid_pixel_ratio_mean": 0.41155446127057077,
+    "step_seconds_mean": 0.2417107540788129,
+    "samples_per_second_mean": 35.654716871661726,
+    "encoder_grad_norm_mean": 3.7580712892964017,
+    "encoder_param_delta_final": 1.0670090913772583
+  },
+  "per_map_csv": "experiments/visual_encoder_citynav/results/full_20261027_masks_b8_per_map.csv",
+  "per_map_rows": 27
+}
