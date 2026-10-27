@@ -19,6 +19,7 @@ from typing import Iterable, Sequence
 import numpy as np
 
 from src.config import DataConfig, ObservationConfig, TeacherConfig
+from src.data.actions import ACTION_NAMES
 from src.data.mapdata import GROUND_LEVEL
 from src.data.trajectory_adapter import (
     Pose5D,
@@ -83,7 +84,7 @@ class EpisodeRecord:
     def teacher(self, config: TeacherConfig | None = None) -> TeacherResult:
         if self._teacher_cache is None:
             self._teacher_cache = TrajectoryAdapter(config).rollout(
-                self.poses, self.target_xy
+                self.poses, self.marker_xyz, self.target_xyz
             )
         return self._teacher_cache
 
@@ -223,13 +224,9 @@ def build_episode_record(
         raise ValueError(f"episode {index}: empty trajectory or target_positions")
 
     ground_level = float(GROUND_LEVEL[map_name])
-    poses = load_trajectory(
-        trajectory_raw,
-        fix_altitude_m=(
-            float(observation.altitude_m) if observation.fix_altitude else None
-        ),
-        ground_level_m=ground_level if observation.fix_altitude else None,
-    )
+    # Preserve the original trajectory altitude.  The formal protocol does not
+    # force a 50 m flight height.
+    poses = load_trajectory(trajectory_raw)
     start_pose = poses[0]
     target_xyz = _point3(target_positions[-1])
     marker_xyz = _point3(marker_positions[-1]) if marker_positions else target_xyz
@@ -421,7 +418,11 @@ class CityNavDataset:
             return {"sampled": 0}
         steps = [result.steps for result in results]
         cross_track = [result.cross_track_median_m for result in results]
-        final = [result.final_distance_m for result in results]
+        final = [result.final_target_distance_m for result in results]
+        final_marker = [result.final_marker_distance_m for result in results]
+        actions = Counter()
+        for result in results:
+            actions.update(int(action) for action in result.actions)
         return {
             "sampled": len(results),
             "success_rate": round(
@@ -429,16 +430,21 @@ class CityNavDataset:
             ),
             "steps_median": int(np.median(steps)),
             "steps_p90": int(np.percentile(steps, 90)),
-            "final_distance_m_median": round(float(np.median(final)), 3),
-            "final_distance_m_p90": round(float(np.percentile(final, 90)), 3),
-            "cross_track_median_m": round(float(np.median(cross_track)), 3),
-            "wrong_stop_reasons": dict(
-                Counter(
-                    result.stop_reason
-                    for result in results
-                    if not result.success
-                )
+            "final_target_distance_m_median": round(float(np.median(final)), 3),
+            "final_target_distance_m_p90": round(float(np.percentile(final, 90)), 3),
+            "final_marker_distance_m_median": round(
+                float(np.median(final_marker)), 3
             ),
+            "final_marker_distance_m_p90": round(
+                float(np.percentile(final_marker, 90)), 3
+            ),
+            "cross_track_median_m": round(float(np.median(cross_track)), 3),
+            "stop_distance_m": float(self.teacher_config.stop_distance_m),
+            "success_radius_m": float(self.teacher_config.success_radius_m),
+            "action_histogram": {
+                ACTION_NAMES[action]: int(actions.get(int(action), 0))
+                for action in ACTION_NAMES
+            },
         }
 
 

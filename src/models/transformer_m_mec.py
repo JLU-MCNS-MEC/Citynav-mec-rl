@@ -1,10 +1,12 @@
 """Transformer-M MEC: V8.2 explicit multi-modal reasoning transformer.
 
-Only change relative to MEC-V8.2 ``ExplicitReasoningTransformer``:
+Only changes relative to MEC-V8.2 ``ExplicitReasoningTransformer``:
   * one projected language token (with its own type embedding) is appended to
-    the fused sequence ``[CLS, current(576), matched-goal(3), heat(1), net(1)]``.
-The movement/arrival heads and the 576-token spatial current representation are
-unchanged.
+    the fused sequence ``[CLS, current(576), matched-goal(3), heat(1), net(1)]``;
+  * the movement head has five classes (Forward/Right/Left/Up/Down), combined
+    with the binary Arrival head into the official six-action distribution.
+The 576-token spatial current representation and the arrival reasoning head
+are unchanged.
 """
 
 from __future__ import annotations

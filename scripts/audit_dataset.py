@@ -12,10 +12,8 @@ import argparse
 import json
 import math
 import sys
-from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Iterable
 
 import numpy as np
 
@@ -235,22 +233,31 @@ def _markdown(report: dict) -> str:
         "",
         "## 4. 离散动作教师回放",
         "",
-        "教师使用 5 m 前进、15 deg 转向、20 m 停止半径和 12 m 纯追踪前视点。"
+        "教师使用官方 episode 生成配置 lookahead=1：5 m 前进、30 deg 转向、"
+        "2 m 升降、垂直阈值 1 m；教师 STOP 距离 5 m，评估成功半径 20 m。"
         "回放轨迹与原始演示轨迹的最近点距离用于交叉验证。",
         "",
-        "| split | 抽样 | 成功率 | 步数中位/p90 | 终点距离中位/p90 (m) | 交叉轨迹中位 (m) | 未成功原因 |",
-        "|---|---:|---:|---:|---:|---:|---|",
+        "| split | 抽样 | 成功率 | 步数中位/p90 | 目标距离中位/p90 (m) | marker 距离中位/p90 (m) | 交叉轨迹中位 (m) | 六动作计数 |",
+        "|---|---:|---:|---:|---:|---:|---:|---|",
     ]
     for split in report["splits"]:
         entry = report["splits"].get(split, {}).get("teacher", {})
+        histogram = entry.get("action_histogram", {})
+        action_text = ", ".join(
+            f"{name}:{int(histogram.get(name, 0))}"
+            for name in (
+                "Stop", "MoveForward", "TurnRight", "TurnLeft", "GoUp", "GoDown"
+            )
+        )
         lines.append(
             f"| {split} | {entry.get('sampled', 0)} | "
             f"{entry.get('success_rate', 0):.4f} | "
             f"{entry.get('steps_median', 0)}/{entry.get('steps_p90', 0)} | "
-            f"{entry.get('final_distance_m_median', 0)}/"
-            f"{entry.get('final_distance_m_p90', 0)} | "
-            f"{entry.get('cross_track_median_m', 0)} | "
-            f"{entry.get('wrong_stop_reasons', {})} |"
+            f"{entry.get('final_target_distance_m_median', 0)}/"
+            f"{entry.get('final_target_distance_m_p90', 0)} | "
+            f"{entry.get('final_marker_distance_m_median', 0)}/"
+            f"{entry.get('final_marker_distance_m_p90', 0)} | "
+            f"{entry.get('cross_track_median_m', 0)} | {action_text} |"
         )
     lines += [
         "",
@@ -259,16 +266,18 @@ def _markdown(report: dict) -> str:
         f"- PLY 审计: {report['ply']['summary']}",
         f"- 栅格审计: {report['raster']['summary']}",
         "",
-        "PLY 仅读取文件头和少量顶点，不加载完整的 8000 万点云；"
-        "真正的第一人称 PLY 渲染尚未实现。",
+        "数据审计仍只读取 PLY 文件和少量顶点；"
+        "第一人称渲染由独立的点云针孔渲染器完成，见 FPV 报告。",
         "",
         "## 6. 结论与限制",
         "",
         "- 所审计划分均可读取，计数与已知统计一致；"
         "test_unseen 默认排除，留给最终冻结评估。",
         "- 所有引用地图均具备 CityRefer、PNG、TIFF 和 PLY。",
-        "- 轨迹六元组按官方约定转换为 `(x,y,z,yaw,pitch)`；"
+        "- 轨迹六元组按官方约定转换为 `(x,y,z,yaw,pitch)`，保留真实高度；"
         "近垂直方向使用局部运动方向作为 yaw 的确定性回退。",
+        "- 六动作标签来自官方 lookahead 教师；教师 STOP 5 m 与评估成功 20 m "
+        "分开统计。",
         "- 当前只验证数据与监督动作，不包含 GSM、CityNav 导航增强架构或 RL 环境。",
         "",
     ]

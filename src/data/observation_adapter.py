@@ -376,6 +376,110 @@ def read_ply_header(path: Path | str) -> PlyHeader:
     )
 
 
+@dataclass
+class PlyCloud:
+    """Read-only memmap of an official SensatUrban binary PLY."""
+
+    path: Path
+    header: PlyHeader
+    data: np.memmap
+
+
+@dataclass
+class PointCloudCrop:
+    """XYZRGB points selected from a PLY crop."""
+
+    xyz: np.ndarray
+    rgb: np.ndarray
+    source_path: Path
+    center_xy: tuple[float, float]
+    radius_m: float
+
+    @property
+    def point_count(self) -> int:
+        return int(len(self.xyz))
+
+
+def open_ply_cloud(path: Path | str) -> PlyCloud:
+    """Open a binary SensatUrban PLY without loading all points."""
+    path = Path(path)
+    header = read_ply_header(path)
+    if header.format != "binary_little_endian":
+        raise ValueError(f"unsupported PLY format: {header.format}")
+    fields = []
+    for name, type_name in header.vertex_properties:
+        if type_name == "list":
+            raise ValueError("list vertex properties are not supported")
+        if type_name not in _PLY_TYPES:
+            raise ValueError(f"unsupported PLY scalar type: {type_name}")
+        fields.append((name, _PLY_TYPES[type_name]))
+    missing = [name for name in ("x", "y", "z", "red", "green", "blue")
+               if name not in {field[0] for field in fields}]
+    if missing:
+        raise ValueError(f"PLY is missing color/XYZ field(s): {missing}")
+    dtype = np.dtype(fields)
+    data = np.memmap(
+        path,
+        dtype=dtype,
+        mode="r",
+        offset=int(header.header_bytes),
+        shape=(int(header.vertex_count),),
+    )
+    return PlyCloud(path=path, header=header, data=data)
+
+
+def crop_ply_cloud(
+    cloud: PlyCloud,
+    center_xy: Sequence[float],
+    radius_m: float,
+    *,
+    chunk_points: int = 4_000_000,
+) -> PointCloudCrop:
+    """Select points within ``radius_m`` of ``center_xy`` in chunks."""
+    center = np.asarray(center_xy, dtype=np.float64)
+    if center.shape != (2,):
+        raise ValueError("center_xy must have shape [2]")
+    radius = float(radius_m)
+    if radius <= 0:
+        raise ValueError("radius_m must be positive")
+    xyz_parts: list[np.ndarray] = []
+    rgb_parts: list[np.ndarray] = []
+    total = int(cloud.header.vertex_count)
+    chunk = max(1, int(chunk_points))
+    radius_sq = radius * radius
+    for start in range(0, total, chunk):
+        block = np.asarray(cloud.data[start:start + chunk])
+        dx = block["x"].astype(np.float64) - center[0]
+        dy = block["y"].astype(np.float64) - center[1]
+        mask = (dx * dx + dy * dy) <= radius_sq
+        if not bool(mask.any()):
+            continue
+        xyz_parts.append(
+            np.stack(
+                [block["x"][mask], block["y"][mask], block["z"][mask]], axis=1
+            ).astype(np.float32)
+        )
+        rgb_parts.append(
+            np.stack(
+                [block["red"][mask], block["green"][mask], block["blue"][mask]],
+                axis=1,
+            ).astype(np.uint8)
+        )
+    if xyz_parts:
+        xyz = np.concatenate(xyz_parts, axis=0)
+        rgb = np.concatenate(rgb_parts, axis=0)
+    else:
+        xyz = np.empty((0, 3), dtype=np.float32)
+        rgb = np.empty((0, 3), dtype=np.uint8)
+    return PointCloudCrop(
+        xyz=xyz,
+        rgb=rgb,
+        source_path=cloud.path,
+        center_xy=(float(center[0]), float(center[1])),
+        radius_m=radius,
+    )
+
+
 def read_first_ply_vertices(
     path: Path | str, count: int = 16
 ) -> np.ndarray:

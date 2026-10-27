@@ -28,11 +28,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.config import (  # noqa: E402
     PROJECT_ROOT,
+    ObservationConfig,
     TextConfig,
     TrainingConfig,
     load_data_config,
 )
 from src.data.citynav_dataset import CityNavDataset  # noqa: E402
+from src.data.fpv_observation import FPVObservationAdapter  # noqa: E402
 from src.data.language_adapter import build_language_adapter  # noqa: E402
 from src.data.observation_adapter import TopDownObservationAdapter  # noqa: E402
 from src.data.paths import (  # noqa: E402
@@ -69,6 +71,12 @@ def _parse_args() -> argparse.Namespace:
         default=64,
         help="maximum number of records inspected when choosing episodes",
     )
+    parser.add_argument(
+        "--observation", default="fpv", choices=("fpv", "topdown")
+    )
+    parser.add_argument("--render-size", type=int, default=336)
+    parser.add_argument("--crop-radius", type=float, default=120.0)
+    parser.add_argument("--splat-radius", type=int, default=0)
     parser.add_argument("--device", default="cpu")
     parser.add_argument("--text-backend", default="hashing",
                         choices=("auto", "bert", "hashing"))
@@ -116,7 +124,7 @@ def _select_episodes(
 def _build_batch(
     dataset: CityNavDataset,
     samples: Sequence[tuple[object, object]],
-    adapter: TopDownObservationAdapter,
+    adapter: object,
     encoder: VisualTokenEncoder,
     text_adapter: object,
     device: torch.device,
@@ -136,9 +144,17 @@ def _build_batch(
             len(result.poses) - 1,
         )
         action_index = min(pose_index, len(result.actions) - 1)
-        observation = adapter.render_step(
-            record.map_name, result.poses[pose_index], record.object_info
-        )
+        if isinstance(adapter, FPVObservationAdapter):
+            observation = adapter.render(
+                record.map_name,
+                result.poses[pose_index],
+                record.object_info,
+                crop_radius_m=float(adapter.config.fpv_crop_radius_m),
+            )
+        else:
+            observation = adapter.render_step(
+                record.map_name, result.poses[pose_index], record.object_info
+            )
         scene = encode_scene(
             encoder,
             observation["current_rgb"][None],
@@ -165,6 +181,9 @@ def _build_batch(
                 "num_teacher_steps": int(result.steps),
                 "teacher_success": bool(result.success),
                 "action": int(result.actions[action_index]),
+                "observation_source": observation.get(
+                    "observation_source", "citynav_orthophoto_topdown"
+                ),
             }
         )
 
@@ -213,7 +232,7 @@ def _run_model(
         decision = model.predict_action(**inputs)
         forward_seconds = time.perf_counter() - start
 
-    if logits.shape != (batch["actions"].numel(), 4):
+    if logits.shape != (batch["actions"].numel(), 6):
         raise RuntimeError(f"{name}: unexpected logits shape {tuple(logits.shape)}")
     if not bool(torch.isfinite(logits).all()):
         raise RuntimeError(f"{name}: non-finite forward logits")
@@ -225,7 +244,11 @@ def _run_model(
         raise RuntimeError(f"{name}: joint probabilities do not sum to one")
 
     eval_metrics = evaluate_components(model, batch)
-    if not all(np.isfinite(value) for value in eval_metrics.values()):
+    eval_scalars = {
+        key: value for key, value in eval_metrics.items()
+        if isinstance(value, (int, float))
+    }
+    if not all(np.isfinite(value) for value in eval_scalars.values()):
         raise RuntimeError(f"{name}: non-finite evaluation metrics")
 
     before = _flat_parameters(model)
@@ -258,9 +281,11 @@ def _run_model(
         "forward_seconds": round(float(forward_seconds), 4),
         "train_seconds": round(float(train_seconds), 4),
         "predicted_actions": [int(value) for value in decision["action"].cpu()],
-        "eval": {key: round(float(value), 6) for key, value in eval_metrics.items()},
+        "eval": {
+            key: round(float(value), 6) for key, value in eval_scalars.items()
+        },
         "train": {
-            key: round(float(value), 6)
+            key: (round(float(value), 6) if isinstance(value, (int, float)) else value)
             for key, value in train_metrics.items()
         },
         "parameter_delta_l2": round(parameter_delta, 8),
@@ -309,9 +334,9 @@ def _markdown(report: dict) -> str:
         "",
         "- [x] CityNav 原始 JSON 读取，split 字段与请求划分一致。",
         "- [x] CityRefer 对象、描述与目标位置可解析，描述索引为 0-based。",
-        "- [x] 官方 top-down 观测裁剪与 DSM 高度代理可生成。",
+        "- [x] 第一视角 PLY RGB / 透视 Depth（或显式 top-down 诊断模式）可生成。",
         "- [x] 视觉编码器输出 576 × 384 tokens。",
-        "- [x] Small / Transformer-M 前向输出 4 动作联合分布。",
+        "- [x] Small / Transformer-M 前向输出六动作联合分布。",
         "- [x] 单步监督训练损失、梯度、参数更新均有限。",
         "- [x] 运行前后共享原始数据快照一致。",
         "",
@@ -364,7 +389,21 @@ def main() -> int:
         TextConfig(backend=args.text_backend, local_files_only=True),
         device=device,
     )
-    adapter = TopDownObservationAdapter(data_config)
+    obs_config = ObservationConfig(
+        image_size=336,
+        depth_size=int(args.render_size),
+        goal_crop_size=96,
+        goal_scales=(14, 28, 56),
+        map_cache_size=2,
+        fpv_width=int(args.render_size),
+        fpv_height=int(args.render_size),
+        fpv_crop_radius_m=float(args.crop_radius),
+        fpv_splat_radius=int(args.splat_radius),
+    )
+    if args.observation == "fpv":
+        adapter = FPVObservationAdapter(data_config, obs_config)
+    else:
+        adapter = TopDownObservationAdapter(data_config, obs_config)
     try:
         batch, episodes = _build_batch(
             dataset,
@@ -394,6 +433,10 @@ def main() -> int:
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "device": str(device),
         "split": args.split,
+        "observation": args.observation,
+        "render_size": int(args.render_size),
+        "crop_radius_m": float(args.crop_radius),
+        "splat_radius": int(args.splat_radius),
         "seed": int(args.seed),
         "text_backend_requested": args.text_backend,
         "text_backend_actual": text_backend,

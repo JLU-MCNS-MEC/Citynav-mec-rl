@@ -11,9 +11,11 @@ import os
 import re
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any, Mapping, Optional
+from typing import Any, Mapping
 
 import yaml
+
+from src.data.actions import NUM_ACTIONS, NUM_MOVE_ACTIONS
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -174,9 +176,21 @@ class ObservationConfig:
     depth_size: int = 336
     goal_crop_size: int = 96
     goal_scales: tuple[int, ...] = (14, 28, 56)
-    altitude_m: float = 50.0
-    fix_altitude: bool = True
     map_cache_size: int = 2
+
+    # First-person point-cloud renderer.  The camera is a pinhole with a square
+    # 90-degree horizontal FOV; depth is metric forward depth.
+    fpv_width: int = 512
+    fpv_height: int = 512
+    fpv_hfov_deg: float = 90.0
+    fpv_near_m: float = 0.5
+    fpv_far_m: float = 300.0
+    fpv_crop_radius_m: float = 300.0
+    fpv_splat_radius: int = 1
+    # "trajectory" uses the pitch from CityNav direction vectors; "fixed" is
+    # available for controlled diagnostics.
+    fpv_pitch_mode: str = "trajectory"
+    fpv_fixed_pitch_deg: float = -30.0
 
     @classmethod
     def from_mapping(cls, mapping: Mapping[str, Any] | None) -> "ObservationConfig":
@@ -186,21 +200,33 @@ class ObservationConfig:
             depth_size=int(_get(mapping, "depth_size", 336)),
             goal_crop_size=int(_get(mapping, "goal_crop_size", 96)),
             goal_scales=tuple(int(v) for v in _get(mapping, "goal_scales", (14, 28, 56))),
-            altitude_m=float(_get(mapping, "altitude_m", 50.0)),
-            fix_altitude=bool(_get(mapping, "fix_altitude", True)),
             map_cache_size=int(_get(mapping, "map_cache_size", 2)),
+            fpv_width=int(_get(mapping, "fpv_width", 512)),
+            fpv_height=int(_get(mapping, "fpv_height", 512)),
+            fpv_hfov_deg=float(_get(mapping, "fpv_hfov_deg", 90.0)),
+            fpv_near_m=float(_get(mapping, "fpv_near_m", 0.5)),
+            fpv_far_m=float(_get(mapping, "fpv_far_m", 300.0)),
+            fpv_crop_radius_m=float(_get(mapping, "fpv_crop_radius_m", 300.0)),
+            fpv_splat_radius=int(_get(mapping, "fpv_splat_radius", 1)),
+            fpv_pitch_mode=str(_get(mapping, "fpv_pitch_mode", "trajectory")),
+            fpv_fixed_pitch_deg=float(_get(mapping, "fpv_fixed_pitch_deg", -30.0)),
         )
 
 
 @dataclass(frozen=True)
 class TeacherConfig:
+    # Official CityNav lookahead teacher defaults.
     forward_step_m: float = 5.0
-    turn_step_deg: float = 15.0
-    stop_radius_m: float = 20.0
-    lookahead_m: float = 12.0
-    turn_threshold_deg: float = 7.5
-    max_steps: int = 1000
-    resample_step_m: float = 1.0
+    turn_step_deg: float = 30.0
+    vertical_step_m: float = 2.0
+    # Official episode generation uses LookaheadTeacherParams(lookahead=1).
+    lookahead: int = 1
+    stop_distance_m: float = 5.0
+    success_radius_m: float = 20.0
+    turn_threshold_deg: float = 30.0
+    vertical_threshold_m: float = 1.0
+    # Safety bound for the otherwise unbounded official while-loop.
+    max_steps: int = 400
 
     @property
     def turn_step_rad(self) -> float:
@@ -215,12 +241,14 @@ class TeacherConfig:
         mapping = mapping or {}
         return cls(
             forward_step_m=float(_get(mapping, "forward_step_m", 5.0)),
-            turn_step_deg=float(_get(mapping, "turn_step_deg", 15.0)),
-            stop_radius_m=float(_get(mapping, "stop_radius_m", 20.0)),
-            lookahead_m=float(_get(mapping, "lookahead_m", 12.0)),
-            turn_threshold_deg=float(_get(mapping, "turn_threshold_deg", 7.5)),
-            max_steps=int(_get(mapping, "max_steps", 1000)),
-            resample_step_m=float(_get(mapping, "resample_step_m", 1.0)),
+            turn_step_deg=float(_get(mapping, "turn_step_deg", 30.0)),
+            vertical_step_m=float(_get(mapping, "vertical_step_m", 2.0)),
+            lookahead=int(_get(mapping, "lookahead", 1)),
+            stop_distance_m=float(_get(mapping, "stop_distance_m", 5.0)),
+            success_radius_m=float(_get(mapping, "success_radius_m", 20.0)),
+            turn_threshold_deg=float(_get(mapping, "turn_threshold_deg", 30.0)),
+            vertical_threshold_m=float(_get(mapping, "vertical_threshold_m", 1.0)),
+            max_steps=int(_get(mapping, "max_steps", 400)),
         )
 
 
@@ -233,6 +261,8 @@ class EncoderConfig:
     num_heads: int = 6
     mlp_ratio: int = 4
     dropout: float = 0.10
+    # Local-only path to the MEC-V8.2 shared_encoder.pt.  Never commit weights.
+    checkpoint: str | None = None
 
     @property
     def grid_size(self) -> int:
@@ -241,6 +271,21 @@ class EncoderConfig:
     @property
     def num_tokens(self) -> int:
         return self.grid_size ** 2
+
+    @classmethod
+    def from_mapping(cls, mapping: Mapping[str, Any] | None) -> "EncoderConfig":
+        mapping = mapping or {}
+        checkpoint = _get(mapping, "checkpoint", None)
+        return cls(
+            image_size=int(_get(mapping, "image_size", 336)),
+            patch_size=int(_get(mapping, "patch_size", 14)),
+            token_dim=int(_get(mapping, "token_dim", 384)),
+            num_layers=int(_get(mapping, "num_layers", 2)),
+            num_heads=int(_get(mapping, "num_heads", 6)),
+            mlp_ratio=int(_get(mapping, "mlp_ratio", 4)),
+            dropout=float(_get(mapping, "dropout", 0.10)),
+            checkpoint=None if not checkpoint else str(checkpoint),
+        )
 
 
 @dataclass(frozen=True)
@@ -258,13 +303,15 @@ class MECConfig:
     arrival_hidden_dim: int = 64
     arrival_match_temperature: float = 0.10
     arrival_stop_threshold: float = 0.50
-    num_actions: int = 4
-    num_move_actions: int = 3
+    num_actions: int = NUM_ACTIONS
+    num_move_actions: int = NUM_MOVE_ACTIONS
 
 
 @dataclass(frozen=True)
 class TextConfig:
-    backend: str = "auto"  # auto | bert | hashing
+    # Formal training uses frozen pretrained BERT.  ``hashing`` is only for
+    # offline unit / smoke tests, never for a formal training run.
+    backend: str = "bert"  # bert | hashing (auto is retained for diagnostics)
     model_name: str = "bert-base-uncased"
     local_files_only: bool = True
     max_length: int = 48
@@ -274,7 +321,7 @@ class TextConfig:
     def from_mapping(cls, mapping: Mapping[str, Any] | None) -> "TextConfig":
         mapping = mapping or {}
         return cls(
-            backend=str(_get(mapping, "backend", "auto")),
+            backend=str(_get(mapping, "backend", "bert")),
             model_name=str(_get(mapping, "model_name", "bert-base-uncased")),
             local_files_only=bool(_get(mapping, "local_files_only", True)),
             max_length=int(_get(mapping, "max_length", 48)),
@@ -286,10 +333,13 @@ class TextConfig:
 class TrainingConfig:
     batch_size: int = 4
     lr: float = 1e-4
+    encoder_lr: float = 1e-5
     weight_decay: float = 1e-4
     arrival_loss_weight: float = 1.0
     grad_clip: float = 1.0
     amp: bool = False
+    train_vision_encoder: bool = True
+    freeze_text_encoder: bool = True
     seed: int = 0
 
     @classmethod
@@ -298,10 +348,13 @@ class TrainingConfig:
         return cls(
             batch_size=int(_get(mapping, "batch_size", 4)),
             lr=float(_get(mapping, "lr", 1e-4)),
+            encoder_lr=float(_get(mapping, "encoder_lr", 1e-5)),
             weight_decay=float(_get(mapping, "weight_decay", 1e-4)),
             arrival_loss_weight=float(_get(mapping, "arrival_loss_weight", 1.0)),
             grad_clip=float(_get(mapping, "grad_clip", 1.0)),
             amp=bool(_get(mapping, "amp", False)),
+            train_vision_encoder=bool(_get(mapping, "train_vision_encoder", True)),
+            freeze_text_encoder=bool(_get(mapping, "freeze_text_encoder", True)),
             seed=int(_get(mapping, "seed", 0)),
         )
 
@@ -370,12 +423,13 @@ def load_app_config(
     teacher = TeacherConfig.from_mapping(train_mapping.get("teacher"))
     text = TextConfig.from_mapping(train_mapping.get("text"))
     training = TrainingConfig.from_mapping(train_mapping.get("training"))
+    encoder = EncoderConfig.from_mapping(train_mapping.get("encoder"))
     seed = int(train_mapping.get("seed", training.seed))
     return AppConfig(
         data=data,
         observation=observation,
         teacher=teacher,
-        encoder=EncoderConfig(),
+        encoder=encoder,
         mec=MECConfig(),
         text=text,
         training=training,

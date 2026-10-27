@@ -65,14 +65,14 @@ def test_build_episode_record_maps_fields_and_description() -> None:
         _raw(),
         split="val_seen",
         cityrefer=FakeCityRefer(_entry()),
-        observation=ObservationConfig(altitude_m=50.0, fix_altitude=True),
+        observation=ObservationConfig(),
         index=0,
     )
     assert record.map_name == "birmingham_block_0"
     assert record.description == "Find the target building."
     assert record.description_match is True
     assert record.description_match_normalized is True
-    assert record.start_pose.z == pytest.approx(record.ground_level_m + 50.0)
+    assert record.start_pose.z == pytest.approx(20.0)
     assert record.target_xy == pytest.approx((10.0, 0.0))
     assert record.target_object_distance_m == pytest.approx(0.0)
     assert record.teacher().success is True

@@ -9,10 +9,10 @@ from __future__ import annotations
 import pytest
 import torch
 
-from src.config import TextConfig, load_data_config
+from src.config import ObservationConfig, TextConfig, load_data_config
 from src.data.citynav_dataset import CityNavDataset
+from src.data.fpv_observation import FPVObservationAdapter
 from src.data.language_adapter import build_language_adapter
-from src.data.observation_adapter import TopDownObservationAdapter
 from src.models import SmallMEC
 from src.models.token_utils import encode_scene
 from src.models.vision_encoder import VisualTokenEncoder
@@ -34,20 +34,32 @@ def test_val_unseen_episode_observation_encoder_and_small_model() -> None:
     dataset = CityNavDataset(config, "val_unseen", max_episodes=3)
     assert len(dataset) > 0
     record = dataset[0]
+    if not config.ply_path(record.map_name).exists():
+        pytest.skip(f"PLY is missing for {record.map_name}")
     assert record.object_info is not None
     assert record.description_match is True
     assert record.teacher().steps >= 1
 
-    adapter = TopDownObservationAdapter(config)
+    observation_config = ObservationConfig(
+        fpv_width=336,
+        fpv_height=336,
+        fpv_crop_radius_m=100.0,
+        fpv_splat_radius=0,
+    )
+    adapter = FPVObservationAdapter(config, observation_config)
     try:
-        observation = adapter.render_step(
-            record.map_name, record.poses[0], record.object_info
+        observation = adapter.render(
+            record.map_name,
+            record.poses[0],
+            record.object_info,
+            crop_radius_m=100.0,
         )
     finally:
         adapter.close()
 
     assert observation["current_rgb"].shape == (336, 336, 3)
     assert observation["depth"].shape == (336, 336, 1)
+    assert observation["depth_quality"]["valid_pixel_ratio"] > 0.05
     assert observation["goal_rgbs"].shape == (3, 96, 96, 3)
 
     encoder = VisualTokenEncoder().eval()
@@ -76,5 +88,5 @@ def test_val_unseen_episode_observation_encoder_and_small_model() -> None:
             torch.zeros(1, 5),
             language,
         )
-    assert logits.shape == (1, 4)
+    assert logits.shape == (1, 6)
     assert torch.isfinite(logits).all()
