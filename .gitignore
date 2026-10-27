@@ -5,11 +5,13 @@ configs/*.local.yml
 .env.*
 
 # ---- Raw / large data (never commit) --------------------------------------
-data/
+# Anchor top-level data directories with a leading slash so that source
+# packages such as src/data/ are not accidentally ignored.
+/data/
 data_cache/*
 !data_cache/.gitkeep
-weights/
-checkpoints/
+/weights/
+/checkpoints/
 *.ply
 *.las
 *.laz
@@ -21,9 +23,9 @@ checkpoints/
 # ---- Training products ----------------------------------------------------
 runs/*
 !runs/.gitkeep
-logs/
-tb/
-tensorboard/
+/logs/
+/tb/
+/tensorboard/
 reports/*
 !reports/.gitkeep
 events.out.tfevents.*
