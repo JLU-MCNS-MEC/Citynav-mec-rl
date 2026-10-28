@@ -48,6 +48,15 @@ Val-Unseen 仅诊断，不参与选模。
 | `original_best_encoder.pt` | 2751（实验 A 冻结权重副本） | `441de539f1d30f2be68d77a1c954daef5f3ab3bd3501f33b2c9798f89517011b` |
 | `train_state.pt` | 5502（模型+优化器+调度器+RNG） | — |
 
+Checkpoint 核验（`verify_checkpoint.py`，结果在
+`experiments/visual_encoder_citynav/results/abl_20261028_e2_fov_pose_ext5502_seed42_checkpoint_verification.json`）：
+
+- best / final 严格加载：1.0000，缺失/多余/形状不匹配均为 0，无辅助头 key；
+- best 与 final 逐张量一致（最大绝对差 0.0）；
+- 相对初始化 L2 变化 1.7189，相对值 2.44%；
+- step 2751 的检查点不在本 run 目录，保留在原始 run
+  `runs/visual_encoder_citynav/abl_20261028_e2_fov_pose_seed42/checkpoints/`。
+
 ## 结论
 
 1. 延长到 5502 步后，Val-Seen 选模分数 0.3120 → 0.3378，macro-F1 0.5326 → 0.5533，

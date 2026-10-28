@@ -220,6 +220,27 @@ def main() -> int:
     ap.add_argument("--max-maps", type=int, default=4)
     ap.add_argument("--shard-index", type=int, default=0)
     ap.add_argument("--shards", type=int, default=1)
+    ap.add_argument(
+        "--token-meta",
+        type=Path,
+        default=(
+            PROJECT_ROOT
+            / "data_cache/t5_frozen_1000/tokens/t5_tokens.json"
+        ),
+        help="token metadata used to reuse the training-time GAB threshold",
+    )
+    ap.add_argument(
+        "--gab-threshold",
+        type=float,
+        default=None,
+        help="override the GAB reliability threshold (default: token metadata)",
+    )
+    ap.add_argument(
+        "--journal",
+        type=Path,
+        default=None,
+        help="append one JSON line per finished episode (default: <out>.jsonl)",
+    )
     args = ap.parse_args()
 
     if args.split == "test_unseen":
@@ -262,7 +283,18 @@ def main() -> int:
     )
     adapter = FPVObservationAdapter(data_config, observation_config)
     teacher = TeacherConfig()
-    gab_config = GABConfig(reliability_threshold=0.35)
+    threshold = args.gab_threshold
+    if threshold is None and args.token_meta.exists():
+        meta = json.loads(args.token_meta.read_text(encoding="utf-8"))
+        threshold = float(meta["gab_reliability_threshold"])
+    if threshold is None:
+        threshold = 0.35
+        print(
+            "warning: token metadata not found; falling back to GAB threshold 0.35",
+            flush=True,
+        )
+    print(f"GAB reliability threshold = {threshold:.6f}", flush=True)
+    gab_config = GABConfig(reliability_threshold=float(threshold))
 
     libraries = {}
     for name in sorted({r.map_name for r in records}):
@@ -270,6 +302,42 @@ def main() -> int:
             data_config, name, observation_config,
             encoder=encoder, device=device,
             stride_m=48.0, scales_m=(32.0, 64.0, 128.0),
+        )
+
+    journal_path = args.journal or args.out.with_name(args.out.stem + ".jsonl")
+    journal_meta = {
+        "split": args.split,
+        "model": args.model,
+        "use_retrieval": bool(args.use_retrieval),
+        "episodes": int(args.episodes),
+        "shard_index": int(args.shard_index),
+        "shards": int(args.shards),
+        "max_steps": int(args.max_steps),
+        "crop_radius": float(args.crop_radius),
+        "gab_threshold": float(threshold),
+        "encoder_checkpoint": str(args.encoder_checkpoint),
+        "mec_checkpoint": str(args.mec_checkpoint),
+    }
+    finished: dict = {}
+    if journal_path.exists():
+        for line in journal_path.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            item = json.loads(line)
+            if "meta" in item:
+                if item["meta"] != journal_meta:
+                    raise SystemExit(
+                        f"journal {journal_path} belongs to a different run; "
+                        "use a new --out/--journal"
+                    )
+            else:
+                finished[(item["map_name"], item["episode_id"])] = item
+        print(f"  journal: {len(finished)} episode(s) already finished", flush=True)
+    else:
+        journal_path.parent.mkdir(parents=True, exist_ok=True)
+        journal_path.write_text(
+            json.dumps({"meta": journal_meta}, ensure_ascii=False) + "\n",
+            encoding="utf-8",
         )
 
     language_cache = {}
@@ -281,23 +349,29 @@ def main() -> int:
                 language_adapter.encode_tensor([record.description], device="cpu")
                 .cpu().numpy()[0]
             )
-        result = run_episode(
-            record,
-            encoder=encoder,
-            model=model,
-            retriever=retriever,
-            library=libraries[record.map_name],
-            language_features=language_cache[record.description],
-            adapter=adapter,
-            teacher=teacher,
-            device=device,
-            observation_config=observation_config,
-            use_retrieval=bool(args.use_retrieval),
-            max_steps=args.max_steps,
-            crop_radius=float(args.crop_radius),
-            gab_config=gab_config,
-        )
-        results.append(result)
+        key = (record.map_name, record.episode_id)
+        if key in finished:
+            results.append(finished[key])
+        else:
+            result = run_episode(
+                record,
+                encoder=encoder,
+                model=model,
+                retriever=retriever,
+                library=libraries[record.map_name],
+                language_features=language_cache[record.description],
+                adapter=adapter,
+                teacher=teacher,
+                device=device,
+                observation_config=observation_config,
+                use_retrieval=bool(args.use_retrieval),
+                max_steps=int(args.max_steps),
+                crop_radius=float(args.crop_radius),
+                gab_config=gab_config,
+            )
+            results.append(result)
+            with journal_path.open("a", encoding="utf-8") as handle:
+                handle.write(json.dumps(result, ensure_ascii=False) + "\n")
         if i % 5 == 0:
             print(
                 f"  {i}/{len(records)} episodes | "
@@ -323,6 +397,8 @@ def main() -> int:
         ])),
         "shard_index": int(args.shard_index),
         "shards": int(args.shards),
+        "gab_threshold": float(threshold),
+        "journal": str(journal_path),
         "elapsed_seconds": round(time.perf_counter() - start, 2),
         "test_unseen_read": False,
     }
