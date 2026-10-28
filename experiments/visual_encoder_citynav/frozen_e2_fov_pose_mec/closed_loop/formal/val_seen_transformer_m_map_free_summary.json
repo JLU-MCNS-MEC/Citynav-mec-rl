@@ -1,0 +1,444 @@
+{
+  "summary": {
+    "split": "val_seen",
+    "model": "transformer_m",
+    "variant": "map_free",
+    "use_retrieval": false,
+    "episodes": 24,
+    "success_rate": 0.0,
+    "oracle_success_rate": 0.041666666666666664,
+    "spl": 0.0,
+    "ne_m": 222.89204902944428,
+    "ndtw": 0.2766004142360345,
+    "mean_steps": 15.125,
+    "stop_rate": 1.0,
+    "mean_step_latency_s": 6.899478150661367,
+    "shards": 8,
+    "test_unseen_read": false
+  },
+  "episodes": [
+    {
+      "episode_id": "f96cfed0d861074e11c0",
+      "map_name": "birmingham_block_1",
+      "steps": 20,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 305.90009203802583,
+      "min_dist_m": 279.8908334767873,
+      "spl": 0.0,
+      "ndtw": 0.04336976045825062,
+      "action_counts": {
+        "MoveForward": 19,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 5.952160334517248
+    },
+    {
+      "episode_id": "0d8070844b84eea34318",
+      "map_name": "birmingham_block_1",
+      "steps": 11,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 173.86865147782106,
+      "min_dist_m": 154.71165832507324,
+      "spl": 0.0,
+      "ndtw": 0.5026283711017752,
+      "action_counts": {
+        "GoDown": 7,
+        "MoveForward": 3,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 4.636636754349721
+    },
+    {
+      "episode_id": "402b2ad68163e1bed142",
+      "map_name": "birmingham_block_1",
+      "steps": 14,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 194.36131918162772,
+      "min_dist_m": 165.18589985929876,
+      "spl": 0.0,
+      "ndtw": 0.08044249018558176,
+      "action_counts": {
+        "MoveForward": 13,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 6.871641778004622
+    },
+    {
+      "episode_id": "398d5b436c0c68c63194",
+      "map_name": "birmingham_block_1",
+      "steps": 15,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 272.525977760292,
+      "min_dist_m": 255.67362158733536,
+      "spl": 0.0,
+      "ndtw": 0.10760601855419918,
+      "action_counts": {
+        "MoveForward": 14,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 7.31161363539286
+    },
+    {
+      "episode_id": "828e7c186ac60840f21b",
+      "map_name": "birmingham_block_10",
+      "steps": 35,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 291.10087352830783,
+      "min_dist_m": 124.30395810737947,
+      "spl": 0.0,
+      "ndtw": 0.18114204757273442,
+      "action_counts": {
+        "MoveForward": 33,
+        "GoDown": 1,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 2.59263440351268
+    },
+    {
+      "episode_id": "646f9dac82c20303634b",
+      "map_name": "birmingham_block_13",
+      "steps": 25,
+      "stopped": true,
+      "success": false,
+      "oracle_success": true,
+      "ne_m": 122.91689636598949,
+      "min_dist_m": 18.233937589169713,
+      "spl": 0.0,
+      "ndtw": 0.8494547587250199,
+      "action_counts": {
+        "MoveForward": 23,
+        "GoDown": 1,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 0.7641570580285042
+    },
+    {
+      "episode_id": "807047ebccd16b3b0dd1",
+      "map_name": "birmingham_block_3",
+      "steps": 9,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 231.97361632918674,
+      "min_dist_m": 211.09889517010774,
+      "spl": 0.0,
+      "ndtw": 0.2318696908201651,
+      "action_counts": {
+        "GoDown": 8,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 7.171505689827932
+    },
+    {
+      "episode_id": "70154f6dd57274855624",
+      "map_name": "birmingham_block_4",
+      "steps": 17,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 276.1151017014979,
+      "min_dist_m": 256.57282426866567,
+      "spl": 0.0,
+      "ndtw": 0.07045984640620559,
+      "action_counts": {
+        "MoveForward": 16,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 8.367070925449404
+    },
+    {
+      "episode_id": "436e6b2ecc7e01a51afd",
+      "map_name": "birmingham_block_9",
+      "steps": 17,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 337.01465185545584,
+      "min_dist_m": 323.3924984237549,
+      "spl": 0.0,
+      "ndtw": 0.3656123635536305,
+      "action_counts": {
+        "GoDown": 7,
+        "MoveForward": 9,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 4.681542766787222
+    },
+    {
+      "episode_id": "5e9087f47a1fbb322db1",
+      "map_name": "cambridge_block_12",
+      "steps": 12,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 133.40204178619734,
+      "min_dist_m": 120.39261113667274,
+      "spl": 0.0,
+      "ndtw": 0.8841320115578503,
+      "action_counts": {
+        "GoDown": 7,
+        "MoveForward": 4,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 9.66356082916415
+    },
+    {
+      "episode_id": "ad422a2ab763ee9b527b",
+      "map_name": "cambridge_block_12",
+      "steps": 14,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 132.00681260811587,
+      "min_dist_m": 122.5473671150776,
+      "spl": 0.0,
+      "ndtw": 0.5679575272492159,
+      "action_counts": {
+        "GoDown": 8,
+        "MoveForward": 5,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 9.055249040929734
+    },
+    {
+      "episode_id": "9cc5bdea1804f7f8d17d",
+      "map_name": "cambridge_block_13",
+      "steps": 8,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 202.7951318726598,
+      "min_dist_m": 192.20452634984574,
+      "spl": 0.0,
+      "ndtw": 0.12937867744069861,
+      "action_counts": {
+        "GoDown": 6,
+        "MoveForward": 1,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 8.090112386009423
+    },
+    {
+      "episode_id": "b3de0f20a86f30dd9fe5",
+      "map_name": "cambridge_block_17",
+      "steps": 11,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 315.3776519794584,
+      "min_dist_m": 301.43901023668474,
+      "spl": 0.0,
+      "ndtw": 0.12097128037874576,
+      "action_counts": {
+        "GoDown": 7,
+        "MoveForward": 3,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 1.5654900887007401
+    },
+    {
+      "episode_id": "f444404fa9ef012b5e22",
+      "map_name": "cambridge_block_19",
+      "steps": 40,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 254.98893493719524,
+      "min_dist_m": 237.38800376215454,
+      "spl": 0.0,
+      "ndtw": 0.040589856722091935,
+      "action_counts": {
+        "MoveForward": 39,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 7.525791604694677
+    },
+    {
+      "episode_id": "ffdaa61f5b6895ecdb1e",
+      "map_name": "cambridge_block_20",
+      "steps": 10,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 239.1532562114734,
+      "min_dist_m": 226.40986884604473,
+      "spl": 0.0,
+      "ndtw": 0.10001403352245714,
+      "action_counts": {
+        "GoDown": 7,
+        "MoveForward": 2,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 2.686311908252537
+    },
+    {
+      "episode_id": "79a6bc12c992c0f85b00",
+      "map_name": "cambridge_block_20",
+      "steps": 12,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 170.87270535325908,
+      "min_dist_m": 157.26994733745406,
+      "spl": 0.0,
+      "ndtw": 0.11481295588963548,
+      "action_counts": {
+        "GoDown": 7,
+        "MoveForward": 4,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 8.441396168122688
+    },
+    {
+      "episode_id": "8925433fd88e9b40093e",
+      "map_name": "cambridge_block_21",
+      "steps": 15,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 242.17349837750052,
+      "min_dist_m": 233.7391949400731,
+      "spl": 0.0,
+      "ndtw": 0.03845144306126819,
+      "action_counts": {
+        "MoveForward": 14,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 10.455593748794248
+    },
+    {
+      "episode_id": "f6ad0627eaaa95182d92",
+      "map_name": "cambridge_block_21",
+      "steps": 12,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 145.14717923957963,
+      "min_dist_m": 104.59704380692233,
+      "spl": 0.0,
+      "ndtw": 0.2626266660999339,
+      "action_counts": {
+        "GoDown": 8,
+        "MoveForward": 3,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 5.444850412740682
+    },
+    {
+      "episode_id": "1a0fe6ddbbbc29a4b048",
+      "map_name": "cambridge_block_28",
+      "steps": 11,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 103.58891407258056,
+      "min_dist_m": 47.56768739368288,
+      "spl": 0.0,
+      "ndtw": 0.2631759121078355,
+      "action_counts": {
+        "GoDown": 4,
+        "MoveForward": 6,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 9.462951324731959
+    },
+    {
+      "episode_id": "5a17ce6c7baa3cb23adb",
+      "map_name": "cambridge_block_28",
+      "steps": 13,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 209.11708383282175,
+      "min_dist_m": 181.50935715038855,
+      "spl": 0.0,
+      "ndtw": 0.08178745430263747,
+      "action_counts": {
+        "MoveForward": 12,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 5.918466215218919
+    },
+    {
+      "episode_id": "a6afacef9c07b583abb0",
+      "map_name": "cambridge_block_33",
+      "steps": 12,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 252.8351793113138,
+      "min_dist_m": 246.0155850637089,
+      "spl": 0.0,
+      "ndtw": 0.5449618379816488,
+      "action_counts": {
+        "GoDown": 7,
+        "MoveForward": 4,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 4.1707485232424615
+    },
+    {
+      "episode_id": "37dbc9a2e128f3d163fd",
+      "map_name": "cambridge_block_7",
+      "steps": 10,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 288.9360047558702,
+      "min_dist_m": 272.72011200571205,
+      "spl": 0.0,
+      "ndtw": 0.31170291980568215,
+      "action_counts": {
+        "GoDown": 6,
+        "MoveForward": 3,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 15.537714200583286
+    },
+    {
+      "episode_id": "675fa3f8a5c5e9ec947a",
+      "map_name": "cambridge_block_7",
+      "steps": 9,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 241.68514917039508,
+      "min_dist_m": 230.65584622264112,
+      "spl": 0.0,
+      "ndtw": 0.520297198000301,
+      "action_counts": {
+        "GoDown": 7,
+        "MoveForward": 1,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 12.672945032258415
+    },
+    {
+      "episode_id": "9264783ce4654654a8fb",
+      "map_name": "cambridge_block_9",
+      "steps": 11,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 211.5524529600377,
+      "min_dist_m": 198.16459570278417,
+      "spl": 0.0,
+      "ndtw": 0.22496482016726224,
+      "action_counts": {
+        "MoveForward": 10,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 6.547330786558715
+    }
+  ]
+}

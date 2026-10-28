@@ -1,7 +1,7 @@
 # 实验 A：冻结 E2-FOV-Pose + MEC 闭环导航 — 状态
 
-- 更新时间：2026-10-28 21:05
-- 状态：**Token 生成进行中（分片断点已启用）**
+- 更新时间：2026-10-29 07:45
+- 状态：**实验 A 完成（8/8 闭环 run 结束）**；结论为负面结果，未建立 A2 > A0 式提升
 - 分支：`exp/visual-encoder-ablation-20261028`
 
 ## 协议
@@ -26,7 +26,7 @@
 | 语言特征 | 完成（21:28） | `data_cache/t5_frozen_1000/language_features.npz`，26,549 条，77 MB（磁盘） |
 | Token 生成 | **完成（23:09）** | 1600 个窗口：train 1250、val_seen 70、val_unseen 280；分片 6.0 GB 在磁盘 |
 | Token 合并 / MEC | **完成（23:16）** | `t5_tokens.npz` 5.29 GB；GAB 阈值 0.0388；4 个模型各 2000 步 |
-| 闭环评估 | **进行中（00:25 启动）** | 每划分 40 条、8 分片、最多 120 步；见下 |
+| 闭环评估 | **完成（03:45）** | 8/8 run；每划分 24 条、8 分片、最多 100 步；`closed_loop/formal/` |
 
 ## MEC 结果（12800 帧：1250 train / 70 val-seen / 280 val-unseen）
 
@@ -44,12 +44,50 @@
 ## 闭环设置与已知代价
 
 - 观测配置与 token 构建完全一致：336 px、120 m crop、无 splat。
-- 单步渲染实测约 3.4 s（`birmingham_block_5`），与并发无关；
-  因此 120 步约 7 min/条，每划分 40 条、8 分片，单轮约 35 min。
+- 单步渲染实测约 3.4 s（`birmingham_block_5`，单进程）；8 个分片并行时受内存
+  带宽影响约 6 s/步。最终预算：每划分 24 条、最多 100 步、8 分片，单轮约 30 min。
+  样本量小，SR 的置信区间较宽，报告中会明确标注，不外推。
 - 分片按地图排序后连续切块，每进程只覆盖少数地图；每进程强制单线程。
 - 结果会同时报告 SR、oracle 成功率（rollout 最小距离 ≤20 m）、SPL、NE、nDTW、Stop 率。
-| MEC 训练 | 待开始 | 4 个模型，权重写 `mec/<model>/{mec.pt}` |
-| 闭环评估 | 待开始 | `closed_loop_eval.py`，分片 + journal 断点 |
+
+## 闭环结果（2026-10-29 03:45 完成，8/8）
+
+报告：`closed_loop/formal/CLOSED_LOOP_REPORT.md`、`closed_loop_comparison.csv`、
+`closed_loop_rates.png`；逐条结果在各 `*_summary.json`。
+
+| split | model | variant | n | SR | oracle SR | SPL | NE (m) | nDTW | steps | stop | s/step |
+|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| val_seen | small | full | 24 | 0.000 | 0.042 | 0.000 | 225.5 | 0.550 | 100.0 | 0.000 | 5.23 |
+| val_seen | small | map_free | 24 | 0.000 | 0.000 | 0.000 | 230.2 | 0.407 | 17.0 | 1.000 | 4.56 |
+| val_seen | transformer_m | full | 24 | 0.000 | 0.042 | 0.000 | 219.0 | 0.580 | 100.0 | 0.000 | 5.09 |
+| val_seen | transformer_m | map_free | 24 | 0.000 | 0.042 | 0.000 | 222.9 | 0.277 | 15.1 | 1.000 | 6.90 |
+| val_unseen | small | full | 24 | 0.000 | 0.083 | 0.000 | 195.8 | 0.577 | 100.0 | 0.000 | 6.91 |
+| val_unseen | small | map_free | 24 | 0.000 | 0.042 | 0.000 | 202.5 | 0.476 | 18.0 | 1.000 | 4.98 |
+| val_unseen | transformer_m | full | 24 | 0.000 | 0.083 | 0.000 | 189.5 | 0.595 | 100.0 | 0.000 | 6.83 |
+| val_unseen | transformer_m | map_free | 24 | 0.000 | 0.083 | 0.000 | 194.8 | 0.283 | 17.7 | 1.000 | 7.13 |
+
+### 行为诊断
+
+- **动作坍缩**：闭环中所有模型的输出只有 `MoveForward` / `GoDown` / `Stop`，
+  `TurnLeft`、`TurnRight`、`GoUp` 一次都没有出现。
+  - `full`：MoveForward ≈ 0.53–0.57、GoDown ≈ 0.43–0.47，从不 Stop → 恒跑满 100 步。
+  - `map_free`：GoDown ≈ 0.94（small）/ 0.22–0.27（transformer_m，另约 66–72% MoveForward），
+    约 15–18 步后 Stop。
+- 这与 token 离线验证一致：四个模型 `TurnRight` 逐类准确率为 0，`full` 的 Stop 召回为 0；
+  训练标签中 GoDown 占 39%（5013/12800）、MoveForward 23%，转向类合计仅约 8%。
+  因此 **SR=0 的主因是策略没有学会转向与停止，而不是渲染或评估接口故障**；
+  oracle SR（0–8.3%）表明个别 rollout 曾偶然接近目标。
+- 检索差异不足以改变行为：`full`（检索+地图）与 `map_free` 的 nDTW 有差别，
+  但两者都没有可用的转向决策。
+
+## 下一步候选（尚未执行）
+
+1. **类别不平衡修正**：对 MEC 训练加 class weights / focal loss，或在窗口采样中
+   过采转向与 Stop 窗口；先看离线逐类召回，再跑小规模闭环。
+2. **检查 full 的 Stop 失效**：同一数据上 map_free 能 Stop、full 不能，
+   需要对比两变体的输入（检索分数是否淹没钱特征）与 loss 曲线。
+3. **扩大闭环规模**（当前每划分 24 条，置信区间很宽）：仅在策略行为改善后再做，
+   否则只是把 SR=0 测得更精确。
 
 ### Token 断点
 
