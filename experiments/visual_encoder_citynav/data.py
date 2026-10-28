@@ -183,7 +183,10 @@ def render_current_rgb(
         camera,
         near=RENDER_NEAR_M,
         far=RENDER_FAR_M,
-        splat_radius=0,
+        # Adaptive point size: 0 = one pixel per point (baseline), >=1 fills a
+        # (2r+1)^2 neighbourhood.  This only widens real points; it never
+        # synthesises geometry for empty regions.
+        splat_radius=int(getattr(observation_config, "fpv_splat_radius", 0)),
     )
     return result.rgb, float(result.valid_pixel_ratio)
 
@@ -284,6 +287,77 @@ def _select_step(
     return int(min(max(1, len(actions) // 3), len(actions) - 1))
 
 
+def _select_steps(
+    actions: Sequence[int],
+    desired_action: int,
+    index: int,
+    count: int,
+    seed: int,
+) -> list[int]:
+    """Choose several teacher steps per trajectory (E3/E4 only).
+
+    The first step is the baseline selection, so E3/E4 stay comparable to E1.
+    Additional steps are drawn deterministically from:
+
+    * action-transition positions (``a[i] != a[i-1]``), which cover the moment
+      a turn/vertical command starts;
+    * per-class positions spread across early / middle / late thirds of the
+      trajectory, which raises directional and vertical coverage without
+      touching labels.
+
+    Nothing is synthesised: every step exists in the official teacher rollout.
+    """
+    if int(count) <= 1 or len(actions) <= 1:
+        return [_select_step(actions, desired_action, index)]
+
+    base = _select_step(actions, desired_action, index)
+    chosen: list[int] = [int(base)]
+    rng = np.random.default_rng(int(seed) + int(index))
+
+    transitions = [
+        i for i in range(1, len(actions)) if int(actions[i]) != int(actions[i - 1])
+    ]
+    thirds = [
+        list(range(0, max(1, len(actions) // 3))),
+        list(range(max(1, len(actions) // 3), max(2, 2 * len(actions) // 3))),
+        list(range(max(2, 2 * len(actions) // 3), len(actions))),
+    ]
+    per_class: dict[int, list[int]] = {}
+    for i, action in enumerate(actions):
+        per_class.setdefault(int(action), []).append(i)
+
+    def _spread(indices: list[int], k: int) -> list[int]:
+        if not indices:
+            return []
+        picks = np.linspace(0, len(indices) - 1, min(k, len(indices)), dtype=int)
+        return [int(indices[p]) for p in picks]
+
+    candidates: list[int] = []
+    # transitions first (turn/vertical onset), then class coverage per third
+    if transitions:
+        candidates.extend(_spread(transitions, max(1, count)))
+    for action in sorted(per_class, key=lambda a: (len(per_class[a]), a)):
+        candidates.extend(_spread(per_class[action], max(1, count // 2)))
+    for third in thirds:
+        candidates.extend(_spread(third, 1))
+    rng.shuffle(candidates)
+
+    for candidate in candidates:
+        if len(chosen) >= int(count):
+            break
+        if candidate not in chosen:
+            chosen.append(int(candidate))
+    # deterministic fill if the trajectory is short
+    filler = list(range(len(actions)))
+    rng.shuffle(filler)
+    for candidate in filler:
+        if len(chosen) >= int(count):
+            break
+        if candidate not in chosen:
+            chosen.append(int(candidate))
+    return sorted(chosen[: int(count)])
+
+
 def build_manifest(
     data_config: DataConfig,
     split: str,
@@ -293,15 +367,23 @@ def build_manifest(
     language_backend: str = "bert",
     output_dir: Path | None = None,
     rebuild: bool = False,
+    steps_per_trajectory: int = 1,
 ) -> dict:
-    """Build a fixed one-frame-per-trajectory manifest."""
+    """Build a teacher-step manifest.
+
+    ``steps_per_trajectory=1`` reproduces the E1 baseline exactly.  Values > 1
+    are only used by the E3/E4 ablations; validation manifests always stay at 1.
+    """
     if split == "test_unseen":
         raise PermissionError("test_unseen is sealed")
     output_dir = output_dir or (
         PROJECT_ROOT / "data_cache" / "visual_encoder_citynav" / "manifests"
     )
     output_dir = ensure_output_dir(output_dir, data_config=data_config)
+    steps_per_trajectory = max(1, int(steps_per_trajectory))
     tag = f"{split}_{'all' if max_records is None else int(max_records)}_{seed}"
+    if steps_per_trajectory > 1:
+        tag += f"_s{steps_per_trajectory}"
     npz_path = output_dir / f"{tag}.npz"
     json_path = output_dir / f"{tag}.json"
     if npz_path.exists() and json_path.exists() and not rebuild:
@@ -329,20 +411,26 @@ def build_manifest(
         if not actions:
             continue
         desired = int(ACTION_ORDER[index % len(ACTION_ORDER)])
-        step = _select_step(actions, desired, index)
-        pose = result.poses[step]
-        rows.append(
-            {
-                "map_name": record.map_name,
-                "pose": pose,
-                "target_xy": tuple(float(v) for v in record.target_xy),
-                "action": int(actions[step]),
-                "description": record.description,
-                "step": int(step),
-                "teacher_steps": int(len(actions)),
-                "desired_action": int(desired),
-            }
-        )
+        if steps_per_trajectory > 1:
+            steps = _select_steps(
+                actions, desired, index, steps_per_trajectory, seed
+            )
+        else:
+            steps = [_select_step(actions, desired, index)]
+        for step in steps:
+            pose = result.poses[step]
+            rows.append(
+                {
+                    "map_name": record.map_name,
+                    "pose": pose,
+                    "target_xy": tuple(float(v) for v in record.target_xy),
+                    "action": int(actions[step]),
+                    "description": record.description,
+                    "step": int(step),
+                    "teacher_steps": int(len(actions)),
+                    "desired_action": int(desired),
+                }
+            )
     map_names = sorted({row["map_name"] for row in rows})
     map_to_id = {name: index for index, name in enumerate(map_names)}
     language_adapter, text_dim, backend, warning = build_language_adapter(
@@ -402,7 +490,13 @@ def build_manifest(
         "language_warning": warning,
         "manifest_file": str(npz_path.relative_to(PROJECT_ROOT)),
         "test_unseen_read": False,
-        "selection": "one teacher step per trajectory; desired six-action cycle; actual label kept",
+        "steps_per_trajectory": int(steps_per_trajectory),
+        "selection": (
+            "one teacher step per trajectory; desired six-action cycle; actual label kept"
+            if steps_per_trajectory == 1
+            else "multiple teacher steps per trajectory: baseline step + action "
+            "transitions + per-class early/middle/late spread; actual labels kept"
+        ),
     }
     json_path.write_text(
         json.dumps(metadata, indent=2, ensure_ascii=False) + "\n",

@@ -519,6 +519,7 @@ def main() -> int:
         seed=seed,
         output_dir=manifest_dir,
         rebuild=args.rebuild_manifests,
+        steps_per_trajectory=int(cfg.get("steps_per_trajectory", 1)),
     )
     val_seen_manifest = build_manifest(
         data_config,
@@ -564,7 +565,8 @@ def main() -> int:
         goal_crop_size=CANDIDATE_SIZE,
         fpv_width=CURRENT_SIZE,
         fpv_height=CURRENT_SIZE,
-        fpv_splat_radius=0,
+        # E2/E4 set this > 0 to widen real points; baseline stays 0.
+        fpv_splat_radius=int(cfg.get("splat_radius", 0)),
     )
     train_dataset = PretrainDataset(
         train_manifest,
@@ -609,6 +611,10 @@ def main() -> int:
     else:
         epochs = int(cfg.get("epochs", 1))
         total_steps = epochs * steps_per_epoch
+        # E3/E4 add samples per trajectory; a fixed update budget keeps the
+        # four ablations comparable (default 2751 for 22,002 / batch 8).
+        if cfg.get("total_steps") is not None:
+            total_steps = int(cfg["total_steps"])
     checkpoint_fractions = (
         cfg.get("smoke", {}).get("checkpoint_fractions", [1.0])
         if args.smoke

@@ -1,0 +1,8663 @@
+{
+  "summary": {
+    "split": "val_seen",
+    "episodes": 200,
+    "available": 2498,
+    "test_unseen_read": false,
+    "action_totals": {
+      "Stop": 200,
+      "MoveForward": 13287,
+      "TurnRight": 2005,
+      "TurnLeft": 2084,
+      "GoUp": 6652,
+      "GoDown": 15851
+    },
+    "semantic_agreement": {
+      "GoUp": {
+        "agree": 6650,
+        "total": 6650,
+        "rate": 1.0
+      },
+      "TurnRight": {
+        "agree": 1995,
+        "total": 1995,
+        "rate": 1.0
+      },
+      "MoveForward": {
+        "agree": 13258,
+        "total": 13258,
+        "rate": 1.0
+      },
+      "TurnLeft": {
+        "agree": 2079,
+        "total": 2079,
+        "rate": 1.0
+      },
+      "GoDown": {
+        "agree": 15837,
+        "total": 15837,
+        "rate": 1.0
+      },
+      "Stop": {
+        "agree": 127,
+        "total": 127,
+        "rate": 1.0
+      }
+    },
+    "episodes_with_zero_direction_vectors": 67,
+    "executed_pose_mismatches": 0,
+    "yaw_vs_motion_median_deg": 9.304002757205521e-07,
+    "yaw_vs_motion_p95_deg": 179.9999999961207,
+    "marker_target_distance_m": {
+      "median": 6.8809754636649165,
+      "p95": 24.5932960023268,
+      "max": 29.047365132981216
+    }
+  },
+  "episodes": [
+    {
+      "map": "birmingham_block_1",
+      "steps": 401,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 89.9999999999408,
+      "yaw_motion_p95_deg": 173.17741061550387,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 105,
+        "TurnRight": 21,
+        "TurnLeft": 25,
+        "GoUp": 103,
+        "GoDown": 146
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          103,
+          103
+        ],
+        "TurnRight": [
+          21,
+          21
+        ],
+        "MoveForward": [
+          105,
+          105
+        ],
+        "TurnLeft": [
+          25,
+          25
+        ],
+        "GoDown": [
+          146,
+          146
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 27.164944515517018,
+      "trajectory_points": 98,
+      "success": false,
+      "stop_reason": "max_steps"
+    },
+    {
+      "map": "birmingham_block_1",
+      "steps": 72,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 5.9383754791043545e-09,
+      "yaw_motion_p95_deg": 4.126640670394269,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 22,
+        "TurnRight": 3,
+        "TurnLeft": 3,
+        "GoUp": 0,
+        "GoDown": 43
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          43,
+          43
+        ],
+        "TurnRight": [
+          3,
+          3
+        ],
+        "MoveForward": [
+          22,
+          22
+        ],
+        "TurnLeft": [
+          3,
+          3
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 6.52074442552474,
+      "trajectory_points": 33,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_1",
+      "steps": 142,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 8.973895189727855,
+      "yaw_motion_p95_deg": 126.59768616986628,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 41,
+        "TurnRight": 8,
+        "TurnLeft": 9,
+        "GoUp": 19,
+        "GoDown": 64
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          64,
+          64
+        ],
+        "MoveForward": [
+          40,
+          40
+        ],
+        "TurnLeft": [
+          9,
+          9
+        ],
+        "GoUp": [
+          19,
+          19
+        ],
+        "TurnRight": [
+          8,
+          8
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 7.445483055225131,
+      "trajectory_points": 24,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_1",
+      "steps": 307,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 0.00032423108210242395,
+      "yaw_motion_p95_deg": 179.99999999129497,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 80,
+        "TurnRight": 10,
+        "TurnLeft": 14,
+        "GoUp": 73,
+        "GoDown": 129
+      },
+      "semantic_agreement": {
+        "MoveForward": [
+          80,
+          80
+        ],
+        "GoUp": [
+          73,
+          73
+        ],
+        "GoDown": [
+          129,
+          129
+        ],
+        "TurnLeft": [
+          14,
+          14
+        ],
+        "TurnRight": [
+          10,
+          10
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 2.8665842541845166,
+      "trajectory_points": 128,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_1",
+      "steps": 97,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 2.5069386443669956e-09,
+      "yaw_motion_p95_deg": 0.5955575898666556,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 28,
+        "TurnRight": 7,
+        "TurnLeft": 2,
+        "GoUp": 0,
+        "GoDown": 59
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          59,
+          59
+        ],
+        "TurnRight": [
+          7,
+          7
+        ],
+        "MoveForward": [
+          28,
+          28
+        ],
+        "TurnLeft": [
+          2,
+          2
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 6.085492469107771,
+      "trajectory_points": 107,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_1",
+      "steps": 66,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 2.042277416511392e-08,
+      "yaw_motion_p95_deg": 1.3323053494063722e-07,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 6,
+        "TurnRight": 0,
+        "TurnLeft": 5,
+        "GoUp": 0,
+        "GoDown": 54
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          54,
+          54
+        ],
+        "TurnLeft": [
+          5,
+          5
+        ],
+        "MoveForward": [
+          6,
+          6
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 5.425117350665722,
+      "trajectory_points": 344,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_1",
+      "steps": 237,
+      "zero_direction_vectors": 4,
+      "yaw_motion_median_deg": 90.00000000360215,
+      "yaw_motion_p95_deg": 145.0390406328864,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 134,
+        "TurnRight": 19,
+        "TurnLeft": 35,
+        "GoUp": 0,
+        "GoDown": 48
+      },
+      "semantic_agreement": {
+        "TurnLeft": [
+          35,
+          35
+        ],
+        "MoveForward": [
+          134,
+          134
+        ],
+        "TurnRight": [
+          19,
+          19
+        ],
+        "GoDown": [
+          48,
+          48
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 1.2085821351287376,
+      "trajectory_points": 223,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_1",
+      "steps": 251,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 1.961689794214342e-09,
+      "yaw_motion_p95_deg": 110.66608030392969,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 136,
+        "TurnRight": 12,
+        "TurnLeft": 27,
+        "GoUp": 10,
+        "GoDown": 65
+      },
+      "semantic_agreement": {
+        "MoveForward": [
+          129,
+          129
+        ],
+        "TurnLeft": [
+          25,
+          25
+        ],
+        "GoDown": [
+          60,
+          60
+        ],
+        "TurnRight": [
+          12,
+          12
+        ],
+        "GoUp": [
+          10,
+          10
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 2.6478583659306674,
+      "trajectory_points": 103,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_1",
+      "steps": 170,
+      "zero_direction_vectors": 43,
+      "yaw_motion_median_deg": 5.933642813738337e-11,
+      "yaw_motion_p95_deg": 5.786905867971742,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 82,
+        "TurnRight": 11,
+        "TurnLeft": 7,
+        "GoUp": 0,
+        "GoDown": 69
+      },
+      "semantic_agreement": {
+        "MoveForward": [
+          82,
+          82
+        ],
+        "TurnLeft": [
+          7,
+          7
+        ],
+        "TurnRight": [
+          11,
+          11
+        ],
+        "GoDown": [
+          69,
+          69
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 14.800685782149293,
+      "trajectory_points": 48,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_1",
+      "steps": 348,
+      "zero_direction_vectors": 4,
+      "yaw_motion_median_deg": 5.069287734352668,
+      "yaw_motion_p95_deg": 179.10752805045433,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 107,
+        "TurnRight": 17,
+        "TurnLeft": 29,
+        "GoUp": 68,
+        "GoDown": 126
+      },
+      "semantic_agreement": {
+        "MoveForward": [
+          107,
+          107
+        ],
+        "TurnLeft": [
+          29,
+          29
+        ],
+        "GoUp": [
+          68,
+          68
+        ],
+        "TurnRight": [
+          17,
+          17
+        ],
+        "GoDown": [
+          126,
+          126
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 0.5671522499854821,
+      "trajectory_points": 86,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_1",
+      "steps": 192,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 1.1360365160562873,
+      "yaw_motion_p95_deg": 160.2519964050466,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 78,
+        "TurnRight": 11,
+        "TurnLeft": 14,
+        "GoUp": 16,
+        "GoDown": 72
+      },
+      "semantic_agreement": {
+        "TurnRight": [
+          11,
+          11
+        ],
+        "MoveForward": [
+          78,
+          78
+        ],
+        "GoDown": [
+          72,
+          72
+        ],
+        "TurnLeft": [
+          14,
+          14
+        ],
+        "GoUp": [
+          16,
+          16
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 0.8032907887789791,
+      "trajectory_points": 30,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_1",
+      "steps": 401,
+      "zero_direction_vectors": 60,
+      "yaw_motion_median_deg": 88.26747066591604,
+      "yaw_motion_p95_deg": 158.0956984206644,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 64,
+        "TurnRight": 9,
+        "TurnLeft": 18,
+        "GoUp": 136,
+        "GoDown": 173
+      },
+      "semantic_agreement": {
+        "TurnLeft": [
+          18,
+          18
+        ],
+        "MoveForward": [
+          64,
+          64
+        ],
+        "GoDown": [
+          173,
+          173
+        ],
+        "TurnRight": [
+          9,
+          9
+        ],
+        "GoUp": [
+          136,
+          136
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 14.205670610789694,
+      "trajectory_points": 119,
+      "success": false,
+      "stop_reason": "max_steps"
+    },
+    {
+      "map": "birmingham_block_1",
+      "steps": 232,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 2.1787308456774125e-09,
+      "yaw_motion_p95_deg": 0.07074414294788736,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 52,
+        "TurnRight": 6,
+        "TurnLeft": 6,
+        "GoUp": 50,
+        "GoDown": 117
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          50,
+          50
+        ],
+        "GoDown": [
+          117,
+          117
+        ],
+        "TurnLeft": [
+          6,
+          6
+        ],
+        "MoveForward": [
+          52,
+          52
+        ],
+        "TurnRight": [
+          6,
+          6
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 3.881435149064115,
+      "trajectory_points": 77,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_1",
+      "steps": 272,
+      "zero_direction_vectors": 16,
+      "yaw_motion_median_deg": 0.07211384774623264,
+      "yaw_motion_p95_deg": 168.23377746701593,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 46,
+        "TurnRight": 15,
+        "TurnLeft": 11,
+        "GoUp": 65,
+        "GoDown": 134
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          134,
+          134
+        ],
+        "MoveForward": [
+          46,
+          46
+        ],
+        "GoUp": [
+          65,
+          65
+        ],
+        "TurnLeft": [
+          11,
+          11
+        ],
+        "TurnRight": [
+          15,
+          15
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 3.07248808598399,
+      "trajectory_points": 66,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_1",
+      "steps": 265,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 3.714747923543403e-09,
+      "yaw_motion_p95_deg": 89.9999999970293,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 98,
+        "TurnRight": 5,
+        "TurnLeft": 7,
+        "GoUp": 52,
+        "GoDown": 102
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          52,
+          52
+        ],
+        "TurnLeft": [
+          7,
+          7
+        ],
+        "MoveForward": [
+          98,
+          98
+        ],
+        "TurnRight": [
+          5,
+          5
+        ],
+        "GoDown": [
+          102,
+          102
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 21.969100317160105,
+      "trajectory_points": 102,
+      "success": false,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_1",
+      "steps": 229,
+      "zero_direction_vectors": 2,
+      "yaw_motion_median_deg": 57.32489329376532,
+      "yaw_motion_p95_deg": 179.99999999394566,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 107,
+        "TurnRight": 10,
+        "TurnLeft": 12,
+        "GoUp": 18,
+        "GoDown": 81
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          81,
+          81
+        ],
+        "MoveForward": [
+          107,
+          107
+        ],
+        "TurnRight": [
+          10,
+          10
+        ],
+        "TurnLeft": [
+          12,
+          12
+        ],
+        "GoUp": [
+          18,
+          18
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 22.003722133311108,
+      "trajectory_points": 148,
+      "success": false,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_1",
+      "steps": 118,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 90.14007495250917,
+      "yaw_motion_p95_deg": 122.5211778300026,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 50,
+        "TurnRight": 7,
+        "TurnLeft": 7,
+        "GoUp": 0,
+        "GoDown": 53
+      },
+      "semantic_agreement": {
+        "TurnRight": [
+          7,
+          7
+        ],
+        "MoveForward": [
+          50,
+          50
+        ],
+        "TurnLeft": [
+          7,
+          7
+        ],
+        "GoDown": [
+          53,
+          53
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 2.470625859678252,
+      "trajectory_points": 36,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_1",
+      "steps": 158,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 0.00012000735544357018,
+      "yaw_motion_p95_deg": 0.1320659725078625,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 75,
+        "TurnRight": 8,
+        "TurnLeft": 7,
+        "GoUp": 0,
+        "GoDown": 67
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          67,
+          67
+        ],
+        "MoveForward": [
+          75,
+          75
+        ],
+        "TurnRight": [
+          8,
+          8
+        ],
+        "TurnLeft": [
+          7,
+          7
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 3.4345038268286574,
+      "trajectory_points": 180,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_1",
+      "steps": 144,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 1.9398133030042996e-07,
+      "yaw_motion_p95_deg": 3.4743176368892423,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 81,
+        "TurnRight": 3,
+        "TurnLeft": 2,
+        "GoUp": 0,
+        "GoDown": 57
+      },
+      "semantic_agreement": {
+        "MoveForward": [
+          81,
+          81
+        ],
+        "GoDown": [
+          57,
+          57
+        ],
+        "TurnRight": [
+          3,
+          3
+        ],
+        "TurnLeft": [
+          2,
+          2
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 4.509219002966428,
+      "trajectory_points": 64,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_1",
+      "steps": 351,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 6.230070510050737e-10,
+      "yaw_motion_p95_deg": 1.89403303503025e-09,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 68,
+        "TurnRight": 6,
+        "TurnLeft": 9,
+        "GoUp": 103,
+        "GoDown": 164
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          103,
+          103
+        ],
+        "TurnLeft": [
+          9,
+          9
+        ],
+        "MoveForward": [
+          68,
+          68
+        ],
+        "GoDown": [
+          164,
+          164
+        ],
+        "TurnRight": [
+          6,
+          6
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 0.83786905304128,
+      "trajectory_points": 118,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_1",
+      "steps": 84,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 8.121737212397979e-09,
+      "yaw_motion_p95_deg": 8.652109336083538e-08,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 9,
+        "TurnRight": 0,
+        "TurnLeft": 2,
+        "GoUp": 0,
+        "GoDown": 72
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          72,
+          72
+        ],
+        "TurnLeft": [
+          2,
+          2
+        ],
+        "MoveForward": [
+          9,
+          9
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 5.148641435151439,
+      "trajectory_points": 60,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_1",
+      "steps": 176,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 3.215121371158529,
+      "yaw_motion_p95_deg": 121.91839637008411,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 63,
+        "TurnRight": 7,
+        "TurnLeft": 7,
+        "GoUp": 16,
+        "GoDown": 82
+      },
+      "semantic_agreement": {
+        "TurnRight": [
+          7,
+          7
+        ],
+        "MoveForward": [
+          63,
+          63
+        ],
+        "TurnLeft": [
+          7,
+          7
+        ],
+        "GoDown": [
+          81,
+          81
+        ],
+        "GoUp": [
+          16,
+          16
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 1.8173766075622835,
+      "trajectory_points": 40,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_1",
+      "steps": 164,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 3.969077798091952e-09,
+      "yaw_motion_p95_deg": 90.0000000048193,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 53,
+        "TurnRight": 10,
+        "TurnLeft": 11,
+        "GoUp": 21,
+        "GoDown": 68
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          68,
+          68
+        ],
+        "MoveForward": [
+          53,
+          53
+        ],
+        "GoUp": [
+          21,
+          21
+        ],
+        "TurnRight": [
+          10,
+          10
+        ],
+        "TurnLeft": [
+          11,
+          11
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 5.377211063960269,
+      "trajectory_points": 79,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_1",
+      "steps": 262,
+      "zero_direction_vectors": 3,
+      "yaw_motion_median_deg": 2.96554166209787,
+      "yaw_motion_p95_deg": 162.8032347430587,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 67,
+        "TurnRight": 12,
+        "TurnLeft": 15,
+        "GoUp": 53,
+        "GoDown": 114
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          53,
+          53
+        ],
+        "TurnRight": [
+          12,
+          12
+        ],
+        "MoveForward": [
+          67,
+          67
+        ],
+        "TurnLeft": [
+          15,
+          15
+        ],
+        "GoDown": [
+          114,
+          114
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 6.276174504701757,
+      "trajectory_points": 58,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_1",
+      "steps": 260,
+      "zero_direction_vectors": 44,
+      "yaw_motion_median_deg": 8.112297326103394e-09,
+      "yaw_motion_p95_deg": 112.88618660410319,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 66,
+        "TurnRight": 11,
+        "TurnLeft": 15,
+        "GoUp": 58,
+        "GoDown": 109
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          58,
+          58
+        ],
+        "TurnRight": [
+          11,
+          11
+        ],
+        "MoveForward": [
+          66,
+          66
+        ],
+        "GoDown": [
+          109,
+          109
+        ],
+        "TurnLeft": [
+          15,
+          15
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 9.305072869585773,
+      "trajectory_points": 56,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_1",
+      "steps": 222,
+      "zero_direction_vectors": 2,
+      "yaw_motion_median_deg": 89.99999973998294,
+      "yaw_motion_p95_deg": 179.99999969161834,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 44,
+        "TurnRight": 3,
+        "TurnLeft": 18,
+        "GoUp": 53,
+        "GoDown": 103
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          53,
+          53
+        ],
+        "TurnLeft": [
+          18,
+          18
+        ],
+        "MoveForward": [
+          44,
+          44
+        ],
+        "GoDown": [
+          103,
+          103
+        ],
+        "TurnRight": [
+          3,
+          3
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 7.8711989282975825,
+      "trajectory_points": 36,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_3",
+      "steps": 148,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 0.006939954575431497,
+      "yaw_motion_p95_deg": 0.26022817628729034,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 71,
+        "TurnRight": 10,
+        "TurnLeft": 7,
+        "GoUp": 0,
+        "GoDown": 59
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          59,
+          59
+        ],
+        "MoveForward": [
+          71,
+          71
+        ],
+        "TurnRight": [
+          10,
+          10
+        ],
+        "TurnLeft": [
+          7,
+          7
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 10.807122520038018,
+      "trajectory_points": 149,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_3",
+      "steps": 114,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 3.0585358816638506e-09,
+      "yaw_motion_p95_deg": 179.99998105435512,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 21,
+        "TurnRight": 10,
+        "TurnLeft": 1,
+        "GoUp": 16,
+        "GoDown": 65
+      },
+      "semantic_agreement": {
+        "TurnRight": [
+          10,
+          10
+        ],
+        "MoveForward": [
+          21,
+          21
+        ],
+        "TurnLeft": [
+          1,
+          1
+        ],
+        "GoUp": [
+          16,
+          16
+        ],
+        "GoDown": [
+          65,
+          65
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 5.481202356608231,
+      "trajectory_points": 30,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_3",
+      "steps": 95,
+      "zero_direction_vectors": 4,
+      "yaw_motion_median_deg": 89.99999995281232,
+      "yaw_motion_p95_deg": 94.14105577071903,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 27,
+        "TurnRight": 4,
+        "TurnLeft": 1,
+        "GoUp": 0,
+        "GoDown": 62
+      },
+      "semantic_agreement": {
+        "TurnRight": [
+          4,
+          4
+        ],
+        "MoveForward": [
+          27,
+          27
+        ],
+        "TurnLeft": [
+          1,
+          1
+        ],
+        "GoDown": [
+          62,
+          62
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 14.654649618657091,
+      "trajectory_points": 24,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_3",
+      "steps": 212,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 1.6688115969264556e-09,
+      "yaw_motion_p95_deg": 0.058189079235529746,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 68,
+        "TurnRight": 4,
+        "TurnLeft": 3,
+        "GoUp": 46,
+        "GoDown": 90
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          46,
+          46
+        ],
+        "MoveForward": [
+          68,
+          68
+        ],
+        "GoDown": [
+          90,
+          90
+        ],
+        "TurnLeft": [
+          3,
+          3
+        ],
+        "TurnRight": [
+          4,
+          4
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 14.8716708063635,
+      "trajectory_points": 82,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_3",
+      "steps": 218,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 90.0000000037466,
+      "yaw_motion_p95_deg": 179.99999996502953,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 72,
+        "TurnRight": 12,
+        "TurnLeft": 20,
+        "GoUp": 32,
+        "GoDown": 81
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          78,
+          78
+        ],
+        "MoveForward": [
+          69,
+          69
+        ],
+        "TurnLeft": [
+          20,
+          20
+        ],
+        "TurnRight": [
+          11,
+          11
+        ],
+        "GoUp": [
+          32,
+          32
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 7.672977227893242,
+      "trajectory_points": 80,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_3",
+      "steps": 141,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 1.6152128894344323e-09,
+      "yaw_motion_p95_deg": 90.02310680717582,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 63,
+        "TurnRight": 15,
+        "TurnLeft": 6,
+        "GoUp": 0,
+        "GoDown": 56
+      },
+      "semantic_agreement": {
+        "MoveForward": [
+          63,
+          63
+        ],
+        "TurnLeft": [
+          6,
+          6
+        ],
+        "GoDown": [
+          56,
+          56
+        ],
+        "TurnRight": [
+          15,
+          15
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 10.205950259641423,
+      "trajectory_points": 43,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_3",
+      "steps": 127,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 4.183396294747689e-09,
+      "yaw_motion_p95_deg": 179.99999999468358,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 60,
+        "TurnRight": 6,
+        "TurnLeft": 5,
+        "GoUp": 0,
+        "GoDown": 55
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          55,
+          55
+        ],
+        "MoveForward": [
+          60,
+          60
+        ],
+        "TurnLeft": [
+          5,
+          5
+        ],
+        "TurnRight": [
+          6,
+          6
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 4.7879923416869925,
+      "trajectory_points": 46,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_3",
+      "steps": 165,
+      "zero_direction_vectors": 2,
+      "yaw_motion_median_deg": 90.00000002672155,
+      "yaw_motion_p95_deg": 121.97761580540987,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 85,
+        "TurnRight": 15,
+        "TurnLeft": 14,
+        "GoUp": 0,
+        "GoDown": 50
+      },
+      "semantic_agreement": {
+        "TurnRight": [
+          10,
+          10
+        ],
+        "MoveForward": [
+          82,
+          82
+        ],
+        "TurnLeft": [
+          14,
+          14
+        ],
+        "GoDown": [
+          50,
+          50
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 6.935214765373554,
+      "trajectory_points": 60,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_3",
+      "steps": 354,
+      "zero_direction_vectors": 2,
+      "yaw_motion_median_deg": 0.015148884012005589,
+      "yaw_motion_p95_deg": 179.9999999995289,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 126,
+        "TurnRight": 22,
+        "TurnLeft": 17,
+        "GoUp": 67,
+        "GoDown": 121
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          67,
+          67
+        ],
+        "TurnRight": [
+          22,
+          22
+        ],
+        "MoveForward": [
+          126,
+          126
+        ],
+        "TurnLeft": [
+          17,
+          17
+        ],
+        "GoDown": [
+          121,
+          121
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 22.88828359830496,
+      "trajectory_points": 74,
+      "success": false,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_3",
+      "steps": 131,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 4.1037043166489396e-09,
+      "yaw_motion_p95_deg": 87.24303359902737,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 62,
+        "TurnRight": 6,
+        "TurnLeft": 4,
+        "GoUp": 0,
+        "GoDown": 58
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          58,
+          58
+        ],
+        "MoveForward": [
+          62,
+          62
+        ],
+        "TurnLeft": [
+          4,
+          4
+        ],
+        "TurnRight": [
+          6,
+          6
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 4.067047028837571,
+      "trajectory_points": 57,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_3",
+      "steps": 100,
+      "zero_direction_vectors": 4,
+      "yaw_motion_median_deg": 5.675865217915082e-09,
+      "yaw_motion_p95_deg": 90.0000000105056,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 34,
+        "TurnRight": 6,
+        "TurnLeft": 4,
+        "GoUp": 5,
+        "GoDown": 50
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          50,
+          50
+        ],
+        "MoveForward": [
+          34,
+          34
+        ],
+        "GoUp": [
+          5,
+          5
+        ],
+        "TurnLeft": [
+          4,
+          4
+        ],
+        "TurnRight": [
+          6,
+          6
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 4.208354118373155,
+      "trajectory_points": 45,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_3",
+      "steps": 168,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 89.99999999768929,
+      "yaw_motion_p95_deg": 90.00000000256155,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 101,
+        "TurnRight": 16,
+        "TurnLeft": 7,
+        "GoUp": 0,
+        "GoDown": 43
+      },
+      "semantic_agreement": {
+        "TurnRight": [
+          16,
+          16
+        ],
+        "MoveForward": [
+          101,
+          101
+        ],
+        "TurnLeft": [
+          7,
+          7
+        ],
+        "GoDown": [
+          43,
+          43
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 19.145198890168622,
+      "trajectory_points": 89,
+      "success": false,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_3",
+      "steps": 401,
+      "zero_direction_vectors": 58,
+      "yaw_motion_median_deg": 89.99999998919925,
+      "yaw_motion_p95_deg": 179.9999999988208,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 106,
+        "TurnRight": 13,
+        "TurnLeft": 18,
+        "GoUp": 128,
+        "GoDown": 135
+      },
+      "semantic_agreement": {
+        "TurnRight": [
+          13,
+          13
+        ],
+        "MoveForward": [
+          106,
+          106
+        ],
+        "TurnLeft": [
+          18,
+          18
+        ],
+        "GoUp": [
+          128,
+          128
+        ],
+        "GoDown": [
+          135,
+          135
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 24.745100942701196,
+      "trajectory_points": 151,
+      "success": false,
+      "stop_reason": "max_steps"
+    },
+    {
+      "map": "birmingham_block_4",
+      "steps": 385,
+      "zero_direction_vectors": 64,
+      "yaw_motion_median_deg": 1.1496814618179802e-09,
+      "yaw_motion_p95_deg": 35.90190259223387,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 115,
+        "TurnRight": 4,
+        "TurnLeft": 23,
+        "GoUp": 101,
+        "GoDown": 141
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          101,
+          101
+        ],
+        "TurnRight": [
+          4,
+          4
+        ],
+        "MoveForward": [
+          115,
+          115
+        ],
+        "TurnLeft": [
+          23,
+          23
+        ],
+        "GoDown": [
+          141,
+          141
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 2.919335634318309,
+      "trajectory_points": 65,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_4",
+      "steps": 149,
+      "zero_direction_vectors": 23,
+      "yaw_motion_median_deg": 3.250526884455714e-10,
+      "yaw_motion_p95_deg": 51.89789089413807,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 36,
+        "TurnRight": 5,
+        "TurnLeft": 12,
+        "GoUp": 18,
+        "GoDown": 77
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          18,
+          18
+        ],
+        "TurnLeft": [
+          12,
+          12
+        ],
+        "MoveForward": [
+          36,
+          36
+        ],
+        "TurnRight": [
+          5,
+          5
+        ],
+        "GoDown": [
+          77,
+          77
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 26.97646244570961,
+      "trajectory_points": 24,
+      "success": false,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_4",
+      "steps": 401,
+      "zero_direction_vectors": 2,
+      "yaw_motion_median_deg": 89.99999993528334,
+      "yaw_motion_p95_deg": 179.99998480323188,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 100,
+        "TurnRight": 27,
+        "TurnLeft": 25,
+        "GoUp": 98,
+        "GoDown": 150
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          98,
+          98
+        ],
+        "TurnRight": [
+          27,
+          27
+        ],
+        "MoveForward": [
+          100,
+          100
+        ],
+        "TurnLeft": [
+          25,
+          25
+        ],
+        "GoDown": [
+          150,
+          150
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 9.469822848629946,
+      "trajectory_points": 98,
+      "success": true,
+      "stop_reason": "max_steps"
+    },
+    {
+      "map": "birmingham_block_4",
+      "steps": 401,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 4.3191169241151005e-09,
+      "yaw_motion_p95_deg": 112.05014858372037,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 163,
+        "TurnRight": 24,
+        "TurnLeft": 25,
+        "GoUp": 76,
+        "GoDown": 112
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          112,
+          112
+        ],
+        "MoveForward": [
+          163,
+          163
+        ],
+        "TurnLeft": [
+          25,
+          25
+        ],
+        "TurnRight": [
+          24,
+          24
+        ],
+        "GoUp": [
+          76,
+          76
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 17.956963275740552,
+      "trajectory_points": 128,
+      "success": false,
+      "stop_reason": "max_steps"
+    },
+    {
+      "map": "birmingham_block_4",
+      "steps": 135,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 0.8661319529866385,
+      "yaw_motion_p95_deg": 92.66595705855602,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 33,
+        "TurnRight": 15,
+        "TurnLeft": 10,
+        "GoUp": 6,
+        "GoDown": 70
+      },
+      "semantic_agreement": {
+        "TurnRight": [
+          15,
+          15
+        ],
+        "MoveForward": [
+          33,
+          33
+        ],
+        "GoDown": [
+          70,
+          70
+        ],
+        "TurnLeft": [
+          10,
+          10
+        ],
+        "GoUp": [
+          6,
+          6
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 0.33925279430015887,
+      "trajectory_points": 27,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_4",
+      "steps": 259,
+      "zero_direction_vectors": 62,
+      "yaw_motion_median_deg": 3.405737952911134e-10,
+      "yaw_motion_p95_deg": 34.80118982512029,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 127,
+        "TurnRight": 18,
+        "TurnLeft": 16,
+        "GoUp": 16,
+        "GoDown": 81
+      },
+      "semantic_agreement": {
+        "MoveForward": [
+          127,
+          127
+        ],
+        "TurnLeft": [
+          16,
+          16
+        ],
+        "TurnRight": [
+          18,
+          18
+        ],
+        "GoUp": [
+          16,
+          16
+        ],
+        "GoDown": [
+          81,
+          81
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 4.717132833296196,
+      "trajectory_points": 63,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_4",
+      "steps": 213,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 64.83437801684593,
+      "yaw_motion_p95_deg": 179.99999999846122,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 83,
+        "TurnRight": 23,
+        "TurnLeft": 9,
+        "GoUp": 14,
+        "GoDown": 83
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          83,
+          83
+        ],
+        "TurnLeft": [
+          9,
+          9
+        ],
+        "MoveForward": [
+          83,
+          83
+        ],
+        "TurnRight": [
+          23,
+          23
+        ],
+        "GoUp": [
+          14,
+          14
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 9.982214982117089,
+      "trajectory_points": 61,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_4",
+      "steps": 59,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 2.5674735055083547e-08,
+      "yaw_motion_p95_deg": 67.53230948538973,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 5,
+        "TurnRight": 4,
+        "TurnLeft": 4,
+        "GoUp": 0,
+        "GoDown": 45
+      },
+      "semantic_agreement": {
+        "TurnLeft": [
+          4,
+          4
+        ],
+        "MoveForward": [
+          5,
+          5
+        ],
+        "GoDown": [
+          45,
+          45
+        ],
+        "TurnRight": [
+          4,
+          4
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 7.680201174174315,
+      "trajectory_points": 14,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_7",
+      "steps": 89,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 3.375102850219277e-09,
+      "yaw_motion_p95_deg": 1.1117206511394018e-08,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 24,
+        "TurnRight": 4,
+        "TurnLeft": 1,
+        "GoUp": 0,
+        "GoDown": 59
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          59,
+          59
+        ],
+        "TurnRight": [
+          4,
+          4
+        ],
+        "MoveForward": [
+          24,
+          24
+        ],
+        "TurnLeft": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 5.416719308931542,
+      "trajectory_points": 70,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_7",
+      "steps": 127,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 3.6565692173100725e-09,
+      "yaw_motion_p95_deg": 0.08917357649978563,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 53,
+        "TurnRight": 4,
+        "TurnLeft": 4,
+        "GoUp": 0,
+        "GoDown": 65
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          65,
+          65
+        ],
+        "MoveForward": [
+          53,
+          53
+        ],
+        "TurnLeft": [
+          4,
+          4
+        ],
+        "TurnRight": [
+          4,
+          4
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 4.364463346041058,
+      "trajectory_points": 205,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_7",
+      "steps": 143,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 6.423921869657542,
+      "yaw_motion_p95_deg": 91.21820866251979,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 30,
+        "TurnRight": 12,
+        "TurnLeft": 6,
+        "GoUp": 14,
+        "GoDown": 80
+      },
+      "semantic_agreement": {
+        "TurnRight": [
+          12,
+          12
+        ],
+        "MoveForward": [
+          30,
+          30
+        ],
+        "GoDown": [
+          80,
+          80
+        ],
+        "TurnLeft": [
+          6,
+          6
+        ],
+        "GoUp": [
+          14,
+          14
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 3.549406243302352,
+      "trajectory_points": 34,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_7",
+      "steps": 284,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 3.3103173326238506,
+      "yaw_motion_p95_deg": 167.3246473795901,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 109,
+        "TurnRight": 18,
+        "TurnLeft": 19,
+        "GoUp": 38,
+        "GoDown": 99
+      },
+      "semantic_agreement": {
+        "MoveForward": [
+          106,
+          106
+        ],
+        "GoDown": [
+          96,
+          96
+        ],
+        "TurnLeft": [
+          19,
+          19
+        ],
+        "GoUp": [
+          38,
+          38
+        ],
+        "TurnRight": [
+          17,
+          17
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 11.968936443776059,
+      "trajectory_points": 72,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_9",
+      "steps": 214,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 0.20433815998232352,
+      "yaw_motion_p95_deg": 32.95365386337304,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 39,
+        "TurnRight": 5,
+        "TurnLeft": 1,
+        "GoUp": 49,
+        "GoDown": 119
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          49,
+          49
+        ],
+        "MoveForward": [
+          39,
+          39
+        ],
+        "GoDown": [
+          119,
+          119
+        ],
+        "TurnRight": [
+          5,
+          5
+        ],
+        "TurnLeft": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 10.490543553977632,
+      "trajectory_points": 49,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_9",
+      "steps": 261,
+      "zero_direction_vectors": 4,
+      "yaw_motion_median_deg": 0.010337774315943855,
+      "yaw_motion_p95_deg": 31.4317537247427,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 45,
+        "TurnRight": 7,
+        "TurnLeft": 7,
+        "GoUp": 68,
+        "GoDown": 133
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          68,
+          68
+        ],
+        "MoveForward": [
+          45,
+          45
+        ],
+        "GoDown": [
+          133,
+          133
+        ],
+        "TurnRight": [
+          7,
+          7
+        ],
+        "TurnLeft": [
+          7,
+          7
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 6.826736161956279,
+      "trajectory_points": 97,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_9",
+      "steps": 148,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 6.333171370605058e-09,
+      "yaw_motion_p95_deg": 179.9999999974727,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 66,
+        "TurnRight": 8,
+        "TurnLeft": 11,
+        "GoUp": 0,
+        "GoDown": 62
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          62,
+          62
+        ],
+        "MoveForward": [
+          66,
+          66
+        ],
+        "TurnLeft": [
+          11,
+          11
+        ],
+        "TurnRight": [
+          8,
+          8
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 20.144037700977055,
+      "trajectory_points": 63,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_9",
+      "steps": 151,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 1.915571751333121e-09,
+      "yaw_motion_p95_deg": 139.49999999981998,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 71,
+        "TurnRight": 7,
+        "TurnLeft": 9,
+        "GoUp": 2,
+        "GoDown": 61
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          61,
+          61
+        ],
+        "MoveForward": [
+          71,
+          71
+        ],
+        "TurnRight": [
+          7,
+          7
+        ],
+        "TurnLeft": [
+          9,
+          9
+        ],
+        "GoUp": [
+          2,
+          2
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 3.9105887896972953,
+      "trajectory_points": 42,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_9",
+      "steps": 310,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 89.63518387387856,
+      "yaw_motion_p95_deg": 161.25348755755897,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 93,
+        "TurnRight": 17,
+        "TurnLeft": 21,
+        "GoUp": 65,
+        "GoDown": 113
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          65,
+          65
+        ],
+        "TurnRight": [
+          17,
+          17
+        ],
+        "MoveForward": [
+          93,
+          93
+        ],
+        "TurnLeft": [
+          21,
+          21
+        ],
+        "GoDown": [
+          113,
+          113
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 1.76387503142751,
+      "trajectory_points": 63,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_9",
+      "steps": 122,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 1.0206896139346733e-08,
+      "yaw_motion_p95_deg": 2.9328619880257363,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 45,
+        "TurnRight": 4,
+        "TurnLeft": 8,
+        "GoUp": 0,
+        "GoDown": 64
+      },
+      "semantic_agreement": {
+        "TurnLeft": [
+          8,
+          8
+        ],
+        "MoveForward": [
+          45,
+          45
+        ],
+        "TurnRight": [
+          4,
+          4
+        ],
+        "GoDown": [
+          64,
+          64
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 4.88818418319587,
+      "trajectory_points": 100,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_9",
+      "steps": 286,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 3.895496937758166e-07,
+      "yaw_motion_p95_deg": 90.76063273126054,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 102,
+        "TurnRight": 20,
+        "TurnLeft": 7,
+        "GoUp": 46,
+        "GoDown": 110
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          46,
+          46
+        ],
+        "TurnRight": [
+          20,
+          20
+        ],
+        "MoveForward": [
+          102,
+          102
+        ],
+        "TurnLeft": [
+          7,
+          7
+        ],
+        "GoDown": [
+          110,
+          110
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 11.629517203103836,
+      "trajectory_points": 89,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_9",
+      "steps": 277,
+      "zero_direction_vectors": 55,
+      "yaw_motion_median_deg": 1.0269596206656009,
+      "yaw_motion_p95_deg": 179.99999999276233,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 71,
+        "TurnRight": 7,
+        "TurnLeft": 14,
+        "GoUp": 66,
+        "GoDown": 118
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          66,
+          66
+        ],
+        "TurnRight": [
+          7,
+          7
+        ],
+        "MoveForward": [
+          69,
+          69
+        ],
+        "TurnLeft": [
+          13,
+          13
+        ],
+        "GoDown": [
+          118,
+          118
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 7.94889902970279,
+      "trajectory_points": 75,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_10",
+      "steps": 148,
+      "zero_direction_vectors": 1,
+      "yaw_motion_median_deg": 89.97139206762412,
+      "yaw_motion_p95_deg": 90.16565297295317,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 76,
+        "TurnRight": 5,
+        "TurnLeft": 7,
+        "GoUp": 0,
+        "GoDown": 59
+      },
+      "semantic_agreement": {
+        "MoveForward": [
+          76,
+          76
+        ],
+        "TurnLeft": [
+          7,
+          7
+        ],
+        "TurnRight": [
+          5,
+          5
+        ],
+        "GoDown": [
+          59,
+          59
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 11.29685104036787,
+      "trajectory_points": 73,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_10",
+      "steps": 131,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 1.7377227668769166e-08,
+      "yaw_motion_p95_deg": 179.9999999961096,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 35,
+        "TurnRight": 7,
+        "TurnLeft": 7,
+        "GoUp": 5,
+        "GoDown": 76
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          76,
+          76
+        ],
+        "TurnRight": [
+          7,
+          7
+        ],
+        "MoveForward": [
+          35,
+          35
+        ],
+        "TurnLeft": [
+          7,
+          7
+        ],
+        "GoUp": [
+          5,
+          5
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 13.896167754297643,
+      "trajectory_points": 20,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_10",
+      "steps": 144,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 0.11896820464944087,
+      "yaw_motion_p95_deg": 130.06691719655507,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 58,
+        "TurnRight": 6,
+        "TurnLeft": 9,
+        "GoUp": 1,
+        "GoDown": 69
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          69,
+          69
+        ],
+        "MoveForward": [
+          58,
+          58
+        ],
+        "TurnLeft": [
+          9,
+          9
+        ],
+        "TurnRight": [
+          6,
+          6
+        ],
+        "GoUp": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 0.49133664360928425,
+      "trajectory_points": 59,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_12",
+      "steps": 125,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 1.9480261313027746e-09,
+      "yaw_motion_p95_deg": 0.059893370825748665,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 63,
+        "TurnRight": 2,
+        "TurnLeft": 2,
+        "GoUp": 0,
+        "GoDown": 57
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          57,
+          57
+        ],
+        "MoveForward": [
+          63,
+          63
+        ],
+        "TurnRight": [
+          2,
+          2
+        ],
+        "TurnLeft": [
+          2,
+          2
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 2.6524457772486,
+      "trajectory_points": 193,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_12",
+      "steps": 125,
+      "zero_direction_vectors": 49,
+      "yaw_motion_median_deg": 5.2669985525035835e-11,
+      "yaw_motion_p95_deg": 0.6983272394256734,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 42,
+        "TurnRight": 7,
+        "TurnLeft": 9,
+        "GoUp": 0,
+        "GoDown": 66
+      },
+      "semantic_agreement": {
+        "MoveForward": [
+          42,
+          42
+        ],
+        "TurnRight": [
+          7,
+          7
+        ],
+        "TurnLeft": [
+          9,
+          9
+        ],
+        "GoDown": [
+          66,
+          66
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 4.90624969787621,
+      "trajectory_points": 50,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_12",
+      "steps": 61,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 9.355919650993081e-09,
+      "yaw_motion_p95_deg": 0.009872979757022338,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 8,
+        "TurnRight": 0,
+        "TurnLeft": 2,
+        "GoUp": 0,
+        "GoDown": 50
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          50,
+          50
+        ],
+        "TurnLeft": [
+          2,
+          2
+        ],
+        "MoveForward": [
+          8,
+          8
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 4.993794037497536,
+      "trajectory_points": 103,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_12",
+      "steps": 85,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 5.416764511344338e-09,
+      "yaw_motion_p95_deg": 2.5734427705345185e-08,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 16,
+        "TurnRight": 5,
+        "TurnLeft": 1,
+        "GoUp": 0,
+        "GoDown": 62
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          62,
+          62
+        ],
+        "TurnRight": [
+          5,
+          5
+        ],
+        "MoveForward": [
+          16,
+          16
+        ],
+        "TurnLeft": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 4.8368053580056385,
+      "trajectory_points": 50,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_12",
+      "steps": 93,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 16.111642784773288,
+      "yaw_motion_p95_deg": 179.99999999362154,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 19,
+        "TurnRight": 7,
+        "TurnLeft": 4,
+        "GoUp": 3,
+        "GoDown": 59
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          59,
+          59
+        ],
+        "TurnLeft": [
+          4,
+          4
+        ],
+        "MoveForward": [
+          19,
+          19
+        ],
+        "TurnRight": [
+          7,
+          7
+        ],
+        "GoUp": [
+          3,
+          3
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 0.5554431657818232,
+      "trajectory_points": 26,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_12",
+      "steps": 245,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 0.8508877782431252,
+      "yaw_motion_p95_deg": 179.99822164256182,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 89,
+        "TurnRight": 19,
+        "TurnLeft": 13,
+        "GoUp": 30,
+        "GoDown": 93
+      },
+      "semantic_agreement": {
+        "TurnLeft": [
+          13,
+          13
+        ],
+        "MoveForward": [
+          89,
+          89
+        ],
+        "GoUp": [
+          30,
+          30
+        ],
+        "GoDown": [
+          93,
+          93
+        ],
+        "TurnRight": [
+          19,
+          19
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 2.6927617048653687,
+      "trajectory_points": 146,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_12",
+      "steps": 280,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 65.3961134040814,
+      "yaw_motion_p95_deg": 179.99999997458886,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 84,
+        "TurnRight": 22,
+        "TurnLeft": 16,
+        "GoUp": 49,
+        "GoDown": 108
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          49,
+          49
+        ],
+        "TurnRight": [
+          22,
+          22
+        ],
+        "MoveForward": [
+          84,
+          84
+        ],
+        "TurnLeft": [
+          16,
+          16
+        ],
+        "GoDown": [
+          108,
+          108
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 27.565235178436957,
+      "trajectory_points": 138,
+      "success": false,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "birmingham_block_13",
+      "steps": 90,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 5.5445210317893646e-09,
+      "yaw_motion_p95_deg": 3.3295685027331925e-08,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 17,
+        "TurnRight": 6,
+        "TurnLeft": 3,
+        "GoUp": 0,
+        "GoDown": 63
+      },
+      "semantic_agreement": {
+        "TurnLeft": [
+          3,
+          3
+        ],
+        "MoveForward": [
+          17,
+          17
+        ],
+        "GoDown": [
+          63,
+          63
+        ],
+        "TurnRight": [
+          6,
+          6
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 25.560223541724266,
+      "trajectory_points": 168,
+      "success": false,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_4",
+      "steps": 71,
+      "zero_direction_vectors": 2,
+      "yaw_motion_median_deg": 6.253917258835942,
+      "yaw_motion_p95_deg": 95.86998029338612,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 15,
+        "TurnRight": 9,
+        "TurnLeft": 0,
+        "GoUp": 0,
+        "GoDown": 46
+      },
+      "semantic_agreement": {
+        "TurnRight": [
+          9,
+          9
+        ],
+        "MoveForward": [
+          15,
+          15
+        ],
+        "GoDown": [
+          46,
+          46
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 16.808048941893365,
+      "trajectory_points": 16,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_4",
+      "steps": 73,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 0.08745803168611724,
+      "yaw_motion_p95_deg": 159.12418288896546,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 11,
+        "TurnRight": 4,
+        "TurnLeft": 2,
+        "GoUp": 8,
+        "GoDown": 47
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          8,
+          8
+        ],
+        "GoDown": [
+          47,
+          47
+        ],
+        "MoveForward": [
+          11,
+          11
+        ],
+        "TurnLeft": [
+          2,
+          2
+        ],
+        "TurnRight": [
+          4,
+          4
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 29.047365132981216,
+      "trajectory_points": 35,
+      "success": false,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_6",
+      "steps": 125,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 9.638098462332525e-10,
+      "yaw_motion_p95_deg": 56.61516010382101,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 57,
+        "TurnRight": 8,
+        "TurnLeft": 6,
+        "GoUp": 0,
+        "GoDown": 53
+      },
+      "semantic_agreement": {
+        "TurnLeft": [
+          6,
+          6
+        ],
+        "MoveForward": [
+          57,
+          57
+        ],
+        "GoDown": [
+          53,
+          53
+        ],
+        "TurnRight": [
+          8,
+          8
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 5.751999446217162,
+      "trajectory_points": 54,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_6",
+      "steps": 160,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 2.111608419679806e-09,
+      "yaw_motion_p95_deg": 5.704828152493275,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 91,
+        "TurnRight": 7,
+        "TurnLeft": 5,
+        "GoUp": 6,
+        "GoDown": 50
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          6,
+          6
+        ],
+        "TurnLeft": [
+          5,
+          5
+        ],
+        "MoveForward": [
+          91,
+          91
+        ],
+        "GoDown": [
+          50,
+          50
+        ],
+        "TurnRight": [
+          7,
+          7
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 9.307857064615469,
+      "trajectory_points": 70,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_6",
+      "steps": 80,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 2.1894302316258557e-09,
+      "yaw_motion_p95_deg": 179.9999999831731,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 21,
+        "TurnRight": 0,
+        "TurnLeft": 5,
+        "GoUp": 0,
+        "GoDown": 53
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          53,
+          53
+        ],
+        "TurnLeft": [
+          5,
+          5
+        ],
+        "MoveForward": [
+          21,
+          21
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 3.1732570437094676,
+      "trajectory_points": 21,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_7",
+      "steps": 290,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 45.203337499280224,
+      "yaw_motion_p95_deg": 179.99999999984445,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 139,
+        "TurnRight": 19,
+        "TurnLeft": 27,
+        "GoUp": 25,
+        "GoDown": 79
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          25,
+          25
+        ],
+        "TurnLeft": [
+          27,
+          27
+        ],
+        "MoveForward": [
+          139,
+          139
+        ],
+        "GoDown": [
+          79,
+          79
+        ],
+        "TurnRight": [
+          19,
+          19
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 19.796937213297348,
+      "trajectory_points": 62,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_7",
+      "steps": 365,
+      "zero_direction_vectors": 96,
+      "yaw_motion_median_deg": 0.0,
+      "yaw_motion_p95_deg": 1.2079746680198323e-10,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 143,
+        "TurnRight": 17,
+        "TurnLeft": 18,
+        "GoUp": 80,
+        "GoDown": 106
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          80,
+          80
+        ],
+        "TurnLeft": [
+          18,
+          18
+        ],
+        "MoveForward": [
+          143,
+          143
+        ],
+        "TurnRight": [
+          17,
+          17
+        ],
+        "GoDown": [
+          106,
+          106
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 5.196555417336898,
+      "trajectory_points": 97,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_7",
+      "steps": 248,
+      "zero_direction_vectors": 141,
+      "yaw_motion_median_deg": 0.0,
+      "yaw_motion_p95_deg": 1.2839263138131923e-10,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 83,
+        "TurnRight": 15,
+        "TurnLeft": 20,
+        "GoUp": 42,
+        "GoDown": 87
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          42,
+          42
+        ],
+        "MoveForward": [
+          83,
+          83
+        ],
+        "TurnLeft": [
+          20,
+          20
+        ],
+        "TurnRight": [
+          15,
+          15
+        ],
+        "GoDown": [
+          87,
+          87
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 6.164835580173957,
+      "trajectory_points": 142,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_7",
+      "steps": 106,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 1.6936835345355003e-09,
+      "yaw_motion_p95_deg": 2.3497810764465206e-09,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 28,
+        "TurnRight": 5,
+        "TurnLeft": 1,
+        "GoUp": 18,
+        "GoDown": 53
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          53,
+          53
+        ],
+        "MoveForward": [
+          28,
+          28
+        ],
+        "GoUp": [
+          18,
+          18
+        ],
+        "TurnRight": [
+          5,
+          5
+        ],
+        "TurnLeft": [
+          1,
+          1
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 24.61146462753324,
+      "trajectory_points": 40,
+      "success": false,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_7",
+      "steps": 209,
+      "zero_direction_vectors": 4,
+      "yaw_motion_median_deg": 0.6397890021136858,
+      "yaw_motion_p95_deg": 177.86222785642758,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 61,
+        "TurnRight": 7,
+        "TurnLeft": 27,
+        "GoUp": 40,
+        "GoDown": 73
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          40,
+          40
+        ],
+        "TurnLeft": [
+          27,
+          27
+        ],
+        "MoveForward": [
+          61,
+          61
+        ],
+        "GoDown": [
+          73,
+          73
+        ],
+        "TurnRight": [
+          7,
+          7
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 2.792554200256373,
+      "trajectory_points": 60,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_7",
+      "steps": 186,
+      "zero_direction_vectors": 4,
+      "yaw_motion_median_deg": 0.2926987495257137,
+      "yaw_motion_p95_deg": 90.75995561281943,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 73,
+        "TurnRight": 6,
+        "TurnLeft": 15,
+        "GoUp": 20,
+        "GoDown": 71
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          20,
+          20
+        ],
+        "TurnLeft": [
+          15,
+          15
+        ],
+        "MoveForward": [
+          73,
+          73
+        ],
+        "TurnRight": [
+          6,
+          6
+        ],
+        "GoDown": [
+          71,
+          71
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 19.408342967539504,
+      "trajectory_points": 49,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_7",
+      "steps": 97,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 89.99999999435045,
+      "yaw_motion_p95_deg": 101.83462173857431,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 43,
+        "TurnRight": 9,
+        "TurnLeft": 4,
+        "GoUp": 0,
+        "GoDown": 40
+      },
+      "semantic_agreement": {
+        "TurnRight": [
+          9,
+          9
+        ],
+        "MoveForward": [
+          43,
+          43
+        ],
+        "TurnLeft": [
+          4,
+          4
+        ],
+        "GoDown": [
+          40,
+          40
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 19.027663928892988,
+      "trajectory_points": 22,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_7",
+      "steps": 317,
+      "zero_direction_vectors": 4,
+      "yaw_motion_median_deg": 0.19260729397555626,
+      "yaw_motion_p95_deg": 156.12052525410567,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 93,
+        "TurnRight": 4,
+        "TurnLeft": 23,
+        "GoUp": 79,
+        "GoDown": 117
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          79,
+          79
+        ],
+        "TurnLeft": [
+          23,
+          23
+        ],
+        "MoveForward": [
+          93,
+          93
+        ],
+        "TurnRight": [
+          4,
+          4
+        ],
+        "GoDown": [
+          117,
+          117
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 3.3502374949156652,
+      "trajectory_points": 70,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_7",
+      "steps": 208,
+      "zero_direction_vectors": 2,
+      "yaw_motion_median_deg": 30.83317385185846,
+      "yaw_motion_p95_deg": 104.0341892924555,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 40,
+        "TurnRight": 10,
+        "TurnLeft": 11,
+        "GoUp": 45,
+        "GoDown": 101
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          45,
+          45
+        ],
+        "GoDown": [
+          101,
+          101
+        ],
+        "TurnRight": [
+          10,
+          10
+        ],
+        "MoveForward": [
+          40,
+          40
+        ],
+        "TurnLeft": [
+          11,
+          11
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 20.14520095957244,
+      "trajectory_points": 50,
+      "success": false,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_7",
+      "steps": 304,
+      "zero_direction_vectors": 81,
+      "yaw_motion_median_deg": 0.0,
+      "yaw_motion_p95_deg": 179.99999998438994,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 114,
+        "TurnRight": 16,
+        "TurnLeft": 15,
+        "GoUp": 56,
+        "GoDown": 102
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          56,
+          56
+        ],
+        "MoveForward": [
+          114,
+          114
+        ],
+        "TurnLeft": [
+          15,
+          15
+        ],
+        "TurnRight": [
+          16,
+          16
+        ],
+        "GoDown": [
+          102,
+          102
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 1.2090770451796082,
+      "trajectory_points": 93,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_7",
+      "steps": 401,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 89.99999999410302,
+      "yaw_motion_p95_deg": 179.99999990921182,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 63,
+        "TurnRight": 16,
+        "TurnLeft": 10,
+        "GoUp": 148,
+        "GoDown": 163
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          148,
+          148
+        ],
+        "TurnLeft": [
+          10,
+          10
+        ],
+        "MoveForward": [
+          63,
+          63
+        ],
+        "TurnRight": [
+          16,
+          16
+        ],
+        "GoDown": [
+          163,
+          163
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 15.435549880769718,
+      "trajectory_points": 173,
+      "success": false,
+      "stop_reason": "max_steps"
+    },
+    {
+      "map": "cambridge_block_7",
+      "steps": 213,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 3.379135793555373e-09,
+      "yaw_motion_p95_deg": 90.00000000270647,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 50,
+        "TurnRight": 5,
+        "TurnLeft": 6,
+        "GoUp": 48,
+        "GoDown": 103
+      },
+      "semantic_agreement": {
+        "TurnLeft": [
+          6,
+          6
+        ],
+        "MoveForward": [
+          50,
+          50
+        ],
+        "GoUp": [
+          48,
+          48
+        ],
+        "GoDown": [
+          103,
+          103
+        ],
+        "TurnRight": [
+          5,
+          5
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 4.335636735687459,
+      "trajectory_points": 56,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_7",
+      "steps": 234,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 2.177916623678958e-09,
+      "yaw_motion_p95_deg": 0.032602676647812016,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 41,
+        "TurnRight": 6,
+        "TurnLeft": 3,
+        "GoUp": 75,
+        "GoDown": 108
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          75,
+          75
+        ],
+        "GoDown": [
+          108,
+          108
+        ],
+        "MoveForward": [
+          41,
+          41
+        ],
+        "TurnRight": [
+          6,
+          6
+        ],
+        "TurnLeft": [
+          3,
+          3
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 2.943404276266695,
+      "trajectory_points": 68,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_9",
+      "steps": 110,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 0.0002236633853415956,
+      "yaw_motion_p95_deg": 10.752862489401673,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 57,
+        "TurnRight": 7,
+        "TurnLeft": 5,
+        "GoUp": 1,
+        "GoDown": 39
+      },
+      "semantic_agreement": {
+        "TurnRight": [
+          7,
+          7
+        ],
+        "MoveForward": [
+          57,
+          57
+        ],
+        "GoUp": [
+          1,
+          1
+        ],
+        "GoDown": [
+          39,
+          39
+        ],
+        "TurnLeft": [
+          5,
+          5
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 4.3451083076629144,
+      "trajectory_points": 48,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_9",
+      "steps": 315,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 1.2006848366899293e-09,
+      "yaw_motion_p95_deg": 3.628073991807904e-09,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 91,
+        "TurnRight": 5,
+        "TurnLeft": 5,
+        "GoUp": 83,
+        "GoDown": 130
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          130,
+          130
+        ],
+        "MoveForward": [
+          91,
+          91
+        ],
+        "GoUp": [
+          83,
+          83
+        ],
+        "TurnRight": [
+          5,
+          5
+        ],
+        "TurnLeft": [
+          5,
+          5
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 19.85768578942334,
+      "trajectory_points": 61,
+      "success": false,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_9",
+      "steps": 135,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 3.254954216572311e-09,
+      "yaw_motion_p95_deg": 0.007658295292865093,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 65,
+        "TurnRight": 10,
+        "TurnLeft": 10,
+        "GoUp": 0,
+        "GoDown": 49
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          49,
+          49
+        ],
+        "MoveForward": [
+          65,
+          65
+        ],
+        "TurnLeft": [
+          10,
+          10
+        ],
+        "TurnRight": [
+          10,
+          10
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 21.59004677374403,
+      "trajectory_points": 379,
+      "success": false,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_9",
+      "steps": 250,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 68.05381295457747,
+      "yaw_motion_p95_deg": 175.22816564504828,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 71,
+        "TurnRight": 11,
+        "TurnLeft": 14,
+        "GoUp": 61,
+        "GoDown": 92
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          61,
+          61
+        ],
+        "TurnRight": [
+          11,
+          11
+        ],
+        "MoveForward": [
+          71,
+          71
+        ],
+        "TurnLeft": [
+          14,
+          14
+        ],
+        "GoDown": [
+          92,
+          92
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 8.178996424359164,
+      "trajectory_points": 28,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_9",
+      "steps": 165,
+      "zero_direction_vectors": 2,
+      "yaw_motion_median_deg": 3.163099797371645e-09,
+      "yaw_motion_p95_deg": 91.95904933478111,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 41,
+        "TurnRight": 7,
+        "TurnLeft": 6,
+        "GoUp": 33,
+        "GoDown": 77
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          33,
+          33
+        ],
+        "GoDown": [
+          77,
+          77
+        ],
+        "TurnRight": [
+          7,
+          7
+        ],
+        "MoveForward": [
+          41,
+          41
+        ],
+        "TurnLeft": [
+          6,
+          6
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 3.358553505342053,
+      "trajectory_points": 34,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_9",
+      "steps": 401,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 179.99999999435664,
+      "yaw_motion_p95_deg": 179.999999997334,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 50,
+        "TurnRight": 13,
+        "TurnLeft": 7,
+        "GoUp": 145,
+        "GoDown": 185
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          145,
+          145
+        ],
+        "TurnLeft": [
+          7,
+          7
+        ],
+        "MoveForward": [
+          50,
+          50
+        ],
+        "GoDown": [
+          185,
+          185
+        ],
+        "TurnRight": [
+          13,
+          13
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 6.267234323818813,
+      "trajectory_points": 93,
+      "success": false,
+      "stop_reason": "max_steps"
+    },
+    {
+      "map": "cambridge_block_9",
+      "steps": 231,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 3.402379287167508e-09,
+      "yaw_motion_p95_deg": 102.96279128446083,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 116,
+        "TurnRight": 11,
+        "TurnLeft": 18,
+        "GoUp": 25,
+        "GoDown": 60
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          60,
+          60
+        ],
+        "MoveForward": [
+          116,
+          116
+        ],
+        "TurnLeft": [
+          18,
+          18
+        ],
+        "TurnRight": [
+          11,
+          11
+        ],
+        "GoUp": [
+          25,
+          25
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 13.97713507184683,
+      "trajectory_points": 48,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_9",
+      "steps": 347,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 70.58358224654759,
+      "yaw_motion_p95_deg": 107.20130695385498,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 106,
+        "TurnRight": 15,
+        "TurnLeft": 28,
+        "GoUp": 79,
+        "GoDown": 118
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          118,
+          118
+        ],
+        "MoveForward": [
+          103,
+          103
+        ],
+        "TurnRight": [
+          15,
+          15
+        ],
+        "TurnLeft": [
+          27,
+          27
+        ],
+        "GoUp": [
+          79,
+          79
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 18.2562284563539,
+      "trajectory_points": 64,
+      "success": false,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_9",
+      "steps": 285,
+      "zero_direction_vectors": 15,
+      "yaw_motion_median_deg": 3.300410704079788e-09,
+      "yaw_motion_p95_deg": 112.50077942459308,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 75,
+        "TurnRight": 15,
+        "TurnLeft": 12,
+        "GoUp": 70,
+        "GoDown": 112
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          70,
+          70
+        ],
+        "TurnRight": [
+          15,
+          15
+        ],
+        "MoveForward": [
+          75,
+          75
+        ],
+        "GoDown": [
+          112,
+          112
+        ],
+        "TurnLeft": [
+          12,
+          12
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 3.4100492577143924,
+      "trajectory_points": 55,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_9",
+      "steps": 334,
+      "zero_direction_vectors": 23,
+      "yaw_motion_median_deg": 7.179873193466824e-09,
+      "yaw_motion_p95_deg": 124.68053536332013,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 91,
+        "TurnRight": 14,
+        "TurnLeft": 13,
+        "GoUp": 83,
+        "GoDown": 132
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          83,
+          83
+        ],
+        "GoDown": [
+          132,
+          132
+        ],
+        "TurnLeft": [
+          13,
+          13
+        ],
+        "MoveForward": [
+          91,
+          91
+        ],
+        "TurnRight": [
+          14,
+          14
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 9.149073384338212,
+      "trajectory_points": 76,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_9",
+      "steps": 358,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 90.00000000148168,
+      "yaw_motion_p95_deg": 178.3105370351055,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 140,
+        "TurnRight": 23,
+        "TurnLeft": 28,
+        "GoUp": 63,
+        "GoDown": 103
+      },
+      "semantic_agreement": {
+        "TurnRight": [
+          23,
+          23
+        ],
+        "MoveForward": [
+          140,
+          140
+        ],
+        "GoUp": [
+          63,
+          63
+        ],
+        "TurnLeft": [
+          28,
+          28
+        ],
+        "GoDown": [
+          103,
+          103
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 13.039824552111316,
+      "trajectory_points": 60,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_9",
+      "steps": 189,
+      "zero_direction_vectors": 9,
+      "yaw_motion_median_deg": 1.5160813611225774e-09,
+      "yaw_motion_p95_deg": 59.02656625178404,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 42,
+        "TurnRight": 4,
+        "TurnLeft": 3,
+        "GoUp": 48,
+        "GoDown": 91
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          48,
+          48
+        ],
+        "TurnLeft": [
+          3,
+          3
+        ],
+        "MoveForward": [
+          42,
+          42
+        ],
+        "GoDown": [
+          91,
+          91
+        ],
+        "TurnRight": [
+          4,
+          4
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 22.879776970466636,
+      "trajectory_points": 34,
+      "success": false,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_9",
+      "steps": 401,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 90.0400572050445,
+      "yaw_motion_p95_deg": 109.30524695924909,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 262,
+        "TurnRight": 21,
+        "TurnLeft": 42,
+        "GoUp": 23,
+        "GoDown": 52
+      },
+      "semantic_agreement": {
+        "TurnLeft": [
+          42,
+          42
+        ],
+        "MoveForward": [
+          262,
+          262
+        ],
+        "TurnRight": [
+          21,
+          21
+        ],
+        "GoDown": [
+          52,
+          52
+        ],
+        "GoUp": [
+          23,
+          23
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 22.5726769494309,
+      "trajectory_points": 163,
+      "success": false,
+      "stop_reason": "max_steps"
+    },
+    {
+      "map": "cambridge_block_9",
+      "steps": 86,
+      "zero_direction_vectors": 5,
+      "yaw_motion_median_deg": 1.893778590655733e-09,
+      "yaw_motion_p95_deg": 0.5803790393713988,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 37,
+        "TurnRight": 1,
+        "TurnLeft": 5,
+        "GoUp": 0,
+        "GoDown": 42
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          42,
+          42
+        ],
+        "TurnLeft": [
+          5,
+          5
+        ],
+        "MoveForward": [
+          37,
+          37
+        ],
+        "TurnRight": [
+          1,
+          1
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 1.0719213113137296,
+      "trajectory_points": 133,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_12",
+      "steps": 290,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 1.7761489563164864e-09,
+      "yaw_motion_p95_deg": 0.0037939861632708912,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 69,
+        "TurnRight": 4,
+        "TurnLeft": 3,
+        "GoUp": 88,
+        "GoDown": 125
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          88,
+          88
+        ],
+        "GoDown": [
+          125,
+          125
+        ],
+        "TurnLeft": [
+          3,
+          3
+        ],
+        "MoveForward": [
+          69,
+          69
+        ],
+        "TurnRight": [
+          4,
+          4
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 21.199066147216495,
+      "trajectory_points": 98,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_12",
+      "steps": 128,
+      "zero_direction_vectors": 2,
+      "yaw_motion_median_deg": 89.65839581853098,
+      "yaw_motion_p95_deg": 141.85432919370717,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 47,
+        "TurnRight": 0,
+        "TurnLeft": 19,
+        "GoUp": 6,
+        "GoDown": 55
+      },
+      "semantic_agreement": {
+        "TurnLeft": [
+          19,
+          19
+        ],
+        "MoveForward": [
+          47,
+          47
+        ],
+        "GoDown": [
+          55,
+          55
+        ],
+        "GoUp": [
+          6,
+          6
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 18.990857955485726,
+      "trajectory_points": 36,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_12",
+      "steps": 136,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 1.7521675740182514e-09,
+      "yaw_motion_p95_deg": 12.7460406900796,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 74,
+        "TurnRight": 7,
+        "TurnLeft": 8,
+        "GoUp": 0,
+        "GoDown": 46
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          46,
+          46
+        ],
+        "MoveForward": [
+          74,
+          74
+        ],
+        "TurnRight": [
+          7,
+          7
+        ],
+        "TurnLeft": [
+          8,
+          8
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 6.198522494448589,
+      "trajectory_points": 33,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_12",
+      "steps": 197,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 1.9543363517907982e-09,
+      "yaw_motion_p95_deg": 90.00000001438613,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 71,
+        "TurnRight": 7,
+        "TurnLeft": 10,
+        "GoUp": 31,
+        "GoDown": 77
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          77,
+          77
+        ],
+        "MoveForward": [
+          71,
+          71
+        ],
+        "TurnLeft": [
+          10,
+          10
+        ],
+        "TurnRight": [
+          7,
+          7
+        ],
+        "GoUp": [
+          31,
+          31
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 5.753533652757466,
+      "trajectory_points": 66,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_12",
+      "steps": 101,
+      "zero_direction_vectors": 26,
+      "yaw_motion_median_deg": 0.0,
+      "yaw_motion_p95_deg": 3.0894483287239305e-09,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 25,
+        "TurnRight": 4,
+        "TurnLeft": 2,
+        "GoUp": 16,
+        "GoDown": 53
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          53,
+          53
+        ],
+        "TurnRight": [
+          4,
+          4
+        ],
+        "MoveForward": [
+          25,
+          25
+        ],
+        "TurnLeft": [
+          2,
+          2
+        ],
+        "GoUp": [
+          16,
+          16
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 15.4073744215713,
+      "trajectory_points": 36,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_12",
+      "steps": 83,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 9.436222295590673e-09,
+      "yaw_motion_p95_deg": 0.04984260305104548,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 24,
+        "TurnRight": 4,
+        "TurnLeft": 6,
+        "GoUp": 0,
+        "GoDown": 48
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          48,
+          48
+        ],
+        "TurnLeft": [
+          6,
+          6
+        ],
+        "MoveForward": [
+          24,
+          24
+        ],
+        "TurnRight": [
+          4,
+          4
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 27.514391235238843,
+      "trajectory_points": 183,
+      "success": false,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_12",
+      "steps": 117,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 0.32196377389987435,
+      "yaw_motion_p95_deg": 135.88261632685428,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 52,
+        "TurnRight": 3,
+        "TurnLeft": 19,
+        "GoUp": 0,
+        "GoDown": 42
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          42,
+          42
+        ],
+        "TurnLeft": [
+          19,
+          19
+        ],
+        "MoveForward": [
+          52,
+          52
+        ],
+        "TurnRight": [
+          3,
+          3
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 2.665009812847281,
+      "trajectory_points": 40,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_12",
+      "steps": 94,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 2.331232747040535,
+      "yaw_motion_p95_deg": 158.2151481431438,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 37,
+        "TurnRight": 7,
+        "TurnLeft": 4,
+        "GoUp": 0,
+        "GoDown": 45
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          45,
+          45
+        ],
+        "TurnRight": [
+          7,
+          7
+        ],
+        "MoveForward": [
+          37,
+          37
+        ],
+        "TurnLeft": [
+          4,
+          4
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 3.464407061926195,
+      "trajectory_points": 31,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_12",
+      "steps": 83,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 2.5695446827169237e-08,
+      "yaw_motion_p95_deg": 0.06389277145191324,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 23,
+        "TurnRight": 4,
+        "TurnLeft": 5,
+        "GoUp": 0,
+        "GoDown": 50
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          50,
+          50
+        ],
+        "TurnRight": [
+          4,
+          4
+        ],
+        "MoveForward": [
+          23,
+          23
+        ],
+        "TurnLeft": [
+          5,
+          5
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 5.299780280191016,
+      "trajectory_points": 162,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_12",
+      "steps": 76,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 2.4638777506455973e-08,
+      "yaw_motion_p95_deg": 173.0411479328767,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 25,
+        "TurnRight": 2,
+        "TurnLeft": 2,
+        "GoUp": 0,
+        "GoDown": 46
+      },
+      "semantic_agreement": {
+        "MoveForward": [
+          25,
+          25
+        ],
+        "GoDown": [
+          46,
+          46
+        ],
+        "TurnRight": [
+          2,
+          2
+        ],
+        "TurnLeft": [
+          2,
+          2
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 5.9933342665300575,
+      "trajectory_points": 40,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_12",
+      "steps": 137,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 1.112227249889066e-09,
+      "yaw_motion_p95_deg": 90.00000000380498,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 60,
+        "TurnRight": 13,
+        "TurnLeft": 8,
+        "GoUp": 0,
+        "GoDown": 55
+      },
+      "semantic_agreement": {
+        "TurnLeft": [
+          8,
+          8
+        ],
+        "MoveForward": [
+          60,
+          60
+        ],
+        "TurnRight": [
+          13,
+          13
+        ],
+        "GoDown": [
+          55,
+          55
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 1.9735188685131677,
+      "trajectory_points": 28,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_12",
+      "steps": 310,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 1.2574136435605308,
+      "yaw_motion_p95_deg": 149.74137742748584,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 124,
+        "TurnRight": 34,
+        "TurnLeft": 13,
+        "GoUp": 55,
+        "GoDown": 83
+      },
+      "semantic_agreement": {
+        "MoveForward": [
+          124,
+          124
+        ],
+        "GoDown": [
+          83,
+          83
+        ],
+        "TurnRight": [
+          34,
+          34
+        ],
+        "TurnLeft": [
+          13,
+          13
+        ],
+        "GoUp": [
+          55,
+          55
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 9.979099735686052,
+      "trajectory_points": 77,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_12",
+      "steps": 101,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 0.23800734165163961,
+      "yaw_motion_p95_deg": 96.53841477988897,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 44,
+        "TurnRight": 5,
+        "TurnLeft": 7,
+        "GoUp": 0,
+        "GoDown": 44
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          44,
+          44
+        ],
+        "TurnLeft": [
+          7,
+          7
+        ],
+        "MoveForward": [
+          44,
+          44
+        ],
+        "TurnRight": [
+          5,
+          5
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 20.747456012851263,
+      "trajectory_points": 27,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_13",
+      "steps": 401,
+      "zero_direction_vectors": 1,
+      "yaw_motion_median_deg": 89.99999999483936,
+      "yaw_motion_p95_deg": 177.07289606874394,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 219,
+        "TurnRight": 32,
+        "TurnLeft": 27,
+        "GoUp": 61,
+        "GoDown": 61
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          61,
+          61
+        ],
+        "TurnLeft": [
+          27,
+          27
+        ],
+        "MoveForward": [
+          219,
+          219
+        ],
+        "TurnRight": [
+          32,
+          32
+        ],
+        "GoDown": [
+          61,
+          61
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 13.964383295987737,
+      "trajectory_points": 279,
+      "success": false,
+      "stop_reason": "max_steps"
+    },
+    {
+      "map": "cambridge_block_13",
+      "steps": 361,
+      "zero_direction_vectors": 95,
+      "yaw_motion_median_deg": 0.0,
+      "yaw_motion_p95_deg": 8.999999993631569,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 84,
+        "TurnRight": 11,
+        "TurnLeft": 13,
+        "GoUp": 105,
+        "GoDown": 147
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          105,
+          105
+        ],
+        "MoveForward": [
+          84,
+          84
+        ],
+        "TurnRight": [
+          11,
+          11
+        ],
+        "TurnLeft": [
+          13,
+          13
+        ],
+        "GoDown": [
+          147,
+          147
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 26.22754121092504,
+      "trajectory_points": 98,
+      "success": false,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_13",
+      "steps": 107,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 1.4712508576652878e-06,
+      "yaw_motion_p95_deg": 1.0000237027354932,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 47,
+        "TurnRight": 5,
+        "TurnLeft": 3,
+        "GoUp": 0,
+        "GoDown": 51
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          51,
+          51
+        ],
+        "MoveForward": [
+          47,
+          47
+        ],
+        "TurnRight": [
+          5,
+          5
+        ],
+        "TurnLeft": [
+          3,
+          3
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 15.368135539645241,
+      "trajectory_points": 187,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_13",
+      "steps": 168,
+      "zero_direction_vectors": 43,
+      "yaw_motion_median_deg": 0.0,
+      "yaw_motion_p95_deg": 0.0,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 49,
+        "TurnRight": 9,
+        "TurnLeft": 5,
+        "GoUp": 30,
+        "GoDown": 74
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          30,
+          30
+        ],
+        "TurnRight": [
+          9,
+          9
+        ],
+        "MoveForward": [
+          49,
+          49
+        ],
+        "TurnLeft": [
+          5,
+          5
+        ],
+        "GoDown": [
+          74,
+          74
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 7.973531937721523,
+      "trajectory_points": 44,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_13",
+      "steps": 70,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 4.6002016246441204e-09,
+      "yaw_motion_p95_deg": 0.2514189454436312,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 17,
+        "TurnRight": 3,
+        "TurnLeft": 0,
+        "GoUp": 0,
+        "GoDown": 49
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          47,
+          47
+        ],
+        "TurnRight": [
+          3,
+          3
+        ],
+        "MoveForward": [
+          17,
+          17
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 3.3943586828525967,
+      "trajectory_points": 70,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_13",
+      "steps": 238,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 90.29200474997415,
+      "yaw_motion_p95_deg": 179.99999999914584,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 85,
+        "TurnRight": 17,
+        "TurnLeft": 23,
+        "GoUp": 42,
+        "GoDown": 70
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          42,
+          42
+        ],
+        "TurnRight": [
+          17,
+          17
+        ],
+        "MoveForward": [
+          85,
+          85
+        ],
+        "TurnLeft": [
+          23,
+          23
+        ],
+        "GoDown": [
+          70,
+          70
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 8.275580122165916,
+      "trajectory_points": 52,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_13",
+      "steps": 401,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 0.0154135475955688,
+      "yaw_motion_p95_deg": 179.99343860865136,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 132,
+        "TurnRight": 30,
+        "TurnLeft": 19,
+        "GoUp": 115,
+        "GoDown": 104
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          115,
+          115
+        ],
+        "TurnRight": [
+          30,
+          30
+        ],
+        "MoveForward": [
+          132,
+          132
+        ],
+        "GoDown": [
+          104,
+          104
+        ],
+        "TurnLeft": [
+          19,
+          19
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 4.1878080082676545,
+      "trajectory_points": 220,
+      "success": false,
+      "stop_reason": "max_steps"
+    },
+    {
+      "map": "cambridge_block_13",
+      "steps": 303,
+      "zero_direction_vectors": 2,
+      "yaw_motion_median_deg": 6.751080649085775,
+      "yaw_motion_p95_deg": 179.9884083228333,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 59,
+        "TurnRight": 27,
+        "TurnLeft": 4,
+        "GoUp": 80,
+        "GoDown": 132
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          80,
+          80
+        ],
+        "TurnRight": [
+          27,
+          27
+        ],
+        "MoveForward": [
+          59,
+          59
+        ],
+        "GoDown": [
+          132,
+          132
+        ],
+        "TurnLeft": [
+          4,
+          4
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 4.150007956435882,
+      "trajectory_points": 83,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_13",
+      "steps": 73,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 1.3717325230152921e-08,
+      "yaw_motion_p95_deg": 2.204878363824778e-07,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 11,
+        "TurnRight": 3,
+        "TurnLeft": 7,
+        "GoUp": 0,
+        "GoDown": 51
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          51,
+          51
+        ],
+        "TurnLeft": [
+          7,
+          7
+        ],
+        "MoveForward": [
+          11,
+          11
+        ],
+        "TurnRight": [
+          3,
+          3
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 5.241819657905189,
+      "trajectory_points": 135,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_13",
+      "steps": 299,
+      "zero_direction_vectors": 53,
+      "yaw_motion_median_deg": 0.0,
+      "yaw_motion_p95_deg": 5.734158424116944e-10,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 51,
+        "TurnRight": 5,
+        "TurnLeft": 13,
+        "GoUp": 89,
+        "GoDown": 140
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          89,
+          89
+        ],
+        "MoveForward": [
+          51,
+          51
+        ],
+        "TurnRight": [
+          5,
+          5
+        ],
+        "TurnLeft": [
+          13,
+          13
+        ],
+        "GoDown": [
+          140,
+          140
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 2.130200044350897,
+      "trajectory_points": 54,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_13",
+      "steps": 107,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 2.3856895388002436e-08,
+      "yaw_motion_p95_deg": 0.18541385917157832,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 55,
+        "TurnRight": 6,
+        "TurnLeft": 7,
+        "GoUp": 1,
+        "GoDown": 37
+      },
+      "semantic_agreement": {
+        "MoveForward": [
+          55,
+          55
+        ],
+        "GoUp": [
+          1,
+          1
+        ],
+        "TurnRight": [
+          6,
+          6
+        ],
+        "TurnLeft": [
+          7,
+          7
+        ],
+        "GoDown": [
+          37,
+          37
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 5.2083909637264565,
+      "trajectory_points": 296,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_13",
+      "steps": 318,
+      "zero_direction_vectors": 19,
+      "yaw_motion_median_deg": 0.47346035045594476,
+      "yaw_motion_p95_deg": 178.93961482556625,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 79,
+        "TurnRight": 18,
+        "TurnLeft": 16,
+        "GoUp": 81,
+        "GoDown": 123
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          81,
+          81
+        ],
+        "TurnRight": [
+          18,
+          18
+        ],
+        "MoveForward": [
+          78,
+          78
+        ],
+        "TurnLeft": [
+          16,
+          16
+        ],
+        "GoDown": [
+          123,
+          123
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 6.451518625541607,
+      "trajectory_points": 91,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_13",
+      "steps": 345,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 3.3000290375180124e-09,
+      "yaw_motion_p95_deg": 90.00000000664245,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 85,
+        "TurnRight": 9,
+        "TurnLeft": 6,
+        "GoUp": 102,
+        "GoDown": 142
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          102,
+          102
+        ],
+        "GoDown": [
+          142,
+          142
+        ],
+        "MoveForward": [
+          85,
+          85
+        ],
+        "TurnLeft": [
+          6,
+          6
+        ],
+        "TurnRight": [
+          9,
+          9
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 18.228878494232294,
+      "trajectory_points": 100,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_13",
+      "steps": 301,
+      "zero_direction_vectors": 1,
+      "yaw_motion_median_deg": 1.3347642998417053e-09,
+      "yaw_motion_p95_deg": 179.9999999959607,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 115,
+        "TurnRight": 16,
+        "TurnLeft": 17,
+        "GoUp": 59,
+        "GoDown": 93
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          93,
+          93
+        ],
+        "MoveForward": [
+          115,
+          115
+        ],
+        "TurnLeft": [
+          17,
+          17
+        ],
+        "TurnRight": [
+          16,
+          16
+        ],
+        "GoUp": [
+          59,
+          59
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 16.59429173229499,
+      "trajectory_points": 77,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_13",
+      "steps": 360,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 89.99999999780735,
+      "yaw_motion_p95_deg": 99.68420005628273,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 150,
+        "TurnRight": 29,
+        "TurnLeft": 15,
+        "GoUp": 65,
+        "GoDown": 100
+      },
+      "semantic_agreement": {
+        "MoveForward": [
+          150,
+          150
+        ],
+        "TurnRight": [
+          29,
+          29
+        ],
+        "TurnLeft": [
+          15,
+          15
+        ],
+        "GoDown": [
+          100,
+          100
+        ],
+        "GoUp": [
+          65,
+          65
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 1.4851147886512803,
+      "trajectory_points": 84,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_17",
+      "steps": 74,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 2.0239692532095773e-07,
+      "yaw_motion_p95_deg": 0.24915171502519767,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 34,
+        "TurnRight": 1,
+        "TurnLeft": 3,
+        "GoUp": 0,
+        "GoDown": 35
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          35,
+          35
+        ],
+        "TurnLeft": [
+          3,
+          3
+        ],
+        "MoveForward": [
+          34,
+          34
+        ],
+        "TurnRight": [
+          1,
+          1
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 6.729751735831475,
+      "trajectory_points": 268,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_17",
+      "steps": 90,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 0.0001433967208451721,
+      "yaw_motion_p95_deg": 0.511116623780133,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 30,
+        "TurnRight": 2,
+        "TurnLeft": 3,
+        "GoUp": 0,
+        "GoDown": 54
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          54,
+          54
+        ],
+        "MoveForward": [
+          30,
+          30
+        ],
+        "TurnLeft": [
+          3,
+          3
+        ],
+        "TurnRight": [
+          2,
+          2
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 12.7659505226521,
+      "trajectory_points": 49,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_17",
+      "steps": 62,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 9.005905969407385e-09,
+      "yaw_motion_p95_deg": 0.13337617283739217,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 13,
+        "TurnRight": 1,
+        "TurnLeft": 2,
+        "GoUp": 0,
+        "GoDown": 45
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          45,
+          45
+        ],
+        "TurnLeft": [
+          2,
+          2
+        ],
+        "MoveForward": [
+          13,
+          13
+        ],
+        "TurnRight": [
+          1,
+          1
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 20.111899453811866,
+      "trajectory_points": 98,
+      "success": false,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_18",
+      "steps": 401,
+      "zero_direction_vectors": 3,
+      "yaw_motion_median_deg": 57.9209596792467,
+      "yaw_motion_p95_deg": 101.13777302306676,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 130,
+        "TurnRight": 18,
+        "TurnLeft": 39,
+        "GoUp": 102,
+        "GoDown": 111
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          111,
+          111
+        ],
+        "MoveForward": [
+          130,
+          130
+        ],
+        "TurnLeft": [
+          39,
+          39
+        ],
+        "TurnRight": [
+          18,
+          18
+        ],
+        "GoUp": [
+          102,
+          102
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 6.48199495360797,
+      "trajectory_points": 316,
+      "success": false,
+      "stop_reason": "max_steps"
+    },
+    {
+      "map": "cambridge_block_18",
+      "steps": 236,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 1.8016951715180012e-09,
+      "yaw_motion_p95_deg": 90.00000000109496,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 57,
+        "TurnRight": 5,
+        "TurnLeft": 5,
+        "GoUp": 68,
+        "GoDown": 100
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          68,
+          68
+        ],
+        "MoveForward": [
+          57,
+          57
+        ],
+        "GoDown": [
+          100,
+          100
+        ],
+        "TurnRight": [
+          5,
+          5
+        ],
+        "TurnLeft": [
+          5,
+          5
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 0.5705851855055164,
+      "trajectory_points": 115,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_18",
+      "steps": 103,
+      "zero_direction_vectors": 3,
+      "yaw_motion_median_deg": 89.99999999737338,
+      "yaw_motion_p95_deg": 101.21451032624373,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 31,
+        "TurnRight": 4,
+        "TurnLeft": 5,
+        "GoUp": 5,
+        "GoDown": 57
+      },
+      "semantic_agreement": {
+        "TurnRight": [
+          4,
+          4
+        ],
+        "MoveForward": [
+          31,
+          31
+        ],
+        "TurnLeft": [
+          5,
+          5
+        ],
+        "GoDown": [
+          57,
+          57
+        ],
+        "GoUp": [
+          5,
+          5
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 4.359418165178316,
+      "trajectory_points": 57,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_18",
+      "steps": 203,
+      "zero_direction_vectors": 16,
+      "yaw_motion_median_deg": 87.71596752868814,
+      "yaw_motion_p95_deg": 112.90610945171439,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 57,
+        "TurnRight": 25,
+        "TurnLeft": 5,
+        "GoUp": 33,
+        "GoDown": 82
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          33,
+          33
+        ],
+        "TurnRight": [
+          25,
+          25
+        ],
+        "MoveForward": [
+          57,
+          57
+        ],
+        "TurnLeft": [
+          5,
+          5
+        ],
+        "GoDown": [
+          82,
+          82
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 3.8156581080319047,
+      "trajectory_points": 105,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_18",
+      "steps": 202,
+      "zero_direction_vectors": 4,
+      "yaw_motion_median_deg": 1.2851723159455668,
+      "yaw_motion_p95_deg": 179.99999999131754,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 37,
+        "TurnRight": 8,
+        "TurnLeft": 14,
+        "GoUp": 53,
+        "GoDown": 89
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          89,
+          89
+        ],
+        "MoveForward": [
+          37,
+          37
+        ],
+        "TurnRight": [
+          8,
+          8
+        ],
+        "TurnLeft": [
+          14,
+          14
+        ],
+        "GoUp": [
+          53,
+          53
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 9.90413808952878,
+      "trajectory_points": 56,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_19",
+      "steps": 193,
+      "zero_direction_vectors": 29,
+      "yaw_motion_median_deg": 11.47824595361574,
+      "yaw_motion_p95_deg": 104.92058605445496,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 28,
+        "TurnRight": 5,
+        "TurnLeft": 2,
+        "GoUp": 56,
+        "GoDown": 101
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          56,
+          56
+        ],
+        "MoveForward": [
+          28,
+          28
+        ],
+        "TurnRight": [
+          5,
+          5
+        ],
+        "TurnLeft": [
+          2,
+          2
+        ],
+        "GoDown": [
+          101,
+          101
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 12.654530653516208,
+      "trajectory_points": 34,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_19",
+      "steps": 108,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 1.0561400764142657e-08,
+      "yaw_motion_p95_deg": 0.05002383053763451,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 49,
+        "TurnRight": 8,
+        "TurnLeft": 5,
+        "GoUp": 0,
+        "GoDown": 45
+      },
+      "semantic_agreement": {
+        "MoveForward": [
+          49,
+          49
+        ],
+        "GoDown": [
+          45,
+          45
+        ],
+        "TurnRight": [
+          8,
+          8
+        ],
+        "TurnLeft": [
+          5,
+          5
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 10.214923123973684,
+      "trajectory_points": 728,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_19",
+      "steps": 187,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 3.3184889768892266e-09,
+      "yaw_motion_p95_deg": 179.99999999858508,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 66,
+        "TurnRight": 2,
+        "TurnLeft": 3,
+        "GoUp": 36,
+        "GoDown": 79
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          36,
+          36
+        ],
+        "MoveForward": [
+          66,
+          66
+        ],
+        "GoDown": [
+          79,
+          79
+        ],
+        "TurnLeft": [
+          3,
+          3
+        ],
+        "TurnRight": [
+          2,
+          2
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 3.611459481736718,
+      "trajectory_points": 83,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_19",
+      "steps": 401,
+      "zero_direction_vectors": 23,
+      "yaw_motion_median_deg": 89.99999999631686,
+      "yaw_motion_p95_deg": 179.90462955457656,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 137,
+        "TurnRight": 28,
+        "TurnLeft": 24,
+        "GoUp": 94,
+        "GoDown": 117
+      },
+      "semantic_agreement": {
+        "MoveForward": [
+          137,
+          137
+        ],
+        "TurnRight": [
+          28,
+          28
+        ],
+        "GoUp": [
+          94,
+          94
+        ],
+        "TurnLeft": [
+          24,
+          24
+        ],
+        "GoDown": [
+          117,
+          117
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 21.345792156042332,
+      "trajectory_points": 113,
+      "success": false,
+      "stop_reason": "max_steps"
+    },
+    {
+      "map": "cambridge_block_20",
+      "steps": 248,
+      "zero_direction_vectors": 27,
+      "yaw_motion_median_deg": 89.99999999883948,
+      "yaw_motion_p95_deg": 90.00000000114053,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 143,
+        "TurnRight": 22,
+        "TurnLeft": 27,
+        "GoUp": 3,
+        "GoDown": 52
+      },
+      "semantic_agreement": {
+        "TurnLeft": [
+          27,
+          27
+        ],
+        "MoveForward": [
+          143,
+          143
+        ],
+        "TurnRight": [
+          22,
+          22
+        ],
+        "GoUp": [
+          3,
+          3
+        ],
+        "GoDown": [
+          52,
+          52
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 15.735278882194919,
+      "trajectory_points": 162,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_20",
+      "steps": 131,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 3.283897264173629e-09,
+      "yaw_motion_p95_deg": 0.29367219445928733,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 69,
+        "TurnRight": 8,
+        "TurnLeft": 8,
+        "GoUp": 0,
+        "GoDown": 45
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          45,
+          45
+        ],
+        "MoveForward": [
+          69,
+          69
+        ],
+        "TurnLeft": [
+          8,
+          8
+        ],
+        "TurnRight": [
+          8,
+          8
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 9.05640788081506,
+      "trajectory_points": 298,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_20",
+      "steps": 158,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 5.619963788833679e-09,
+      "yaw_motion_p95_deg": 0.3739375604476115,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 83,
+        "TurnRight": 12,
+        "TurnLeft": 9,
+        "GoUp": 3,
+        "GoDown": 50
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          3,
+          3
+        ],
+        "MoveForward": [
+          83,
+          83
+        ],
+        "TurnLeft": [
+          9,
+          9
+        ],
+        "TurnRight": [
+          12,
+          12
+        ],
+        "GoDown": [
+          50,
+          50
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 4.237991851622326,
+      "trajectory_points": 438,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_20",
+      "steps": 140,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 6.648415228412996e-09,
+      "yaw_motion_p95_deg": 28.76804059377932,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 64,
+        "TurnRight": 6,
+        "TurnLeft": 15,
+        "GoUp": 0,
+        "GoDown": 54
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          54,
+          54
+        ],
+        "TurnLeft": [
+          15,
+          15
+        ],
+        "MoveForward": [
+          64,
+          64
+        ],
+        "TurnRight": [
+          6,
+          6
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 19.936016644369456,
+      "trajectory_points": 42,
+      "success": false,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_20",
+      "steps": 391,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 90.00000000217443,
+      "yaw_motion_p95_deg": 127.7077340317765,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 128,
+        "TurnRight": 41,
+        "TurnLeft": 19,
+        "GoUp": 80,
+        "GoDown": 122
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          80,
+          80
+        ],
+        "TurnRight": [
+          41,
+          41
+        ],
+        "MoveForward": [
+          128,
+          128
+        ],
+        "TurnLeft": [
+          19,
+          19
+        ],
+        "GoDown": [
+          122,
+          122
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 5.8057125545080694,
+      "trajectory_points": 201,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_20",
+      "steps": 80,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 0.0015586842022489707,
+      "yaw_motion_p95_deg": 2.438296687683136,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 28,
+        "TurnRight": 8,
+        "TurnLeft": 1,
+        "GoUp": 0,
+        "GoDown": 42
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          42,
+          42
+        ],
+        "TurnRight": [
+          8,
+          8
+        ],
+        "MoveForward": [
+          28,
+          28
+        ],
+        "TurnLeft": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 12.297892366983545,
+      "trajectory_points": 45,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_20",
+      "steps": 84,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 6.59909118641286e-09,
+      "yaw_motion_p95_deg": 179.99999999633113,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 29,
+        "TurnRight": 1,
+        "TurnLeft": 4,
+        "GoUp": 8,
+        "GoDown": 41
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          8,
+          8
+        ],
+        "TurnLeft": [
+          4,
+          4
+        ],
+        "MoveForward": [
+          29,
+          29
+        ],
+        "GoDown": [
+          41,
+          41
+        ],
+        "TurnRight": [
+          1,
+          1
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 10.525270432519433,
+      "trajectory_points": 43,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_20",
+      "steps": 131,
+      "zero_direction_vectors": 10,
+      "yaw_motion_median_deg": 0.009125028339785502,
+      "yaw_motion_p95_deg": 0.5886809666814348,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 33,
+        "TurnRight": 2,
+        "TurnLeft": 2,
+        "GoUp": 28,
+        "GoDown": 65
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          65,
+          65
+        ],
+        "MoveForward": [
+          33,
+          33
+        ],
+        "TurnLeft": [
+          2,
+          2
+        ],
+        "TurnRight": [
+          2,
+          2
+        ],
+        "GoUp": [
+          28,
+          28
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 6.000453388099332,
+      "trajectory_points": 127,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_20",
+      "steps": 401,
+      "zero_direction_vectors": 136,
+      "yaw_motion_median_deg": 0.0,
+      "yaw_motion_p95_deg": 90.00000037570439,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 245,
+        "TurnRight": 27,
+        "TurnLeft": 31,
+        "GoUp": 47,
+        "GoDown": 50
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          50,
+          50
+        ],
+        "GoUp": [
+          47,
+          47
+        ],
+        "TurnRight": [
+          27,
+          27
+        ],
+        "MoveForward": [
+          245,
+          245
+        ],
+        "TurnLeft": [
+          31,
+          31
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 6.166921694716056,
+      "trajectory_points": 166,
+      "success": false,
+      "stop_reason": "max_steps"
+    },
+    {
+      "map": "cambridge_block_20",
+      "steps": 69,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 90.00000000142728,
+      "yaw_motion_p95_deg": 90.00000000197278,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 13,
+        "TurnRight": 4,
+        "TurnLeft": 1,
+        "GoUp": 4,
+        "GoDown": 46
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          4,
+          4
+        ],
+        "GoDown": [
+          46,
+          46
+        ],
+        "TurnRight": [
+          4,
+          4
+        ],
+        "MoveForward": [
+          13,
+          13
+        ],
+        "TurnLeft": [
+          1,
+          1
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 6.678990640268995,
+      "trajectory_points": 24,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_20",
+      "steps": 159,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 0.2163722392130335,
+      "yaw_motion_p95_deg": 109.71453447396104,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 75,
+        "TurnRight": 7,
+        "TurnLeft": 15,
+        "GoUp": 8,
+        "GoDown": 53
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          53,
+          53
+        ],
+        "TurnLeft": [
+          15,
+          15
+        ],
+        "MoveForward": [
+          73,
+          73
+        ],
+        "TurnRight": [
+          6,
+          6
+        ],
+        "GoUp": [
+          6,
+          6
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 3.6247511848053175,
+      "trajectory_points": 54,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_20",
+      "steps": 195,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 3.7578380783678705e-09,
+      "yaw_motion_p95_deg": 10.359097846142982,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 53,
+        "TurnRight": 6,
+        "TurnLeft": 4,
+        "GoUp": 49,
+        "GoDown": 82
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          82,
+          82
+        ],
+        "MoveForward": [
+          53,
+          53
+        ],
+        "TurnRight": [
+          6,
+          6
+        ],
+        "TurnLeft": [
+          4,
+          4
+        ],
+        "GoUp": [
+          49,
+          49
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 21.372435167133684,
+      "trajectory_points": 45,
+      "success": false,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_20",
+      "steps": 78,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 2.2895566374420726e-08,
+      "yaw_motion_p95_deg": 0.32408754088303693,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 23,
+        "TurnRight": 2,
+        "TurnLeft": 4,
+        "GoUp": 0,
+        "GoDown": 48
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          48,
+          48
+        ],
+        "MoveForward": [
+          23,
+          23
+        ],
+        "TurnRight": [
+          2,
+          2
+        ],
+        "TurnLeft": [
+          4,
+          4
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 5.111259359628026,
+      "trajectory_points": 230,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_20",
+      "steps": 219,
+      "zero_direction_vectors": 87,
+      "yaw_motion_median_deg": 2.1827129001386048e-09,
+      "yaw_motion_p95_deg": 179.9999999968729,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 63,
+        "TurnRight": 6,
+        "TurnLeft": 11,
+        "GoUp": 44,
+        "GoDown": 94
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          44,
+          44
+        ],
+        "TurnRight": [
+          6,
+          6
+        ],
+        "MoveForward": [
+          63,
+          63
+        ],
+        "TurnLeft": [
+          11,
+          11
+        ],
+        "GoDown": [
+          94,
+          94
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 0.4909163479381372,
+      "trajectory_points": 89,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_20",
+      "steps": 236,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 1.8341877181438326e-09,
+      "yaw_motion_p95_deg": 91.10037104909192,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 66,
+        "TurnRight": 0,
+        "TurnLeft": 3,
+        "GoUp": 68,
+        "GoDown": 98
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          98,
+          98
+        ],
+        "MoveForward": [
+          66,
+          66
+        ],
+        "GoUp": [
+          68,
+          68
+        ],
+        "TurnLeft": [
+          3,
+          3
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 11.861717704643238,
+      "trajectory_points": 54,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_20",
+      "steps": 208,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 0.24703022528942203,
+      "yaw_motion_p95_deg": 17.077831631151135,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 66,
+        "TurnRight": 11,
+        "TurnLeft": 7,
+        "GoUp": 38,
+        "GoDown": 85
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          38,
+          38
+        ],
+        "MoveForward": [
+          66,
+          66
+        ],
+        "GoDown": [
+          85,
+          85
+        ],
+        "TurnLeft": [
+          7,
+          7
+        ],
+        "TurnRight": [
+          11,
+          11
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 25.46722163250072,
+      "trajectory_points": 119,
+      "success": false,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_21",
+      "steps": 299,
+      "zero_direction_vectors": 8,
+      "yaw_motion_median_deg": 89.99999999980835,
+      "yaw_motion_p95_deg": 90.00049848141128,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 119,
+        "TurnRight": 20,
+        "TurnLeft": 17,
+        "GoUp": 54,
+        "GoDown": 88
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          54,
+          54
+        ],
+        "TurnLeft": [
+          17,
+          17
+        ],
+        "MoveForward": [
+          119,
+          119
+        ],
+        "TurnRight": [
+          20,
+          20
+        ],
+        "GoDown": [
+          88,
+          88
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 10.719926389830423,
+      "trajectory_points": 83,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_21",
+      "steps": 56,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 0.038145347801405806,
+      "yaw_motion_p95_deg": 3.7867785488250862,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 4,
+        "TurnRight": 5,
+        "TurnLeft": 0,
+        "GoUp": 0,
+        "GoDown": 46
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          46,
+          46
+        ],
+        "TurnRight": [
+          5,
+          5
+        ],
+        "MoveForward": [
+          4,
+          4
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 16.25590940279264,
+      "trajectory_points": 8,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_21",
+      "steps": 401,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 4.611778843684647e-09,
+      "yaw_motion_p95_deg": 0.043513103069370715,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 63,
+        "TurnRight": 7,
+        "TurnLeft": 3,
+        "GoUp": 152,
+        "GoDown": 175
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          152,
+          152
+        ],
+        "MoveForward": [
+          63,
+          63
+        ],
+        "GoDown": [
+          175,
+          175
+        ],
+        "TurnRight": [
+          7,
+          7
+        ],
+        "TurnLeft": [
+          3,
+          3
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 17.261573176668726,
+      "trajectory_points": 144,
+      "success": false,
+      "stop_reason": "max_steps"
+    },
+    {
+      "map": "cambridge_block_21",
+      "steps": 79,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 3.277828765841397e-09,
+      "yaw_motion_p95_deg": 130.50000000311576,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 34,
+        "TurnRight": 5,
+        "TurnLeft": 2,
+        "GoUp": 0,
+        "GoDown": 37
+      },
+      "semantic_agreement": {
+        "MoveForward": [
+          34,
+          34
+        ],
+        "TurnRight": [
+          5,
+          5
+        ],
+        "TurnLeft": [
+          2,
+          2
+        ],
+        "GoDown": [
+          37,
+          37
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 4.197967920889904,
+      "trajectory_points": 26,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_21",
+      "steps": 183,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 0.924500460821994,
+      "yaw_motion_p95_deg": 90.7124823921399,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 43,
+        "TurnRight": 7,
+        "TurnLeft": 10,
+        "GoUp": 45,
+        "GoDown": 77
+      },
+      "semantic_agreement": {
+        "TurnLeft": [
+          10,
+          10
+        ],
+        "MoveForward": [
+          43,
+          43
+        ],
+        "TurnRight": [
+          7,
+          7
+        ],
+        "GoDown": [
+          77,
+          77
+        ],
+        "GoUp": [
+          45,
+          45
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 4.446920504856847,
+      "trajectory_points": 46,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_21",
+      "steps": 267,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 2.597749841632142e-09,
+      "yaw_motion_p95_deg": 4.176921957638103e-09,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 44,
+        "TurnRight": 5,
+        "TurnLeft": 4,
+        "GoUp": 80,
+        "GoDown": 133
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          80,
+          80
+        ],
+        "GoDown": [
+          133,
+          133
+        ],
+        "TurnLeft": [
+          4,
+          4
+        ],
+        "MoveForward": [
+          44,
+          44
+        ],
+        "TurnRight": [
+          5,
+          5
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 1.8638721959939277,
+      "trajectory_points": 75,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_21",
+      "steps": 99,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 0.7635365730816585,
+      "yaw_motion_p95_deg": 7.275974655213693,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 44,
+        "TurnRight": 4,
+        "TurnLeft": 5,
+        "GoUp": 0,
+        "GoDown": 45
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          45,
+          45
+        ],
+        "TurnLeft": [
+          5,
+          5
+        ],
+        "MoveForward": [
+          44,
+          44
+        ],
+        "TurnRight": [
+          4,
+          4
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 0.6392215368310372,
+      "trajectory_points": 34,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_21",
+      "steps": 244,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 0.10218632679075865,
+      "yaw_motion_p95_deg": 145.06784819613517,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 77,
+        "TurnRight": 8,
+        "TurnLeft": 16,
+        "GoUp": 43,
+        "GoDown": 99
+      },
+      "semantic_agreement": {
+        "MoveForward": [
+          77,
+          77
+        ],
+        "GoUp": [
+          43,
+          43
+        ],
+        "TurnLeft": [
+          16,
+          16
+        ],
+        "TurnRight": [
+          8,
+          8
+        ],
+        "GoDown": [
+          99,
+          99
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 3.327242209093351,
+      "trajectory_points": 73,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_21",
+      "steps": 120,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 3.042200552819854e-09,
+      "yaw_motion_p95_deg": 0.15169101393089948,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 68,
+        "TurnRight": 4,
+        "TurnLeft": 6,
+        "GoUp": 0,
+        "GoDown": 41
+      },
+      "semantic_agreement": {
+        "MoveForward": [
+          68,
+          68
+        ],
+        "TurnLeft": [
+          6,
+          6
+        ],
+        "GoDown": [
+          41,
+          41
+        ],
+        "TurnRight": [
+          4,
+          4
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 5.660922091198673,
+      "trajectory_points": 396,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_21",
+      "steps": 168,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 9.557694039985126e-10,
+      "yaw_motion_p95_deg": 139.49999999764032,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 81,
+        "TurnRight": 15,
+        "TurnLeft": 19,
+        "GoUp": 1,
+        "GoDown": 51
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          51,
+          51
+        ],
+        "TurnLeft": [
+          19,
+          19
+        ],
+        "MoveForward": [
+          81,
+          81
+        ],
+        "TurnRight": [
+          15,
+          15
+        ],
+        "GoUp": [
+          1,
+          1
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 12.737182849232333,
+      "trajectory_points": 70,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_21",
+      "steps": 140,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 90.00001746538591,
+      "yaw_motion_p95_deg": 90.12310473353958,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 77,
+        "TurnRight": 5,
+        "TurnLeft": 8,
+        "GoUp": 0,
+        "GoDown": 49
+      },
+      "semantic_agreement": {
+        "MoveForward": [
+          76,
+          76
+        ],
+        "TurnLeft": [
+          7,
+          7
+        ],
+        "TurnRight": [
+          5,
+          5
+        ],
+        "GoDown": [
+          49,
+          49
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 11.160641029785268,
+      "trajectory_points": 67,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_21",
+      "steps": 94,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 0.21386583237299397,
+      "yaw_motion_p95_deg": 4.874228586680541,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 44,
+        "TurnRight": 3,
+        "TurnLeft": 5,
+        "GoUp": 0,
+        "GoDown": 41
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          41,
+          41
+        ],
+        "MoveForward": [
+          44,
+          44
+        ],
+        "TurnLeft": [
+          5,
+          5
+        ],
+        "TurnRight": [
+          3,
+          3
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 1.1429150130598944,
+      "trajectory_points": 57,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_21",
+      "steps": 236,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 35.20315777497672,
+      "yaw_motion_p95_deg": 160.36229750573756,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 58,
+        "TurnRight": 14,
+        "TurnLeft": 21,
+        "GoUp": 53,
+        "GoDown": 89
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          53,
+          53
+        ],
+        "TurnRight": [
+          14,
+          14
+        ],
+        "MoveForward": [
+          58,
+          58
+        ],
+        "TurnLeft": [
+          21,
+          21
+        ],
+        "GoDown": [
+          89,
+          89
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 19.687566109958798,
+      "trajectory_points": 55,
+      "success": false,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_21",
+      "steps": 331,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 1.6950575341578925e-09,
+      "yaw_motion_p95_deg": 0.020789484487527207,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 70,
+        "TurnRight": 3,
+        "TurnLeft": 6,
+        "GoUp": 108,
+        "GoDown": 143
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          108,
+          108
+        ],
+        "MoveForward": [
+          70,
+          70
+        ],
+        "GoDown": [
+          143,
+          143
+        ],
+        "TurnLeft": [
+          6,
+          6
+        ],
+        "TurnRight": [
+          3,
+          3
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 1.254514069569227,
+      "trajectory_points": 125,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_21",
+      "steps": 252,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 1.142590910457026,
+      "yaw_motion_p95_deg": 92.36267527470814,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 70,
+        "TurnRight": 25,
+        "TurnLeft": 15,
+        "GoUp": 51,
+        "GoDown": 90
+      },
+      "semantic_agreement": {
+        "TurnRight": [
+          25,
+          25
+        ],
+        "MoveForward": [
+          70,
+          70
+        ],
+        "GoDown": [
+          90,
+          90
+        ],
+        "GoUp": [
+          51,
+          51
+        ],
+        "TurnLeft": [
+          15,
+          15
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 7.940271927603578,
+      "trajectory_points": 54,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_21",
+      "steps": 198,
+      "zero_direction_vectors": 64,
+      "yaw_motion_median_deg": 3.385509625137026e-10,
+      "yaw_motion_p95_deg": 7.0462820433641955,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 92,
+        "TurnRight": 11,
+        "TurnLeft": 13,
+        "GoUp": 24,
+        "GoDown": 57
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          24,
+          24
+        ],
+        "TurnLeft": [
+          13,
+          13
+        ],
+        "MoveForward": [
+          92,
+          92
+        ],
+        "TurnRight": [
+          11,
+          11
+        ],
+        "GoDown": [
+          57,
+          57
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 6.2963054823892195,
+      "trajectory_points": 65,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_23",
+      "steps": 104,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 2.3540175752822296e-09,
+      "yaw_motion_p95_deg": 12.622396329351385,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 48,
+        "TurnRight": 4,
+        "TurnLeft": 3,
+        "GoUp": 0,
+        "GoDown": 48
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          48,
+          48
+        ],
+        "MoveForward": [
+          48,
+          48
+        ],
+        "TurnLeft": [
+          3,
+          3
+        ],
+        "TurnRight": [
+          4,
+          4
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 9.69167690610759,
+      "trajectory_points": 83,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_23",
+      "steps": 62,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 5.454066056648542e-09,
+      "yaw_motion_p95_deg": 14.464196467757526,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 14,
+        "TurnRight": 0,
+        "TurnLeft": 1,
+        "GoUp": 0,
+        "GoDown": 46
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          46,
+          46
+        ],
+        "MoveForward": [
+          14,
+          14
+        ],
+        "TurnLeft": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 20.61506409561786,
+      "trajectory_points": 35,
+      "success": false,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_25",
+      "steps": 141,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 9.250961346504784e-10,
+      "yaw_motion_p95_deg": 3.3093404294034644e-09,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 18,
+        "TurnRight": 1,
+        "TurnLeft": 7,
+        "GoUp": 37,
+        "GoDown": 77
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          37,
+          37
+        ],
+        "GoDown": [
+          77,
+          77
+        ],
+        "TurnLeft": [
+          7,
+          7
+        ],
+        "MoveForward": [
+          18,
+          18
+        ],
+        "TurnRight": [
+          1,
+          1
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 9.378348516054201,
+      "trajectory_points": 42,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_25",
+      "steps": 73,
+      "zero_direction_vectors": 19,
+      "yaw_motion_median_deg": 1.3810604537850882e-09,
+      "yaw_motion_p95_deg": 90.80493533265329,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 23,
+        "TurnRight": 8,
+        "TurnLeft": 6,
+        "GoUp": 0,
+        "GoDown": 35
+      },
+      "semantic_agreement": {
+        "TurnLeft": [
+          6,
+          6
+        ],
+        "MoveForward": [
+          23,
+          23
+        ],
+        "GoDown": [
+          35,
+          35
+        ],
+        "TurnRight": [
+          8,
+          8
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 8.815322426840586,
+      "trajectory_points": 28,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_28",
+      "steps": 131,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 0.1394772414866773,
+      "yaw_motion_p95_deg": 90.37380841956305,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 35,
+        "TurnRight": 2,
+        "TurnLeft": 7,
+        "GoUp": 16,
+        "GoDown": 70
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          70,
+          70
+        ],
+        "TurnLeft": [
+          7,
+          7
+        ],
+        "MoveForward": [
+          35,
+          35
+        ],
+        "TurnRight": [
+          2,
+          2
+        ],
+        "GoUp": [
+          16,
+          16
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 6.442459040946641,
+      "trajectory_points": 133,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_28",
+      "steps": 118,
+      "zero_direction_vectors": 36,
+      "yaw_motion_median_deg": 1.8476071144558635e-08,
+      "yaw_motion_p95_deg": 7.546787070407942e-08,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 3,
+        "TurnRight": 0,
+        "TurnLeft": 1,
+        "GoUp": 31,
+        "GoDown": 82
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          31,
+          31
+        ],
+        "GoDown": [
+          82,
+          82
+        ],
+        "TurnLeft": [
+          1,
+          1
+        ],
+        "MoveForward": [
+          3,
+          3
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 4.572302620005397,
+      "trajectory_points": 80,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_28",
+      "steps": 229,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 7.7744813527124546,
+      "yaw_motion_p95_deg": 125.6367146768916,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 87,
+        "TurnRight": 13,
+        "TurnLeft": 7,
+        "GoUp": 44,
+        "GoDown": 77
+      },
+      "semantic_agreement": {
+        "TurnRight": [
+          12,
+          12
+        ],
+        "MoveForward": [
+          86,
+          86
+        ],
+        "GoDown": [
+          77,
+          77
+        ],
+        "TurnLeft": [
+          7,
+          7
+        ],
+        "GoUp": [
+          44,
+          44
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 3.8461538666396926,
+      "trajectory_points": 28,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_28",
+      "steps": 224,
+      "zero_direction_vectors": 62,
+      "yaw_motion_median_deg": 3.1421844697863408e-09,
+      "yaw_motion_p95_deg": 118.58437431494451,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 87,
+        "TurnRight": 10,
+        "TurnLeft": 11,
+        "GoUp": 37,
+        "GoDown": 78
+      },
+      "semantic_agreement": {
+        "TurnLeft": [
+          11,
+          11
+        ],
+        "MoveForward": [
+          87,
+          87
+        ],
+        "TurnRight": [
+          10,
+          10
+        ],
+        "GoUp": [
+          37,
+          37
+        ],
+        "GoDown": [
+          78,
+          78
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 14.163197441490938,
+      "trajectory_points": 63,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_28",
+      "steps": 159,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 45.00000000054499,
+      "yaw_motion_p95_deg": 130.50000000080942,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 61,
+        "TurnRight": 11,
+        "TurnLeft": 21,
+        "GoUp": 8,
+        "GoDown": 57
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          57,
+          57
+        ],
+        "TurnLeft": [
+          21,
+          21
+        ],
+        "MoveForward": [
+          61,
+          61
+        ],
+        "TurnRight": [
+          11,
+          11
+        ],
+        "GoUp": [
+          8,
+          8
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 6.2625480524877295,
+      "trajectory_points": 66,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_28",
+      "steps": 143,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 2.2208922785348927e-09,
+      "yaw_motion_p95_deg": 0.19053948336908455,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 69,
+        "TurnRight": 7,
+        "TurnLeft": 10,
+        "GoUp": 0,
+        "GoDown": 56
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          56,
+          56
+        ],
+        "MoveForward": [
+          69,
+          69
+        ],
+        "TurnLeft": [
+          10,
+          10
+        ],
+        "TurnRight": [
+          7,
+          7
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 19.86103973049361,
+      "trajectory_points": 300,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_28",
+      "steps": 88,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 0.20798999141616986,
+      "yaw_motion_p95_deg": 97.47668398280078,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 22,
+        "TurnRight": 2,
+        "TurnLeft": 15,
+        "GoUp": 0,
+        "GoDown": 48
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          48,
+          48
+        ],
+        "MoveForward": [
+          22,
+          22
+        ],
+        "TurnRight": [
+          2,
+          2
+        ],
+        "TurnLeft": [
+          15,
+          15
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 12.05614777245141,
+      "trajectory_points": 36,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_28",
+      "steps": 272,
+      "zero_direction_vectors": 19,
+      "yaw_motion_median_deg": 70.0764137642785,
+      "yaw_motion_p95_deg": 177.74828250403655,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 116,
+        "TurnRight": 33,
+        "TurnLeft": 29,
+        "GoUp": 29,
+        "GoDown": 64
+      },
+      "semantic_agreement": {
+        "MoveForward": [
+          115,
+          115
+        ],
+        "TurnRight": [
+          33,
+          33
+        ],
+        "TurnLeft": [
+          29,
+          29
+        ],
+        "GoUp": [
+          29,
+          29
+        ],
+        "GoDown": [
+          64,
+          64
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 5.575559839630114,
+      "trajectory_points": 194,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_28",
+      "steps": 401,
+      "zero_direction_vectors": 28,
+      "yaw_motion_median_deg": 83.28404000415298,
+      "yaw_motion_p95_deg": 179.99918078407478,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 83,
+        "TurnRight": 24,
+        "TurnLeft": 11,
+        "GoUp": 150,
+        "GoDown": 132
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          150,
+          150
+        ],
+        "TurnRight": [
+          24,
+          24
+        ],
+        "MoveForward": [
+          83,
+          83
+        ],
+        "TurnLeft": [
+          11,
+          11
+        ],
+        "GoDown": [
+          132,
+          132
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 6.763729033723392,
+      "trajectory_points": 140,
+      "success": false,
+      "stop_reason": "max_steps"
+    },
+    {
+      "map": "cambridge_block_28",
+      "steps": 401,
+      "zero_direction_vectors": 23,
+      "yaw_motion_median_deg": 86.38050602445684,
+      "yaw_motion_p95_deg": 176.80213625782326,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 176,
+        "TurnRight": 26,
+        "TurnLeft": 31,
+        "GoUp": 68,
+        "GoDown": 99
+      },
+      "semantic_agreement": {
+        "TurnLeft": [
+          31,
+          31
+        ],
+        "MoveForward": [
+          176,
+          176
+        ],
+        "GoUp": [
+          68,
+          68
+        ],
+        "TurnRight": [
+          26,
+          26
+        ],
+        "GoDown": [
+          99,
+          99
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 5.770605787873578,
+      "trajectory_points": 126,
+      "success": false,
+      "stop_reason": "max_steps"
+    },
+    {
+      "map": "cambridge_block_28",
+      "steps": 222,
+      "zero_direction_vectors": 17,
+      "yaw_motion_median_deg": 0.06989103967390553,
+      "yaw_motion_p95_deg": 89.99987894846161,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 63,
+        "TurnRight": 3,
+        "TurnLeft": 18,
+        "GoUp": 41,
+        "GoDown": 96
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          96,
+          96
+        ],
+        "TurnLeft": [
+          18,
+          18
+        ],
+        "MoveForward": [
+          63,
+          63
+        ],
+        "GoUp": [
+          41,
+          41
+        ],
+        "TurnRight": [
+          3,
+          3
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 5.162287299858339,
+      "trajectory_points": 92,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_28",
+      "steps": 131,
+      "zero_direction_vectors": 1,
+      "yaw_motion_median_deg": 0.3962773941236616,
+      "yaw_motion_p95_deg": 168.6480386220216,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 42,
+        "TurnRight": 12,
+        "TurnLeft": 4,
+        "GoUp": 11,
+        "GoDown": 61
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          61,
+          61
+        ],
+        "MoveForward": [
+          42,
+          42
+        ],
+        "TurnLeft": [
+          4,
+          4
+        ],
+        "TurnRight": [
+          12,
+          12
+        ],
+        "GoUp": [
+          11,
+          11
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 11.089455054049214,
+      "trajectory_points": 34,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_28",
+      "steps": 61,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 0.0006750829897144233,
+      "yaw_motion_p95_deg": 0.23061639845143006,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 27,
+        "TurnRight": 3,
+        "TurnLeft": 1,
+        "GoUp": 0,
+        "GoDown": 29
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          29,
+          29
+        ],
+        "TurnRight": [
+          3,
+          3
+        ],
+        "MoveForward": [
+          27,
+          27
+        ],
+        "TurnLeft": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 18.742858276385885,
+      "trajectory_points": 20,
+      "success": false,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_28",
+      "steps": 195,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 1.3182940230718496,
+      "yaw_motion_p95_deg": 91.8344143280427,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 61,
+        "TurnRight": 10,
+        "TurnLeft": 6,
+        "GoUp": 35,
+        "GoDown": 82
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          82,
+          82
+        ],
+        "MoveForward": [
+          61,
+          61
+        ],
+        "TurnLeft": [
+          6,
+          6
+        ],
+        "TurnRight": [
+          10,
+          10
+        ],
+        "GoUp": [
+          35,
+          35
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 10.148459357462903,
+      "trajectory_points": 25,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_33",
+      "steps": 133,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 9.955390597355324e-10,
+      "yaw_motion_p95_deg": 98.99999999884372,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 80,
+        "TurnRight": 9,
+        "TurnLeft": 6,
+        "GoUp": 0,
+        "GoDown": 37
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          37,
+          37
+        ],
+        "MoveForward": [
+          79,
+          79
+        ],
+        "TurnRight": [
+          8,
+          8
+        ],
+        "TurnLeft": [
+          6,
+          6
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 8.636590861169571,
+      "trajectory_points": 50,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_33",
+      "steps": 282,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 90.0000000003323,
+      "yaw_motion_p95_deg": 179.99055162137213,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 71,
+        "TurnRight": 12,
+        "TurnLeft": 15,
+        "GoUp": 66,
+        "GoDown": 117
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          66,
+          66
+        ],
+        "TurnRight": [
+          12,
+          12
+        ],
+        "MoveForward": [
+          71,
+          71
+        ],
+        "TurnLeft": [
+          15,
+          15
+        ],
+        "GoDown": [
+          117,
+          117
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 24.59233975889488,
+      "trajectory_points": 51,
+      "success": false,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_33",
+      "steps": 179,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 0.49307569879266294,
+      "yaw_motion_p95_deg": 101.23367851517901,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 58,
+        "TurnRight": 7,
+        "TurnLeft": 13,
+        "GoUp": 29,
+        "GoDown": 71
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          71,
+          71
+        ],
+        "MoveForward": [
+          58,
+          58
+        ],
+        "GoUp": [
+          29,
+          29
+        ],
+        "TurnLeft": [
+          13,
+          13
+        ],
+        "TurnRight": [
+          7,
+          7
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 3.5513478419069,
+      "trajectory_points": 54,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_33",
+      "steps": 368,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 90.00000000014697,
+      "yaw_motion_p95_deg": 179.97875018442235,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 109,
+        "TurnRight": 52,
+        "TurnLeft": 20,
+        "GoUp": 68,
+        "GoDown": 118
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          68,
+          68
+        ],
+        "TurnRight": [
+          52,
+          52
+        ],
+        "MoveForward": [
+          109,
+          109
+        ],
+        "TurnLeft": [
+          20,
+          20
+        ],
+        "GoDown": [
+          118,
+          118
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 11.72165968303815,
+      "trajectory_points": 168,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_33",
+      "steps": 175,
+      "zero_direction_vectors": 0,
+      "yaw_motion_median_deg": 9.423000648357629e-05,
+      "yaw_motion_p95_deg": 2.780555007933367,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 36,
+        "TurnRight": 3,
+        "TurnLeft": 2,
+        "GoUp": 52,
+        "GoDown": 81
+      },
+      "semantic_agreement": {
+        "GoDown": [
+          81,
+          81
+        ],
+        "MoveForward": [
+          36,
+          36
+        ],
+        "GoUp": [
+          52,
+          52
+        ],
+        "TurnRight": [
+          3,
+          3
+        ],
+        "TurnLeft": [
+          2,
+          2
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 21.956241025889703,
+      "trajectory_points": 49,
+      "success": false,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_33",
+      "steps": 124,
+      "zero_direction_vectors": 16,
+      "yaw_motion_median_deg": 2.145703965865095e-09,
+      "yaw_motion_p95_deg": 6.977874893425196e-09,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 64,
+        "TurnRight": 7,
+        "TurnLeft": 7,
+        "GoUp": 5,
+        "GoDown": 40
+      },
+      "semantic_agreement": {
+        "MoveForward": [
+          64,
+          64
+        ],
+        "GoUp": [
+          5,
+          5
+        ],
+        "TurnLeft": [
+          7,
+          7
+        ],
+        "TurnRight": [
+          7,
+          7
+        ],
+        "GoDown": [
+          40,
+          40
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 9.967191017953345,
+      "trajectory_points": 66,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_33",
+      "steps": 117,
+      "zero_direction_vectors": 42,
+      "yaw_motion_median_deg": 2.552942187279684e-09,
+      "yaw_motion_p95_deg": 179.99999999578336,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 32,
+        "TurnRight": 1,
+        "TurnLeft": 3,
+        "GoUp": 18,
+        "GoDown": 62
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          18,
+          18
+        ],
+        "MoveForward": [
+          32,
+          32
+        ],
+        "TurnLeft": [
+          3,
+          3
+        ],
+        "GoDown": [
+          62,
+          62
+        ],
+        "TurnRight": [
+          1,
+          1
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 8.589681863562781,
+      "trajectory_points": 45,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    },
+    {
+      "map": "cambridge_block_33",
+      "steps": 256,
+      "zero_direction_vectors": 25,
+      "yaw_motion_median_deg": 9.94521282237464e-09,
+      "yaw_motion_p95_deg": 100.07323691477166,
+      "action_histogram": {
+        "Stop": 1,
+        "MoveForward": 66,
+        "TurnRight": 11,
+        "TurnLeft": 4,
+        "GoUp": 66,
+        "GoDown": 108
+      },
+      "semantic_agreement": {
+        "GoUp": [
+          66,
+          66
+        ],
+        "MoveForward": [
+          66,
+          66
+        ],
+        "GoDown": [
+          108,
+          108
+        ],
+        "TurnRight": [
+          11,
+          11
+        ],
+        "TurnLeft": [
+          4,
+          4
+        ],
+        "Stop": [
+          1,
+          1
+        ]
+      },
+      "executed_pose_mismatch": 0,
+      "marker_target_distance_m": 11.75120796209412,
+      "trajectory_points": 59,
+      "success": true,
+      "stop_reason": "teacher_stop_distance"
+    }
+  ]
+}
