@@ -633,12 +633,41 @@ def main() -> int:
     batch_size = int(cfg["batch_size"])
     if args.smoke:
         batch_size = int(cfg["smoke"].get("batch_size", batch_size))
+    steps_per_epoch = int(math.ceil(len(train_dataset) / batch_size))
+    if args.smoke:
+        total_steps = int(cfg["smoke"]["steps"])
+        epochs = int(math.ceil(total_steps / max(steps_per_epoch, 1)))
+    else:
+        epochs = int(cfg.get("epochs", 1))
+        total_steps = epochs * steps_per_epoch
+        # E3/E4 add samples per trajectory; a fixed update budget keeps the
+        # four ablations comparable (default 2751 for 22,002 / batch 8).
+        if cfg.get("total_steps") is not None:
+            total_steps = int(cfg["total_steps"])
     order_path = run_dir / "order.npy"
     if order_path.exists():
         order = np.load(order_path)
+        extended = False
     else:
         generator = torch.Generator().manual_seed(int(seed) * 100003 + 7)
         order = torch.randperm(len(train_dataset), generator=generator).numpy()
+        extended = True
+    # Resuming past one epoch (2751 -> 5502) needs more sample indices than the
+    # original permutation.  Append extra deterministic permutations; existing
+    # entries are preserved so the resumed run replays the same order.
+    needed = int(total_steps) * int(batch_size)
+    if len(order) < needed:
+        epoch_index = 1
+        while len(order) < needed:
+            generator = torch.Generator().manual_seed(
+                int(seed) * 100003 + 7 + epoch_index
+            )
+            extra = torch.randperm(len(train_dataset), generator=generator).numpy()
+            take = min(len(extra), needed - len(order))
+            order = np.concatenate([order, extra[:take]])
+            epoch_index += 1
+        extended = True
+    if extended:
         np.save(order_path, order)
     start_index = min(start_step * batch_size, len(order))
     sampler = order[start_index:] if start_index else order
@@ -651,17 +680,6 @@ def main() -> int:
         pin_memory=device.type == "cuda",
         drop_last=False,
     )
-    steps_per_epoch = int(math.ceil(len(train_dataset) / batch_size))
-    if args.smoke:
-        total_steps = int(cfg["smoke"]["steps"])
-        epochs = int(math.ceil(total_steps / max(steps_per_epoch, 1)))
-    else:
-        epochs = int(cfg.get("epochs", 1))
-        total_steps = epochs * steps_per_epoch
-        # E3/E4 add samples per trajectory; a fixed update budget keeps the
-        # four ablations comparable (default 2751 for 22,002 / batch 8).
-        if cfg.get("total_steps") is not None:
-            total_steps = int(cfg["total_steps"])
     checkpoint_fractions = (
         cfg.get("smoke", {}).get("checkpoint_fractions", [1.0])
         if args.smoke
@@ -670,6 +688,8 @@ def main() -> int:
     checkpoint_steps = _checkpoint_steps(
         total_steps, checkpoint_fractions
     )
+    if cfg.get("checkpoint_steps_abs"):
+        checkpoint_steps |= {int(v) for v in cfg["checkpoint_steps_abs"] if 0 < int(v) <= total_steps}
     (run_dir / "checkpoints").mkdir(parents=True, exist_ok=True)
 
     encoder_checkpoint = Path(cfg["encoder_checkpoint"])
@@ -893,6 +913,9 @@ def main() -> int:
                             "gpu_allocated_mb",
                         ):
                             writer.add_scalar(f"train/{key}", row[key], step)
+                state_every = int(cfg.get("state_every", 0) or 0)
+                if state_every > 0 and step % state_every == 0:
+                    _save_train_state()
                 if step in checkpoint_steps:
                     val_seen = _evaluate(
                         model, val_seen_dataset, val_seen_manifest,

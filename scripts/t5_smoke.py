@@ -526,6 +526,12 @@ def _build_token_cache(
                     )
                     if episode is not None:
                         train_episodes.append(episode)
+                        if len(train_episodes) % 100 == 0:
+                            print(
+                                f"  train episodes={len(train_episodes)} "
+                                f"frames={sum(len(e['actions']) for e in train_episodes)}",
+                                flush=True,
+                            )
         train_heatmaps = [
             heat for episode in train_episodes for heat in episode["heatmaps"]
         ]

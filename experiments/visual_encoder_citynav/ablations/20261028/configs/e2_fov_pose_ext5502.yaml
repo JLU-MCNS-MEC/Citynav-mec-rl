@@ -1,0 +1,42 @@
+# E2-FOV-Pose extended: resume 2751 -> 5502 total steps (seed 42)
+# Identical protocol to full_20261027_masks_b8 except the seed.
+seed: 42
+device: cuda
+total_steps: 5502
+steps_per_trajectory: 1
+splat_radius: 1
+visual_input: fpv
+pose_history: true
+bev_window_m: 128.0
+max_points: 4000000
+
+encoder_checkpoint: data_cache/weights/shared_encoder.pt
+
+candidate_stride_m: 48.0
+candidate_scales_m: [32.0, 64.0, 128.0]
+candidate_k: 16
+current_match_radius_m: 30.0
+target_match_radius_m: 40.0
+
+batch_size: 8
+epochs: 1
+lr_encoder: 0.00001
+lr_heads: 0.001
+weight_decay: 0.0001
+lambda_xview: 0.5
+lambda_retrieval: 0.5
+temperature: 0.07
+grad_clip: 1.0
+num_workers: 2
+val_samples: 256
+checkpoint_fractions: [1.0]
+checkpoint_steps_abs: [4127, 5502]
+state_every: 200
+log_every: 10
+
+smoke:
+  train_samples: 64
+  val_samples: 32
+  steps: 20
+  batch_size: 8
+  checkpoint_fractions: [1.0]
