@@ -51,6 +51,19 @@
 - 与 E1 的差异：E3 学会转向（TurnLeft 0.488 / TurnRight 0.146），但升降为 0；
   E1 相反（TurnLeft/Right 0，GoUp 0.269 / GoDown 0.694）
 
+## E2 完成（2751/2751，最佳在 2063）
+
+| 指标 | Val-Seen | Val-Unseen |
+|---|---:|---:|
+| action accuracy | 0.4102 | 0.4414 |
+| macro-F1 | 0.3247 | 0.3638 |
+| xview Top-1 / Top-5 | 0.0602 / 0.2249 | 0.0397 / 0.1825 |
+| R@1 / 5 / 10 | 0.0859 / 0.2695 / 0.3867 | 0.0664 / 0.1641 / 0.3047 |
+
+- best step 2063，score 0.2288；用时 170.6 分钟
+- best_encoder SHA-256 `f1958ff71d36744a4bd06d7130912f35b1c556b71b2a6c57b2d8e19b0d2cbd77`
+- 逐类动作（Val-Seen）：{'Stop': 0.8372093023255814, 'MoveForward': 0.5384615384615384, 'TurnRight': 0.0, 'TurnLeft': 0.0, 'GoUp': 0.2692307692307692, 'GoDown': 0.6938775510204082}
+
 ## 资源
 
 - 四组并行，GPU 显存约 28.5 GB / 97.9 GB
