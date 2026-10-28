@@ -174,6 +174,15 @@ def _parse_args() -> argparse.Namespace:
         help="START:END slice of selected val_unseen records",
     )
     parser.add_argument(
+        "--group-by-map",
+        action="store_true",
+        help=(
+            "collect the selected records grouped by map to avoid PLY cache "
+            "thrashing. Episodes are independent and keyed by identity, so the "
+            "merged token order is unchanged."
+        ),
+    )
+    parser.add_argument(
         "--reuse-retrieval",
         action="store_true",
         help=(
@@ -711,6 +720,8 @@ def _build_token_cache(
             )
             low, high = _parse_range(range_spec, len(records))
             records = records[low:high]
+            if getattr(args, "group_by_map", False):
+                records = sorted(records, key=lambda item: item.map_name)
             if range_spec is not None:
                 print(
                     f"  {split} record range {low}:{high} of {count} selected",
@@ -778,6 +789,8 @@ def _build_token_cache(
             )
             low, high = _parse_range(range_spec, len(records))
             records = records[low:high]
+            if getattr(args, "group_by_map", False):
+                records = sorted(records, key=lambda item: item.map_name)
             if range_spec is not None:
                 print(
                     f"  {split} record range {low}:{high} of {count} selected",

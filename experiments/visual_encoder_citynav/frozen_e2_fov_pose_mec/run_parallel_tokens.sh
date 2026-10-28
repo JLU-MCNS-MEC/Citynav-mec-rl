@@ -3,8 +3,10 @@
 #
 # Sizes (2026-10-28 decision):
 #   train_seen : 625 trajectories -> 1250 windows
-#   val_seen   :  88 trajectories -> ~176 windows
-#   val_unseen :  88 trajectories -> ~176 windows  (about 350 val windows)
+#   val_seen   :  88 requested, but the three protocol maps only hold 35
+#                  eligible trajectories -> ~70 windows (hard cap, logged)
+#   val_unseen : 140 trajectories -> ~280 windows
+# Total validation is therefore ~350 windows.
 #
 # Stage 1 runs four collectors in parallel over disjoint record ranges.  Every
 # episode is written to data_cache/t5_frozen_1000/tokens/shards immediately, so
@@ -24,7 +26,7 @@ MODE="${1:---all}"
 
 TRAIN=625
 VAL_SEEN=88
-VAL_UNSEEN=88
+VAL_UNSEEN=140
 STEPS=8
 
 export CITYNAV_DATA_ROOT="/home/20261024_1/Workspace/DATA/sbfnav-data"
@@ -51,15 +53,20 @@ collect() {
   echo "started ${name} pid=$! log=$OUT/token_${name}.log"
 }
 
-COMMON_COLLECT=(--token-shards --reuse-retrieval --collect-only)
+# --group-by-map only changes render order (episodes are identity-keyed); it
+# avoids reloading a PLY every episode when records round-robin across maps.
+COMMON_COLLECT=(--token-shards --reuse-retrieval --collect-only --group-by-map)
 
 if [ "$MODE" = "--all" ] || [ "$MODE" = "--collect-only" ]; then
-  collect train0 --train-range 0:209
-  collect train1 --train-range 209:418
-  collect train2 --train-range 418:625
-  collect val --train-range 0:0 --val-seen-range 0:88 --val-unseen-range 0:88
+  # train collectors must not also collect the validation splits
+  collect train0 --train-range 0:209 --val-seen-range 0:0 --val-unseen-range 0:0
+  collect train1 --train-range 209:418 --val-seen-range 0:0 --val-unseen-range 0:0
+  collect train2 --train-range 418:625 --val-seen-range 0:0 --val-unseen-range 0:0
+  # validation split over two processes (seen maps are shared; unseen is cut)
+  collect val0 --train-range 0:0 --val-seen-range 0:88 --val-unseen-range 0:70
+  collect val1 --train-range 0:0 --val-seen-range 0:0 --val-unseen-range 70:140
   status=0
-  for name in train0 train1 train2 val; do
+  for name in train0 train1 train2 val0 val1; do
     pid=$(cat "$OUT/pid_token_${name}")
     if wait "$pid"; then
       echo "collector ${name} finished OK"
