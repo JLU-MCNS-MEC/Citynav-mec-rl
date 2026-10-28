@@ -74,11 +74,12 @@ def main() -> int:
                 idx = np.linspace(
                     0, len(records) - 1, min(args.episodes_per_map, len(records))
                 ).astype(int)
+                cloud = store.get(map_name)  # cache load outside the timer
                 for i in idx:
                     record = records[int(i)]
                     pose = record.poses[len(record.poses) // 2]
                     t0 = time.perf_counter()
-                    _, ratio = render_current_rgb(store.get(map_name), pose, obs)
+                    _, ratio = render_current_rgb(cloud, pose, obs)
                     dt = time.perf_counter() - t0
                     ratios.append(ratio)
                     times.append(dt)
