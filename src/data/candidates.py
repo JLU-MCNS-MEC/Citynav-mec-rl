@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Sequence
@@ -85,6 +86,18 @@ def _library_key(
 def _cache_paths(map_name: str, key: str) -> tuple[Path, Path]:
     root = PROJECT_ROOT / "data_cache" / "candidates"
     return root / f"{map_name}_{key}.npz", root / f"{map_name}_{key}.json"
+
+
+def _atomic_savez(path: Path, **arrays) -> None:
+    """Write an npz atomically so concurrent readers never see a partial file.
+
+    Parallel token collectors all refresh the candidate embeddings cache; a
+    plain ``np.savez_compressed`` truncates in place and made other processes
+    fail with ``zipfile.BadZipFile``.
+    """
+    tmp_path = path.with_name(f"{path.name}.{os.getpid()}.tmp.npz")
+    np.savez_compressed(tmp_path, **arrays)
+    os.replace(tmp_path, path)
 
 
 def _grid_centers(bounds, stride_m: float) -> np.ndarray:
@@ -168,7 +181,7 @@ def build_candidate_library(
         finally:
             adapter.close()
         ensure_output_dir(npz_path.parent, data_config=data_config)
-        np.savez_compressed(
+        _atomic_savez(
             npz_path,
             centers=library.centers,
             scales=library.scales,
@@ -194,7 +207,7 @@ def build_candidate_library(
         library.embeddings = encode_candidate_images(
             library.images, encoder, device
         ).detach().cpu().numpy()
-        np.savez_compressed(
+        _atomic_savez(
             npz_path,
             centers=library.centers,
             scales=library.scales,

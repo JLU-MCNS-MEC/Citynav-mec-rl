@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import random
 import sys
 import time
@@ -73,6 +74,7 @@ from src.models.mec_common import build_spatial_heatmap  # noqa: E402
 from src.models.t5_mec import build_t5_model  # noqa: E402
 from src.models.token_utils import encode_current_tokens  # noqa: E402
 from src.training.retrieval import (  # noqa: E402
+    LanguageMapRetriever,
     RetrievalSample,
     train_retriever,
 )
@@ -141,6 +143,45 @@ def _parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--collect-only",
+        action="store_true",
+        help=(
+            "only collect episode shards and exit before GAB threshold fitting, "
+            "finalization and MEC training. Requires --token-shards."
+        ),
+    )
+    parser.add_argument(
+        "--prep-only",
+        action="store_true",
+        help=(
+            "build the disk language-feature cache and exit, so parallel "
+            "collection processes share one BERT pass."
+        ),
+    )
+    parser.add_argument(
+        "--train-range",
+        default=None,
+        help="START:END slice of selected train records for parallel collection",
+    )
+    parser.add_argument(
+        "--val-seen-range",
+        default=None,
+        help="START:END slice of selected val_seen records",
+    )
+    parser.add_argument(
+        "--val-unseen-range",
+        default=None,
+        help="START:END slice of selected val_unseen records",
+    )
+    parser.add_argument(
+        "--reuse-retrieval",
+        action="store_true",
+        help=(
+            "load existing cache_dir/retrieval/{encoder,retriever}.pt instead of "
+            "retraining the retriever (the encoder stays frozen)."
+        ),
+    )
+    parser.add_argument(
         "--encoder-checkpoint",
         type=Path,
         default=PROJECT_ROOT / "data_cache" / "weights" / "shared_encoder.pt",
@@ -190,11 +231,43 @@ def _load_bert() -> tuple[object, dict]:
 def _language_map(
     descriptions: Sequence[str],
     adapter,
+    cache_path: Path | None = None,
 ) -> tuple[dict[str, np.ndarray], dict]:
     unique = sorted(set(str(text) for text in descriptions))
-    with torch.no_grad():
-        encoded = adapter.encode_tensor(unique, device="cpu").numpy()
-    mapping = {text: encoded[index] for index, text in enumerate(unique)}
+    cached: dict[str, np.ndarray] = {}
+    if cache_path is not None and cache_path.exists():
+        try:
+            with np.load(cache_path, allow_pickle=False) as payload:
+                texts = [str(value) for value in payload["texts"]]
+                features = payload["features"]
+            cached = {
+                text: features[index].astype(np.float32)
+                for index, text in enumerate(texts)
+            }
+        except Exception as exc:  # corrupted cache: recompute from scratch
+            print(f"  language cache unreadable, rebuilding ({exc})", flush=True)
+            cached = {}
+    missing = [text for text in unique if text not in cached]
+    if missing:
+        with torch.no_grad():
+            encoded = adapter.encode_tensor(missing, device="cpu").numpy()
+        for text, vector in zip(missing, encoded):
+            cached[text] = vector.astype(np.float32)
+    if cache_path is not None and (missing or not cache_path.exists()):
+        merged = sorted(cached)
+        cache_path.parent.mkdir(parents=True, exist_ok=True)
+        # Unique temp name: parallel collectors must not race on one temp file.
+        tmp_path = cache_path.with_name(
+            f"{cache_path.name}.{os.getpid()}.tmp.npz"
+        )
+        np.savez_compressed(
+            tmp_path,
+            texts=np.asarray(merged),
+            features=np.stack([cached[text] for text in merged]),
+        )
+        tmp_path.replace(cache_path)
+    mapping = {text: cached[text] for text in unique}
+    encoded = np.stack([mapping[text] for text in unique])
     return mapping, {
         "unique_descriptions": len(unique),
         "feature_dim": int(encoded.shape[1]),
@@ -481,6 +554,19 @@ _EPISODE_ARRAY_KEYS = (
 )
 
 
+def _parse_range(spec: str | None, total: int) -> tuple[int, int]:
+    """Parse ``START:END`` into a clamped slice; ``None`` means the full list."""
+    total = int(total)
+    if spec is None or str(spec).strip() == "":
+        return 0, total
+    start, _, end = str(spec).partition(":")
+    low = int(start) if start.strip() else 0
+    high = int(end) if end.strip() else total
+    low = max(0, min(low, total))
+    high = max(low, min(high, total))
+    return low, high
+
+
 def _episode_key(split: str, map_name: str, episode_id, start: int) -> tuple:
     return (str(split), str(map_name), str(episode_id), int(start))
 
@@ -580,9 +666,27 @@ def _build_token_cache(
 
     adapter = FPVObservationAdapter(data_config, observation_config)
     split_specs = [
-        ("train_seen", args.train_maps, int(args.train_trajectories), 0),
-        ("val_seen", args.val_seen_maps, int(args.val_seen_trajectories), 1),
-        ("val_unseen", args.val_unseen_maps, int(args.val_unseen_trajectories), 2),
+        (
+            "train_seen",
+            args.train_maps,
+            int(args.train_trajectories),
+            0,
+            args.train_range,
+        ),
+        (
+            "val_seen",
+            args.val_seen_maps,
+            int(args.val_seen_trajectories),
+            1,
+            args.val_seen_range,
+        ),
+        (
+            "val_unseen",
+            args.val_unseen_maps,
+            int(args.val_unseen_trajectories),
+            2,
+            args.val_unseen_range,
+        ),
     ]
     use_shards = bool(getattr(args, "token_shards", False))
     shard_dir = cache_dir / "shards"
@@ -598,13 +702,20 @@ def _build_token_cache(
     train_episodes = []
     val_specs = []
     try:
-        for split, maps, count, split_id in split_specs[:1]:
+        for split, maps, count, split_id, range_spec in split_specs[:1]:
             dataset = CityNavDataset(
                 data_config, split, include_processed_descriptions=False
             )
             records = _select_teacher_records(
                 dataset, maps, count, int(args.steps_per_trajectory)
             )
+            low, high = _parse_range(range_spec, len(records))
+            records = records[low:high]
+            if range_spec is not None:
+                print(
+                    f"  {split} record range {low}:{high} of {count} selected",
+                    flush=True,
+                )
             for record in records:
                 result = record.teacher(dataset.teacher_config)
                 total = len(result.actions)
@@ -658,25 +769,20 @@ def _build_token_cache(
                                 f"frames={sum(len(e['actions']) for e in train_episodes)}",
                                 flush=True,
                             )
-        train_heatmaps = [
-            heat for episode in train_episodes for heat in episode["heatmaps"]
-        ]
-        threshold = fit_reliability_threshold(train_heatmaps, percentile=60.0)
-        gab_config = GABConfig(reliability_threshold=threshold)
-        train_parts = [
-            _finalize_episode(episode, gab_config, 0)
-            for episode in train_episodes
-        ]
-        all_parts = [part[0] for part in train_parts]
-        all_meta = [item for part in train_parts for item in part[1]]
-
-        for split, maps, count, split_id in split_specs[1:]:
+        for split, maps, count, split_id, range_spec in split_specs[1:]:
             dataset = CityNavDataset(
                 data_config, split, include_processed_descriptions=False
             )
             records = _select_teacher_records(
                 dataset, maps, count, int(args.steps_per_trajectory)
             )
+            low, high = _parse_range(range_spec, len(records))
+            records = records[low:high]
+            if range_spec is not None:
+                print(
+                    f"  {split} record range {low}:{high} of {count} selected",
+                    flush=True,
+                )
             for record in records:
                 result = record.teacher(dataset.teacher_config)
                 total = len(result.actions)
@@ -724,6 +830,45 @@ def _build_token_cache(
                             )
                     if episode is not None:
                         val_specs.append((split, split_id, episode))
+        if getattr(args, "collect_only", False):
+            if not use_shards:
+                raise SystemExit("--collect-only requires --token-shards")
+            print(
+                f"  collect-only: {len(train_episodes)} train + "
+                f"{len(val_specs)} val episode(s) ready on disk; "
+                "exit before threshold/finalization",
+                flush=True,
+            )
+            return None, {
+                "frames": 0,
+                "trajectories": {
+                    "train_seen": len(train_episodes),
+                    "val_seen": sum(
+                        1 for item in val_specs if item[0] == "val_seen"
+                    ),
+                    "val_unseen": sum(
+                        1 for item in val_specs if item[0] == "val_unseen"
+                    ),
+                },
+                "action_counts": {},
+                "gab_reliability_threshold": None,
+                "token_file": None,
+                "token_bytes": 0,
+                "test_unseen_read": False,
+            }
+
+        train_heatmaps = [
+            heat for episode in train_episodes for heat in episode["heatmaps"]
+        ]
+        threshold = fit_reliability_threshold(train_heatmaps, percentile=60.0)
+        gab_config = GABConfig(reliability_threshold=threshold)
+        train_parts = [
+            _finalize_episode(episode, gab_config, 0)
+            for episode in train_episodes
+        ]
+        all_parts = [part[0] for part in train_parts]
+        all_meta = [item for part in train_parts for item in part[1]]
+
         for split, split_id, episode in val_specs:
             arrays, metadata = _finalize_episode(
                 episode, gab_config, split_id
@@ -1108,7 +1253,18 @@ def main() -> int:
     descriptions = []
     for dataset in (dataset_train, dataset_val_seen, dataset_val_unseen):
         descriptions.extend(record.description for record in dataset.records)
-    language_map, language_meta = _language_map(descriptions, bert)
+    language_map, language_meta = _language_map(
+        descriptions, bert, args.cache_dir / "language_features.npz"
+    )
+    if getattr(args, "prep_only", False):
+        after = snapshot_raw_dirs(data_config)
+        assert_snapshot_unchanged(before, after)
+        print(
+            f"language cache ready: {language_meta['unique_descriptions']} "
+            f"description(s) -> {args.cache_dir / 'language_features.npz'}",
+            flush=True,
+        )
+        return 0
 
     libraries = _build_libraries(
         data_config, observation_config, all_maps, encoder, device, args
@@ -1126,23 +1282,55 @@ def main() -> int:
         args.retrieval_val_per_map, "val_unseen",
     )
     train_encoder = not bool(args.freeze_visual_encoder)
-    retriever, retrieval_val, retrieval_info = train_retriever(
-        train_samples,
-        val_seen_samples + val_unseen_samples,
-        encoder=encoder,
-        device=device,
-        steps=int(args.retrieval_steps),
-        lr=float(args.retrieval_lr),
-        encoder_lr=float(args.encoder_lr),
-        train_encoder=train_encoder,
-        seed=int(args.seed),
-        log_every=20,
-        eval_every=max(20, int(args.retrieval_steps) // 2),
-    )
-    if retrieval_info["best_retriever_state"] is not None:
-        retriever.load_state_dict(retrieval_info["best_retriever_state"])
-    if train_encoder and retrieval_info["best_encoder_state"] is not None:
-        encoder.load_state_dict(retrieval_info["best_encoder_state"])
+    reuse_retrieval = bool(getattr(args, "reuse_retrieval", False)) and (
+        args.cache_dir / "retrieval" / "retriever.pt"
+    ).exists()
+    if reuse_retrieval:
+        retriever_path = args.cache_dir / "retrieval" / "retriever.pt"
+        encoder_path = args.cache_dir / "retrieval" / "encoder.pt"
+        retriever = LanguageMapRetriever().to(device)
+        retriever.load_state_dict(
+            torch.load(retriever_path, map_location="cpu", weights_only=True)
+        )
+        retriever.eval()
+        if encoder_path.exists():
+            stored = torch.load(encoder_path, map_location="cpu", weights_only=True)
+            current = encoder.state_dict()
+            diff = max(
+                float((current[key].detach().cpu() - stored[key]).abs().max())
+                for key in current
+            )
+            if diff > 0.0:
+                raise SystemExit(
+                    "reuse-retrieval: stored encoder differs from the frozen "
+                    f"checkpoint (max abs diff {diff:.3e}); refusing"
+                )
+        retrieval_val = {}
+        retrieval_info = {
+            "best_retriever_state": None,
+            "best_encoder_state": None,
+            "trace": [],
+            "best_recall@1": None,
+        }
+        print(f"reuse-retrieval: loaded {retriever_path}", flush=True)
+    else:
+        retriever, retrieval_val, retrieval_info = train_retriever(
+            train_samples,
+            val_seen_samples + val_unseen_samples,
+            encoder=encoder,
+            device=device,
+            steps=int(args.retrieval_steps),
+            lr=float(args.retrieval_lr),
+            encoder_lr=float(args.encoder_lr),
+            train_encoder=train_encoder,
+            seed=int(args.seed),
+            log_every=20,
+            eval_every=max(20, int(args.retrieval_steps) // 2),
+        )
+        if retrieval_info["best_retriever_state"] is not None:
+            retriever.load_state_dict(retrieval_info["best_retriever_state"])
+        if train_encoder and retrieval_info["best_encoder_state"] is not None:
+            encoder.load_state_dict(retrieval_info["best_encoder_state"])
     encoder.eval()
     encoder.requires_grad_(False)
     retriever.eval()
@@ -1190,6 +1378,18 @@ def main() -> int:
         device,
         args.cache_dir / "tokens",
     )
+    if getattr(args, "collect_only", False):
+        after = snapshot_raw_dirs(data_config)
+        assert_snapshot_unchanged(before, after)
+        print(
+            "token collection finished (collect-only); "
+            f"train={token_meta['trajectories']['train_seen']} "
+            f"val_seen={token_meta['trajectories']['val_seen']} "
+            f"val_unseen={token_meta['trajectories']['val_unseen']}",
+            flush=True,
+        )
+        print(f"  raw data unchanged: {after['digest']}", flush=True)
+        return 0
     train_indices = np.flatnonzero(token_arrays["split_id"] == 0)
     val_indices = {
         "val_seen": np.flatnonzero(token_arrays["split_id"] == 1),

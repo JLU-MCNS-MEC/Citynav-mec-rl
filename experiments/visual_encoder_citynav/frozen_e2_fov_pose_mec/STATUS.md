@@ -10,7 +10,7 @@
 |---|---|
 | 视觉编码器 | **冻结** `runs/visual_encoder_citynav/abl_20261028_e2_fov_pose_seed42/best_encoder.pt` |
 | SHA-256 | `441de539f1d30f2be68d77a1c954daef5f3ab3bd3501f33b2c9798f89517011b`（已核验） |
-| 数据规模 | 训练 1000 条轨迹 × 2 窗口 × 8 步；Val-Seen 100、Val-Unseen 100 条 |
+| 数据规模 | 训练 **625 条轨迹 ≈ 1250 窗口**；Val-Seen/Val-Unseen 各 **88 条 ≈ 176 窗口**（合计约 350）；每窗口 8 步 |
 | 缓存 | `data_cache/t5_frozen_1000/` |
 | 输出 | `run_20261028/` |
 | 模型 | Small / Transformer-M，各含 `full`（检索+地图）与 `map_free` |
@@ -23,7 +23,8 @@
 |---|---|---|
 | 候选库 + 语言特征 | 完成 | `data_cache/candidates/` |
 | Retrieval 训练 | 完成（19:03） | `retrieval/{encoder.pt,retriever.pt}`，冻结编码器 |
-| Token 生成 | **进行中**（20:48 重启） | 每 episode 一个分片，见 `tokens/shards/` |
+| 语言特征 | 完成（21:28） | `data_cache/t5_frozen_1000/language_features.npz`，26,549 条，77 MB（磁盘） |
+| Token 生成 | **并行进行中**（21:29 启动） | 4 进程：train 0:209 / 209:418 / 418:625 + val；分片见 `tokens/shards/` |
 | MEC 训练 | 待开始 | 4 个模型，权重写 `mec/<model>/{mec.pt}` |
 | 闭环评估 | 待开始 | `closed_loop_eval.py`，分片 + journal 断点 |
 
