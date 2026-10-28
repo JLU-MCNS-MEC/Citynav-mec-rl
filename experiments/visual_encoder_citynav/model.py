@@ -24,14 +24,16 @@ class PretrainModel(nn.Module):
         hidden_dim: int = 512,
         projection_dim: int = 256,
         text_dim: int = 768,
+        pose_dim: int = 0,
     ):
         super().__init__()
+        self.pose_dim = int(pose_dim)
         self.encoder = VisualTokenEncoder()
         self.token_dim = int(token_dim)
         self.text_dim = int(text_dim)
         self.projection_dim = int(projection_dim)
         self.action_head = nn.Sequential(
-            nn.Linear(2 * self.token_dim + self.text_dim, hidden_dim),
+            nn.Linear(2 * self.token_dim + self.text_dim + self.pose_dim, hidden_dim),
             nn.GELU(),
             nn.Dropout(0.1),
             nn.Linear(hidden_dim, 6),
@@ -99,12 +101,16 @@ class PretrainModel(nn.Module):
         current_images: torch.Tensor,
         candidate_images: torch.Tensor,
         language_features: torch.Tensor,
+        pose_features: torch.Tensor | None = None,
     ) -> dict:
         _, current_global = self.encode_current(current_images)
         candidate_tokens = self.encode_candidate_batch(candidate_images)
-        action_logits = self.action_head(
-            torch.cat([current_global, language_features.float()], dim=-1)
-        )
+        action_inputs = [current_global, language_features.float()]
+        if self.pose_dim > 0:
+            if pose_features is None:
+                raise ValueError("pose_features required when pose_dim > 0")
+            action_inputs.append(pose_features.float())
+        action_logits = self.action_head(torch.cat(action_inputs, dim=-1))
         xview_query = self.xview_query(current_global)
         xview_candidate = self.xview_candidate(candidate_tokens)
         retrieval_query = self.retrieval_query(language_features.float())

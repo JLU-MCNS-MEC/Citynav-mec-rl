@@ -42,7 +42,7 @@ from src.data.fpv_renderer import (
     render_point_cloud,
 )
 from src.data.language_adapter import build_language_adapter
-from src.data.observation_adapter import open_ply_cloud
+from src.data.observation_adapter import OrthoStore, open_ply_cloud
 from src.data.paths import ensure_output_dir
 from src.data.trajectory_adapter import Pose5D, TrajectoryAdapter
 
@@ -58,6 +58,10 @@ MAX_CURRENT_POSITIVES = 4
 MAX_TARGET_POSITIVES = 4
 MAX_HARD_NEGATIVES = 8
 RENDER_NEAR_M = 0.5
+POSE_HISTORY_STEPS = 8
+# per history step: valid, forward, lateral, dz, dyaw, 6 action one-hot
+POSE_HISTORY_DIM = POSE_HISTORY_STEPS * 11 + 3
+
 RENDER_FAR_M = 250.0
 
 
@@ -358,6 +362,80 @@ def _select_steps(
     return sorted(chosen[: int(count)])
 
 
+def pose_history_features(
+    poses: Sequence[Pose5D],
+    actions: Sequence[int],
+    step: int,
+    k: int = POSE_HISTORY_STEPS,
+) -> np.ndarray:
+    """Past-only pose/action context (no future, no target, no oracle).
+
+    For each of the last ``k`` steps: validity flag, displacement in the
+    current heading frame, yaw change, and the executed action one-hot.
+    The first three values encode the current heading and pitch.
+    """
+    current = poses[int(step)]
+    out = np.zeros((POSE_HISTORY_DIM,), dtype=np.float32)
+    out[-3] = math.sin(current.yaw)
+    out[-2] = math.cos(current.yaw)
+    out[-1] = current.pitch / math.pi
+    cos_y, sin_y = math.cos(current.yaw), math.sin(current.yaw)
+    for j in range(1, int(k) + 1):
+        index = int(step) - j
+        base = (j - 1) * 11
+        if index < 0:
+            continue
+        pose = poses[index]
+        dx = pose.x - current.x
+        dy = pose.y - current.y
+        dz = pose.z - current.z
+        forward = (cos_y * dx + sin_y * dy) / 10.0
+        lateral = (-sin_y * dx + cos_y * dy) / 10.0
+        dyaw = ((pose.yaw - current.yaw + math.pi) % (2.0 * math.pi) - math.pi) / math.pi
+        out[base + 0] = 1.0
+        out[base + 1] = forward
+        out[base + 2] = lateral
+        out[base + 3] = dz / 10.0
+        out[base + 4] = dyaw
+        action = int(actions[index])
+        if 0 <= action < 6:
+            out[base + 5 + action] = 1.0
+    return out
+
+
+class BevStore:
+    """North-up orthophoto crops around the current pose (no target drawn)."""
+
+    def __init__(self, data_config: DataConfig, *, window_m: float = 128.0,
+                 size: int = 336, max_maps: int = 2):
+        self.ortho = OrthoStore(data_config.rgbd_dir, max_maps=max_maps)
+        self.window_m = float(window_m)
+        self.size = int(size)
+
+    def close(self) -> None:
+        self.ortho.close()
+
+    def render(self, map_name: str, pose: Pose5D) -> tuple[np.ndarray, float]:
+        data = self.ortho.get(map_name)
+        ds = data.dataset
+        row, col = ds.index(float(pose.x), float(pose.y))
+        res = abs(float(ds.transform.a))
+        half = max(1, int(round((self.window_m / 2.0) / res)))
+        r = int(round(row)); c = int(round(col))
+        r0, r1 = r - half, r + half
+        c0, c1 = c - half, c + half
+        H, W = data.rgb.shape[:2]
+        crop = np.zeros((2 * half, 2 * half, 3), dtype=np.uint8)
+        sr0, sr1 = max(0, r0), min(H, r1)
+        sc0, sc1 = max(0, c0), min(W, c1)
+        if sr1 > sr0 and sc1 > sc0:
+            crop[sr0 - r0:sr1 - r0, sc0 - c0:sc1 - c0] = data.rgb[sr0:sr1, sc0:sc1]
+        import cv2
+        image = cv2.resize(crop, (self.size, self.size), interpolation=cv2.INTER_AREA)
+        valid = float(np.mean(np.any(crop != 0, axis=-1)))
+        return image, valid
+
+
 def build_manifest(
     data_config: DataConfig,
     split: str,
@@ -368,6 +446,7 @@ def build_manifest(
     output_dir: Path | None = None,
     rebuild: bool = False,
     steps_per_trajectory: int = 1,
+    pose_history: bool = False,
 ) -> dict:
     """Build a teacher-step manifest.
 
@@ -384,6 +463,8 @@ def build_manifest(
     tag = f"{split}_{'all' if max_records is None else int(max_records)}_{seed}"
     if steps_per_trajectory > 1:
         tag += f"_s{steps_per_trajectory}"
+    if pose_history:
+        tag += "_ph"
     npz_path = output_dir / f"{tag}.npz"
     json_path = output_dir / f"{tag}.json"
     if npz_path.exists() and json_path.exists() and not rebuild:
@@ -419,18 +500,21 @@ def build_manifest(
             steps = [_select_step(actions, desired, index)]
         for step in steps:
             pose = result.poses[step]
-            rows.append(
-                {
-                    "map_name": record.map_name,
-                    "pose": pose,
-                    "target_xy": tuple(float(v) for v in record.target_xy),
-                    "action": int(actions[step]),
-                    "description": record.description,
-                    "step": int(step),
-                    "teacher_steps": int(len(actions)),
-                    "desired_action": int(desired),
-                }
-            )
+            row = {
+                "map_name": record.map_name,
+                "pose": pose,
+                "target_xy": tuple(float(v) for v in record.target_xy),
+                "action": int(actions[step]),
+                "description": record.description,
+                "step": int(step),
+                "teacher_steps": int(len(actions)),
+                "desired_action": int(desired),
+            }
+            if pose_history:
+                row["pose_history"] = pose_history_features(
+                    result.poses, actions, step
+                )
+            rows.append(row)
     map_names = sorted({row["map_name"] for row in rows})
     map_to_id = {name: index for index, name in enumerate(map_names)}
     language_adapter, text_dim, backend, warning = build_language_adapter(
@@ -469,6 +553,10 @@ def build_manifest(
         ),
         "language_features": language,
     }
+    if pose_history:
+        arrays["pose_features"] = np.asarray(
+            [row["pose_history"] for row in rows], dtype=np.float32
+        )
     np.savez_compressed(npz_path, **arrays)
     action_counts = Counter(int(v) for v in arrays["action"])
     metadata = {
@@ -491,6 +579,8 @@ def build_manifest(
         "manifest_file": str(npz_path.relative_to(PROJECT_ROOT)),
         "test_unseen_read": False,
         "steps_per_trajectory": int(steps_per_trajectory),
+        "pose_history": bool(pose_history),
+        "pose_feature_dim": int(POSE_HISTORY_DIM) if pose_history else 0,
         "selection": (
             "one teacher step per trajectory; desired six-action cycle; actual label kept"
             if steps_per_trajectory == 1
@@ -522,7 +612,15 @@ class PretrainDataset(torch.utils.data.Dataset):
         cloud_store: PointCloudStore,
         *,
         seed: int = 0,
+        visual_input: str = "fpv",
+        bev_store: "BevStore | None" = None,
     ):
+        if visual_input not in ("fpv", "bev"):
+            raise ValueError(f"unknown visual_input: {visual_input}")
+        if visual_input == "bev" and bev_store is None:
+            raise ValueError("bev_store is required when visual_input='bev'")
+        self.visual_input = visual_input
+        self.bev_store = bev_store
         self.manifest = manifest
         self.data_config = data_config
         self.observation_config = observation_config
@@ -536,6 +634,10 @@ class PretrainDataset(torch.utils.data.Dataset):
         self.action = np.asarray(manifest["action"], dtype=np.int64)
         self.language = np.asarray(manifest["language_features"], dtype=np.float32)
         self.step = np.asarray(manifest["step"], dtype=np.int64)
+        self.pose_features = (
+            np.asarray(manifest["pose_features"], dtype=np.float32)
+            if "pose_features" in manifest else None
+        )
 
     def __len__(self) -> int:
         return int(len(self.action))
@@ -544,11 +646,14 @@ class PretrainDataset(torch.utils.data.Dataset):
         index = int(index)
         map_name = self.map_names[int(self.map_id[index])]
         pose = Pose5D(*[float(v) for v in self.pose[index]])
-        points = self.cloud_store.get(map_name)
         render_start = time.perf_counter()
-        current_rgb, valid_ratio = render_current_rgb(
-            points, pose, self.observation_config
-        )
+        if self.visual_input == "bev":
+            current_rgb, valid_ratio = self.bev_store.render(map_name, pose)
+        else:
+            points = self.cloud_store.get(map_name)
+            current_rgb, valid_ratio = render_current_rgb(
+                points, pose, self.observation_config
+            )
         render_seconds = time.perf_counter() - render_start
         library = self.candidate_store.get(map_name)
         rng = np.random.default_rng(self.seed + index)
@@ -580,4 +685,8 @@ class PretrainDataset(torch.utils.data.Dataset):
             "sample_index": index,
             "valid_pixel_ratio": float(valid_ratio),
             "render_seconds": float(render_seconds),
+            **(
+                {"pose_features": self.pose_features[index].astype(np.float32)}
+                if self.pose_features is not None else {}
+            ),
         }

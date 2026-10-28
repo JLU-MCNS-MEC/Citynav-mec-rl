@@ -49,6 +49,8 @@ from experiments.visual_encoder_citynav.data import (  # noqa: E402
     PointCloudStore,
     PretrainDataset,
     build_manifest,
+    BevStore,
+    POSE_HISTORY_DIM,
 )
 from experiments.visual_encoder_citynav.losses import (  # noqa: E402
     multi_positive_infonce,
@@ -151,6 +153,10 @@ def _to_device_batch(batch: dict, device: torch.device) -> dict:
         "render_seconds": batch["render_seconds"].float().to(device),
         "map_id": batch["map_id"].long().to(device),
         "sample_index": batch["sample_index"].long().to(device),
+        **(
+            {"pose_features": batch["pose_features"].float().to(device)}
+            if "pose_features" in batch else {}
+        ),
     }
 
 
@@ -161,7 +167,8 @@ def _compute_losses(
     cfg: dict,
 ) -> tuple[torch.Tensor, dict]:
     outputs = model(
-        batch["current"], batch["candidates"], batch["language"]
+        batch["current"], batch["candidates"], batch["language"],
+        batch.get("pose_features"),
     )
     action = weighted_action_loss(
         outputs["action_logits"], batch["actions"], class_weights
@@ -251,9 +258,10 @@ def _evaluate(
         current = batch["current_rgb"].float().permute(0, 3, 1, 2).to(device) / 255.0
         language = batch["language"].float().to(device)
         tokens, current_global = model.encode_current(current)
-        action_logits = model.action_head(
-            torch.cat([current_global, language], dim=-1)
-        )
+        action_inputs = [current_global, language]
+        if model.pose_dim > 0:
+            action_inputs.append(batch["pose_features"].float().to(device))
+        action_logits = model.action_head(torch.cat(action_inputs, dim=-1))
         globals_.append(current_global.detach().cpu())
         languages.append(language.detach().cpu())
         logits.append(action_logits.detach().cpu())
@@ -531,6 +539,7 @@ def main() -> int:
         output_dir=manifest_dir,
         rebuild=args.rebuild_manifests,
         steps_per_trajectory=int(cfg.get("steps_per_trajectory", 1)),
+        pose_history=bool(cfg.get("pose_history", False)),
     )
     val_seen_manifest = build_manifest(
         data_config,
@@ -539,6 +548,7 @@ def main() -> int:
         seed=seed,
         output_dir=manifest_dir,
         rebuild=args.rebuild_manifests,
+        pose_history=bool(cfg.get("pose_history", False)),
     )
     val_unseen_manifest = build_manifest(
         data_config,
@@ -547,6 +557,7 @@ def main() -> int:
         seed=seed,
         output_dir=manifest_dir,
         rebuild=args.rebuild_manifests,
+        pose_history=bool(cfg.get("pose_history", False)),
     )
     all_maps = sorted(
         set(train_manifest["map_names"])
@@ -571,6 +582,16 @@ def main() -> int:
         max_points=int(cfg.get("max_points", MAX_POINTS_DEFAULT)),
         rebuild=args.rebuild_clouds,
     )
+    visual_input = str(cfg.get("visual_input", "fpv")).lower()
+    bev_store = (
+        BevStore(
+            data_config,
+            window_m=float(cfg.get("bev_window_m", 128.0)),
+            size=CURRENT_SIZE,
+            max_maps=int(cfg.get("map_cache_size", 2)),
+        )
+        if visual_input == "bev" else None
+    )
     observation_config = ObservationConfig(
         image_size=CURRENT_SIZE,
         goal_crop_size=CANDIDATE_SIZE,
@@ -586,6 +607,8 @@ def main() -> int:
         candidate_store,
         cloud_store,
         seed=seed,
+        visual_input=visual_input,
+        bev_store=bev_store,
     )
     val_seen_dataset = PretrainDataset(
         val_seen_manifest,
@@ -594,6 +617,8 @@ def main() -> int:
         candidate_store,
         cloud_store,
         seed=seed + 100,
+        visual_input=visual_input,
+        bev_store=bev_store,
     )
     val_unseen_dataset = PretrainDataset(
         val_unseen_manifest,
@@ -602,6 +627,8 @@ def main() -> int:
         candidate_store,
         cloud_store,
         seed=seed + 200,
+        visual_input=visual_input,
+        bev_store=bev_store,
     )
     batch_size = int(cfg["batch_size"])
     if args.smoke:
@@ -649,7 +676,8 @@ def main() -> int:
     if not encoder_checkpoint.is_absolute():
         encoder_checkpoint = PROJECT_ROOT / encoder_checkpoint
     encoder, init_report = load_pretrained_encoder(encoder_checkpoint, device)
-    model = PretrainModel().to(device)
+    pose_dim = int(POSE_HISTORY_DIM) if bool(cfg.get("pose_history", False)) else 0
+    model = PretrainModel(pose_dim=pose_dim).to(device)
     model.encoder.load_state_dict(encoder.state_dict(), strict=True)
     model.train()
     class_weights_np, action_counts = _class_weights(train_manifest["action"])
