@@ -19,6 +19,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
 import sys
 import time
 from collections import Counter
@@ -26,6 +27,10 @@ from pathlib import Path
 
 import numpy as np
 import torch
+
+# Eight shards run at once; torch's default thread pool oversubscribes the
+# machine and pushed closed-loop latency from ~2 s to ~10 s per step.
+torch.set_num_threads(int(os.environ.get("CITYNAV_TORCH_THREADS", "1")))
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(PROJECT_ROOT) not in sys.path:

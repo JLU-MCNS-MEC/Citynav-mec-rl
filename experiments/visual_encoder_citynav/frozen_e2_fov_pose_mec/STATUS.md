@@ -10,7 +10,7 @@
 |---|---|
 | 视觉编码器 | **冻结** `runs/visual_encoder_citynav/abl_20261028_e2_fov_pose_seed42/best_encoder.pt` |
 | SHA-256 | `441de539f1d30f2be68d77a1c954daef5f3ab3bd3501f33b2c9798f89517011b`（已核验） |
-| 数据规模 | 训练 **625 条轨迹 ≈ 1250 窗口**；Val-Seen/Val-Unseen 各 **88 条 ≈ 176 窗口**（合计约 350）；每窗口 8 步 |
+| 数据规模 | 训练 **625 条轨迹 ≈ 1250 窗口**；Val-Unseen **140 条 ≈ 280 窗口**；Val-Seen 受 3 张协议地图限制为 **35 条 ≈ 70 窗口**（验证合计约 350）；每窗口 8 步 |
 | 缓存 | `data_cache/t5_frozen_1000/` |
 | 输出 | `run_20261028/` |
 | 模型 | Small / Transformer-M，各含 `full`（检索+地图）与 `map_free` |
@@ -24,7 +24,30 @@
 | 候选库 + 语言特征 | 完成 | `data_cache/candidates/` |
 | Retrieval 训练 | 完成（19:03） | `retrieval/{encoder.pt,retriever.pt}`，冻结编码器 |
 | 语言特征 | 完成（21:28） | `data_cache/t5_frozen_1000/language_features.npz`，26,549 条，77 MB（磁盘） |
-| Token 生成 | **并行进行中**（21:29 启动） | 4 进程：train 0:209 / 209:418 / 418:625 + val；分片见 `tokens/shards/` |
+| Token 生成 | **完成（23:09）** | 1600 个窗口：train 1250、val_seen 70、val_unseen 280；分片 6.0 GB 在磁盘 |
+| Token 合并 / MEC | **完成（23:16）** | `t5_tokens.npz` 5.29 GB；GAB 阈值 0.0388；4 个模型各 2000 步 |
+| 闭环评估 | **进行中（00:25 启动）** | 每划分 40 条、8 分片、最多 120 步；见下 |
+
+## MEC 结果（12800 帧：1250 train / 70 val-seen / 280 val-unseen）
+
+| 模型 | VS acc | VS move-acc | VU acc | VU move-acc | VU Stop P/R |
+|---|---:|---:|---:|---:|---:|
+| small:full | 0.6161 | 0.6571 | 0.5732 | 0.6114 | 0.000 / 0.000 |
+| small:map_free | 0.6929 | 0.6762 | 0.6464 | 0.6276 | 0.897 / 0.929 |
+| transformer_m:full | 0.6429 | 0.6857 | 0.5938 | 0.6333 | 0.000 / 0.000 |
+| transformer_m:map_free | 0.5786 | 0.5524 | 0.6022 | 0.5833 | 0.932 / 0.886 |
+
+- 两个 full 模型在 argmax 决策下**从不预测 Stop**；闭环会跑满步数。
+- 四个模型的 `TurnRight` 逐类准确率均为 0。
+- 检索：Val-Seen R@1/5/10 = 0.174/0.609/0.609；Val-Unseen = 0.104/0.250/0.354。
+
+## 闭环设置与已知代价
+
+- 观测配置与 token 构建完全一致：336 px、120 m crop、无 splat。
+- 单步渲染实测约 3.4 s（`birmingham_block_5`），与并发无关；
+  因此 120 步约 7 min/条，每划分 40 条、8 分片，单轮约 35 min。
+- 分片按地图排序后连续切块，每进程只覆盖少数地图；每进程强制单线程。
+- 结果会同时报告 SR、oracle 成功率（rollout 最小距离 ≤20 m）、SPL、NE、nDTW、Stop 率。
 | MEC 训练 | 待开始 | 4 个模型，权重写 `mec/<model>/{mec.pt}` |
 | 闭环评估 | 待开始 | `closed_loop_eval.py`，分片 + journal 断点 |
 

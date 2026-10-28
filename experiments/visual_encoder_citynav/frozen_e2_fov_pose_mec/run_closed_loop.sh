@@ -40,6 +40,11 @@ mkdir -p "$OUT_DIR"
 export CITYNAV_DATA_ROOT="/home/20261024_1/Workspace/DATA/sbfnav-data"
 export CITYNAV_PLY_ROOT="/home/20261024_1/Workspace/DATA/original_block_ply"
 export PYTHONPATH="$ROOT"
+# Rendering is single-threaded; keep each shard to one core so eight shards do
+# not oversubscribe the 24-core machine.
+export OMP_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+export CITYNAV_TORCH_THREADS=1
 cd "$ROOT" || exit 1
 
 for ((i = 0; i < SHARDS; i++)); do
