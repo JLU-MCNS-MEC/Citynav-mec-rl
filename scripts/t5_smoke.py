@@ -67,6 +67,7 @@ from src.data.t5_features import (  # noqa: E402
     history_arrays,
     visual_descriptor,
 )
+from src.data.trajectory_adapter import Pose5D  # noqa: E402
 from src.models import VisualTokenEncoder, load_encoder_checkpoint  # noqa: E402
 from src.models.mec_common import build_spatial_heatmap  # noqa: E402
 from src.models.t5_mec import build_t5_model  # noqa: E402
@@ -130,6 +131,15 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--mec-weight-decay", type=float, default=1e-4)
     parser.add_argument("--rebuild-candidates", action="store_true")
     parser.add_argument("--rebuild-tokens", action="store_true")
+    parser.add_argument(
+        "--token-shards",
+        action="store_true",
+        help=(
+            "persist each collected token episode to cache_dir/tokens/shards so an "
+            "interrupted token build resumes instead of restarting. Off by default: "
+            "the resulting token arrays are identical either way."
+        ),
+    )
     parser.add_argument(
         "--encoder-checkpoint",
         type=Path,
@@ -461,6 +471,95 @@ def _concat_parts(parts: Sequence[dict]) -> dict:
     }
 
 
+_EPISODE_ARRAY_KEYS = (
+    "current_tokens",
+    "visuals",
+    "heatmaps",
+    "goal_tokens",
+    "map_features",
+    "language_features",
+)
+
+
+def _episode_key(split: str, map_name: str, episode_id, start: int) -> tuple:
+    return (str(split), str(map_name), str(episode_id), int(start))
+
+
+def _episode_shard_path(
+    shard_dir: Path, split: str, map_name: str, episode_id, start: int
+) -> Path:
+    safe = "_".join(
+        part.replace("/", "-").replace(" ", "_")
+        for part in (str(split), str(map_name), str(episode_id))
+    )
+    return shard_dir / f"{safe}_{int(start):04d}.npz"
+
+
+def _save_episode_shard(path: Path, episode: dict) -> None:
+    payload: dict = {
+        "map_name": np.asarray(str(episode["map_name"])),
+        "episode_id": np.asarray(str(episode["episode_id"])),
+        "split": np.asarray(str(episode["split"])),
+        "poses": np.asarray(
+            [pose.as_tuple() for pose in episode["poses"]], dtype=np.float64
+        ),
+        "actions": np.asarray(episode["actions"], dtype=np.int64),
+        "start_step": np.asarray(int(episode["start_step"]), dtype=np.int64),
+        "goal_valid": np.asarray(int(episode["goal_valid"]), dtype=np.int64),
+        "top5_indices": np.asarray(episode["top5_indices"], dtype=np.int64),
+        "render_seconds": np.asarray(float(episode["render_seconds"])),
+        "valid_pixel_ratio_mean": np.asarray(
+            float(episode["valid_pixel_ratio_mean"])
+        ),
+    }
+    for key in _EPISODE_ARRAY_KEYS:
+        payload[key] = np.asarray(episode[key])
+    tmp_path = path.with_suffix(".tmp.npz")
+    np.savez_compressed(tmp_path, **payload)
+    tmp_path.replace(path)
+
+
+def _load_episode_shard(path: Path) -> dict:
+    with np.load(path, allow_pickle=False) as data:
+        episode = {key: data[key] for key in _EPISODE_ARRAY_KEYS}
+        episode.update(
+            map_name=str(data["map_name"]),
+            episode_id=str(data["episode_id"]),
+            split=str(data["split"]),
+            poses=[Pose5D(*(float(v) for v in row)) for row in data["poses"]],
+            actions=[int(v) for v in data["actions"]],
+            start_step=int(data["start_step"]),
+            goal_valid=int(data["goal_valid"]),
+            top5_indices=[int(v) for v in data["top5_indices"]],
+            render_seconds=float(data["render_seconds"]),
+            valid_pixel_ratio_mean=float(data["valid_pixel_ratio_mean"]),
+        )
+    return episode
+
+
+def _load_episode_shards(shard_dir: Path) -> dict:
+    episodes: dict = {}
+    if not shard_dir.exists():
+        return episodes
+    for path in sorted(shard_dir.glob("*.npz")):
+        if path.name.endswith(".tmp.npz"):
+            continue
+        try:
+            episode = _load_episode_shard(path)
+        except Exception as exc:  # corrupted/partial shard: recompute that episode
+            print(f"  token shard unreadable, will recompute: {path.name} ({exc})")
+            continue
+        episodes[
+            _episode_key(
+                episode["split"],
+                episode["map_name"],
+                episode["episode_id"],
+                episode["start_step"],
+            )
+        ] = episode
+    return episodes
+
+
 def _build_token_cache(
     data_config,
     observation_config: ObservationConfig,
@@ -485,6 +584,17 @@ def _build_token_cache(
         ("val_seen", args.val_seen_maps, int(args.val_seen_trajectories), 1),
         ("val_unseen", args.val_unseen_maps, int(args.val_unseen_trajectories), 2),
     ]
+    use_shards = bool(getattr(args, "token_shards", False))
+    shard_dir = cache_dir / "shards"
+    if use_shards:
+        shard_dir.mkdir(parents=True, exist_ok=True)
+        shard_cache = _load_episode_shards(shard_dir)
+        print(
+            f"  token shards: {len(shard_cache)} episode(s) reused from {shard_dir}",
+            flush=True,
+        )
+    else:
+        shard_cache = {}
     train_episodes = []
     val_specs = []
     try:
@@ -510,20 +620,36 @@ def _build_token_cache(
                 for start in sorted(starts):
                     if start < 0:
                         continue
-                    episode = _collect_episode_frames(
-                        record,
-                        result,
-                        observation_config=observation_config,
-                        adapter=adapter,
-                        encoder=encoder,
-                        retriever=retriever,
-                        library=libraries[record.map_name],
-                        language_features=language_map[record.description],
-                        start=start,
-                        steps=int(args.steps_per_trajectory),
-                        device=device,
-                        crop_radius=float(args.crop_radius),
+                    key = _episode_key(
+                        split, record.map_name, record.episode_id, start
                     )
+                    episode = shard_cache.get(key)
+                    if episode is None:
+                        episode = _collect_episode_frames(
+                            record,
+                            result,
+                            observation_config=observation_config,
+                            adapter=adapter,
+                            encoder=encoder,
+                            retriever=retriever,
+                            library=libraries[record.map_name],
+                            language_features=language_map[record.description],
+                            start=start,
+                            steps=int(args.steps_per_trajectory),
+                            device=device,
+                            crop_radius=float(args.crop_radius),
+                        )
+                        if episode is not None and use_shards:
+                            _save_episode_shard(
+                                _episode_shard_path(
+                                    shard_dir,
+                                    split,
+                                    record.map_name,
+                                    record.episode_id,
+                                    start,
+                                ),
+                                episode,
+                            )
                     if episode is not None:
                         train_episodes.append(episode)
                         if len(train_episodes) % 100 == 0:
@@ -566,20 +692,36 @@ def _build_token_cache(
                 for start in sorted(starts):
                     if start < 0:
                         continue
-                    episode = _collect_episode_frames(
-                        record,
-                        result,
-                        observation_config=observation_config,
-                        adapter=adapter,
-                        encoder=encoder,
-                        retriever=retriever,
-                        library=libraries[record.map_name],
-                        language_features=language_map[record.description],
-                        start=start,
-                        steps=int(args.steps_per_trajectory),
-                        device=device,
-                        crop_radius=float(args.crop_radius),
+                    key = _episode_key(
+                        split, record.map_name, record.episode_id, start
                     )
+                    episode = shard_cache.get(key)
+                    if episode is None:
+                        episode = _collect_episode_frames(
+                            record,
+                            result,
+                            observation_config=observation_config,
+                            adapter=adapter,
+                            encoder=encoder,
+                            retriever=retriever,
+                            library=libraries[record.map_name],
+                            language_features=language_map[record.description],
+                            start=start,
+                            steps=int(args.steps_per_trajectory),
+                            device=device,
+                            crop_radius=float(args.crop_radius),
+                        )
+                        if episode is not None and use_shards:
+                            _save_episode_shard(
+                                _episode_shard_path(
+                                    shard_dir,
+                                    split,
+                                    record.map_name,
+                                    record.episode_id,
+                                    start,
+                                ),
+                                episode,
+                            )
                     if episode is not None:
                         val_specs.append((split, split_id, episode))
         for split, split_id, episode in val_specs:
