@@ -609,7 +609,9 @@ def _save_episode_shard(path: Path, episode: dict) -> None:
     }
     for key in _EPISODE_ARRAY_KEYS:
         payload[key] = np.asarray(episode[key])
-    tmp_path = path.with_suffix(".tmp.npz")
+    # PID-unique temp: two collectors may render the same episode when ranges
+    # overlap, and a shared temp path produced a CRC-corrupted shard once.
+    tmp_path = path.with_name(f"{path.name}.{os.getpid()}.tmp.npz")
     np.savez_compressed(tmp_path, **payload)
     tmp_path.replace(path)
 
