@@ -266,8 +266,16 @@ def main() -> int:
     if args.episodes < len(records):
         idx = np.linspace(0, len(records) - 1, args.episodes, dtype=int)
         records = [records[int(i)] for i in idx]
+    # Group by map before sharding: episodes are independent and metrics are
+    # aggregated, and this avoids reloading a PLY on almost every episode
+    # (map_cache_size=2).  Shards take contiguous blocks of the map-sorted
+    # list, so each process covers only a few maps instead of all of them.
+    records = sorted(records, key=lambda record: record.map_name)
     if args.shards > 1:
-        records = records[args.shard_index::args.shards]
+        total = len(records)
+        low = int(args.shard_index) * total // int(args.shards)
+        high = (int(args.shard_index) + 1) * total // int(args.shards)
+        records = records[low:high]
 
     encoder = _load_encoder(args.encoder_checkpoint, device)
     model = build_t5_model(

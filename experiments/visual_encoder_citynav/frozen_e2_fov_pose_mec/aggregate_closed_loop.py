@@ -16,6 +16,7 @@ def main() -> int:
     parser.add_argument("--out-dir", type=Path, required=True)
     parser.add_argument("--split", required=True)
     parser.add_argument("--model", required=True)
+    parser.add_argument("--variant", default="full", choices=("full", "map_free"))
     parser.add_argument("--shards", type=int, required=True)
     parser.add_argument("--output", type=Path, default=None)
     args = parser.parse_args()
@@ -23,7 +24,10 @@ def main() -> int:
     episodes = []
     missing = []
     for index in range(args.shards):
-        path = args.out_dir / f"{args.split}_{args.model}_full_shard{index}.json"
+        path = (
+            args.out_dir
+            / f"{args.split}_{args.model}_{args.variant}_shard{index}.json"
+        )
         if not path.exists():
             missing.append(path.name)
             continue
@@ -40,7 +44,8 @@ def main() -> int:
     summary = {
         "split": args.split,
         "model": args.model,
-        "use_retrieval": True,
+        "variant": args.variant,
+        "use_retrieval": args.variant == "full",
         "episodes": len(episodes),
         "success_rate": _mean("success"),
         "oracle_success_rate": _mean("oracle_success"),
@@ -60,7 +65,8 @@ def main() -> int:
         "test_unseen_read": False,
     }
     output = args.output or (
-        args.out_dir / f"{args.split}_{args.model}_full_summary.json"
+        args.out_dir
+        / f"{args.split}_{args.model}_{args.variant}_summary.json"
     )
     output.write_text(
         json.dumps(
