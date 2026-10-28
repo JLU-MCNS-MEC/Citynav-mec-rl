@@ -149,12 +149,12 @@ def main() -> int:
         if not metrics_csv.exists():
             continue
         with metrics_csv.open() as f:
-            rows = list(csv.DictReader(f))
-        if not rows:
+            metric_rows = list(csv.DictReader(f))
+        if not metric_rows:
             continue
-        steps = [int(r["step"]) for r in rows]
+        steps = [int(r["step"]) for r in metric_rows]
         for ax, key in zip(axes.flat, metrics):
-            values = [float(r[key]) for r in rows]
+            values = [float(r[key]) for r in metric_rows]
             if len(values) > 50:
                 kernel = 50
                 smoothed = [
