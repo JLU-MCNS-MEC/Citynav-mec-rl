@@ -17,6 +17,25 @@
 | E3 | 3 教师步/轨迹 | 690 | score 0.1990 / F1 0.2620 / xview@1 0.0482 / R@5 0.2656 |
 | E4 | splat=1 + 3 步 | 450 | 未到 |
 
+## E1 完成（2751/2751）
+
+| 指标 | Val-Seen | Val-Unseen |
+|---|---:|---:|
+| action accuracy | 0.4023 | 0.4336 |
+| macro-F1 | 0.3141 | 0.3488 |
+| xview Top-1 / Top-5 | 0.0602 / 0.2490 | 0.0437 / 0.1508 |
+| R@1 / 5 / 10 | 0.0820 / 0.2812 / 0.4258 | 0.0781 / 0.1875 / 0.3281 |
+
+- best step 2751，score 0.2281
+- 用时 124.8 分钟，GPU 峰值 5621 MiB
+- best_encoder SHA-256 `23765e13e91d5be45c6958caf55cb558e9e236a4e4c323e76b8225e5080c26ea`
+- encoder_final SHA-256 `1716772788c6b435a31cdea472ebd0d601831d5de569530f27c7b2fe586d0f39`
+- 原始数据未变：True；Test-Unseen 未读取：True
+- 逐类动作（Val-Seen）：{'Stop': 0.8372093023255814, 'MoveForward': 0.5, 'TurnRight': 0.0, 'TurnLeft': 0.0, 'GoUp': 0.2692307692307692, 'GoDown': 0.6938775510204082}
+
+> 注意：TurnRight / TurnLeft 的逐类准确率仍为 0，与旧基线的已知失败模式一致；
+> 这是辅助动作头的诊断结果，不是导航成功率。
+
 ## 资源
 
 - 四组并行，GPU 显存约 28.5 GB / 97.9 GB
