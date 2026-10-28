@@ -1,0 +1,55 @@
+{
+  "split": "val_seen",
+  "episodes": 2498,
+  "available": 2498,
+  "test_unseen_read": false,
+  "action_totals": {
+    "Stop": 2498,
+    "MoveForward": 154406,
+    "TurnRight": 24405,
+    "TurnLeft": 23850,
+    "GoUp": 76674,
+    "GoDown": 190354
+  },
+  "semantic_agreement": {
+    "GoUp": {
+      "agree": 76652,
+      "total": 76652,
+      "rate": 1.0
+    },
+    "TurnRight": {
+      "agree": 24353,
+      "total": 24353,
+      "rate": 1.0
+    },
+    "MoveForward": {
+      "agree": 154032,
+      "total": 154032,
+      "rate": 1.0
+    },
+    "TurnLeft": {
+      "agree": 23796,
+      "total": 23796,
+      "rate": 1.0
+    },
+    "GoDown": {
+      "agree": 189916,
+      "total": 189916,
+      "rate": 1.0
+    },
+    "Stop": {
+      "agree": 1578,
+      "total": 1578,
+      "rate": 1.0
+    }
+  },
+  "episodes_with_zero_direction_vectors": 777,
+  "executed_pose_mismatches": 0,
+  "yaw_vs_motion_median_deg": 1.444832038203585e-07,
+  "yaw_vs_motion_p95_deg": 179.9999999973398,
+  "marker_target_distance_m": {
+    "median": 6.46109560891119,
+    "p95": 24.181615915573484,
+    "max": 29.973822247916384
+  }
+}
