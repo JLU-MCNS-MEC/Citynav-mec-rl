@@ -140,6 +140,42 @@ def main() -> int:
     fig.savefig(out / "figures" / "ablation_curves_20261028.png", dpi=220)
     plt.close(fig)
 
+    # --- figure 3: training losses (smoothed) ------------------------------
+    metrics = ["total_loss", "action_loss", "xview_loss", "retrieval_loss"]
+    fig, axes = plt.subplots(2, 2, figsize=(10, 6.5))
+    plotted = False
+    for name, run in DEFAULT_RUNS.items():
+        metrics_csv = PROJECT_ROOT / "runs" / "visual_encoder_citynav" / run / "train_metrics.csv"
+        if not metrics_csv.exists():
+            continue
+        with metrics_csv.open() as f:
+            rows = list(csv.DictReader(f))
+        if not rows:
+            continue
+        steps = [int(r["step"]) for r in rows]
+        for ax, key in zip(axes.flat, metrics):
+            values = [float(r[key]) for r in rows]
+            if len(values) > 50:
+                kernel = 50
+                smoothed = [
+                    sum(values[max(0, i - kernel + 1): i + 1]) / len(values[max(0, i - kernel + 1): i + 1])
+                    for i in range(len(values))
+                ]
+            else:
+                smoothed = values
+            ax.plot(steps, smoothed, label=name, linewidth=0.9)
+            ax.set_title(key)
+            ax.grid(alpha=0.3)
+            plotted = True
+    if plotted:
+        for ax in axes.flat:
+            ax.set_xlabel("step")
+        axes.flat[0].legend(fontsize=8)
+        fig.suptitle("Training losses (50-step moving average)")
+        fig.tight_layout()
+        fig.savefig(out / "figures" / "ablation_training_losses_20261028.png", dpi=220)
+    plt.close(fig)
+
     print(f"wrote {len(rows)} rows to {csv_path}")
     return 0
 
