@@ -80,6 +80,8 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--rebuild-manifests", action="store_true")
     parser.add_argument("--rebuild-clouds", action="store_true")
     parser.add_argument("--rebuild-candidates", action="store_true")
+    parser.add_argument("--resume", action="store_true",
+                        help="continue from runs/<run>/train_state.pt")
     return parser.parse_args()
 
 
@@ -505,6 +507,15 @@ def main() -> int:
         if args.smoke else f"full_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
     )
     run_dir = ensure_output_dir(PROJECT_ROOT / "runs" / "visual_encoder_citynav" / run_name)
+    resume_state = None
+    if args.resume:
+        state_path = run_dir / "train_state.pt"
+        if state_path.exists():
+            resume_state = torch.load(state_path, map_location="cpu")
+            print(f"resume: loaded state at step {resume_state['step']}", flush=True)
+        else:
+            print("resume: no train_state.pt found; starting fresh", flush=True)
+    start_step = int(resume_state["step"]) if resume_state else 0
     manifest_dir = PROJECT_ROOT / "data_cache" / "visual_encoder_citynav" / "manifests"
     if args.smoke:
         train_max = int(cfg["smoke"]["train_samples"])
@@ -595,10 +606,19 @@ def main() -> int:
     batch_size = int(cfg["batch_size"])
     if args.smoke:
         batch_size = int(cfg["smoke"].get("batch_size", batch_size))
+    order_path = run_dir / "order.npy"
+    if order_path.exists():
+        order = np.load(order_path)
+    else:
+        generator = torch.Generator().manual_seed(int(seed) * 100003 + 7)
+        order = torch.randperm(len(train_dataset), generator=generator).numpy()
+        np.save(order_path, order)
+    start_index = min(start_step * batch_size, len(order))
+    sampler = order[start_index:] if start_index else order
     loader = DataLoader(
         train_dataset,
         batch_size=batch_size,
-        shuffle=True,
+        sampler=sampler,
         num_workers=int(cfg.get("num_workers", 0)),
         persistent_workers=bool(int(cfg.get("num_workers", 0)) > 0),
         pin_memory=device.type == "cuda",
@@ -654,6 +674,15 @@ def main() -> int:
     initial_encoder = torch.nn.utils.parameters_to_vector(
         [p.detach().float().cpu() for p in encoder_params]
     )
+    if resume_state is not None:
+        model.load_state_dict(resume_state["model"])
+        optimizer.load_state_dict(resume_state["optimizer"])
+        scheduler.load_state_dict(resume_state["scheduler"])
+        initial_encoder = resume_state["initial_encoder"]
+        torch.set_rng_state(resume_state["rng_cpu"])
+        if torch.cuda.is_available() and resume_state.get("rng_cuda") is not None:
+            torch.cuda.set_rng_state_all(resume_state["rng_cuda"])
+        model.train()
     metrics_path = run_dir / "train_metrics.csv"
     fieldnames = [
         "step", "epoch", "total_loss", "action_loss", "xview_loss",
@@ -670,17 +699,56 @@ def main() -> int:
     except Exception:
         writer = None
     gradient_checks = None
-    best_score = -1.0
-    best_step = None
-    best_encoder_path = None
-    best_metrics = None
-    val_history = []
-    step = 0
+    best_score = float(resume_state["best_score"]) if resume_state else -1.0
+    best_step = resume_state.get("best_step") if resume_state else None
+    best_encoder_path = (
+        resume_state.get("best_encoder_path") if resume_state else None
+    )
+    if best_encoder_path is None and resume_state is not None:
+        candidate = run_dir / "best_encoder.pt"
+        if candidate.exists():
+            best_encoder_path = {
+                "path": str(candidate),
+                "sha256": encoder_sha256(candidate),
+                "parameters": int(
+                    sum(p.numel() for p in model.encoder.parameters())
+                ),
+            }
+    best_metrics = resume_state.get("best_metrics") if resume_state else None
+    val_history = list(resume_state.get("val_history", [])) if resume_state else []
+    step = start_step
     epoch = 0
     start_time = time.perf_counter()
-    with metrics_path.open("w", newline="", encoding="utf-8") as metrics_file:
+
+    def _save_train_state() -> None:
+        """Full resumable state: model, optimizer, scheduler, counters, RNG."""
+        torch.save(
+            {
+                "step": int(step),
+                "model": model.state_dict(),
+                "optimizer": optimizer.state_dict(),
+                "scheduler": scheduler.state_dict(),
+                "initial_encoder": initial_encoder,
+                "best_score": float(best_score),
+                "best_step": best_step,
+                "best_metrics": best_metrics,
+                "best_encoder_path": best_encoder_path,
+                "val_history": val_history,
+                "rng_cpu": torch.get_rng_state(),
+                "rng_cuda": (
+                    torch.cuda.get_rng_state_all()
+                    if torch.cuda.is_available() else None
+                ),
+            },
+            run_dir / "train_state.pt",
+        )
+    metrics_mode = (
+        "a" if resume_state is not None and metrics_path.exists() else "w"
+    )
+    with metrics_path.open(metrics_mode, newline="", encoding="utf-8") as metrics_file:
         csv_writer = csv.DictWriter(metrics_file, fieldnames=fieldnames)
-        csv_writer.writeheader()
+        if metrics_mode == "w":
+            csv_writer.writeheader()
         while step < total_steps:
             epoch += 1
             for batch in loader:
@@ -846,6 +914,7 @@ def main() -> int:
                         f"retrieval_r5={val_seen['retrieval']['recall@5']}",
                         flush=True,
                     )
+                    _save_train_state()
                     model.train()
                 if step >= total_steps:
                     break
@@ -876,6 +945,7 @@ def main() -> int:
     final_encoder_path = save_encoder_only(
         model.encoder, run_dir / "encoder_final.pt"
     )
+    _save_train_state()
     if best_encoder_path is None:
         best_encoder_path = final_encoder_path
     elapsed = time.perf_counter() - start_time
