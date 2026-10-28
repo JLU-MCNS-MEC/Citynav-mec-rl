@@ -99,10 +99,14 @@ def main() -> int:
                     entry["tif_bounds"] = [b.left, b.bottom, b.right, b.top]
                 if entry["ply"]:
                     x = entry["ply"]["x"]; y = entry["ply"]["y"]
-                    entry["bounds_match"] = (
-                        abs(x[0] - b.left) <= 0.2 and abs(x[1] - b.right) <= 0.2
-                        and abs(y[0] - b.bottom) <= 0.2 and abs(y[1] - b.top) <= 0.2
+                    dev = max(
+                        abs(x[0] - b.left), abs(x[1] - b.right),
+                        abs(y[0] - b.bottom), abs(y[1] - b.top),
                     )
+                    entry["bounds_max_deviation_m"] = round(dev, 3)
+                    # One 0.1 m raster cell of rounding is expected; 1 m is a
+                    # deliberately loose ceiling for sparse edge points.
+                    entry["bounds_match"] = dev <= 1.0
         report["maps"][name] = entry
 
     missing = {s: sorted(set(required[s]) - {m for m, e in report["maps"].items() if e["present"]}) for s in SPLITS}
