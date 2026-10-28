@@ -247,8 +247,18 @@ def main() -> int:
         raise PermissionError("test_unseen stays sealed")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     data_config = load_data_config(data_root=args.data_root, ply_root=args.ply_root)
+    # Must match the token-build observation config exactly: 336 px FPV,
+    # 120 m crop, no point splatting.  The default 300 m crop would change the
+    # rendered distribution and is several times slower.
     observation_config = ObservationConfig(
-        image_size=336, goal_crop_size=96, fpv_width=336, fpv_height=336,
+        image_size=336,
+        depth_size=336,
+        goal_crop_size=96,
+        goal_scales=(14, 28, 56),
+        map_cache_size=2,
+        fpv_width=336,
+        fpv_height=336,
+        fpv_crop_radius_m=float(args.crop_radius),
         fpv_splat_radius=0,
     )
     dataset = CityNavDataset(data_config, args.split, include_processed_descriptions=False)
