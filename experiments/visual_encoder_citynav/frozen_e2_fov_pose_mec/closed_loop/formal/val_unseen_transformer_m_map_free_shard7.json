@@ -1,0 +1,77 @@
+{
+  "summary": {
+    "split": "val_unseen",
+    "episodes": 3,
+    "model": "transformer_m",
+    "use_retrieval": false,
+    "success_rate": 0.0,
+    "oracle_success_rate": 0.3333333333333333,
+    "spl": 0.0,
+    "ne_m": 221.10004484207184,
+    "ndtw": 0.24203292422310355,
+    "mean_steps": 25.333333333333332,
+    "stop_rate": 1.0,
+    "mean_step_latency_s": 6.1239033543311825,
+    "shard_index": 7,
+    "shards": 8,
+    "gab_threshold": 0.03880675001548639,
+    "journal": "/home/20261024_1/Workspace/Citynav-mec-rl/experiments/visual_encoder_citynav/frozen_e2_fov_pose_mec/closed_loop/formal/val_unseen_transformer_m_map_free_shard7.jsonl",
+    "elapsed_seconds": 521.0,
+    "test_unseen_read": false
+  },
+  "episodes": [
+    {
+      "episode_id": "97021b62f623039f85ec",
+      "map_name": "cambridge_block_3",
+      "steps": 16,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 396.6982369527745,
+      "min_dist_m": 385.6282591954511,
+      "spl": 0.0,
+      "ndtw": 0.21196229691135246,
+      "action_counts": {
+        "MoveForward": 10,
+        "GoDown": 5,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 7.3100932779489085
+    },
+    {
+      "episode_id": "5707f45658b5912f5a17",
+      "map_name": "cambridge_block_3",
+      "steps": 47,
+      "stopped": true,
+      "success": false,
+      "oracle_success": true,
+      "ne_m": 82.24392811518493,
+      "min_dist_m": 8.209081427282522,
+      "spl": 0.0,
+      "ndtw": 0.2077367081392206,
+      "action_counts": {
+        "MoveForward": 46,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 7.637678376299903
+    },
+    {
+      "episode_id": "5f926f48c1a0a0338925",
+      "map_name": "cambridge_block_3",
+      "steps": 13,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 184.35796945825615,
+      "min_dist_m": 155.84448577661414,
+      "spl": 0.0,
+      "ndtw": 0.30639976761873755,
+      "action_counts": {
+        "GoDown": 7,
+        "MoveForward": 5,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 3.4239384087447364
+    }
+  ]
+}

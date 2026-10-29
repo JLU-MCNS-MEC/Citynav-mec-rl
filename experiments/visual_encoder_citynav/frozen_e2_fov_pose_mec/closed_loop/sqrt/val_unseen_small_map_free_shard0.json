@@ -1,0 +1,75 @@
+{
+  "summary": {
+    "split": "val_unseen",
+    "episodes": 3,
+    "model": "small",
+    "use_retrieval": false,
+    "success_rate": 0.0,
+    "oracle_success_rate": 0.3333333333333333,
+    "spl": 0.0,
+    "ne_m": 132.3984571482348,
+    "ndtw": 0.6203307058527939,
+    "mean_steps": 12.666666666666666,
+    "stop_rate": 1.0,
+    "mean_step_latency_s": 6.659611234346383,
+    "shard_index": 0,
+    "shards": 8,
+    "gab_threshold": 0.03880675001548639,
+    "journal": "/home/20261024_1/Workspace/Citynav-mec-rl/experiments/visual_encoder_citynav/frozen_e2_fov_pose_mec/closed_loop/sqrt/val_unseen_small_map_free_shard0.jsonl",
+    "elapsed_seconds": 258.67,
+    "test_unseen_read": false
+  },
+  "episodes": [
+    {
+      "episode_id": "d4726a5573469fe3339d",
+      "map_name": "birmingham_block_5",
+      "steps": 14,
+      "stopped": true,
+      "success": false,
+      "oracle_success": true,
+      "ne_m": 112.27705886054665,
+      "min_dist_m": 6.376378534651427,
+      "spl": 0.0,
+      "ndtw": 0.7042302964701648,
+      "action_counts": {
+        "MoveForward": 13,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 8.073392879600371
+    },
+    {
+      "episode_id": "ad3e833b23dd479b77c4",
+      "map_name": "birmingham_block_5",
+      "steps": 13,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 161.03769544522976,
+      "min_dist_m": 132.1889244355449,
+      "spl": 0.0,
+      "ndtw": 0.40045887601842783,
+      "action_counts": {
+        "GoDown": 12,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 7.066946048701468
+    },
+    {
+      "episode_id": "0cbb6f22d38389b4e5f2",
+      "map_name": "birmingham_block_5",
+      "steps": 11,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 123.88061713892795,
+      "min_dist_m": 87.46731203518657,
+      "spl": 0.0,
+      "ndtw": 0.7563029450697891,
+      "action_counts": {
+        "GoDown": 10,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 4.838494774737311
+    }
+  ]
+}

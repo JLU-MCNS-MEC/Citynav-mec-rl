@@ -1,0 +1,75 @@
+{
+  "summary": {
+    "split": "val_unseen",
+    "episodes": 3,
+    "model": "transformer_m",
+    "use_retrieval": false,
+    "success_rate": 0.0,
+    "oracle_success_rate": 0.0,
+    "spl": 0.0,
+    "ne_m": 220.37743326627808,
+    "ndtw": 0.14144396365804232,
+    "mean_steps": 32.0,
+    "stop_rate": 1.0,
+    "mean_step_latency_s": 3.864308909978939,
+    "shard_index": 2,
+    "shards": 8,
+    "gab_threshold": 0.03880675001548639,
+    "journal": "/home/20261024_1/Workspace/Citynav-mec-rl/experiments/visual_encoder_citynav/frozen_e2_fov_pose_mec/closed_loop/formal/val_unseen_transformer_m_map_free_shard2.jsonl",
+    "elapsed_seconds": 535.08,
+    "test_unseen_read": false
+  },
+  "episodes": [
+    {
+      "episode_id": "a28df561aa3b55546480",
+      "map_name": "birmingham_block_5",
+      "steps": 63,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 197.6633115731234,
+      "min_dist_m": 74.25943173070273,
+      "spl": 0.0,
+      "ndtw": 0.14258365287005298,
+      "action_counts": {
+        "MoveForward": 62,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 7.387306282270907
+    },
+    {
+      "episode_id": "89f514a5b962242cfe6d",
+      "map_name": "birmingham_block_5",
+      "steps": 16,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 286.3397645185628,
+      "min_dist_m": 267.8200576991535,
+      "spl": 0.0,
+      "ndtw": 0.2337918558682923,
+      "action_counts": {
+        "MoveForward": 15,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 2.2729813230544096
+    },
+    {
+      "episode_id": "e0e6160eeb7eb0204a77",
+      "map_name": "birmingham_block_5",
+      "steps": 17,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 177.12922370714804,
+      "min_dist_m": 131.42051832676358,
+      "spl": 0.0,
+      "ndtw": 0.04795638223578168,
+      "action_counts": {
+        "MoveForward": 16,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 1.9326391246115022
+    }
+  ]
+}

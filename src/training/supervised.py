@@ -63,6 +63,8 @@ def factorized_loss(
     actions: torch.Tensor,
     *,
     arrival_loss_weight: float = 1.0,
+    move_class_weights: Optional[torch.Tensor] = None,
+    arrival_pos_weight: Optional[torch.Tensor] = None,
 ) -> dict:
     """Movement CE on non-stop labels + binary arrival BCE on every label."""
     move_logits = components["move_logits"]
@@ -84,12 +86,20 @@ def factorized_loss(
         # Movement head order: Forward, Right, Left, Up, Down.  Official action
         # IDs are 1..5, so subtract one to obtain the head target.
         move_targets = actions[move_mask] - 1
-        move_loss = F.cross_entropy(move_logits[move_mask], move_targets)
+        move_loss = F.cross_entropy(
+            move_logits[move_mask],
+            move_targets,
+            weight=move_class_weights,
+        )
     else:
         move_loss = move_logits.sum() * 0.0
 
     arrival_target = (actions == int(STOP)).float()
-    arrival_loss = F.binary_cross_entropy_with_logits(arrival_logit, arrival_target)
+    arrival_loss = F.binary_cross_entropy_with_logits(
+        arrival_logit,
+        arrival_target,
+        pos_weight=arrival_pos_weight,
+    )
     loss = move_loss + float(arrival_loss_weight) * arrival_loss
 
     joint_logits = combine_move_and_arrival(move_logits, arrival_logit)
@@ -178,6 +188,8 @@ def train_step(
     *,
     scaler: Optional[torch.cuda.amp.GradScaler] = None,
     clip_parameters: Optional[Iterable[torch.nn.Parameter]] = None,
+    move_class_weights: Optional[torch.Tensor] = None,
+    arrival_pos_weight: Optional[torch.Tensor] = None,
 ) -> dict:
     config = config or TrainingConfig()
     clip_parameters = (
@@ -192,6 +204,8 @@ def train_step(
         components,
         batch["actions"],
         arrival_loss_weight=config.arrival_loss_weight,
+        move_class_weights=move_class_weights,
+        arrival_pos_weight=arrival_pos_weight,
     )
     loss = losses["loss"]
     if not torch.isfinite(loss):

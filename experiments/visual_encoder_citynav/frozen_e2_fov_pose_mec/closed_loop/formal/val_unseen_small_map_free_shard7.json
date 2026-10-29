@@ -1,0 +1,75 @@
+{
+  "summary": {
+    "split": "val_unseen",
+    "episodes": 3,
+    "model": "small",
+    "use_retrieval": false,
+    "success_rate": 0.0,
+    "oracle_success_rate": 0.0,
+    "spl": 0.0,
+    "ne_m": 278.7431095751269,
+    "ndtw": 0.5052540275392066,
+    "mean_steps": 19.0,
+    "stop_rate": 1.0,
+    "mean_step_latency_s": 4.894485979340231,
+    "shard_index": 7,
+    "shards": 8,
+    "gab_threshold": 0.03880675001548639,
+    "journal": "/home/20261024_1/Workspace/Citynav-mec-rl/experiments/visual_encoder_citynav/frozen_e2_fov_pose_mec/closed_loop/formal/val_unseen_small_map_free_shard7.jsonl",
+    "elapsed_seconds": 255.85,
+    "test_unseen_read": false
+  },
+  "episodes": [
+    {
+      "episode_id": "97021b62f623039f85ec",
+      "map_name": "cambridge_block_3",
+      "steps": 18,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 440.100140118948,
+      "min_dist_m": 434.6478127378939,
+      "spl": 0.0,
+      "ndtw": 0.368059137123259,
+      "action_counts": {
+        "GoDown": 17,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 2.987802518143629
+    },
+    {
+      "episode_id": "5707f45658b5912f5a17",
+      "map_name": "cambridge_block_3",
+      "steps": 25,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 211.52849961272366,
+      "min_dist_m": 209.22732860191348,
+      "spl": 0.0,
+      "ndtw": 0.718806720224872,
+      "action_counts": {
+        "GoDown": 24,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 3.4412230797577648
+    },
+    {
+      "episode_id": "5f926f48c1a0a0338925",
+      "map_name": "cambridge_block_3",
+      "steps": 14,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 184.60068899370899,
+      "min_dist_m": 163.08533536035804,
+      "spl": 0.0,
+      "ndtw": 0.4288962252694886,
+      "action_counts": {
+        "GoDown": 13,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 8.2544323401193
+    }
+  ]
+}

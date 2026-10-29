@@ -1,0 +1,75 @@
+{
+  "summary": {
+    "split": "val_seen",
+    "episodes": 3,
+    "model": "small",
+    "use_retrieval": false,
+    "success_rate": 0.0,
+    "oracle_success_rate": 0.0,
+    "spl": 0.0,
+    "ne_m": 202.3912771180434,
+    "ndtw": 0.3975043172063763,
+    "mean_steps": 14.0,
+    "stop_rate": 1.0,
+    "mean_step_latency_s": 4.244931138538347,
+    "shard_index": 6,
+    "shards": 8,
+    "gab_threshold": 0.03880675001548639,
+    "journal": "/home/20261024_1/Workspace/Citynav-mec-rl/experiments/visual_encoder_citynav/frozen_e2_fov_pose_mec/closed_loop/formal/val_seen_small_map_free_shard6.jsonl",
+    "elapsed_seconds": 166.92,
+    "test_unseen_read": false
+  },
+  "episodes": [
+    {
+      "episode_id": "1a0fe6ddbbbc29a4b048",
+      "map_name": "cambridge_block_28",
+      "steps": 12,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 96.6468836052855,
+      "min_dist_m": 57.03724387004563,
+      "spl": 0.0,
+      "ndtw": 0.5480878646877997,
+      "action_counts": {
+        "GoDown": 11,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 7.467869232854961
+    },
+    {
+      "episode_id": "5a17ce6c7baa3cb23adb",
+      "map_name": "cambridge_block_28",
+      "steps": 17,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 240.7021338556128,
+      "min_dist_m": 229.7290810764498,
+      "spl": 0.0,
+      "ndtw": 0.07746625956233627,
+      "action_counts": {
+        "GoDown": 16,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 2.0324388410046916
+    },
+    {
+      "episode_id": "a6afacef9c07b583abb0",
+      "map_name": "cambridge_block_33",
+      "steps": 13,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 269.82481389323203,
+      "min_dist_m": 265.4618556843678,
+      "spl": 0.0,
+      "ndtw": 0.566958827368993,
+      "action_counts": {
+        "GoDown": 12,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 3.234485341755387
+    }
+  ]
+}

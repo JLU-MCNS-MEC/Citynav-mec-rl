@@ -1,0 +1,74 @@
+{
+  "summary": {
+    "split": "val_seen",
+    "episodes": 3,
+    "model": "small",
+    "use_retrieval": true,
+    "success_rate": 0.0,
+    "oracle_success_rate": 0.0,
+    "spl": 0.0,
+    "ne_m": 307.1804337822313,
+    "ndtw": 0.3420855579114203,
+    "mean_steps": 100.0,
+    "stop_rate": 0.0,
+    "mean_step_latency_s": 6.726407671690297,
+    "shard_index": 2,
+    "shards": 8,
+    "gab_threshold": 0.03880675001548639,
+    "journal": "/home/20261024_1/Workspace/Citynav-mec-rl/experiments/visual_encoder_citynav/frozen_e2_fov_pose_mec/closed_loop/sqrt/val_seen_small_full_shard2.jsonl",
+    "elapsed_seconds": 2019.27,
+    "test_unseen_read": false
+  },
+  "episodes": [
+    {
+      "episode_id": "807047ebccd16b3b0dd1",
+      "map_name": "birmingham_block_3",
+      "steps": 100,
+      "stopped": false,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 599.840827158008,
+      "min_dist_m": 211.09889517010774,
+      "spl": 0.0,
+      "ndtw": 0.1973724966963825,
+      "action_counts": {
+        "GoDown": 16,
+        "MoveForward": 84
+      },
+      "mean_step_latency_s": 7.6558700872655026
+    },
+    {
+      "episode_id": "70154f6dd57274855624",
+      "map_name": "birmingham_block_4",
+      "steps": 100,
+      "stopped": false,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 227.36273218478937,
+      "min_dist_m": 92.75493784931567,
+      "spl": 0.0,
+      "ndtw": 0.060223240862623144,
+      "action_counts": {
+        "MoveForward": 100
+      },
+      "mean_step_latency_s": 7.790135688688606
+    },
+    {
+      "episode_id": "436e6b2ecc7e01a51afd",
+      "map_name": "birmingham_block_9",
+      "steps": 100,
+      "stopped": false,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 94.33774200389666,
+      "min_dist_m": 85.9676244789792,
+      "spl": 0.0,
+      "ndtw": 0.7686609361752552,
+      "action_counts": {
+        "GoDown": 35,
+        "MoveForward": 65
+      },
+      "mean_step_latency_s": 4.733217239116784
+    }
+  ]
+}

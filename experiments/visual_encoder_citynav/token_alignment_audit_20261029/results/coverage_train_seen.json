@@ -1,0 +1,48 @@
+{
+  "train_seen": {
+    "records": 22002,
+    "maps": 24,
+    "teacher_actions_total": 4156966,
+    "trajectory_length": {
+      "mean": 188.94,
+      "median": 159,
+      "p90": 360,
+      "max": 401
+    },
+    "action_distribution": {
+      "Stop": 0.0053,
+      "MoveForward": 0.3277,
+      "TurnRight": 0.051,
+      "TurnLeft": 0.0511,
+      "GoUp": 0.1622,
+      "GoDown": 0.4027
+    }
+  },
+  "sampled_token_cache": {
+    "trajectories": 625,
+    "windows": 1250,
+    "frames": 10000,
+    "maps": [
+      "birmingham_block_13",
+      "birmingham_block_11",
+      "birmingham_block_12",
+      "birmingham_block_10",
+      "cambridge_block_25",
+      "cambridge_block_17",
+      "cambridge_block_23",
+      "cambridge_block_4"
+    ],
+    "record_coverage": 0.0284,
+    "map_coverage": 0.3333,
+    "frames_per_trajectory": 16,
+    "sampled_fraction_of_median_trajectory": 0.1006,
+    "action_distribution": {
+      "Stop": 0.0625,
+      "MoveForward": 0.2965,
+      "TurnRight": 0.0493,
+      "TurnLeft": 0.0532,
+      "GoUp": 0.0372,
+      "GoDown": 0.5013
+    }
+  }
+}

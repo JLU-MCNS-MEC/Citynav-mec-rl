@@ -1,0 +1,245 @@
+{
+  "generated_at": "2026-10-29T03:06:01+00:00",
+  "device": "cuda",
+  "seed": 42,
+  "input_dims": {
+    "current_tokens": [
+      576,
+      384
+    ],
+    "goal_tokens": [
+      3,
+      384
+    ],
+    "history_vis": [
+      16,
+      768
+    ],
+    "history_pose": [
+      16,
+      12
+    ],
+    "history_action": [
+      16,
+      6
+    ],
+    "history_mask": [
+      16
+    ],
+    "gab": [
+      20
+    ],
+    "map_feat": [
+      22
+    ],
+    "language_features": [
+      768
+    ]
+  },
+  "bert": {
+    "backend": "bert",
+    "feature_dim": 768,
+    "parameters": 109482240,
+    "requires_grad_any": false,
+    "warning": null,
+    "unique_descriptions": 26549
+  },
+  "retrieval": {
+    "candidate_stride_m": 48.0,
+    "candidate_scales_m": [
+      32.0,
+      64.0,
+      128.0
+    ],
+    "map_count": 2,
+    "candidate_count": 369,
+    "train_visual_encoder": false,
+    "train_samples": 16,
+    "val": {},
+    "trace": [],
+    "best_recall@1": null,
+    "encoder_checkpoint": "runs/visual_encoder_citynav/abl_20261028_e2_fov_pose_seed42/best_encoder.pt",
+    "retriever_checkpoint": "experiments/visual_encoder_citynav/token_alignment_audit_20261029/cache/probe_h0/retrieval/retriever.pt",
+    "encoder_state": "experiments/visual_encoder_citynav/token_alignment_audit_20261029/cache/probe_h0/retrieval/encoder.pt",
+    "test_unseen_read": false
+  },
+  "tokens": {
+    "frames": 64,
+    "trajectories": {
+      "train_seen": 4,
+      "val_seen": 2,
+      "val_unseen": 2
+    },
+    "action_counts": {
+      "0": {
+        "Stop": 2,
+        "MoveForward": 14,
+        "TurnLeft": 3,
+        "GoUp": 3,
+        "GoDown": 10
+      },
+      "1": {
+        "Stop": 1,
+        "MoveForward": 4,
+        "TurnRight": 1,
+        "GoDown": 10
+      },
+      "2": {
+        "Stop": 1,
+        "MoveForward": 4,
+        "GoDown": 11
+      }
+    },
+    "gab_reliability_threshold": 0.027194434850049486,
+    "token_file": "experiments/visual_encoder_citynav/token_alignment_audit_20261029/cache/probe_h0/tokens/t5_tokens.npz",
+    "token_bytes": 26408867,
+    "test_unseen_read": false
+  },
+  "models": [
+    {
+      "name": "transformer_m:full",
+      "model": "transformer_m",
+      "use_retrieval": true,
+      "balance": "none",
+      "parameters": 3232390,
+      "initial": {
+        "val_seen": {
+          "frames": 16,
+          "loss": 2.791915,
+          "accuracy": 0.0625,
+          "move_accuracy": 0.0,
+          "stop_precision": 0.0625,
+          "stop_recall": 1.0,
+          "per_class_counts": {
+            "Stop": 1,
+            "MoveForward": 4,
+            "TurnRight": 1,
+            "TurnLeft": 0,
+            "GoUp": 0,
+            "GoDown": 10
+          },
+          "per_class_accuracy": {
+            "Stop": 1.0,
+            "MoveForward": 0.0,
+            "TurnRight": 0.0,
+            "TurnLeft": 0.0,
+            "GoUp": 0.0,
+            "GoDown": 0.0
+          },
+          "eval_seconds": 0.22
+        },
+        "val_unseen": {
+          "frames": 16,
+          "loss": 2.801145,
+          "accuracy": 0.0625,
+          "move_accuracy": 0.0,
+          "stop_precision": 0.0625,
+          "stop_recall": 1.0,
+          "per_class_counts": {
+            "Stop": 1,
+            "MoveForward": 4,
+            "TurnRight": 0,
+            "TurnLeft": 0,
+            "GoUp": 0,
+            "GoDown": 11
+          },
+          "per_class_accuracy": {
+            "Stop": 1.0,
+            "MoveForward": 0.0,
+            "TurnRight": 0.0,
+            "TurnLeft": 0.0,
+            "GoUp": 0.0,
+            "GoDown": 0.0
+          },
+          "eval_seconds": 0.034
+        }
+      },
+      "final": {
+        "val_seen": {
+          "frames": 16,
+          "loss": 1.859471,
+          "accuracy": 0.0625,
+          "move_accuracy": 0.0,
+          "stop_precision": 0.0625,
+          "stop_recall": 1.0,
+          "per_class_counts": {
+            "Stop": 1,
+            "MoveForward": 4,
+            "TurnRight": 1,
+            "TurnLeft": 0,
+            "GoUp": 0,
+            "GoDown": 10
+          },
+          "per_class_accuracy": {
+            "Stop": 1.0,
+            "MoveForward": 0.0,
+            "TurnRight": 0.0,
+            "TurnLeft": 0.0,
+            "GoUp": 0.0,
+            "GoDown": 0.0
+          },
+          "eval_seconds": 0.036
+        },
+        "val_unseen": {
+          "frames": 16,
+          "loss": 1.471786,
+          "accuracy": 0.0625,
+          "move_accuracy": 0.0,
+          "stop_precision": 0.0625,
+          "stop_recall": 1.0,
+          "per_class_counts": {
+            "Stop": 1,
+            "MoveForward": 4,
+            "TurnRight": 0,
+            "TurnLeft": 0,
+            "GoUp": 0,
+            "GoDown": 11
+          },
+          "per_class_accuracy": {
+            "Stop": 1.0,
+            "MoveForward": 0.0,
+            "TurnRight": 0.0,
+            "TurnLeft": 0.0,
+            "GoUp": 0.0,
+            "GoDown": 0.0
+          },
+          "eval_seconds": 0.035
+        }
+      },
+      "trace": [
+        {
+          "step": 0,
+          "loss": 2.621129,
+          "accuracy": 0.0,
+          "move_accuracy": 0.0,
+          "stop_precision": 0.0,
+          "stop_recall": 0.0,
+          "grad_norm": 16.021452
+        },
+        {
+          "step": 19,
+          "loss": 1.3892,
+          "accuracy": 0.125,
+          "move_accuracy": 0.0,
+          "stop_precision": 0.125,
+          "stop_recall": 1.0,
+          "grad_norm": 4.17307
+        }
+      ],
+      "train_seconds": 1.212,
+      "frames_per_second": 132.0,
+      "gpu_memory": {
+        "max_allocated_mb": 301.86,
+        "max_reserved_mb": 3622.0
+      },
+      "checkpoint": "experiments/visual_encoder_citynav/token_alignment_audit_20261029/cache/probe_h0/mec/transformer_m_full/mec.pt"
+    }
+  ],
+  "raw_data_unchanged": true,
+  "raw_snapshot": {
+    "file_count": 117,
+    "total_bytes": 32725227425,
+    "digest": "22d64d73fdec214f8d74ef920f9438680ffd72cc"
+  },
+  "note": "Small-scale retrieval + T5/language smoke; not a full training result. test_unseen was never read."
+}

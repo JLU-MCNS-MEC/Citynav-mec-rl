@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import random
 import sys
@@ -37,7 +38,7 @@ from src.config import (  # noqa: E402
     TrainingConfig,
     load_data_config,
 )
-from src.data.actions import ACTION_NAMES, STOP  # noqa: E402
+from src.data.actions import ACTION_NAMES, NUM_ACTIONS, STOP  # noqa: E402
 from src.data.candidates import (  # noqa: E402
     CANDIDATE_SCALES_M,
     CANDIDATE_STRIDE_M,
@@ -131,6 +132,36 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--mec-batch-size", type=int, default=8)
     parser.add_argument("--mec-lr", type=float, default=1e-4)
     parser.add_argument("--mec-weight-decay", type=float, default=1e-4)
+    parser.add_argument(
+        "--mec-balance",
+        choices=("none", "balanced", "sqrt"),
+        default="none",
+        help=(
+            "reweight MEC training for the imbalanced six-action labels: "
+            "'balanced' uses inverse move-class frequency plus an arrival "
+            "pos_weight of neg/pos; 'sqrt' uses the square roots. Evaluation "
+            "losses stay unweighted. Off by default."
+        ),
+    )
+    parser.add_argument(
+        "--mec-subdir",
+        default="mec",
+        help=(
+            "checkpoint subdirectory under cache-dir; use a new name to keep "
+            "a reweighted run separate from the baseline weights."
+        ),
+    )
+    parser.add_argument(
+        "--mec-models",
+        nargs="+",
+        default=[
+            "small:full",
+            "small:map_free",
+            "transformer_m:full",
+            "transformer_m:map_free",
+        ],
+        help="subset of MEC models to train, e.g. small:full transformer_m:full",
+    )
     parser.add_argument("--rebuild-candidates", action="store_true")
     parser.add_argument("--rebuild-tokens", action="store_true")
     parser.add_argument(
@@ -140,6 +171,17 @@ def _parse_args() -> argparse.Namespace:
             "persist each collected token episode to cache_dir/tokens/shards so an "
             "interrupted token build resumes instead of restarting. Off by default: "
             "the resulting token arrays are identical either way."
+        ),
+    )
+    parser.add_argument(
+        "--history-context",
+        type=int,
+        default=0,
+        help=(
+            "render this many real states before each supervised window and use "
+            "them as causal history (0 keeps the legacy 8-step-window history). "
+            "Supervised steps and labels are unchanged; extra renders are history "
+            "only. Use a separate cache dir when this is nonzero."
         ),
     )
     parser.add_argument(
@@ -404,10 +446,15 @@ def _collect_episode_frames(
     steps: int,
     device: torch.device,
     crop_radius: float,
+    history_context: int = 0,
 ) -> dict | None:
-    poses = list(result.poses[start:start + int(steps)])
-    actions = [int(v) for v in result.actions[start:start + int(steps)]]
-    if len(poses) != int(steps) or len(actions) != int(steps):
+    steps = int(steps)
+    history = max(0, int(history_context))
+    lo = max(0, int(start) - history)
+    poses = list(result.poses[lo:int(start) + steps])
+    actions = [int(v) for v in result.actions[lo:int(start) + steps]]
+    expected = int(start) + steps - lo
+    if len(poses) != expected or len(actions) != expected:
         return None
     with torch.no_grad():
         language = torch.from_numpy(language_features).float().to(device).reshape(1, -1)
@@ -460,6 +507,7 @@ def _collect_episode_frames(
         "poses": poses,
         "actions": actions,
         "start_step": int(start),
+        "history_context": history,
         "current_tokens": np.stack(current_tokens),
         "visuals": np.stack(visuals),
         "heatmaps": np.stack(heatmaps),
@@ -481,7 +529,18 @@ def _finalize_episode(
     poses = episode["poses"]
     actions = episode["actions"]
     visuals = episode["visuals"]
-    gab = build_gab_sequence(episode["heatmaps"], actions, gab_config)
+    history = int(episode.get("history_context", 0))
+    start = int(episode["start_step"])
+    lo = max(0, start - history)
+    sup_start = start - lo
+    sup_indices = list(range(sup_start, len(actions)))
+    # GAB stays window-local so the history-context comparison isolates the
+    # history inputs; the closed loop keeps accumulating GAB from episode start.
+    gab = build_gab_sequence(
+        episode["heatmaps"][sup_start:],
+        actions[sup_start:],
+        gab_config,
+    )
     current = []
     goals = []
     history_vis = []
@@ -495,7 +554,8 @@ def _finalize_episode(
     step_ids = []
     goal_valid = []
     top5_rows = []
-    for index, action in enumerate(actions):
+    for step_offset, index in enumerate(sup_indices):
+        action = actions[index]
         h_vis, h_pose, h_action, h_mask = history_arrays(
             poses, actions, index, visuals
         )
@@ -505,11 +565,11 @@ def _finalize_episode(
         history_pose.append(h_pose)
         history_action.append(h_action)
         history_mask.append(h_mask)
-        gab_rows.append(gab[index])
+        gab_rows.append(gab[step_offset])
         map_rows.append(episode["map_features"][index])
         language.append(episode["language_features"])
         labels.append(int(action))
-        step_ids.append(episode["start_step"] + index)
+        step_ids.append(start + step_offset)
         goal_valid.append(episode["goal_valid"])
         top5_rows.append(episode["top5_indices"])
     arrays = {
@@ -533,14 +593,14 @@ def _finalize_episode(
             "split": episode["split"],
             "map_name": episode["map_name"],
             "episode_id": episode["episode_id"],
-            "teacher_step": int(episode["start_step"] + index),
-            "action": int(action),
+            "teacher_step": int(start + step_offset),
+            "action": int(actions[index]),
             "goal_valid": int(episode["goal_valid"]),
             "top5_indices": [int(v) for v in episode["top5_indices"]],
             "render_seconds": episode["render_seconds"],
             "valid_pixel_ratio_mean": episode["valid_pixel_ratio_mean"],
         }
-        for index, action in enumerate(actions)
+        for step_offset, index in enumerate(sup_indices)
     ]
     return arrays, metadata
 
@@ -600,6 +660,9 @@ def _save_episode_shard(path: Path, episode: dict) -> None:
         ),
         "actions": np.asarray(episode["actions"], dtype=np.int64),
         "start_step": np.asarray(int(episode["start_step"]), dtype=np.int64),
+        "history_context": np.asarray(
+            int(episode.get("history_context", 0)), dtype=np.int64
+        ),
         "goal_valid": np.asarray(int(episode["goal_valid"]), dtype=np.int64),
         "top5_indices": np.asarray(episode["top5_indices"], dtype=np.int64),
         "render_seconds": np.asarray(float(episode["render_seconds"])),
@@ -626,6 +689,11 @@ def _load_episode_shard(path: Path) -> dict:
             poses=[Pose5D(*(float(v) for v in row)) for row in data["poses"]],
             actions=[int(v) for v in data["actions"]],
             start_step=int(data["start_step"]),
+            history_context=(
+                int(data["history_context"])
+                if "history_context" in data.files
+                else 0
+            ),
             goal_valid=int(data["goal_valid"]),
             top5_indices=[int(v) for v in data["top5_indices"]],
             render_seconds=float(data["render_seconds"]),
@@ -762,6 +830,9 @@ def _build_token_cache(
                             steps=int(args.steps_per_trajectory),
                             device=device,
                             crop_radius=float(args.crop_radius),
+                            history_context=int(
+                                getattr(args, "history_context", 0)
+                            ),
                         )
                         if episode is not None and use_shards:
                             _save_episode_shard(
@@ -831,6 +902,9 @@ def _build_token_cache(
                             steps=int(args.steps_per_trajectory),
                             device=device,
                             crop_radius=float(args.crop_radius),
+                            history_context=int(
+                                getattr(args, "history_context", 0)
+                            ),
                         )
                         if episode is not None and use_shards:
                             _save_episode_shard(
@@ -934,6 +1008,46 @@ def _build_token_cache(
         encoding="utf-8",
     )
     return merged, metadata
+
+
+def _mec_balance_weights(
+    arrays: dict,
+    train_indices: np.ndarray,
+    mode: str,
+    device: torch.device,
+) -> tuple[torch.Tensor | None, torch.Tensor | None]:
+    """Inverse-frequency weights for the imbalanced action labels.
+
+    Returns ``(move_class_weights, arrival_pos_weight)``.  The movement head
+    order is Forward, Right, Left, Up, Down, so the weight vector is indexed by
+    ``action_id - 1``.  Weights are normalized to mean one over classes that
+    actually occur, which keeps the total loss scale comparable to ``mode=none``.
+    """
+    if mode == "none":
+        return None, None
+    actions = np.asarray(arrays["actions"])[train_indices].astype(np.int64)
+    move_actions = actions[actions != int(STOP)]
+    if move_actions.size == 0:
+        return None, None
+    move_targets = move_actions - 1
+    counts = np.bincount(move_targets, minlength=NUM_ACTIONS - 1).astype(np.float64)
+    present = counts > 0
+    weights = np.zeros_like(counts)
+    weights[present] = move_actions.size / (present.sum() * counts[present])
+    if mode == "sqrt":
+        weights[present] = np.sqrt(weights[present])
+    weights[present] /= weights[present].mean()
+
+    num_stop = int((actions == int(STOP)).sum())
+    num_move = int(actions.size - num_stop)
+    pos_weight = num_move / max(num_stop, 1)
+    if mode == "sqrt":
+        pos_weight = math.sqrt(pos_weight)
+
+    return (
+        torch.tensor(weights, dtype=torch.float32, device=device),
+        torch.tensor([pos_weight], dtype=torch.float32, device=device),
+    )
 
 
 def _t5_batch(
@@ -1068,6 +1182,10 @@ def _train_t5_model(
         grad_clip=1.0,
         seed=int(args.seed),
     )
+    balance_mode = str(getattr(args, "mec_balance", "none"))
+    move_class_weights, arrival_pos_weight = _mec_balance_weights(
+        arrays, train_indices, balance_mode, device
+    )
     initial = {
         split: _evaluate_t5(
             model, arrays, indices, device,
@@ -1088,7 +1206,14 @@ def _train_t5_model(
             replace=False,
         )
         batch = _t5_batch(arrays, indices, device, use_retrieval=use_retrieval)
-        result = train_step(model, optimizer, batch, training)
+        result = train_step(
+            model,
+            optimizer,
+            batch,
+            training,
+            move_class_weights=move_class_weights,
+            arrival_pos_weight=arrival_pos_weight,
+        )
         if step % 25 == 0 or step == int(args.mec_steps) - 1:
             trace.append(
                 {
@@ -1121,13 +1246,16 @@ def _train_t5_model(
             ),
         }
     checkpoint_dir = ensure_output_dir(
-        args.cache_dir / "mec" / name.replace(":", "_").lower()
+        args.cache_dir
+        / str(getattr(args, "mec_subdir", "mec"))
+        / name.replace(":", "_").lower()
     )
     torch.save(model.state_dict(), checkpoint_dir / "mec.pt")
     return {
         "name": name,
         "model": model_name,
         "use_retrieval": bool(use_retrieval),
+        "balance": balance_mode,
         "parameters": int(sum(p.numel() for p in model.parameters())),
         "initial": initial,
         "final": final,
@@ -1410,19 +1538,30 @@ def main() -> int:
         "val_seen": np.flatnonzero(token_arrays["split_id"] == 1),
         "val_unseen": np.flatnonzero(token_arrays["split_id"] == 2),
     }
+    allowed_models = {
+        f"{model}:{variant}"
+        for model in ("small", "transformer_m")
+        for variant in ("full", "map_free")
+    }
+    requested_models = list(getattr(args, "mec_models", []) or [])
+    unknown = sorted(set(requested_models) - allowed_models)
+    if unknown:
+        raise SystemExit(
+            "unknown --mec-models value(s): " + ", ".join(unknown)
+            + "; allowed: " + ", ".join(sorted(allowed_models))
+        )
     model_results = []
-    for model_name in ("small", "transformer_m"):
-        for full_name in (f"{model_name}:full", f"{model_name}:map_free"):
-            model_results.append(
-                _train_t5_model(
-                    full_name,
-                    token_arrays,
-                    train_indices,
-                    val_indices,
-                    device,
-                    args,
-                )
+    for full_name in requested_models:
+        model_results.append(
+            _train_t5_model(
+                full_name,
+                token_arrays,
+                train_indices,
+                val_indices,
+                device,
+                args,
             )
+        )
     after = snapshot_raw_dirs(data_config)
     assert_snapshot_unchanged(before, after)
     report = {

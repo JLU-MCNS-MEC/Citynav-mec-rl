@@ -23,7 +23,8 @@ shift 6
 
 CACHE="$ROOT/data_cache/t5_frozen_1000"
 ENC="$ROOT/runs/visual_encoder_citynav/abl_20261028_e2_fov_pose_seed42/best_encoder.pt"
-MEC="$CACHE/mec/${MODEL}_${VARIANT}/mec.pt"
+MEC_ROOT="${MEC_ROOT:-$CACHE/mec}"
+MEC="$MEC_ROOT/${MODEL}_${VARIANT}/mec.pt"
 RET="$CACHE/retrieval/retriever.pt"
 
 RETRIEVAL_ARGS=()

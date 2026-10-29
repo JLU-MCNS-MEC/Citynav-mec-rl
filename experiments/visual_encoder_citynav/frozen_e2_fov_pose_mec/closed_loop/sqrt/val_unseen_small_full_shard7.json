@@ -1,0 +1,75 @@
+{
+  "summary": {
+    "split": "val_unseen",
+    "episodes": 3,
+    "model": "small",
+    "use_retrieval": true,
+    "success_rate": 0.0,
+    "oracle_success_rate": 0.3333333333333333,
+    "spl": 0.0,
+    "ne_m": 242.0651149609761,
+    "ndtw": 0.29468466867993076,
+    "mean_steps": 100.0,
+    "stop_rate": 0.0,
+    "mean_step_latency_s": 9.262439349985216,
+    "shard_index": 7,
+    "shards": 8,
+    "gab_threshold": 0.03880675001548639,
+    "journal": "/home/20261024_1/Workspace/Citynav-mec-rl/experiments/visual_encoder_citynav/frozen_e2_fov_pose_mec/closed_loop/sqrt/val_unseen_small_full_shard7.jsonl",
+    "elapsed_seconds": 2779.66,
+    "test_unseen_read": false
+  },
+  "episodes": [
+    {
+      "episode_id": "97021b62f623039f85ec",
+      "map_name": "cambridge_block_3",
+      "steps": 100,
+      "stopped": false,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 114.9981356430832,
+      "min_dist_m": 104.92778449124982,
+      "spl": 0.0,
+      "ndtw": 0.4202417699854461,
+      "action_counts": {
+        "GoDown": 28,
+        "MoveForward": 72
+      },
+      "mean_step_latency_s": 11.32527987651294
+    },
+    {
+      "episode_id": "5707f45658b5912f5a17",
+      "map_name": "cambridge_block_3",
+      "steps": 100,
+      "stopped": false,
+      "success": false,
+      "oracle_success": true,
+      "ne_m": 210.9736397306747,
+      "min_dist_m": 8.209081427282522,
+      "spl": 0.0,
+      "ndtw": 0.2660171619323971,
+      "action_counts": {
+        "GoDown": 17,
+        "MoveForward": 83
+      },
+      "mean_step_latency_s": 10.544391844407656
+    },
+    {
+      "episode_id": "5f926f48c1a0a0338925",
+      "map_name": "cambridge_block_3",
+      "steps": 100,
+      "stopped": false,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 400.2235695091705,
+      "min_dist_m": 152.1658691668564,
+      "spl": 0.0,
+      "ndtw": 0.1977950741219492,
+      "action_counts": {
+        "GoDown": 16,
+        "MoveForward": 84
+      },
+      "mean_step_latency_s": 5.917646329035051
+    }
+  ]
+}

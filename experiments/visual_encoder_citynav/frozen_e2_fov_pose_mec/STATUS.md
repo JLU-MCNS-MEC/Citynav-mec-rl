@@ -80,10 +80,30 @@
 - 检索差异不足以改变行为：`full`（检索+地图）与 `map_free` 的 nDTW 有差别，
   但两者都没有可用的转向决策。
 
-## 下一步候选（尚未执行）
+## 类别不平衡修正（2026-10-29，离线结果）
 
-1. **类别不平衡修正**：对 MEC 训练加 class weights / focal loss，或在窗口采样中
-   过采转向与 Stop 窗口；先看离线逐类召回，再跑小规模闭环。
+训练脚本新增 `--mec-balance {none,balanced,sqrt}`（移动类逆频率权重 + Stop 的
+`pos_weight`），新权重分别写到 `data_cache/t5_frozen_1000/mec_balanced/` 与
+`mec_sqrt/`，基线 `mec/` 未改动。
+
+| 运行 | Stop pos_weight | small:full VU acc | TurnLeft | TurnRight | GoUp | 结论 |
+|---|---:|---:|---:|---:|---:|---|
+| baseline | 1 | 0.573 | 0.08 | 0.00 | 0.59 | 从不 Stop，转向近 0 |
+| balanced | ≈15.0 | 0.079 | 0.03 | 0.00 | 0.50 | **退化：永远 Stop**（P 0.064 / R 1.000） |
+| sqrt | ≈3.87 | 0.588 | 0.11 | 0.02 | 0.65 | 可用折中；Stop 召回仍为 0 |
+
+- 两个 `full` 变体对 `balanced` 的 Stop 权重极敏感，arrival head 直接塌成全正；
+  `map_free` 受影响较小（VU acc 0.646→0.592）。
+- `sqrt` 下 `small:full` 保持/略升总准确率并首次出现非零转向召回；
+  `transformer_m:full` 略降（0.594→0.578）；两个 `map_free` 均略低于基线。
+- 离线报告：`balanced_run_20261029/t5_report.{md,json}`、
+  `sqrt_run_20261029/t5_report.{md,json}`。
+- 闭环：sqrt 权重的 24 条 × 8 分片同协议对比运行中，输出 `closed_loop/sqrt/`。
+
+## 下一步候选
+
+1. **类别不平衡修正**：已执行（见上节）；待 sqrt 闭环结果决定是否继续调
+   focal loss / 过采样，或转去排查 `full` 变体的 Stop 失效。
 2. **检查 full 的 Stop 失效**：同一数据上 map_free 能 Stop、full 不能，
    需要对比两变体的输入（检索分数是否淹没钱特征）与 loss 曲线。
 3. **扩大闭环规模**（当前每划分 24 条，置信区间很宽）：仅在策略行为改善后再做，

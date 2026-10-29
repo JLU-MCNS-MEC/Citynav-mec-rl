@@ -1,0 +1,75 @@
+{
+  "summary": {
+    "split": "val_unseen",
+    "episodes": 3,
+    "model": "small",
+    "use_retrieval": false,
+    "success_rate": 0.0,
+    "oracle_success_rate": 0.0,
+    "spl": 0.0,
+    "ne_m": 234.6444655809386,
+    "ndtw": 0.4266499206534174,
+    "mean_steps": 12.333333333333334,
+    "stop_rate": 1.0,
+    "mean_step_latency_s": 7.249330919494876,
+    "shard_index": 4,
+    "shards": 8,
+    "gab_threshold": 0.03880675001548639,
+    "journal": "/home/20261024_1/Workspace/Citynav-mec-rl/experiments/visual_encoder_citynav/frozen_e2_fov_pose_mec/closed_loop/sqrt/val_unseen_small_map_free_shard4.jsonl",
+    "elapsed_seconds": 243.91,
+    "test_unseen_read": false
+  },
+  "episodes": [
+    {
+      "episode_id": "440581c4a8bf35174d43",
+      "map_name": "cambridge_block_10",
+      "steps": 9,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 193.3748176887541,
+      "min_dist_m": 179.80085979146054,
+      "spl": 0.0,
+      "ndtw": 0.5084088223229473,
+      "action_counts": {
+        "GoDown": 8,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 6.79477944610537
+    },
+    {
+      "episode_id": "b3db03ed73f69c3cbdc5",
+      "map_name": "cambridge_block_10",
+      "steps": 11,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 237.44469187927814,
+      "min_dist_m": 228.49455708437645,
+      "spl": 0.0,
+      "ndtw": 0.27767763511121935,
+      "action_counts": {
+        "MoveForward": 10,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 12.028942878717896
+    },
+    {
+      "episode_id": "84ddf12789beecaa237c",
+      "map_name": "cambridge_block_10",
+      "steps": 17,
+      "stopped": true,
+      "success": false,
+      "oracle_success": false,
+      "ne_m": 273.11388717478354,
+      "min_dist_m": 265.4469533657531,
+      "spl": 0.0,
+      "ndtw": 0.4938633045260856,
+      "action_counts": {
+        "GoDown": 16,
+        "Stop": 1
+      },
+      "mean_step_latency_s": 2.9242704336613636
+    }
+  ]
+}

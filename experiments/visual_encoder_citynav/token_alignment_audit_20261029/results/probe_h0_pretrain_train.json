@@ -1,0 +1,175 @@
+{
+  "cache_dir": "experiments/visual_encoder_citynav/token_alignment_audit_20261029/cache/probe_h0_pretrain",
+  "model": "transformer_m:full",
+  "mec_steps": 30,
+  "batch_size": 8,
+  "seeds": [
+    42
+  ],
+  "frames": {
+    "train": 32,
+    "val_seen": 16,
+    "val_unseen": 16
+  },
+  "history_length": {
+    "mean": 3.5,
+    "min": 0,
+    "max": 7,
+    "valid_16_fraction": 0.0
+  },
+  "tokens_meta_trajectories": {
+    "train_seen": 4,
+    "val_seen": 2,
+    "val_unseen": 2
+  },
+  "results": [
+    {
+      "name": "transformer_m:full",
+      "model": "transformer_m",
+      "use_retrieval": true,
+      "balance": "none",
+      "parameters": 3232390,
+      "initial": {
+        "val_seen": {
+          "frames": 16,
+          "loss": 2.294921,
+          "accuracy": 0.0625,
+          "move_accuracy": 0.0,
+          "stop_precision": 0.0625,
+          "stop_recall": 1.0,
+          "per_class_counts": {
+            "Stop": 1,
+            "MoveForward": 4,
+            "TurnRight": 1,
+            "TurnLeft": 0,
+            "GoUp": 0,
+            "GoDown": 10
+          },
+          "per_class_accuracy": {
+            "Stop": 1.0,
+            "MoveForward": 0.0,
+            "TurnRight": 0.0,
+            "TurnLeft": 0.0,
+            "GoUp": 0.0,
+            "GoDown": 0.0
+          },
+          "eval_seconds": 4.54
+        },
+        "val_unseen": {
+          "frames": 16,
+          "loss": 2.611368,
+          "accuracy": 0.0625,
+          "move_accuracy": 0.0,
+          "stop_precision": 0.0625,
+          "stop_recall": 1.0,
+          "per_class_counts": {
+            "Stop": 1,
+            "MoveForward": 4,
+            "TurnRight": 0,
+            "TurnLeft": 0,
+            "GoUp": 0,
+            "GoDown": 11
+          },
+          "per_class_accuracy": {
+            "Stop": 1.0,
+            "MoveForward": 0.0,
+            "TurnRight": 0.0,
+            "TurnLeft": 0.0,
+            "GoUp": 0.0,
+            "GoDown": 0.0
+          },
+          "eval_seconds": 0.078
+        }
+      },
+      "final": {
+        "val_seen": {
+          "frames": 16,
+          "loss": 2.556556,
+          "accuracy": 0.0625,
+          "move_accuracy": 0.0,
+          "stop_precision": 0.0625,
+          "stop_recall": 1.0,
+          "per_class_counts": {
+            "Stop": 1,
+            "MoveForward": 4,
+            "TurnRight": 1,
+            "TurnLeft": 0,
+            "GoUp": 0,
+            "GoDown": 10
+          },
+          "per_class_accuracy": {
+            "Stop": 1.0,
+            "MoveForward": 0.0,
+            "TurnRight": 0.0,
+            "TurnLeft": 0.0,
+            "GoUp": 0.0,
+            "GoDown": 0.0
+          },
+          "eval_seconds": 0.053
+        },
+        "val_unseen": {
+          "frames": 16,
+          "loss": 1.746394,
+          "accuracy": 0.0625,
+          "move_accuracy": 0.0,
+          "stop_precision": 0.0625,
+          "stop_recall": 1.0,
+          "per_class_counts": {
+            "Stop": 1,
+            "MoveForward": 4,
+            "TurnRight": 0,
+            "TurnLeft": 0,
+            "GoUp": 0,
+            "GoDown": 11
+          },
+          "per_class_accuracy": {
+            "Stop": 1.0,
+            "MoveForward": 0.0,
+            "TurnRight": 0.0,
+            "TurnLeft": 0.0,
+            "GoUp": 0.0,
+            "GoDown": 0.0
+          },
+          "eval_seconds": 0.057
+        }
+      },
+      "trace": [
+        {
+          "step": 0,
+          "loss": 2.35693,
+          "accuracy": 0.0,
+          "move_accuracy": 0.0,
+          "stop_precision": 0.0,
+          "stop_recall": 0.0,
+          "grad_norm": 11.375173
+        },
+        {
+          "step": 25,
+          "loss": 1.900784,
+          "accuracy": 0.0,
+          "move_accuracy": 0.0,
+          "stop_precision": 0.0,
+          "stop_recall": 0.0,
+          "grad_norm": 6.229574
+        },
+        {
+          "step": 29,
+          "loss": 2.117177,
+          "accuracy": 0.0,
+          "move_accuracy": 0.0,
+          "stop_precision": 0.0,
+          "stop_recall": 0.0,
+          "grad_norm": 9.744212
+        }
+      ],
+      "train_seconds": 9.291,
+      "frames_per_second": 25.83,
+      "gpu_memory": {
+        "max_allocated_mb": 286.9,
+        "max_reserved_mb": 372.0
+      },
+      "checkpoint": "experiments/visual_encoder_citynav/token_alignment_audit_20261029/cache/probe_h0_pretrain/mec_audit_s42/transformer_m_full/mec.pt",
+      "seed": 42
+    }
+  ]
+}

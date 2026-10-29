@@ -1,0 +1,178 @@
+{
+  "map": "cambridge_block_25",
+  "split": "val_seen",
+  "record_index": 0,
+  "episode_id": "38fdbb82d6f897a54d27",
+  "teacher_poses": 173,
+  "pose_ids": [
+    0,
+    57,
+    114,
+    172
+  ],
+  "pretrain_config": {
+    "image_size": 336,
+    "depth_size": 336,
+    "goal_crop_size": 96,
+    "goal_scales": [
+      14,
+      28,
+      56
+    ],
+    "map_cache_size": 2,
+    "fpv_width": 336,
+    "fpv_height": 336,
+    "fpv_hfov_deg": 90.0,
+    "fpv_near_m": 0.5,
+    "fpv_far_m": 300.0,
+    "fpv_crop_radius_m": 300.0,
+    "fpv_splat_radius": 1,
+    "fpv_pitch_mode": "trajectory",
+    "fpv_fixed_pitch_deg": -30.0
+  },
+  "token_config": {
+    "image_size": 336,
+    "depth_size": 336,
+    "goal_crop_size": 96,
+    "goal_scales": [
+      14,
+      28,
+      56
+    ],
+    "map_cache_size": 2,
+    "fpv_width": 336,
+    "fpv_height": 336,
+    "fpv_hfov_deg": 90.0,
+    "fpv_near_m": 0.5,
+    "fpv_far_m": 300.0,
+    "fpv_crop_radius_m": 120.0,
+    "fpv_splat_radius": 0,
+    "fpv_pitch_mode": "trajectory",
+    "fpv_fixed_pitch_deg": -30.0
+  },
+  "cloud_points": 3854408,
+  "poses": [
+    {
+      "pose_id": 0,
+      "xyz_yaw": [
+        1621.6806383179,
+        638.5402942862,
+        142.3393052851,
+        0.19845670439418253
+      ],
+      "valid_ratio": {
+        "pretrain": 0.4963151927437642,
+        "token": 0.39157277494331066,
+        "closed": 0.39157277494331066,
+        "token_on_cloud": 0.3880208333333333
+      },
+      "point_count": {
+        "pretrain": 3854408,
+        "token": 10610040,
+        "closed": 10610040,
+        "token_on_cloud": 2121931
+      }
+    },
+    {
+      "pose_id": 57,
+      "xyz_yaw": [
+        1627.3796933389226,
+        703.9379046847536,
+        130.3393052851,
+        0.7220554799924819
+      ],
+      "valid_ratio": {
+        "pretrain": 0.5247661564625851,
+        "token": 0.46293048469387754,
+        "closed": 0.46293048469387754,
+        "token_on_cloud": 0.4588382227891156
+      },
+      "point_count": {
+        "pretrain": 3854408,
+        "token": 15435310,
+        "closed": 15435310,
+        "token_on_cloud": 3086957
+      }
+    },
+    {
+      "pose_id": 114,
+      "xyz_yaw": [
+        1671.8488109489147,
+        749.7650311837135,
+        100.33930528510001,
+        1.2456542555907806
+      ],
+      "valid_ratio": {
+        "pretrain": 0.5647321428571429,
+        "token": 0.5404620181405896,
+        "closed": 0.5404620181405896,
+        "token_on_cloud": 0.5343147675736961
+      },
+      "point_count": {
+        "pretrain": 3854408,
+        "token": 15762772,
+        "closed": 15762772,
+        "token_on_cloud": 3152518
+      }
+    },
+    {
+      "pose_id": 172,
+      "xyz_yaw": [
+        1695.5851431876354,
+        788.8726628542795,
+        52.33930528510001,
+        0.19845670439418317
+      ],
+      "valid_ratio": {
+        "pretrain": 0.6001984126984127,
+        "token": 0.5773366638321995,
+        "closed": 0.5773366638321995,
+        "token_on_cloud": 0.3475499574829932
+      },
+      "point_count": {
+        "pretrain": 3854408,
+        "token": 13367792,
+        "closed": 13367792,
+        "token_on_cloud": 2673489
+      }
+    }
+  ],
+  "aggregate": {
+    "pretrain": {
+      "valid_ratio": 0.5465029761904762,
+      "point_count": 3854408.0,
+      "render_seconds": 1.39438778499607,
+      "mean_abs_rgb": 19.302862405776978,
+      "fraction_gt10": 0.35059479520975056,
+      "token_l2": 0.3119898270815611,
+      "token_cos": 0.9278774112462997
+    },
+    "token": {
+      "valid_ratio": 0.4930754854024943,
+      "point_count": 13793978.5,
+      "render_seconds": 5.050696867459919,
+      "mean_abs_rgb": 0.0,
+      "fraction_gt10": 0.0,
+      "token_l2": 0.0,
+      "token_cos": 1.0
+    },
+    "closed": {
+      "valid_ratio": 0.4930754854024943,
+      "point_count": 13793978.5,
+      "render_seconds": 2.9175397654180415,
+      "mean_abs_rgb": 0.0,
+      "fraction_gt10": 0.0,
+      "token_l2": 0.0,
+      "token_cos": 1.0000025629997253
+    },
+    "token_on_cloud": {
+      "valid_ratio": 0.43218094529478457,
+      "point_count": 2758723.75,
+      "render_seconds": 0.5695383090642281,
+      "mean_abs_rgb": 10.752754032611847,
+      "fraction_gt10": 0.19164319373582767,
+      "token_l2": 0.16674708062782884,
+      "token_cos": 0.9579836130142212
+    }
+  }
+}
