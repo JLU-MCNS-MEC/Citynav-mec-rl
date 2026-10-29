@@ -20,7 +20,7 @@
 | 编号 | 目录 | 目的 | 依赖 | 状态 | 结果 |
 |---|---|---|---|---|---|
 | 01 | `01_dataset_length_and_horizon_audit/` | 官方口径、轨迹长度、教师动作数、步数上限 | 无 | **完成** | 100 步只覆盖约 20%；建议固定上限 500；见 `REPORT.md` |
-| 02 | `02_full_closed_loop_recheck/` | small:full / transformer_m:full 两轮分层闭环复测（固定 500 步） | 01 | **运行中**（预算 10–12 h） | 待填写 |
+| 02 | `02_full_closed_loop_recheck/` | small:full / transformer_m:full 单轮分层闭环复测（每划分 24 条，固定 500 步） | 01 | **运行中**（预算 4–5 h） | 待填写 |
 | 03 | `03_v82_citynav_dataflow_audit/` | MEC-V8.2 与 CityNav 数据流逐项对照 | 01–02 | 计划中 | 待填写 |
 | 04 | `04_stop_history_consistency/` | STOP 监督、历史因果、GAB 状态一致性修复与诊断缓存 | 03 | 计划中 | 待填写 |
 | 05 | `05_transformer_m_overfit_diagnostic/` | Transformer-M 小规模过拟合与决策诊断 | 04 | 计划中 | 待填写 |

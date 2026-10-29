@@ -58,9 +58,7 @@ pair() {
 }
 
 pair val_seen A
-pair val_seen B
 pair val_unseen A
-pair val_unseen B
 
 echo "=== $(date -Is) all runs finished; aggregating" >> "$LOG"
 "$PY" "$HERE/scripts/aggregate_experiment_02.py" \
