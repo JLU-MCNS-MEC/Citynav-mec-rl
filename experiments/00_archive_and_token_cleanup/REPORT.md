@@ -2,8 +2,7 @@
 
 - 日期：2026-10-29
 - 分支：`exp/citynav-mec-fixed50m-topdown`（从核验后的 `ebe557f` 创建）
-- 状态：**归档、盘点、清单与校验完成**；**Token 数据集删除已就绪，但等待用户明确确认**
-  （自动模式对不可逆删除做了权限拦截，见 §3.4）
+- 状态：**完成**（归档、盘点、校验、删除与删除后核验均已完成）
 - 未读取：`test_unseen`
 
 ## 1. 旧版核验与归档
@@ -126,10 +125,9 @@
   不读取 `t5_tokens.npz` 或 shards；本报告写作时旧实验仍在运行，删除不影响其收尾；
 - 清理脚本先写清单/校验和，再逐项删除，不使用宽泛通配符。
 
-### 3.4 当前状态：等待用户确认
+### 3.4 执行结果（2026-10-29 21:26，用户确认后执行）
 
-执行阶段被自动模式权限拦截（不可逆删除需要用户的明确指令）。归档与清单已全部落盘，
-删除可随时执行。复现命令：
+命令：
 
 ```bash
 cd /home/20261024_1/Workspace/Citynav-mec-rl-fixed50m
@@ -137,17 +135,27 @@ $HOME/miniconda3/envs/DRL_migrated/bin/python \
   experiments/00_archive_and_token_cleanup/scripts/archive_and_cleanup.py --execute
 ```
 
-脚本执行后会写入 `metadata/token_cleanup_result.json`：逐项删除记录、删除前/后可用空间、
-实际释放字节、残留目标扫描，并自动删除空的 `tokens/` 目录。
+逐项记录写入归档 `metadata/token_cleanup_result.json`：
 
-## 4. 删除后核验（待执行）
+| 指标 | 值 |
+|---|---:|
+| 删除目标 | 20 项 / 1,619 个文件 |
+| 表观删除量 | 13,488,943,515 B（13.49 GB） |
+| 实际磁盘删除量 | 13,492,269,056 B（12.57 GiB） |
+| `df` 实际释放 | 13,492,441,088 B（13.49 GB） |
+| 残留目标 | **0** |
+| 空的 `tokens/` 目录 | 已自动删除 |
 
-执行后需补齐：
+## 4. 删除后核验
 
-1. `df` 前后差值 vs 表观 13.49 GB；
-2. 残留扫描（20 个目标全部不存在；`token_dataset_*` 仍为 0）；
-3. `du -sh data_cache/t5_frozen_1000`（预期从 11 GB 降到约 0.3 GB：`mec*`、`retrieval`、
-   `language_features.npz` 保留）。
+| 项 | 结果 |
+|---|---|
+| `data_cache/t5_frozen_1000/` | 从 11 GB 降到 **194 MB**：`language_features.npz` 74 MB、`mec/` 34 MB、`mec_balanced/` 34 MB、`mec_sqrt/` 34 MB、`retrieval/` 18 MB，全部保留 |
+| `tokens/` | 不存在 |
+| 残留扫描 | 全盘无 `t5_tokens.npz`、无 `part_*.npz` |
+| `token_dataset_*` | 0 |
+| 磁盘 | 已用 912 GB → 899 GB（释放 13 GB） |
+| 审计缓存 | 只删除 Token 载荷；检索权重、MEC 权重、语言特征保留（从 5.9 GB 降到 3.3 GB） |
 
 ## 5. 结论与下一步
 

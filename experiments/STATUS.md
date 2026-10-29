@@ -12,7 +12,7 @@
 
 | 阶段 | 名称 | 状态 | 报告 | commit |
 |---|---|---|---|---|
-| 00 | 旧版归档与 Token 清理 | 归档/盘点/校验完成；**删除待用户确认** | `00_archive_and_token_cleanup/REPORT.md` | 见本 commit |
+| 00 | 旧版归档与 Token 清理 | **完成**（删除 13.49 GB，残留 0） | `00_archive_and_token_cleanup/REPORT.md` | `86d75ca` + 本次提交 |
 | 01 | 俯视地图资产审计 | **完成** | `01_topdown_asset_audit/REPORT.md` | 见本 commit |
 | 02 | 人工轨迹质量审计 | 未开始 | — | — |
 | 03 | 固定 50 m 与四动作教师 | 未开始 | — | — |

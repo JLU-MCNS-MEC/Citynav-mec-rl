@@ -281,7 +281,7 @@ def main() -> int:
         if path.is_dir():
             shutil.rmtree(path)
         else:
-            path.remove()
+            path.unlink()
         deleted.append({"path": str(path), "files": row["files"], "disk_bytes": row["disk_bytes"]})
     # remove the now-empty core tokens directory
     try:
