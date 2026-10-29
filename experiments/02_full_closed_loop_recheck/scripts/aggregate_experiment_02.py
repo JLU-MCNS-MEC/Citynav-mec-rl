@@ -3,7 +3,7 @@
 
 Each run directory contains one <split>_<model>_full_summary.json produced by
 aggregate_closed_loop.py, with per-episode step distance traces.  This script
-computes SR / NE / truncation at caps 100/200/300/400/500, action output
+computes SR / NE / truncation at the fixed 500-step cap, action output
 distributions, and 20 m entry/exit/stop diagnostics.
 
 No target or trajectory information is fed back into the model; all metrics are
@@ -20,7 +20,7 @@ from pathlib import Path
 
 import numpy as np
 
-CAPS = (100, 200, 300, 400, 500)
+CAPS = (500,)
 CLASSES = ("Stop", "MoveForward", "TurnRight", "TurnLeft", "GoUp", "GoDown")
 
 
