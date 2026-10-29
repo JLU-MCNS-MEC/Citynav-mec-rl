@@ -1,0 +1,180 @@
+{
+  "generated_at": "2026-10-29 21:52:32",
+  "split": "train_seen",
+  "test_unseen_read": false,
+  "n_episodes": 22002,
+  "replay_success": 19105,
+  "replay_success_rate": 0.8683301518043814,
+  "entered_20m": 21157,
+  "entered_20m_rate": 0.9615944005090447,
+  "action_totals": {
+    "TurnRight": 562277,
+    "Forward": 1424867,
+    "TurnLeft": 565740,
+    "Stop": 19105
+  },
+  "failure_reasons": {
+    "never_entered_20m": 565,
+    "step_limit": 2331,
+    "degenerate": 1
+  },
+  "teacher_steps": {
+    "mean": 70.24831196021984,
+    "median": 60.0,
+    "p95": 165.0,
+    "p99": 268.9599999999991,
+    "max": 1077
+  },
+  "by_map": {
+    "birmingham_block_1": {
+      "n": 2894,
+      "success": 2551,
+      "rate": 0.8814789219073946
+    },
+    "birmingham_block_10": {
+      "n": 310,
+      "success": 273,
+      "rate": 0.8806451612903226
+    },
+    "birmingham_block_11": {
+      "n": 17,
+      "success": 17,
+      "rate": 1.0
+    },
+    "birmingham_block_12": {
+      "n": 781,
+      "success": 725,
+      "rate": 0.9282970550576184
+    },
+    "birmingham_block_13": {
+      "n": 30,
+      "success": 29,
+      "rate": 0.9666666666666667
+    },
+    "birmingham_block_3": {
+      "n": 1543,
+      "success": 1355,
+      "rate": 0.8781594296824368
+    },
+    "birmingham_block_4": {
+      "n": 894,
+      "success": 786,
+      "rate": 0.8791946308724832
+    },
+    "birmingham_block_7": {
+      "n": 352,
+      "success": 335,
+      "rate": 0.9517045454545454
+    },
+    "birmingham_block_9": {
+      "n": 915,
+      "success": 794,
+      "rate": 0.8677595628415301
+    },
+    "cambridge_block_12": {
+      "n": 1406,
+      "success": 1200,
+      "rate": 0.8534850640113798
+    },
+    "cambridge_block_13": {
+      "n": 1775,
+      "success": 1466,
+      "rate": 0.8259154929577465
+    },
+    "cambridge_block_17": {
+      "n": 374,
+      "success": 323,
+      "rate": 0.8636363636363636
+    },
+    "cambridge_block_18": {
+      "n": 521,
+      "success": 439,
+      "rate": 0.8426103646833013
+    },
+    "cambridge_block_19": {
+      "n": 384,
+      "success": 303,
+      "rate": 0.7890625
+    },
+    "cambridge_block_20": {
+      "n": 1884,
+      "success": 1685,
+      "rate": 0.8943736730360934
+    },
+    "cambridge_block_21": {
+      "n": 1667,
+      "success": 1486,
+      "rate": 0.8914217156568687
+    },
+    "cambridge_block_23": {
+      "n": 285,
+      "success": 267,
+      "rate": 0.9368421052631579
+    },
+    "cambridge_block_25": {
+      "n": 157,
+      "success": 143,
+      "rate": 0.910828025477707
+    },
+    "cambridge_block_28": {
+      "n": 1452,
+      "success": 1210,
+      "rate": 0.8333333333333334
+    },
+    "cambridge_block_33": {
+      "n": 890,
+      "success": 806,
+      "rate": 0.9056179775280899
+    },
+    "cambridge_block_4": {
+      "n": 298,
+      "success": 270,
+      "rate": 0.9060402684563759
+    },
+    "cambridge_block_6": {
+      "n": 280,
+      "success": 256,
+      "rate": 0.9142857142857143
+    },
+    "cambridge_block_7": {
+      "n": 1349,
+      "success": 1106,
+      "rate": 0.8198665678280208
+    },
+    "cambridge_block_9": {
+      "n": 1544,
+      "success": 1280,
+      "rate": 0.8290155440414507
+    }
+  },
+  "by_length_bin": {
+    "short": {
+      "n": 6369,
+      "success": 6369,
+      "rate": 1.0
+    },
+    "medium": {
+      "n": 6390,
+      "success": 6390,
+      "rate": 1.0
+    },
+    "long": {
+      "n": 6346,
+      "success": 6346,
+      "rate": 1.0
+    },
+    "failed": {
+      "n": 2897,
+      "success": 0,
+      "rate": 0.0
+    }
+  },
+  "fixed_z_range": [
+    0.0,
+    93.69745635986328
+  ],
+  "teacher_step_terciles": [
+    44.0,
+    77.0
+  ]
+}

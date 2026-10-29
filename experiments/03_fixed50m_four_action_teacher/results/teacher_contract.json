@@ -1,0 +1,25 @@
+{
+  "labels": "/home/20261024_1/Workspace/Citynav-mec-rl-fixed50m/experiments/03_fixed50m_four_action_teacher/results/four_action_labels.npz",
+  "n_episodes": 22002,
+  "n_states": 2571989,
+  "success": 19105,
+  "checks": {
+    "action_ids_valid": true,
+    "no_vertical_actions": true,
+    "state_action_aligned": true,
+    "success_ends_with_stop": true,
+    "failure_has_no_stop": true,
+    "stop_within_20m": true,
+    "replay_consistent": true,
+    "reasons_valid": true
+  },
+  "all_passed": true,
+  "max_stop_distance_m": 19.992507934570312,
+  "max_replay_error": 0.0002537157535371266,
+  "action_counts": {
+    "Stop": 19105,
+    "Forward": 1424867,
+    "TurnLeft": 565740,
+    "TurnRight": 562277
+  }
+}
