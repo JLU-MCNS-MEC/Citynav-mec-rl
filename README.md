@@ -1,12 +1,33 @@
 # CityNav-MEC-RL
 
-CityNav / CityRefer 数据适配、SensatUrban PLY 第一视角 RGB/Depth 渲染、官方
-六动作监督，以及 MEC-V8.2 Small / Transformer-M 的最小训练验证。
+CityNav / CityRefer 数据适配、SensatUrban 俯视栅格视觉目标导航，以及
+MEC-V8.2 Transformer-M 的训练与闭环验证。
 
-当前阶段**只做数据、观测、六动作标签、T5+语言候选检索与过拟合/Smoke 验证**：
-不启动完整训练集训练，不实现完整 RL 闭环，不采用 CityNav 论文的 GSM 语义地图增强。
+## 当前协议（2026-10-29 起，分支 `exp/citynav-mec-fixed50m-topdown`）
 
-## 当前协议
+- 平台：UAV 固定离地 **50 m**（`z = GROUND_LEVEL[map] + 50`），不做升降；
+- 视觉输入：**俯视 RGB 地图局部观测**（以 UAV 为中心、100 m × 100 m、按航向旋转到机头朝前，
+  224×224），冻结 ImageNet 预训练 ResNet-50，保留 **7×7×2048** 空间特征；
+- 目标参考图像：以目标为中心、北向上、96 m × 96 m 的切片，编码为 **2048** 维全局嵌入；
+- 全局候选：28 张开发地图的固定网格候选（48 m 步长、96 m 切片），每个候选 2048 维嵌入；
+  候选必须通过高程有效掩码，无效区域不参与匹配；
+- 目标信念：参考图像与候选的视觉匹配（top-5）+ 机头坐标系下的相对几何，**12 维**；
+- 历史：严格因果的 16 步视觉（16×2048）、相对位姿（16×3）、动作（16×4）、掩码（16）；
+- **无语言输入、无 BERT、无网络状态**；不输入真实目标坐标、目标 ID、目标距离、未来动作；
+- 动作：四类离散动作 **STOP / Forward 5 m / TurnLeft 30° / TurnRight 30°**；
+- 模型：只训练 Transformer-M，固定随机种子 42、43；不使用 Small；
+- 损失：普通四分类交叉熵，**不使用类别加权、pos_weight、focal loss**；
+- 教师：实验 03B 的直接目标导向教师（A* 只使用高程障碍图，不使用人工轨迹中间点）；
+- 指标：SR 为主；`test_unseen` 保持封存。
+
+阶段索引与当前状态见 [`experiments/STATUS.md`](experiments/STATUS.md)；
+中断恢复记录见
+[`experiments/00_archive_and_token_cleanup/RECOVERY_2026-10-30.md`](experiments/00_archive_and_token_cleanup/RECOVERY_2026-10-30.md)。
+
+## 历史协议（旧分支 `exp/visual-encoder-ablation-20261028`，已归档）
+
+以下内容描述 2026-10-29 之前的 FPV + 冻结 BERT + 六动作方案，保留用于复现旧结果，
+**不代表当前分支的输入/动作/训练协议**：
 
 - 视觉输入：原始 SensatUrban PLY 的第一视角 RGB + 透视前向 Depth；
 - 文本输入：冻结预训练 `bert-base-uncased`；正式训练不使用 hashing；
@@ -16,7 +37,7 @@ CityNav / CityRefer 数据适配、SensatUrban PLY 第一视角 RGB/Depth 渲染
 - 教师：官方 lookahead 教师，对 marker 5 m 停止；评估成功半径单独为 20 m；
 - 数据：只读官方 `original_citynav` 四个划分；`test_unseen` 默认封存。
 
-## 六动作
+### 六动作（历史）
 
 | ID | 动作 | 执行 |
 |---:|---|---|
@@ -31,7 +52,7 @@ CityNav / CityRefer 数据适配、SensatUrban PLY 第一视角 RGB/Depth 渲染
 头。`combine_move_and_arrival` 组合成 `[Stop, Forward, Right, Left, Up, Down]`
 的 6 类联合分布，与官方动作 ID 对齐。
 
-## T5 + 语言检索
+### T5 + 语言检索（历史）
 
 ToyEnv V8.2 T5 六模态 + 冻结 BERT：
 
@@ -62,7 +83,7 @@ ID、裁剪、教师动作或成功标签。
 0.021/0.146/0.292；full 相对 map-free **没有显示正增益**。这是必须保留的负结果，
 详见 [`docs/T5_RETRIEVAL_REPORT.md`](docs/T5_RETRIEVAL_REPORT.md)。
 
-## 第一视角渲染
+### 第一视角渲染（历史）
 
 `src/data/fpv_renderer.py` + `src/data/fpv_observation.py`：
 
@@ -79,7 +100,7 @@ ID、裁剪、教师动作或成功标签。
 详细相机参数、样例指标、空洞与坐标校验见
 [`docs/FPV_RENDER_REPORT.md`](docs/FPV_RENDER_REPORT.md)。
 
-## 模型与文本
+### 模型与文本（历史）
 
 - `SmallMEC`：V8.2 `MeanPoolMLP` 的五类移动头 + Stop 头；
 - `TransformerMMEC`：V8.2 `ExplicitReasoningTransformer` 的五类移动头 + Stop 头；
@@ -96,9 +117,9 @@ ID、裁剪、教师动作或成功标签。
 - `ann_ids` 是对象 `descriptions` 的 0-based 索引；
 - split 文本与 CityRefer 文本存在空白/ASCII 双引号差异；严格匹配约 97.4%，
   归一化后三个开发划分均为 100%；
-- `target_positions[-1]` 是评估目标；`marker_positions[-1]` 是教师停止目标；
-  两者不能混用；
-- 原始轨迹高度保留，不再固定 50 m；
+- `target_positions[-1]` 是评估目标；`marker_positions[-1]` 是旧教师的停止目标，
+  新协议（实验 03B）只使用 `target_positions[-1]`，两者不能混用；
+- 原始轨迹高度保留；**当前协议在重放时固定为 `GROUND_LEVEL[map] + 50 m`**；
 - PNG/TIF 尺寸随 block 裁剪变化，但同一 block 的 PNG/TIF 尺寸一致，变换均为
   0.1 m。
 
@@ -216,7 +237,10 @@ python scripts/smoke_test.py \
 `test_unseen` 默认被数据集和审计脚本拒绝；只有显式
 `--allow-test-unseen` / `--include-test-unseen` 才能读取，保留给最终冻结报告。
 
-## 已验证结果
+## 已验证结果（旧协议，2026-10-29 之前）
+
+> 下列数字来自 FPV + BERT + 六动作方案，仅用于旧分支复现，**不是当前固定 50 m
+> 俯视四动作协议的结果**。当前分支的阶段结果见 `experiments/STATUS.md`。
 
 - `pytest -q`：72 passed；
 - FPV 样例：4 个不同地图的 512×512 RGB/Depth/overlay，见
@@ -251,26 +275,25 @@ python scripts/smoke_test.py \
   数据摘要变化会直接失败；
 - 不提交原始 JSON / CityRefer / RGB/TIFF / PLY / 大缓存 / 权重 / 日志。
 
-## 限制与下一步
+## 当前进度与下一步
 
-限制：
+当前分支的阶段状态、已完成实验与阻塞项以
+[`experiments/STATUS.md`](experiments/STATUS.md) 为准。截至 2026-10-30：
+
+1. 实验 00–03 已完成（Token 清理、俯视资产审计、轨迹质量审计、四动作教师）；
+2. 实验 04 初版有输入契约缺陷，正在修正（空间特征、高程有效掩码、Recall@K、
+   Val-Seen/Val-Unseen 全局定位验证）；
+3. 实验 03B（直接目标导向教师）进行中；
+4. 实验 05（Transformer-M 训练）与 06（闭环 SR）必须等 03B 和 04 修正完成后启动；
+5. 实验 07 记录采样/覆盖未解决问题，保持 OPEN。
+
+### 旧协议（FPV + BERT + 六动作）的已知限制
 
 - 点云 FPV 有空洞、无表面重建/光照，不等于 AirSim；
-- 部分地图的点云与正射颜色相关性较低，正式实验前需逐地图几何配准；
-- 过拟合验证只使用 128 条 train_seen 轨迹和 256 帧，不代表 val 泛化；
-- T5 候选检索在 val_unseen 上很弱（R@1 0.021），当前不足以支持地图增益；
-- 网络状态为确定性 5 维占位向量；
-- 尚未移植 V8.2 完整训练配方（movement class balance、arrival hard states、
-  checkpoint 选择）；
-- 尚未做完整 SR/SPL/NE 评测、RL、DQN/PPO 或 GSM。
-
-下一步：
-
-1. 改进无泄漏候选检索：更多 train episodes/训练步、更强的跨模态表示和候选覆盖，重新评估 R@1/5/10；
-2. 逐地图检查 PLY/轨迹/目标/语言/FPV 对齐，排除低相关地图；
-3. 在完整 `train_seen` 上跑监督基线，在 `val_seen` / `val_unseen` 评测；
-4. 移植 V8.2 训练配方与真实网络状态；
-5. 再决定 RL 闭环与全量 FPV 缓存。
+- 部分地图的点云与正射颜色相关性较低；
+- 过拟合验证只使用 128 条 train_seen 轨迹和 256 帧；
+- T5 候选检索在 val_unseen 上很弱（R@1 0.021）；
+- 旧协议没有解决 Stop 失效与闭环 SR=0 的问题（见旧分支实验 02/04/06 报告）。
 
 ## Git
 

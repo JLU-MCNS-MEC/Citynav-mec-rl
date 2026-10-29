@@ -1,0 +1,57 @@
+{
+  "split": "val_seen",
+  "seed": 42,
+  "step_cap": 500,
+  "bounds": [
+    44,
+    77
+  ],
+  "checkpoint": "checkpoint.pt",
+  "episodes": 3,
+  "metrics": {
+    "all": {
+      "n": 3,
+      "sr": 0.0,
+      "osr": 0.3333333333333333,
+      "stop_rate": 1.0,
+      "early_stop_rate": 1.0,
+      "non_stop_rate": 0.0,
+      "cap_fail_rate": 0.0,
+      "mean_steps": 49.333333333333336,
+      "mean_stop_dist": 110.87933696165679,
+      "mean_final_dist": 110.87933696165679,
+      "mean_min_dist": 54.1940749502316,
+      "actions": {
+        "Forward": 126,
+        "TurnRight": 9,
+        "TurnLeft": 10,
+        "Stop": 3
+      }
+    },
+    "short": {
+      "n": 3,
+      "sr": 0.0,
+      "osr": 0.3333333333333333,
+      "stop_rate": 1.0,
+      "early_stop_rate": 1.0,
+      "non_stop_rate": 0.0,
+      "cap_fail_rate": 0.0,
+      "mean_steps": 49.333333333333336,
+      "mean_stop_dist": 110.87933696165679,
+      "mean_final_dist": 110.87933696165679,
+      "mean_min_dist": 54.1940749502316,
+      "actions": {
+        "Forward": 126,
+        "TurnRight": 9,
+        "TurnLeft": 10,
+        "Stop": 3
+      }
+    },
+    "medium": {
+      "n": 0
+    },
+    "long": {
+      "n": 0
+    }
+  }
+}

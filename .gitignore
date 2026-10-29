@@ -37,6 +37,17 @@ nohup.out
 *.onnx
 *.safetensors
 
+# ---- Experiment caches (stage 04/05) --------------------------------------
+experiments/04_visual_goal_global_map_pipeline/cache/
+experiments/04_visual_goal_global_map_pipeline/cache_v2/
+experiments/05_transformer_m_training/features/
+experiments/05_transformer_m_training/features_v2/
+experiments/05_transformer_m_training/features_scaled/
+experiments/05_transformer_m_training/runs/
+experiments/05_transformer_m_training/runs_v2/
+experiments/05_transformer_m_training/checkpoints/
+experiments/06_closed_loop_success_rate/runs/
+
 # ---- Python / tooling -----------------------------------------------------
 __pycache__/
 *.py[cod]
