@@ -1,13 +1,30 @@
 #!/usr/bin/env python3
-"""Small-scale validation of the fixed-50 m visual-goal / global-map pipeline."""
+"""Global-goal localisation validation for the fixed-50 m pipeline.
+
+For every convertible Val-Seen / Val-Unseen task, at t = 5, t = 20 and the
+near-goal state (the teacher's STOP state), measure how well the visual
+reference image retrieves the true target position from the fixed candidate
+grid:
+
+* Recall@1 / @5 / @10 at 20 m and 24 m (computed on exactly K candidates -
+  the old version reused a 5-element array for Recall@10);
+* top-1 candidate distance;
+* top-5 weighted position error;
+* normalised belief entropy;
+* observation / candidate elevation-validity statistics.
+
+`test_unseen` is never read.
+"""
 
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import math
 import sys
 import time
+from collections import OrderedDict, defaultdict
 from pathlib import Path
 
 import cv2
@@ -28,8 +45,9 @@ from pipeline import (  # noqa: E402
 )
 
 SPLITS = DATA / "sbfnav-data/original_citynav"
-CACHE = HERE / "cache/candidates"
-RECALL_RADIUS = 48.0
+CACHE = HERE / "cache_v2/candidates48"
+RADII = (20.0, 24.0)
+KS = (1, 5, 10)
 
 
 def value_check() -> dict:
@@ -45,135 +63,197 @@ def value_check() -> dict:
     }
 
 
-def pipeline_checks(raster: MapRaster, feats: np.ndarray, states: np.ndarray,
+def pipeline_checks(raster: MapRaster, feats: dict, states: np.ndarray,
                     actions: np.ndarray, t: int) -> dict:
-    hist = history_window(feats, states, actions, t)
-    feats2, states2, actions2 = feats.copy(), states.copy(), actions.copy()
+    hist = history_window(feats["pooled"], states, actions, t)
+    feats2 = {k: v.copy() for k, v in feats.items()}
+    states2, actions2 = states.copy(), actions.copy()
     if t + 1 < len(states):
         states2[t + 1:] += 123.0
         actions2[t + 1:] = (actions2[t + 1:] + 1) % 4
-        feats2[t + 1:] = 0.0
-    hist2 = history_window(feats2, states2, actions2, t)
+        feats2["pooled"][t + 1:] = 0.0
+        feats2["spatial"][t + 1:] = 0.0
+    hist2 = history_window(feats2["pooled"], states2, actions2, t)
     causal = all(np.array_equal(hist[k], hist2[k]) for k in hist)
     mask_ok = int(hist["history_mask"].sum()) == min(t, HISTORY_LEN)
-
-    # coordinate frame: project the front-edge centre through the actual crop matrix
-    out = 224
-    corners = view_area_corners(float(states[t][0]), float(states[t][1]), float(states[t][2]), 50.0)
-    cols, rows = raster.pixel([p[0] for p in corners], [p[1] for p in corners])
-    src = np.stack([cols, rows], axis=1).astype(np.float32)
-    dst = np.array([[0, 0], [out - 1, 0], [out - 1, out - 1], [0, out - 1]], np.float32)
-    matrix = cv2.getPerspectiveTransform(src, dst)
-    fx = states[t][0] + 50 * math.cos(states[t][2])
-    fy = states[t][1] + 50 * math.sin(states[t][2])
-    fcol, frow = raster.pixel(fx, fy)
-    front = np.array([[[float(fcol), float(frow)]]], np.float32)
-    projected = cv2.perspectiveTransform(front, matrix)[0, 0]
-    frame_err = float(np.linalg.norm(projected - np.array([(out - 1) / 2.0, 0.0])))
-
-    return {
-        "history_causal": bool(causal),
-        "history_mask_ok": bool(mask_ok),
-        "front_edge_pixel_error": frame_err,
-        "history_shapes": {k: list(v.shape) for k, v in hist.items()},
-    }
+    return {"history_causal": bool(causal), "history_mask_ok": bool(mask_ok),
+            "history_shapes": {k: list(v.shape) for k, v in hist.items()},
+            "spatial_shape": list(feats["spatial"].shape),
+            "pooled_shape": list(feats["pooled"].shape)}
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--episodes", type=int, default=40)
-    parser.add_argument("--steps", type=int, nargs="+", default=[5, 20])
-    args = parser.parse_args()
+class RasterCache:
+    """Small LRU of map rasters (each ~48 MB RGB + 16 MB validity)."""
 
-    records = json.loads((SPLITS / "citynav_val_seen.json").read_text(encoding="utf-8"))
-    stride = max(1, len(records) // args.episodes)
-    chosen = records[::stride][: args.episodes]
-    ground = load_ground()
-    encoder = FrozenResNet(device="cpu")
+    def __init__(self, size: int = 3):
+        self.size = size
+        self.items: OrderedDict[str, MapRaster] = OrderedDict()
 
-    recall = {"1": [], "5": [], "10": []}
-    recall24 = {"1": [], "5": [], "10": []}
-    top1_dist, entropies, wm_dist = [], [], []
-    checks_all = []
-    encode_times = []
-    used = 0
-    figure_done = False
-    started = time.time()
-
-    for k, record in enumerate(chosen, 1):
-        name = f"{record['area']}_block_{record['block']}"
-        result = convert_episode(record, ground.get(name))
-        if not result.get("success"):
-            continue
-        states = np.asarray(result["states"], dtype=np.float64)
-        actions = np.asarray(result["actions"], dtype=np.int64)
-        if len(states) < 2:
-            continue
+    def get(self, name: str) -> MapRaster:
+        if name in self.items:
+            self.items.move_to_end(name)
+            return self.items[name]
         raster = MapRaster.load(name)
-        lib = CandidateLibrary.load(name, CACHE / f"{name}.npz")
-        target = np.asarray(record["target_positions"][-1], np.float64)[:2]
-        t0 = time.time()
-        target_emb = target_embedding(raster, target, encoder)
-        encode_times.append(time.time() - t0)
-        max_t = min(max(args.steps), len(states) - 1)
-        feats = encode_episode(raster, states[: max_t + 1], encoder)
-        used += 1
-        for t in args.steps:
-            t = min(t, len(states) - 1)
-            if t < 1:
-                continue
-            belief, info = belief_features(lib, target_emb, states[t][:2], float(states[t][2]))
-            d = np.linalg.norm(info["positions"] - target[None, :], axis=1)
-            for kk in recall:
-                recall[kk].append(bool((d[: int(kk)] <= RECALL_RADIUS).any()))
-                recall24[kk].append(bool((d[: int(kk)] <= 24.0).any()))
-            top1_dist.append(float(d[0]))
-            entropies.append(float(belief[2]))
-            wm = info["weights"] @ info["positions"]
-            wm_dist.append(float(np.linalg.norm(wm - target)))
-            checks_all.append(pipeline_checks(raster, feats, states, actions, t))
-            if not figure_done:
-                plot_case(raster, record, result, states, lib, info, target, t, belief)
-                figure_done = True
-        if k % 10 == 0:
-            print(f"  {k}/{len(chosen)} processed, {used} usable, "
-                  f"{time.time() - started:.0f}s", flush=True)
+        self.items[name] = raster
+        if len(self.items) > self.size:
+            self.items.popitem(last=False)
+        return raster
 
-    checks = {
-        "all_history_causal": all(c["history_causal"] for c in checks_all),
-        "all_history_mask_ok": all(c["history_mask_ok"] for c in checks_all),
-        "max_front_edge_pixel_error": max((c["front_edge_pixel_error"] for c in checks_all), default=None),
+
+def grouped_records(split: str) -> dict[str, list[tuple[int, dict]]]:
+    records = json.loads((SPLITS / f"citynav_{split}.json").read_text(encoding="utf-8"))
+    groups: dict[str, list[tuple[int, dict]]] = defaultdict(list)
+    for idx, record in enumerate(records):
+        groups[f"{record['area']}_block_{record['block']}"].append((idx, record))
+    return dict(sorted(groups.items()))
+
+
+def sample_rows(states: np.ndarray, steps: list[int]) -> list[tuple[str, int]]:
+    out = []
+    n = len(states)
+    for s in steps:
+        if s == -1:
+            if n >= 2:
+                out.append(("near", n - 1))
+        elif s < n:
+            out.append((f"t{s}", s))
+    return out
+
+
+def metric_block(rows: list[dict]) -> dict:
+    if not rows:
+        return {"n": 0}
+    out = {"n": len(rows)}
+    for radius in RADII:
+        tag = f"{int(radius)}m"
+        for k in KS:
+            out[f"recall@{k}_{tag}"] = float(np.mean([r[f"recall@{k}_{tag}"] for r in rows]))
+    out["top1_distance_m"] = {
+        "mean": float(np.mean([r["top1_distance"] for r in rows])),
+        "median": float(np.median([r["top1_distance"] for r in rows])),
     }
+    out["top5_weighted_distance_m"] = {
+        "mean": float(np.mean([r["top5_weighted"] for r in rows])),
+        "median": float(np.median([r["top5_weighted"] for r in rows])),
+        "within_20m": float(np.mean([r["top5_weighted"] <= 20.0 for r in rows])),
+        "within_24m": float(np.mean([r["top5_weighted"] <= 24.0 for r in rows])),
+    }
+    out["belief_entropy_mean"] = float(np.mean([r["entropy"] for r in rows]))
+    out["observation_valid_fraction"] = {
+        "mean": float(np.mean([r["obs_valid"] for r in rows])),
+        "min": float(np.min([r["obs_valid"] for r in rows])),
+    }
+    return out
+
+
+def evaluate_split(split: str, encoder: FrozenResNet, steps: list[int], limit: int,
+                   max_maps: int, figure: bool, cache: Path = CACHE) -> dict:
+    groups = grouped_records(split)
+    rasters = RasterCache()
+    libraries: dict[str, CandidateLibrary] = {}
+    rows: list[dict] = []
+    per_map: dict[str, int] = {}
+    failures: dict[str, int] = defaultdict(int)
+    used = 0
+    checks: list[dict] = []
+    started = time.time()
+    done_maps = 0
+    for name, items in groups.items():
+        if max_maps and done_maps >= max_maps:
+            break
+        done_maps += 1
+        cache_path = cache / f"{name}.npz"
+        if not cache_path.exists():
+            failures["missing_candidates"] += len(items)
+            print(f"  {name}: no candidate cache, skipped", flush=True)
+            continue
+        raster = rasters.get(name)
+        lib = libraries.get(name) or CandidateLibrary.load(name, cache_path)
+        libraries[name] = lib
+        per_map[name] = len(lib.positions)
+        for idx, record in items:
+            if limit and used >= limit:
+                break
+            result = convert_episode(record, load_ground_cached().get(name))
+            if not result.get("success"):
+                failures[result.get("reason", "failed")] += 1
+                continue
+            states = np.asarray(result["states"], np.float64)
+            actions = np.asarray(result["actions"], np.int64)
+            chosen = sample_rows(states, steps)
+            if not chosen:
+                failures["short"] += 1
+                continue
+            target = np.asarray(record["target_positions"][-1], np.float64)[:2]
+            if not raster.height_valid(float(target[0]), float(target[1])):
+                failures["target_invalid"] += 1
+                continue
+            phase_of = {t: label for label, t in chosen}
+            t_idx = sorted(phase_of)
+            images = [raster.heading_crop(float(states[t][0]), float(states[t][1]),
+                                          float(states[t][2]), return_valid=True)
+                      for t in t_idx]
+            target_emb = target_embedding(raster, target, encoder)
+            for t, (image, obs_valid) in zip(t_idx, images):
+                belief, info = belief_features(lib, target_emb, states[t][:2],
+                                               float(states[t][2]), topk=max(KS))
+                # Localisation error: distance from each ranked *candidate* to
+                # the true target.  (info["rank_distances"] is the distance from
+                # the UAV pose to the candidate and must not be used here.)
+                rank_d = np.linalg.norm(lib.positions[info["order"]] - target[None, :], axis=1)
+                wm = info["top5_weights"] @ info["top5_positions"]
+                row = {"split": split, "map": name, "index": idx,
+                       "phase": phase_of[t], "t": t,
+                       "top1_distance": float(rank_d[0]),
+                       "top5_weighted": float(np.linalg.norm(wm - target)),
+                       "entropy": float(belief[2]), "obs_valid": float(obs_valid)}
+                for radius in RADII:
+                    for k in KS:
+                        row[f"recall@{k}_{int(radius)}m"] = float(
+                            bool((rank_d[:k] <= radius).any()))
+                rows.append(row)
+                if not checks and figure:
+                    feats = encode_episode(raster, states[: t + 1], encoder)
+                    checks.append(pipeline_checks(raster, feats, states, actions, t))
+                    plot_case(raster, record, result, states, lib, info, target, t, belief)
+            used += 1
+        print(f"  {name}: {len(items)} tasks, {len(lib.positions)} candidates "
+              f"({time.time() - started:.0f}s)", flush=True)
+    by_phase = defaultdict(list)
+    for row in rows:
+        by_phase[row["phase"]].append(row)
     summary = {
-        "split": "val_seen",
+        "split": split,
         "test_unseen_read": False,
-        "episodes_requested": len(chosen),
+        "candidates": str(cache),
+        "candidate_counts": {"maps": len(per_map), "total": int(sum(per_map.values())),
+                             "min": int(min(per_map.values())) if per_map else 0,
+                             "max": int(max(per_map.values())) if per_map else 0},
         "episodes_used": used,
-        "steps_per_episode": args.steps,
-        "recall_48m": {k: float(np.mean(v)) for k, v in recall.items()},
-        "recall_24m": {k: float(np.mean(v)) for k, v in recall24.items()},
-        "top1_distance_m": {"mean": float(np.mean(top1_dist)), "median": float(np.median(top1_dist))},
-        "belief_entropy_mean": float(np.mean(entropies)),
-        "top5_weighted_distance_m": {"mean": float(np.mean(wm_dist)),
-                                     "median": float(np.median(wm_dist)),
-                                     "within_24m": float(np.mean(np.asarray(wm_dist) <= 24.0))},
-        "observation": {"size": 224, "half_extent_m": 50.0,
-                        "spatial_feature": [2048, 7, 7]},
-        "target_reference": {"half_extent_m": 48.0, "embedding_dim": 2048},
-        "candidates": {"stride_m": 48.0, "patch_m": 96.0},
-        "history": {"length": HISTORY_LEN,
-                    "visual_dim": 2048, "pose_dim": 3, "action_dim": 4},
-        "checks": checks,
-        "timing": {"candidate_build_seconds": None,
-                   "target_encode_seconds_mean": float(np.mean(encode_times)),
-                   "validation_seconds": round(time.time() - started, 1)},
+        "failures": dict(failures),
+        "steps": steps,
+        "all": metric_block(rows),
+        "by_phase": {phase: metric_block(v) for phase, v in by_phase.items()},
+        "checks": {
+            "all_history_causal": all(c["history_causal"] for c in checks),
+            "all_history_mask_ok": all(c["history_mask_ok"] for c in checks),
+            "spatial_shape": checks[0]["spatial_shape"] if checks else None,
+            "pooled_shape": checks[0]["pooled_shape"] if checks else None,
+        },
         "geometry": value_check(),
+        "seconds": round(time.time() - started, 1),
     }
-    (HERE / "results").mkdir(parents=True, exist_ok=True)
-    (HERE / "results/validation_summary.json").write_text(
-        json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(json.dumps(summary, indent=2, ensure_ascii=False))
-    return 0
+    return {"summary": summary, "rows": rows}
+
+
+_GROUND = None
+
+
+def load_ground_cached() -> dict[str, float]:
+    global _GROUND
+    if _GROUND is None:
+        _GROUND = load_ground()
+    return _GROUND
 
 
 def plot_case(raster, record, result, states, lib, info, target, t, belief) -> None:
@@ -189,20 +269,63 @@ def plot_case(raster, record, result, states, lib, info, target, t, belief) -> N
     axes[2].imshow(raster.image, extent=(left, right, bottom, top), origin="upper")
     xy = np.asarray(record["trajectory"], float)[:, :2]
     axes[2].plot(xy[:, 0], xy[:, 1], "-", color="tab:blue", lw=1.2, label="human path")
+    axes[2].plot(np.asarray(states)[:, 0], np.asarray(states)[:, 1], "--",
+                 color="tab:orange", lw=1.2, label="four-action teacher")
     axes[2].scatter(*states[0][:2], c="lime", edgecolor="black", s=30, label="start")
-    axes[2].scatter(*target, c="red", marker="*", s=160, edgecolor="black", label="target (eval only)")
+    axes[2].scatter(*target, c="red", marker="*", s=160, edgecolor="black",
+                    label="target (eval only)")
     cand = lib.positions
     axes[2].scatter(cand[:, 0], cand[:, 1], c="white", s=6, alpha=0.6, label="candidates")
     top_pos = info["positions"]
-    axes[2].scatter(top_pos[:, 0], top_pos[:, 1], c="yellow", edgecolor="black", s=45, label="top-5 match")
+    axes[2].scatter(top_pos[:, 0], top_pos[:, 1], c="yellow", edgecolor="black", s=45,
+                    label="top-5 match")
     axes[2].scatter(*states[t][:2], c="cyan", marker="o", s=40, label="current")
     axes[2].legend(fontsize=7, loc="lower left")
     axes[2].set_title(f"belief: top1 sim={belief[0]:.3f}")
     for ax in axes:
         ax.tick_params(labelsize=7)
     fig.tight_layout()
-    fig.savefig(HERE / "figures/pipeline_case.png", dpi=140)
+    (HERE / "figures").mkdir(exist_ok=True)
+    fig.savefig(HERE / "figures/pipeline_case_v2.png", dpi=140)
     plt.close(fig)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--split", nargs="+", default=["val_seen", "val_unseen"])
+    parser.add_argument("--episodes", type=int, default=0,
+                        help="per split cap; 0 = all convertible tasks")
+    parser.add_argument("--maps", type=int, default=0, help="cap number of maps (debug)")
+    parser.add_argument("--steps", type=int, nargs="+", default=[5, 20, -1],
+                        help="-1 = near-goal (teacher STOP state)")
+    parser.add_argument("--device", default="cuda")
+    parser.add_argument("--candidates", type=Path, default=CACHE)
+    parser.add_argument("--out", default="validation_v2")
+    args = parser.parse_args()
+
+    encoder = FrozenResNet(device=args.device)
+    (HERE / "results").mkdir(parents=True, exist_ok=True)
+    combined = {}
+    for split in args.split:
+        print(f"=== {split} ===", flush=True)
+        result = evaluate_split(split, encoder, args.steps, args.episodes,
+                                args.maps, figure=(split == "val_seen"),
+                                cache=args.candidates)
+        summary, rows = result["summary"], result["rows"]
+        (HERE / f"results/{args.out}_{split}.json").write_text(
+            json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        if rows:
+            keys = list(rows[0].keys())
+            with (HERE / f"results/{args.out}_{split}.csv").open("w", newline="",
+                                                                 encoding="utf-8") as fh:
+                writer = csv.DictWriter(fh, fieldnames=keys)
+                writer.writeheader()
+                writer.writerows(rows)
+        print(json.dumps(summary, indent=2, ensure_ascii=False), flush=True)
+        combined[split] = summary
+    (HERE / f"results/{args.out}_combined.json").write_text(
+        json.dumps(combined, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    return 0
 
 
 if __name__ == "__main__":

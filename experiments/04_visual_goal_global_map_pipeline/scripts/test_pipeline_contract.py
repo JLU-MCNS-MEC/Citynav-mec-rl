@@ -12,6 +12,7 @@ from pipeline import (
     CandidateLibrary,
     MapRaster,
     belief_features,
+    build_candidates,
     history_window,
     view_area_corners,
     wrap,
@@ -91,6 +92,57 @@ def test_history_relative_pose_is_in_current_frame():
     # the past state is 5 m ahead of the current one in world x; with yaw=0 the
     # relative offset in the current heading frame is +5 m forward
     assert np.allclose(hist["history_pose"][0], [5.0, 0.0, 0.0], atol=1e-6)
+
+
+def test_valid_fraction_counts_out_of_bounds_as_invalid():
+    img = np.zeros((1000, 1000, 3), np.uint8)
+    validity = np.ones((100, 100), bool)
+    validity[:, 50:] = False                       # x >= 50 m is nodata
+    raster = MapRaster("toy", img, 0.0, 0.0, 100.0, 100.0, 0.1, validity)
+    assert abs(raster.valid_fraction(25.0, 50.0, 20.0) - 1.0) < 1e-6
+    assert abs(raster.valid_fraction(45.0, 50.0, 20.0) - 0.625) < 1e-6
+    assert raster.valid_fraction(95.0, 50.0, 20.0) < 0.5   # half outside raster
+    assert raster.height_valid(25.0, 50.0)
+    assert not raster.height_valid(75.0, 50.0)
+
+
+class _StubEncoder:
+    def embed(self, images):
+        out = np.zeros((len(images), 8), np.float32)
+        out[:, 0] = 1.0
+        return out
+
+
+def test_build_candidates_skips_mostly_invalid_patches():
+    img = np.zeros((1000, 1000, 3), np.uint8)
+    validity = np.ones((100, 100), bool)
+    validity[:, 50:] = False
+    raster = MapRaster("toy", img, 0.0, 0.0, 100.0, 100.0, 0.1, validity)
+    lib = build_candidates(raster, _StubEncoder(), stride=20.0, half=20.0, min_valid=0.6)
+    assert len(lib.positions) > 0
+    assert lib.valid_fraction is not None
+    assert np.all(lib.valid_fraction >= 0.6)
+    assert np.all(lib.positions[:, 0] < 50.0)
+    assert np.allclose(np.linalg.norm(lib.embeddings, axis=1), 1.0)
+
+
+def test_belief_topk_does_not_change_feature_but_extends_ranking():
+    rng = np.random.default_rng(2)
+    emb = rng.normal(size=(40, 8)).astype(np.float32)
+    emb /= np.linalg.norm(emb, axis=1, keepdims=True)
+    positions = np.stack([np.arange(40) * 5.0, np.zeros(40)], axis=1).astype(np.float32)
+    lib = CandidateLibrary("toy", positions, emb)
+    ref = emb[7].copy()
+    f5, i5 = belief_features(lib, ref, np.array([0.0, 0.0]), 0.0, topk=5)
+    f10, i10 = belief_features(lib, ref, np.array([0.0, 0.0]), 0.0, topk=10)
+    assert np.array_equal(f5, f10)                  # the 12-d belief is top-5 only
+    assert len(i5["top_indices"]) == 5
+    assert len(i10["top_indices"]) == 10
+    assert len(i10["rank_distances"]) == 40
+    assert i10["top_indices"][0] == 7
+    # Recall@K must come from the full ranking, not from the 5-element top list
+    k10 = 10
+    assert len(i10["rank_distances"][:k10]) == k10
 
 
 def test_wrap_range():

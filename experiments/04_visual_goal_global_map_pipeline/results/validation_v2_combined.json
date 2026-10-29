@@ -1,0 +1,274 @@
+{
+  "val_seen": {
+    "split": "val_seen",
+    "test_unseen_read": false,
+    "candidates": "/home/20261024_1/Workspace/Citynav-mec-rl-fixed50m/experiments/04_visual_goal_global_map_pipeline/cache_v2/candidates48",
+    "candidate_counts": {
+      "maps": 24,
+      "total": 903,
+      "min": 1,
+      "max": 76
+    },
+    "episodes_used": 2066,
+    "failures": {
+      "step_limit": 283,
+      "never_entered_20m": 70,
+      "short": 25,
+      "target_invalid": 54
+    },
+    "steps": [
+      5,
+      20,
+      -1
+    ],
+    "all": {
+      "n": 5972,
+      "recall@1_20m": 0.4120897521768252,
+      "recall@5_20m": 0.47103148024112523,
+      "recall@10_20m": 0.4760549229738781,
+      "recall@1_24m": 0.5192565304755525,
+      "recall@5_24m": 0.6629269926322839,
+      "recall@10_24m": 0.6679504353650368,
+      "top1_distance_m": {
+        "mean": 27.42010327847542,
+        "median": 23.575971157422657
+      },
+      "top5_weighted_distance_m": {
+        "mean": 43.862304909177944,
+        "median": 31.77381645841449,
+        "within_20m": 0.27947086403215005,
+        "within_24m": 0.36302746148693904
+      },
+      "belief_entropy_mean": 0.8076697661873884,
+      "observation_valid_fraction": {
+        "mean": 0.7907696922906386,
+        "min": 0.0
+      }
+    },
+    "by_phase": {
+      "t5": {
+        "n": 2050,
+        "recall@1_20m": 0.4097560975609756,
+        "recall@5_20m": 0.468780487804878,
+        "recall@10_20m": 0.47365853658536583,
+        "recall@1_24m": 0.5185365853658537,
+        "recall@5_24m": 0.6639024390243903,
+        "recall@10_24m": 0.6687804878048781,
+        "top1_distance_m": {
+          "mean": 27.39954733572998,
+          "median": 23.575971157422657
+        },
+        "top5_weighted_distance_m": {
+          "mean": 43.795736090943215,
+          "median": 31.720014459437913,
+          "within_20m": 0.27951219512195125,
+          "within_24m": 0.364390243902439
+        },
+        "belief_entropy_mean": 0.8069020493292227,
+        "observation_valid_fraction": {
+          "mean": 0.7542531362773768,
+          "min": 0.0
+        }
+      },
+      "t20": {
+        "n": 1856,
+        "recall@1_20m": 0.4170258620689655,
+        "recall@5_20m": 0.47629310344827586,
+        "recall@10_20m": 0.4816810344827586,
+        "recall@1_24m": 0.5210129310344828,
+        "recall@5_24m": 0.662176724137931,
+        "recall@10_24m": 0.6675646551724138,
+        "top1_distance_m": {
+          "mean": 27.48617382059057,
+          "median": 23.304247502551036
+        },
+        "top5_weighted_distance_m": {
+          "mean": 43.96346497952021,
+          "median": 31.87514486553281,
+          "within_20m": 0.2796336206896552,
+          "within_24m": 0.3604525862068966
+        },
+        "belief_entropy_mean": 0.809847280045907,
+        "observation_valid_fraction": {
+          "mean": 0.8106304278766329,
+          "min": 0.0
+        }
+      },
+      "near": {
+        "n": 2066,
+        "recall@1_20m": 0.4099709583736689,
+        "recall@5_20m": 0.46853823814133594,
+        "recall@10_20m": 0.47337850919651503,
+        "recall@1_24m": 0.5183930300096805,
+        "recall@5_24m": 0.6626331074540174,
+        "recall@10_24m": 0.6674733785091965,
+        "top1_distance_m": {
+          "mean": 27.38114527095483,
+          "median": 23.575971157422657
+        },
+        "top5_weighted_distance_m": {
+          "mean": 43.837480604640646,
+          "median": 31.77381645841449,
+          "within_20m": 0.2792836398838335,
+          "within_24m": 0.3639883833494676
+        },
+        "belief_entropy_mean": 0.8064753585580704,
+        "observation_valid_fraction": {
+          "mean": 0.8091614708867575,
+          "min": 0.08924585459183673
+        }
+      }
+    },
+    "checks": {
+      "all_history_causal": true,
+      "all_history_mask_ok": true,
+      "spatial_shape": [
+        6,
+        7,
+        7,
+        2048
+      ],
+      "pooled_shape": [
+        6,
+        2048
+      ]
+    },
+    "geometry": {
+      "corner_side_error_m": 4.263256414560601e-14,
+      "corner_center_error_m": 0.0
+    },
+    "seconds": 49.6
+  },
+  "val_unseen": {
+    "split": "val_unseen",
+    "test_unseen_read": false,
+    "candidates": "/home/20261024_1/Workspace/Citynav-mec-rl-fixed50m/experiments/04_visual_goal_global_map_pipeline/cache_v2/candidates48",
+    "candidate_counts": {
+      "maps": 4,
+      "total": 223,
+      "min": 45,
+      "max": 75
+    },
+    "episodes_used": 2377,
+    "failures": {
+      "short": 22,
+      "never_entered_20m": 104,
+      "step_limit": 245,
+      "target_invalid": 78
+    },
+    "steps": [
+      5,
+      20,
+      -1
+    ],
+    "all": {
+      "n": 6898,
+      "recall@1_20m": 0.44563641635256596,
+      "recall@5_20m": 0.49565091330820527,
+      "recall@10_20m": 0.49565091330820527,
+      "recall@1_24m": 0.5426210495795882,
+      "recall@5_24m": 0.646419251957089,
+      "recall@10_24m": 0.646419251957089,
+      "top1_distance_m": {
+        "mean": 33.87211670948551,
+        "median": 22.055267272312186
+      },
+      "top5_weighted_distance_m": {
+        "mean": 43.45529784387628,
+        "median": 30.358744977030394,
+        "within_20m": 0.296462742824007,
+        "within_24m": 0.3846042331110467
+      },
+      "belief_entropy_mean": 0.7970624898319211,
+      "observation_valid_fraction": {
+        "mean": 0.7982839026516486,
+        "min": 0.0
+      }
+    },
+    "by_phase": {
+      "t5": {
+        "n": 2361,
+        "recall@1_20m": 0.44726810673443457,
+        "recall@5_20m": 0.49682337992376113,
+        "recall@10_20m": 0.49682337992376113,
+        "recall@1_24m": 0.5438373570520966,
+        "recall@5_24m": 0.6471833968657349,
+        "recall@10_24m": 0.6471833968657349,
+        "top1_distance_m": {
+          "mean": 33.815559084839,
+          "median": 21.975805677067907
+        },
+        "top5_weighted_distance_m": {
+          "mean": 43.365398468925854,
+          "median": 30.241224914167155,
+          "within_20m": 0.2969080897924608,
+          "within_24m": 0.3850063532401525
+        },
+        "belief_entropy_mean": 0.7971759576607639,
+        "observation_valid_fraction": {
+          "mean": 0.766793010584952,
+          "min": 0.0
+        }
+      },
+      "t20": {
+        "n": 2160,
+        "recall@1_20m": 0.4425925925925926,
+        "recall@5_20m": 0.49398148148148147,
+        "recall@10_20m": 0.49398148148148147,
+        "recall@1_24m": 0.5398148148148149,
+        "recall@5_24m": 0.6449074074074074,
+        "recall@10_24m": 0.6449074074074074,
+        "top1_distance_m": {
+          "mean": 34.09477583741697,
+          "median": 22.222381252143638
+        },
+        "top5_weighted_distance_m": {
+          "mean": 43.7343949464122,
+          "median": 30.752083018074927,
+          "within_20m": 0.29398148148148145,
+          "within_24m": 0.38287037037037036
+        },
+        "belief_entropy_mean": 0.7969691175553534,
+        "observation_valid_fraction": {
+          "mean": 0.8277016107007038,
+          "min": 0.0
+        }
+      },
+      "near": {
+        "n": 2377,
+        "recall@1_20m": 0.44678165755153554,
+        "recall@5_20m": 0.4960033655868742,
+        "recall@10_20m": 0.4960033655868742,
+        "recall@1_24m": 0.5439629785443837,
+        "recall@5_24m": 0.6470340765671014,
+        "recall@10_24m": 0.6470340765671014,
+        "top1_distance_m": {
+          "mean": 33.72596140256856,
+          "median": 21.975805677067907
+        },
+        "top5_weighted_distance_m": {
+          "mean": 43.29097419338423,
+          "median": 30.241224914167155,
+          "within_20m": 0.29827513672696676,
+          "within_24m": 0.3857803954564577
+        },
+        "belief_entropy_mean": 0.7970346339520257,
+        "observation_valid_fraction": {
+          "mean": 0.8028307039909465,
+          "min": 0.20378268494897958
+        }
+      }
+    },
+    "checks": {
+      "all_history_causal": true,
+      "all_history_mask_ok": true,
+      "spatial_shape": null,
+      "pooled_shape": null
+    },
+    "geometry": {
+      "corner_side_error_m": 4.263256414560601e-14,
+      "corner_center_error_m": 0.0
+    },
+    "seconds": 50.2
+  }
+}
