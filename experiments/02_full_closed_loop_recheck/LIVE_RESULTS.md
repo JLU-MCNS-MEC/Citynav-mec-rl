@@ -1,13 +1,14 @@
 # Experiment 02 live results (500-step budget)
 
-- updated: 2026-10-29 18:08:04
-- completed trajectories: **46**
-- expected per run: 24; runs: 2 / 4 started
+- updated: 2026-10-29 19:19:24
+- completed trajectories: **49**
+- expected per run: 24; runs: 3 / 4 started
 
 | run | done | SR | NE mean (m) | stop rate | entered 20m | left after entry | mean steps | actions (top 3) |
 |---|---:|---:|---:|---:|---:|---:|---:|---|
-| val_seen_small_roundA | 23/24 | 0.0% | 2135.7 | 0.0% | 8.7% | 8.7% | 500.0 | MoveForward 92%, GoDown 8%, Stop 0% |
-| val_seen_transformer_m_roundA | 23/24 | 0.0% | 2131.6 | 0.0% | 8.7% | 8.7% | 500.0 | MoveForward 92%, GoDown 8%, Stop 0% |
+| val_seen_small_roundA | 24/24 | 0.0% | 2140.0 | 0.0% | 12.5% | 12.5% | 500.0 | MoveForward 92%, GoDown 8%, Stop 0% |
+| val_seen_transformer_m_roundA | 24/24 | 0.0% | 2135.6 | 0.0% | 12.5% | 12.5% | 500.0 | MoveForward 92%, GoDown 8%, Stop 0% |
+| val_unseen_small_roundA | 1/24 | 0.0% | 2472.5 | 0.0% | 0.0% | 0.0% | 500.0 | MoveForward 97%, GoDown 3%, Stop 0% |
 
 ## Per-trajectory results (completion order)
 
@@ -59,5 +60,8 @@
 | 44 | 17:39:34 | val_seen_small_roundA | cambridge_block_9 | 3e3d69644910 | 500 | False | False | 2011.9 | 54.9 | False | False | MoveForward 465, GoDown 35 |
 | 45 | 18:06:41 | val_seen_small_roundA | cambridge_block_13 | 1e50e6983a50 | 500 | False | False | 2050.2 | 49.6 | False | False | MoveForward 452, GoDown 48 |
 | 46 | 18:08:04 | val_seen_transformer_m_roundA | cambridge_block_13 | 1e50e6983a50 | 500 | False | False | 2050.2 | 49.6 | False | False | MoveForward 452, GoDown 48 |
+| 47 | 18:08:27 | val_seen_transformer_m_roundA | cambridge_block_9 | 2330c6735d1f | 500 | False | False | 2227.5 | 5.1 | True | True | MoveForward 450, GoDown 50 |
+| 48 | 18:08:47 | val_seen_small_roundA | cambridge_block_9 | 2330c6735d1f | 500 | False | False | 2237.5 | 8.3 | True | True | MoveForward 452, GoDown 48 |
+| 49 | 19:19:24 | val_unseen_small_roundA | cambridge_block_10 | b8f07a313bd7 | 500 | False | False | 2472.5 | 71.5 | False | False | MoveForward 485, GoDown 15 |
 
 Full per-step traces are in `runs/<run>/*.jsonl`. Test-Unseen is not used.
