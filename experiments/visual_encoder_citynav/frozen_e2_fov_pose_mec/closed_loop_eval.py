@@ -122,6 +122,11 @@ def run_episode(
     actions: list[int] = []
     visuals: list[np.ndarray] = []
     positions = [np.asarray([pose.x, pose.y], dtype=np.float64)]
+    target_xyz = np.asarray(record.target_xyz, dtype=np.float64)
+    step_distances = [float(np.linalg.norm(pose.xyz - target_xyz))]
+    step_xy_distances = [
+        float(np.linalg.norm(np.asarray([pose.x, pose.y]) - target_xyz[:2]))
+    ]
     gab_state = GABState(gab_config)
     previous_action = -1
     latencies: list[float] = []
@@ -172,10 +177,16 @@ def run_episode(
         previous_action = action
         if action == int(STOP):
             stopped = True
+            step_distances.append(step_distances[-1])
+            step_xy_distances.append(step_xy_distances[-1])
             break
         pose = transition_pose(pose, action, teacher)
         poses.append(pose)
         positions.append(np.asarray([pose.x, pose.y], dtype=np.float64))
+        step_distances.append(float(np.linalg.norm(pose.xyz - target_xyz)))
+        step_xy_distances.append(
+            float(np.linalg.norm(np.asarray([pose.x, pose.y]) - target_xyz[:2]))
+        )
 
     target = np.asarray(record.target_xyz, dtype=np.float64)
     final = np.asarray([poses[-1].x, poses[-1].y, poses[-1].z], dtype=np.float64)
@@ -190,20 +201,41 @@ def run_episode(
     spl = 0.0
     if success and ref_len > 0:
         spl = ref_len / max(exec_len, ref_len)
+    step_distances_array = np.asarray(step_distances, dtype=np.float64)
+    entered_20m = bool((step_distances_array <= SUCCESS_RADIUS_M).any())
+    first_entry = (
+        int(np.argmax(step_distances_array <= SUCCESS_RADIUS_M))
+        if entered_20m else None
+    )
+    left_after_entry = bool(
+        entered_20m and (step_distances_array[first_entry:] > SUCCESS_RADIUS_M).any()
+    )
+    stopped_within_20m = bool(stopped and step_distances_array[-1] <= SUCCESS_RADIUS_M)
+    max_steps_reached = bool(not stopped and len(actions) >= int(max_steps))
     return {
         "episode_id": record.episode_id,
         "map_name": record.map_name,
         "steps": len(actions),
+        "max_steps_reached": max_steps_reached,
         "stopped": bool(stopped),
+        "stopped_within_20m": stopped_within_20m,
         "success": bool(success),
         "oracle_success": bool(min_dist <= SUCCESS_RADIUS_M),
+        "oracle_success_3d": bool(step_distances_array.min() <= SUCCESS_RADIUS_M),
         "ne_m": ne,
         "min_dist_m": min_dist,
+        "min_dist_3d_m": float(step_distances_array.min()),
+        "entered_20m": entered_20m,
+        "first_entry_step": first_entry,
+        "left_after_entering_20m": left_after_entry,
         "spl": float(spl),
         "ndtw": _ndtw(path, reference),
         "action_counts": {
             ACTION_NAMES[int(a)]: int(c) for a, c in Counter(actions).items()
         },
+        "action_sequence": [int(a) for a in actions],
+        "step_distances_m": [float(v) for v in step_distances],
+        "step_xy_distances_m": [float(v) for v in step_xy_distances],
         "mean_step_latency_s": float(np.mean(latencies)) if latencies else None,
     }
 
@@ -214,7 +246,13 @@ def main() -> int:
     ap.add_argument("--ply-root", required=True)
     ap.add_argument("--split", default="val_seen")
     ap.add_argument("--episodes", type=int, default=20)
-    ap.add_argument("--max-steps", type=int, default=400)
+    ap.add_argument(
+        "--episode-indices",
+        type=Path,
+        default=None,
+        help="JSON list of record indices; overrides --episodes selection",
+    )
+    ap.add_argument("--max-steps", type=int, default=500)
     ap.add_argument("--crop-radius", type=float, default=120.0)
     ap.add_argument("--encoder-checkpoint", type=Path, required=True)
     ap.add_argument("--mec-checkpoint", type=Path, required=True)
@@ -268,7 +306,17 @@ def main() -> int:
     )
     dataset = CityNavDataset(data_config, args.split, include_processed_descriptions=False)
     records = dataset.records
-    if args.episodes < len(records):
+    episode_indices = None
+    if args.episode_indices is not None:
+        episode_indices = [int(v) for v in json.loads(
+            args.episode_indices.read_text(encoding="utf-8")
+        )]
+        if len(set(episode_indices)) != len(episode_indices):
+            raise SystemExit("--episode-indices contains duplicates")
+        if any(i < 0 or i >= len(records) for i in episode_indices):
+            raise SystemExit("--episode-indices contains out-of-range index")
+        records = [records[i] for i in episode_indices]
+    elif args.episodes < len(records):
         idx = np.linspace(0, len(records) - 1, args.episodes, dtype=int)
         records = [records[int(i)] for i in idx]
     # Group by map before sharding: episodes are independent and metrics are
@@ -336,6 +384,7 @@ def main() -> int:
         "shard_index": int(args.shard_index),
         "shards": int(args.shards),
         "max_steps": int(args.max_steps),
+        "episode_indices": episode_indices,
         "crop_radius": float(args.crop_radius),
         "gab_threshold": float(threshold),
         "encoder_checkpoint": str(args.encoder_checkpoint),
