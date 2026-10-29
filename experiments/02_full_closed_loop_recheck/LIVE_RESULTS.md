@@ -1,12 +1,12 @@
 # Experiment 02 live results (500-step budget)
 
-- updated: 2026-10-29 16:27:17
-- completed trajectories: **22**
+- updated: 2026-10-29 16:29:42
+- completed trajectories: **23**
 - expected per run: 24; runs: 2 / 4 started
 
 | run | done | SR | NE mean (m) | stop rate | entered 20m | left after entry | mean steps | actions (top 3) |
 |---|---:|---:|---:|---:|---:|---:|---:|---|
-| val_seen_small_roundA | 11/24 | 0.0% | 2154.9 | 0.0% | 18.2% | 18.2% | 500.0 | MoveForward 92%, GoDown 8%, Stop 0% |
+| val_seen_small_roundA | 12/24 | 0.0% | 2141.2 | 0.0% | 16.7% | 16.7% | 500.0 | MoveForward 92%, GoDown 8%, Stop 0% |
 | val_seen_transformer_m_roundA | 11/24 | 0.0% | 2147.7 | 0.0% | 18.2% | 18.2% | 500.0 | MoveForward 92%, GoDown 8%, Stop 0% |
 
 ## Per-trajectory results (completion order)
@@ -35,5 +35,6 @@
 | 20 | 16:24:50 | val_seen_transformer_m_roundA | birmingham_block_12 | 1cfd09de78f4 | 500 | False | False | 2255.1 | 7.1 | True | True | MoveForward 451, GoDown 49 |
 | 21 | 16:25:53 | val_seen_transformer_m_roundA | cambridge_block_21 | 9dfe032ef575 | 500 | False | False | 2111.1 | 81.2 | False | False | MoveForward 470, GoDown 30 |
 | 22 | 16:27:17 | val_seen_small_roundA | cambridge_block_21 | 9dfe032ef575 | 500 | False | False | 2136.2 | 85.1 | False | False | MoveForward 475, GoDown 25 |
+| 23 | 16:29:42 | val_seen_small_roundA | cambridge_block_6 | 264a27d57345 | 500 | False | False | 1990.0 | 236.0 | False | False | MoveForward 448, GoDown 52 |
 
 Full per-step traces are in `runs/<run>/*.jsonl`. Test-Unseen is not used.
