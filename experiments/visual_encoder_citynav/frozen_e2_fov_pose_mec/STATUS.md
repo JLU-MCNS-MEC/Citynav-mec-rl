@@ -1,7 +1,8 @@
 # 实验 A：冻结 E2-FOV-Pose + MEC 闭环导航 — 状态
 
-- 更新时间：2026-10-29 07:45
-- 状态：**实验 A 完成（8/8 闭环 run 结束）**；结论为负面结果，未建立 A2 > A0 式提升
+- 更新时间：2026-10-29 12:50
+- 状态：**实验 A 完成（8/8 闭环 run 结束）**；sqrt 权重闭环复核也已完成
+  （8/8，SR 仍全为 0）。结论为负面结果，未建立 A2 > A0 式提升
 - 分支：`exp/visual-encoder-ablation-20261028`
 
 ## 协议
@@ -98,12 +99,18 @@
   `transformer_m:full` 略降（0.594→0.578）；两个 `map_free` 均略低于基线。
 - 离线报告：`balanced_run_20261029/t5_report.{md,json}`、
   `sqrt_run_20261029/t5_report.{md,json}`。
-- 闭环：sqrt 权重的 24 条 × 8 分片同协议对比运行中，输出 `closed_loop/sqrt/`。
+- 闭环：sqrt 权重的 24 条 × 8 分片同协议对比**已完成（8/8，12:49）**，
+  输出 `closed_loop/sqrt/`，完整报告见
+  `closed_loop/sqrt/SQRT_CLOSED_LOOP_REPORT.md`。
+- sqrt 闭环结论：**8/8 run 的 SR 仍为 0**；`transformer_m:full` 首次出现少量
+  Stop（8.3% / 4.2%），`small:full` 仍从不 Stop；两个 `full` 变体的 NE 变差
+  约 90–145 m、nDTW 接近腰斩。sqrt 权重不是可用修复。
 
 ## 下一步候选
 
-1. **类别不平衡修正**：已执行（见上节）；待 sqrt 闭环结果决定是否继续调
-   focal loss / 过采样，或转去排查 `full` 变体的 Stop 失效。
+1. **类别不平衡修正**：已执行并完成闭环复核（见上节）。sqrt 仍 SR=0 且 `full`
+   的 NE/nDTW 变差，**不再沿 sqrt 方向调参**；后续改为定向排查 `full` 的 Stop
+   失效与转向监督，再考虑 focal loss / 过采样。
 2. **检查 full 的 Stop 失效**：同一数据上 map_free 能 Stop、full 不能，
    需要对比两变体的输入（检索分数是否淹没钱特征）与 loss 曲线。
 3. **扩大闭环规模**（当前每划分 24 条，置信区间很宽）：仅在策略行为改善后再做，
