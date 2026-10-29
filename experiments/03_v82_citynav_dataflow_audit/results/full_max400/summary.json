@@ -1,0 +1,2848 @@
+{
+  "official": {
+    "difficulty_definition": "start-to-target distance; 33rd/66th training percentiles 171 m / 258 m",
+    "short_medium_long_defined": false,
+    "average_action_count_reported": false,
+    "reported_average_path_length_m": {
+      "human": 508,
+      "shortest": 290
+    },
+    "official_episode_max_steps_filter": 500,
+    "official_eval_max_timestep_default": 200,
+    "success_dist_m": 20.0,
+    "teacher_stop_distance_m": 5.0
+  },
+  "groups": [
+    {
+      "group": "split=val_seen",
+      "n": 2498,
+      "teacher_success_rate_20m": 0.8403,
+      "teacher_stop_reason": {
+        "teacher_stop_distance": 2324,
+        "max_steps": 174
+      },
+      "fields": {
+        "trajectory_points": {
+          "n": 2498,
+          "mean": 88.125,
+          "std": 83.826,
+          "min": 2.0,
+          "p25": 40.0,
+          "median": 63.0,
+          "p75": 105.0,
+          "p90": 172.0,
+          "p95": 235.0,
+          "p99": 438.27,
+          "max": 900.0
+        },
+        "teacher_steps": {
+          "n": 2498,
+          "mean": 189.026,
+          "std": 100.187,
+          "min": 38.0,
+          "p25": 108.25,
+          "median": 160.0,
+          "p75": 254.75,
+          "p90": 354.0,
+          "p95": 401.0,
+          "p99": 401.0,
+          "max": 401.0
+        },
+        "start_target_m": {
+          "n": 2498,
+          "mean": 224.223,
+          "std": 87.839,
+          "min": 62.6,
+          "p25": 150.224,
+          "median": 213.934,
+          "p75": 287.899,
+          "p90": 352.216,
+          "p95": 379.108,
+          "p99": 433.23,
+          "max": 513.507
+        },
+        "human_path_m": {
+          "n": 2498,
+          "mean": 545.736,
+          "std": 423.047,
+          "min": 54.095,
+          "p25": 268.504,
+          "median": 436.514,
+          "p75": 684.501,
+          "p90": 1035.776,
+          "p95": 1332.04,
+          "p99": 2038.08,
+          "max": 4575.251
+        },
+        "teacher_path_m": {
+          "n": 2498,
+          "mean": 522.853,
+          "std": 275.083,
+          "min": 76.0,
+          "p25": 311.0,
+          "median": 464.5,
+          "p75": 677.0,
+          "p90": 945.3,
+          "p95": 1073.3,
+          "p99": 1248.03,
+          "max": 1475.0
+        },
+        "actions_per_point": {
+          "n": 2498,
+          "mean": 3.156,
+          "std": 2.553,
+          "min": 0.132,
+          "p25": 2.0,
+          "median": 2.99,
+          "p75": 4.088,
+          "p90": 5.169,
+          "p95": 6.0,
+          "p99": 7.778,
+          "max": 62.5
+        }
+      },
+      "coverage": {
+        "50": {
+          "episodes_over_cap": 2485,
+          "fraction_over_cap": 0.994796
+        },
+        "100": {
+          "episodes_over_cap": 1982,
+          "fraction_over_cap": 0.793435
+        },
+        "150": {
+          "episodes_over_cap": 1324,
+          "fraction_over_cap": 0.530024
+        },
+        "200": {
+          "episodes_over_cap": 963,
+          "fraction_over_cap": 0.385508
+        },
+        "250": {
+          "episodes_over_cap": 652,
+          "fraction_over_cap": 0.261009
+        },
+        "300": {
+          "episodes_over_cap": 418,
+          "fraction_over_cap": 0.167334
+        },
+        "400": {
+          "episodes_over_cap": 174,
+          "fraction_over_cap": 0.069656
+        },
+        "500": {
+          "episodes_over_cap": 0,
+          "fraction_over_cap": 0.0
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 2498,
+          "fraction": 0.00529
+        },
+        "MoveForward": {
+          "count": 154406,
+          "fraction": 0.327002
+        },
+        "TurnRight": {
+          "count": 24405,
+          "fraction": 0.051685
+        },
+        "TurnLeft": {
+          "count": 23850,
+          "fraction": 0.05051
+        },
+        "GoUp": {
+          "count": 76674,
+          "fraction": 0.162381
+        },
+        "GoDown": {
+          "count": 190354,
+          "fraction": 0.403133
+        }
+      }
+    },
+    {
+      "group": "split=val_seen,difficulty=easy",
+      "n": 836,
+      "teacher_success_rate_20m": 0.8636,
+      "teacher_stop_reason": {
+        "teacher_stop_distance": 798,
+        "max_steps": 38
+      },
+      "fields": {
+        "trajectory_points": {
+          "n": 836,
+          "mean": 69.199,
+          "std": 72.569,
+          "min": 2.0,
+          "p25": 28.0,
+          "median": 46.0,
+          "p75": 83.25,
+          "p90": 148.5,
+          "p95": 194.5,
+          "p99": 335.6,
+          "max": 778.0
+        },
+        "teacher_steps": {
+          "n": 836,
+          "mean": 144.055,
+          "std": 92.049,
+          "min": 38.0,
+          "p25": 77.75,
+          "median": 108.0,
+          "p75": 183.25,
+          "p90": 284.0,
+          "p95": 375.5,
+          "p99": 401.0,
+          "max": 401.0
+        },
+        "start_target_m": {
+          "n": 836,
+          "mean": 130.991,
+          "std": 23.999,
+          "min": 62.6,
+          "p25": 113.707,
+          "median": 133.069,
+          "p75": 150.375,
+          "p90": 161.164,
+          "p95": 166.111,
+          "p99": 170.032,
+          "max": 170.931
+        },
+        "human_path_m": {
+          "n": 836,
+          "mean": 406.752,
+          "std": 402.689,
+          "min": 54.095,
+          "p25": 159.762,
+          "median": 273.595,
+          "p75": 490.756,
+          "p90": 862.566,
+          "p95": 1141.645,
+          "p99": 1821.584,
+          "max": 4575.251
+        },
+        "teacher_path_m": {
+          "n": 836,
+          "mean": 371.311,
+          "std": 256.166,
+          "min": 76.0,
+          "p25": 201.75,
+          "median": 276.0,
+          "p75": 455.5,
+          "p90": 727.5,
+          "p95": 983.75,
+          "p99": 1241.7,
+          "max": 1460.0
+        },
+        "actions_per_point": {
+          "n": 836,
+          "mean": 3.165,
+          "std": 1.958,
+          "min": 0.132,
+          "p25": 1.82,
+          "median": 3.078,
+          "p75": 4.303,
+          "p90": 5.364,
+          "p95": 6.23,
+          "p99": 8.261,
+          "max": 25.0
+        }
+      },
+      "coverage": {
+        "50": {
+          "episodes_over_cap": 823,
+          "fraction_over_cap": 0.98445
+        },
+        "100": {
+          "episodes_over_cap": 449,
+          "fraction_over_cap": 0.537081
+        },
+        "150": {
+          "episodes_over_cap": 273,
+          "fraction_over_cap": 0.326555
+        },
+        "200": {
+          "episodes_over_cap": 186,
+          "fraction_over_cap": 0.222488
+        },
+        "250": {
+          "episodes_over_cap": 117,
+          "fraction_over_cap": 0.139952
+        },
+        "300": {
+          "episodes_over_cap": 72,
+          "fraction_over_cap": 0.086124
+        },
+        "400": {
+          "episodes_over_cap": 38,
+          "fraction_over_cap": 0.045455
+        },
+        "500": {
+          "episodes_over_cap": 0,
+          "fraction_over_cap": 0.0
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 836,
+          "fraction": 0.006942
+        },
+        "MoveForward": {
+          "count": 32500,
+          "fraction": 0.269866
+        },
+        "TurnRight": {
+          "count": 6677,
+          "fraction": 0.055443
+        },
+        "TurnLeft": {
+          "count": 6459,
+          "fraction": 0.053633
+        },
+        "GoUp": {
+          "count": 18484,
+          "fraction": 0.153483
+        },
+        "GoDown": {
+          "count": 55474,
+          "fraction": 0.460633
+        }
+      }
+    },
+    {
+      "group": "split=val_seen,difficulty=medium",
+      "n": 807,
+      "teacher_success_rate_20m": 0.834,
+      "teacher_stop_reason": {
+        "teacher_stop_distance": 758,
+        "max_steps": 49
+      },
+      "fields": {
+        "trajectory_points": {
+          "n": 807,
+          "mean": 83.709,
+          "std": 74.551,
+          "min": 2.0,
+          "p25": 39.5,
+          "median": 58.0,
+          "p75": 101.5,
+          "p90": 166.4,
+          "p95": 220.7,
+          "p99": 384.0,
+          "max": 728.0
+        },
+        "teacher_steps": {
+          "n": 807,
+          "mean": 190.335,
+          "std": 94.931,
+          "min": 74.0,
+          "p25": 110.5,
+          "median": 162.0,
+          "p75": 251.0,
+          "p90": 349.0,
+          "p95": 401.0,
+          "p99": 401.0,
+          "max": 401.0
+        },
+        "start_target_m": {
+          "n": 807,
+          "mean": 212.85,
+          "std": 25.069,
+          "min": 171.166,
+          "p25": 190.61,
+          "median": 212.952,
+          "p75": 234.925,
+          "p90": 246.365,
+          "p95": 252.009,
+          "p99": 256.143,
+          "max": 258.0
+        },
+        "human_path_m": {
+          "n": 807,
+          "mean": 539.34,
+          "std": 395.672,
+          "min": 164.351,
+          "p25": 261.772,
+          "median": 416.016,
+          "p75": 655.069,
+          "p90": 1037.211,
+          "p95": 1336.727,
+          "p99": 1951.967,
+          "max": 4034.374
+        },
+        "teacher_path_m": {
+          "n": 807,
+          "mean": 520.556,
+          "std": 245.248,
+          "min": 234.0,
+          "p25": 325.0,
+          "median": 446.0,
+          "p75": 642.5,
+          "p90": 905.0,
+          "p95": 1047.5,
+          "p99": 1219.64,
+          "max": 1419.0
+        },
+        "actions_per_point": {
+          "n": 807,
+          "mean": 3.227,
+          "std": 2.251,
+          "min": 0.148,
+          "p25": 2.097,
+          "median": 3.124,
+          "p75": 4.192,
+          "p90": 5.225,
+          "p95": 6.026,
+          "p99": 7.497,
+          "max": 48.0
+        }
+      },
+      "coverage": {
+        "50": {
+          "episodes_over_cap": 807,
+          "fraction_over_cap": 1.0
+        },
+        "100": {
+          "episodes_over_cap": 681,
+          "fraction_over_cap": 0.843866
+        },
+        "150": {
+          "episodes_over_cap": 425,
+          "fraction_over_cap": 0.526642
+        },
+        "200": {
+          "episodes_over_cap": 307,
+          "fraction_over_cap": 0.380421
+        },
+        "250": {
+          "episodes_over_cap": 203,
+          "fraction_over_cap": 0.251549
+        },
+        "300": {
+          "episodes_over_cap": 128,
+          "fraction_over_cap": 0.158612
+        },
+        "400": {
+          "episodes_over_cap": 49,
+          "fraction_over_cap": 0.060719
+        },
+        "500": {
+          "episodes_over_cap": 0,
+          "fraction_over_cap": 0.0
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 807,
+          "fraction": 0.005254
+        },
+        "MoveForward": {
+          "count": 48531,
+          "fraction": 0.315957
+        },
+        "TurnRight": {
+          "count": 7886,
+          "fraction": 0.051341
+        },
+        "TurnLeft": {
+          "count": 7659,
+          "fraction": 0.049863
+        },
+        "GoUp": {
+          "count": 25894,
+          "fraction": 0.168581
+        },
+        "GoDown": {
+          "count": 62823,
+          "fraction": 0.409004
+        }
+      }
+    },
+    {
+      "group": "split=val_seen,difficulty=hard",
+      "n": 855,
+      "teacher_success_rate_20m": 0.8234,
+      "teacher_stop_reason": {
+        "teacher_stop_distance": 768,
+        "max_steps": 87
+      },
+      "fields": {
+        "trajectory_points": {
+          "n": 855,
+          "mean": 110.8,
+          "std": 96.186,
+          "min": 2.0,
+          "p25": 58.0,
+          "median": 83.0,
+          "p75": 121.5,
+          "p90": 206.6,
+          "p95": 300.6,
+          "p99": 515.02,
+          "max": 900.0
+        },
+        "teacher_steps": {
+          "n": 855,
+          "mean": 231.763,
+          "std": 93.434,
+          "min": 94.0,
+          "p25": 148.0,
+          "median": 215.0,
+          "p75": 301.0,
+          "p90": 401.0,
+          "p95": 401.0,
+          "p99": 401.0,
+          "max": 401.0
+        },
+        "start_target_m": {
+          "n": 855,
+          "mean": 326.117,
+          "std": 48.811,
+          "min": 258.413,
+          "p25": 284.521,
+          "median": 318.274,
+          "p75": 359.375,
+          "p90": 389.496,
+          "p95": 413.868,
+          "p99": 462.993,
+          "max": 513.507
+        },
+        "human_path_m": {
+          "n": 855,
+          "mean": 687.669,
+          "std": 421.296,
+          "min": 262.228,
+          "p25": 412.811,
+          "median": 573.205,
+          "p75": 825.918,
+          "p90": 1102.246,
+          "p95": 1411.515,
+          "p99": 2303.838,
+          "max": 4493.822
+        },
+        "teacher_path_m": {
+          "n": 855,
+          "mean": 673.194,
+          "std": 234.709,
+          "min": 323.0,
+          "p25": 475.0,
+          "median": 625.0,
+          "p75": 829.0,
+          "p90": 1039.6,
+          "p95": 1105.6,
+          "p99": 1245.26,
+          "max": 1475.0
+        },
+        "actions_per_point": {
+          "n": 855,
+          "mean": 3.081,
+          "std": 3.241,
+          "min": 0.186,
+          "p25": 2.023,
+          "median": 2.81,
+          "p75": 3.745,
+          "p90": 4.814,
+          "p95": 5.591,
+          "p99": 8.184,
+          "max": 62.5
+        }
+      },
+      "coverage": {
+        "50": {
+          "episodes_over_cap": 855,
+          "fraction_over_cap": 1.0
+        },
+        "100": {
+          "episodes_over_cap": 852,
+          "fraction_over_cap": 0.996491
+        },
+        "150": {
+          "episodes_over_cap": 626,
+          "fraction_over_cap": 0.732164
+        },
+        "200": {
+          "episodes_over_cap": 470,
+          "fraction_over_cap": 0.549708
+        },
+        "250": {
+          "episodes_over_cap": 332,
+          "fraction_over_cap": 0.388304
+        },
+        "300": {
+          "episodes_over_cap": 218,
+          "fraction_over_cap": 0.254971
+        },
+        "400": {
+          "episodes_over_cap": 87,
+          "fraction_over_cap": 0.101754
+        },
+        "500": {
+          "episodes_over_cap": 0,
+          "fraction_over_cap": 0.0
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 855,
+          "fraction": 0.004315
+        },
+        "MoveForward": {
+          "count": 73375,
+          "fraction": 0.370287
+        },
+        "TurnRight": {
+          "count": 9842,
+          "fraction": 0.049668
+        },
+        "TurnLeft": {
+          "count": 9732,
+          "fraction": 0.049113
+        },
+        "GoUp": {
+          "count": 32296,
+          "fraction": 0.162982
+        },
+        "GoDown": {
+          "count": 72057,
+          "fraction": 0.363636
+        }
+      }
+    },
+    {
+      "group": "split=val_seen,distance_bin=easy",
+      "n": 836,
+      "teacher_success_rate_20m": 0.8636,
+      "teacher_stop_reason": {
+        "teacher_stop_distance": 798,
+        "max_steps": 38
+      },
+      "fields": {
+        "trajectory_points": {
+          "n": 836,
+          "mean": 69.199,
+          "std": 72.569,
+          "min": 2.0,
+          "p25": 28.0,
+          "median": 46.0,
+          "p75": 83.25,
+          "p90": 148.5,
+          "p95": 194.5,
+          "p99": 335.6,
+          "max": 778.0
+        },
+        "teacher_steps": {
+          "n": 836,
+          "mean": 144.055,
+          "std": 92.049,
+          "min": 38.0,
+          "p25": 77.75,
+          "median": 108.0,
+          "p75": 183.25,
+          "p90": 284.0,
+          "p95": 375.5,
+          "p99": 401.0,
+          "max": 401.0
+        },
+        "start_target_m": {
+          "n": 836,
+          "mean": 130.991,
+          "std": 23.999,
+          "min": 62.6,
+          "p25": 113.707,
+          "median": 133.069,
+          "p75": 150.375,
+          "p90": 161.164,
+          "p95": 166.111,
+          "p99": 170.032,
+          "max": 170.931
+        },
+        "human_path_m": {
+          "n": 836,
+          "mean": 406.752,
+          "std": 402.689,
+          "min": 54.095,
+          "p25": 159.762,
+          "median": 273.595,
+          "p75": 490.756,
+          "p90": 862.566,
+          "p95": 1141.645,
+          "p99": 1821.584,
+          "max": 4575.251
+        },
+        "teacher_path_m": {
+          "n": 836,
+          "mean": 371.311,
+          "std": 256.166,
+          "min": 76.0,
+          "p25": 201.75,
+          "median": 276.0,
+          "p75": 455.5,
+          "p90": 727.5,
+          "p95": 983.75,
+          "p99": 1241.7,
+          "max": 1460.0
+        },
+        "actions_per_point": {
+          "n": 836,
+          "mean": 3.165,
+          "std": 1.958,
+          "min": 0.132,
+          "p25": 1.82,
+          "median": 3.078,
+          "p75": 4.303,
+          "p90": 5.364,
+          "p95": 6.23,
+          "p99": 8.261,
+          "max": 25.0
+        }
+      },
+      "coverage": {
+        "50": {
+          "episodes_over_cap": 823,
+          "fraction_over_cap": 0.98445
+        },
+        "100": {
+          "episodes_over_cap": 449,
+          "fraction_over_cap": 0.537081
+        },
+        "150": {
+          "episodes_over_cap": 273,
+          "fraction_over_cap": 0.326555
+        },
+        "200": {
+          "episodes_over_cap": 186,
+          "fraction_over_cap": 0.222488
+        },
+        "250": {
+          "episodes_over_cap": 117,
+          "fraction_over_cap": 0.139952
+        },
+        "300": {
+          "episodes_over_cap": 72,
+          "fraction_over_cap": 0.086124
+        },
+        "400": {
+          "episodes_over_cap": 38,
+          "fraction_over_cap": 0.045455
+        },
+        "500": {
+          "episodes_over_cap": 0,
+          "fraction_over_cap": 0.0
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 836,
+          "fraction": 0.006942
+        },
+        "MoveForward": {
+          "count": 32500,
+          "fraction": 0.269866
+        },
+        "TurnRight": {
+          "count": 6677,
+          "fraction": 0.055443
+        },
+        "TurnLeft": {
+          "count": 6459,
+          "fraction": 0.053633
+        },
+        "GoUp": {
+          "count": 18484,
+          "fraction": 0.153483
+        },
+        "GoDown": {
+          "count": 55474,
+          "fraction": 0.460633
+        }
+      }
+    },
+    {
+      "group": "split=val_seen,distance_bin=medium",
+      "n": 807,
+      "teacher_success_rate_20m": 0.834,
+      "teacher_stop_reason": {
+        "teacher_stop_distance": 758,
+        "max_steps": 49
+      },
+      "fields": {
+        "trajectory_points": {
+          "n": 807,
+          "mean": 83.709,
+          "std": 74.551,
+          "min": 2.0,
+          "p25": 39.5,
+          "median": 58.0,
+          "p75": 101.5,
+          "p90": 166.4,
+          "p95": 220.7,
+          "p99": 384.0,
+          "max": 728.0
+        },
+        "teacher_steps": {
+          "n": 807,
+          "mean": 190.335,
+          "std": 94.931,
+          "min": 74.0,
+          "p25": 110.5,
+          "median": 162.0,
+          "p75": 251.0,
+          "p90": 349.0,
+          "p95": 401.0,
+          "p99": 401.0,
+          "max": 401.0
+        },
+        "start_target_m": {
+          "n": 807,
+          "mean": 212.85,
+          "std": 25.069,
+          "min": 171.166,
+          "p25": 190.61,
+          "median": 212.952,
+          "p75": 234.925,
+          "p90": 246.365,
+          "p95": 252.009,
+          "p99": 256.143,
+          "max": 258.0
+        },
+        "human_path_m": {
+          "n": 807,
+          "mean": 539.34,
+          "std": 395.672,
+          "min": 164.351,
+          "p25": 261.772,
+          "median": 416.016,
+          "p75": 655.069,
+          "p90": 1037.211,
+          "p95": 1336.727,
+          "p99": 1951.967,
+          "max": 4034.374
+        },
+        "teacher_path_m": {
+          "n": 807,
+          "mean": 520.556,
+          "std": 245.248,
+          "min": 234.0,
+          "p25": 325.0,
+          "median": 446.0,
+          "p75": 642.5,
+          "p90": 905.0,
+          "p95": 1047.5,
+          "p99": 1219.64,
+          "max": 1419.0
+        },
+        "actions_per_point": {
+          "n": 807,
+          "mean": 3.227,
+          "std": 2.251,
+          "min": 0.148,
+          "p25": 2.097,
+          "median": 3.124,
+          "p75": 4.192,
+          "p90": 5.225,
+          "p95": 6.026,
+          "p99": 7.497,
+          "max": 48.0
+        }
+      },
+      "coverage": {
+        "50": {
+          "episodes_over_cap": 807,
+          "fraction_over_cap": 1.0
+        },
+        "100": {
+          "episodes_over_cap": 681,
+          "fraction_over_cap": 0.843866
+        },
+        "150": {
+          "episodes_over_cap": 425,
+          "fraction_over_cap": 0.526642
+        },
+        "200": {
+          "episodes_over_cap": 307,
+          "fraction_over_cap": 0.380421
+        },
+        "250": {
+          "episodes_over_cap": 203,
+          "fraction_over_cap": 0.251549
+        },
+        "300": {
+          "episodes_over_cap": 128,
+          "fraction_over_cap": 0.158612
+        },
+        "400": {
+          "episodes_over_cap": 49,
+          "fraction_over_cap": 0.060719
+        },
+        "500": {
+          "episodes_over_cap": 0,
+          "fraction_over_cap": 0.0
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 807,
+          "fraction": 0.005254
+        },
+        "MoveForward": {
+          "count": 48531,
+          "fraction": 0.315957
+        },
+        "TurnRight": {
+          "count": 7886,
+          "fraction": 0.051341
+        },
+        "TurnLeft": {
+          "count": 7659,
+          "fraction": 0.049863
+        },
+        "GoUp": {
+          "count": 25894,
+          "fraction": 0.168581
+        },
+        "GoDown": {
+          "count": 62823,
+          "fraction": 0.409004
+        }
+      }
+    },
+    {
+      "group": "split=val_seen,distance_bin=hard",
+      "n": 855,
+      "teacher_success_rate_20m": 0.8234,
+      "teacher_stop_reason": {
+        "teacher_stop_distance": 768,
+        "max_steps": 87
+      },
+      "fields": {
+        "trajectory_points": {
+          "n": 855,
+          "mean": 110.8,
+          "std": 96.186,
+          "min": 2.0,
+          "p25": 58.0,
+          "median": 83.0,
+          "p75": 121.5,
+          "p90": 206.6,
+          "p95": 300.6,
+          "p99": 515.02,
+          "max": 900.0
+        },
+        "teacher_steps": {
+          "n": 855,
+          "mean": 231.763,
+          "std": 93.434,
+          "min": 94.0,
+          "p25": 148.0,
+          "median": 215.0,
+          "p75": 301.0,
+          "p90": 401.0,
+          "p95": 401.0,
+          "p99": 401.0,
+          "max": 401.0
+        },
+        "start_target_m": {
+          "n": 855,
+          "mean": 326.117,
+          "std": 48.811,
+          "min": 258.413,
+          "p25": 284.521,
+          "median": 318.274,
+          "p75": 359.375,
+          "p90": 389.496,
+          "p95": 413.868,
+          "p99": 462.993,
+          "max": 513.507
+        },
+        "human_path_m": {
+          "n": 855,
+          "mean": 687.669,
+          "std": 421.296,
+          "min": 262.228,
+          "p25": 412.811,
+          "median": 573.205,
+          "p75": 825.918,
+          "p90": 1102.246,
+          "p95": 1411.515,
+          "p99": 2303.838,
+          "max": 4493.822
+        },
+        "teacher_path_m": {
+          "n": 855,
+          "mean": 673.194,
+          "std": 234.709,
+          "min": 323.0,
+          "p25": 475.0,
+          "median": 625.0,
+          "p75": 829.0,
+          "p90": 1039.6,
+          "p95": 1105.6,
+          "p99": 1245.26,
+          "max": 1475.0
+        },
+        "actions_per_point": {
+          "n": 855,
+          "mean": 3.081,
+          "std": 3.241,
+          "min": 0.186,
+          "p25": 2.023,
+          "median": 2.81,
+          "p75": 3.745,
+          "p90": 4.814,
+          "p95": 5.591,
+          "p99": 8.184,
+          "max": 62.5
+        }
+      },
+      "coverage": {
+        "50": {
+          "episodes_over_cap": 855,
+          "fraction_over_cap": 1.0
+        },
+        "100": {
+          "episodes_over_cap": 852,
+          "fraction_over_cap": 0.996491
+        },
+        "150": {
+          "episodes_over_cap": 626,
+          "fraction_over_cap": 0.732164
+        },
+        "200": {
+          "episodes_over_cap": 470,
+          "fraction_over_cap": 0.549708
+        },
+        "250": {
+          "episodes_over_cap": 332,
+          "fraction_over_cap": 0.388304
+        },
+        "300": {
+          "episodes_over_cap": 218,
+          "fraction_over_cap": 0.254971
+        },
+        "400": {
+          "episodes_over_cap": 87,
+          "fraction_over_cap": 0.101754
+        },
+        "500": {
+          "episodes_over_cap": 0,
+          "fraction_over_cap": 0.0
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 855,
+          "fraction": 0.004315
+        },
+        "MoveForward": {
+          "count": 73375,
+          "fraction": 0.370287
+        },
+        "TurnRight": {
+          "count": 9842,
+          "fraction": 0.049668
+        },
+        "TurnLeft": {
+          "count": 9732,
+          "fraction": 0.049113
+        },
+        "GoUp": {
+          "count": 32296,
+          "fraction": 0.162982
+        },
+        "GoDown": {
+          "count": 72057,
+          "fraction": 0.363636
+        }
+      }
+    },
+    {
+      "group": "split=val_unseen",
+      "n": 2826,
+      "teacher_success_rate_20m": 0.856,
+      "teacher_stop_reason": {
+        "teacher_stop_distance": 2722,
+        "max_steps": 104
+      },
+      "fields": {
+        "trajectory_points": {
+          "n": 2826,
+          "mean": 70.127,
+          "std": 66.673,
+          "min": 2.0,
+          "p25": 34.0,
+          "median": 52.0,
+          "p75": 81.0,
+          "p90": 129.0,
+          "p95": 188.5,
+          "p99": 338.75,
+          "max": 1112.0
+        },
+        "teacher_steps": {
+          "n": 2826,
+          "mean": 181.24,
+          "std": 87.735,
+          "min": 30.0,
+          "p25": 114.0,
+          "median": 159.0,
+          "p75": 232.0,
+          "p90": 313.5,
+          "p95": 376.75,
+          "p99": 401.0,
+          "max": 401.0
+        },
+        "start_target_m": {
+          "n": 2826,
+          "mean": 235.152,
+          "std": 86.834,
+          "min": 60.156,
+          "p25": 164.947,
+          "median": 228.328,
+          "p75": 298.976,
+          "p90": 354.466,
+          "p95": 386.302,
+          "p99": 439.187,
+          "max": 554.075
+        },
+        "human_path_m": {
+          "n": 2826,
+          "mean": 510.087,
+          "std": 363.238,
+          "min": 55.452,
+          "p25": 290.115,
+          "median": 423.57,
+          "p75": 625.304,
+          "p90": 895.166,
+          "p95": 1124.576,
+          "p99": 1937.303,
+          "max": 4203.46
+        },
+        "teacher_path_m": {
+          "n": 2826,
+          "mean": 507.556,
+          "std": 240.845,
+          "min": 58.0,
+          "p25": 333.0,
+          "median": 459.0,
+          "p75": 639.75,
+          "p90": 855.5,
+          "p95": 997.25,
+          "p99": 1187.0,
+          "max": 1414.0
+        },
+        "actions_per_point": {
+          "n": 2826,
+          "mean": 3.537,
+          "std": 1.974,
+          "min": 0.138,
+          "p25": 2.508,
+          "median": 3.451,
+          "p75": 4.417,
+          "p90": 5.575,
+          "p95": 6.443,
+          "p99": 8.187,
+          "max": 59.5
+        }
+      },
+      "coverage": {
+        "50": {
+          "episodes_over_cap": 2814,
+          "fraction_over_cap": 0.995754
+        },
+        "100": {
+          "episodes_over_cap": 2354,
+          "fraction_over_cap": 0.832979
+        },
+        "150": {
+          "episodes_over_cap": 1528,
+          "fraction_over_cap": 0.540694
+        },
+        "200": {
+          "episodes_over_cap": 969,
+          "fraction_over_cap": 0.342887
+        },
+        "250": {
+          "episodes_over_cap": 577,
+          "fraction_over_cap": 0.204176
+        },
+        "300": {
+          "episodes_over_cap": 324,
+          "fraction_over_cap": 0.11465
+        },
+        "400": {
+          "episodes_over_cap": 104,
+          "fraction_over_cap": 0.036801
+        },
+        "500": {
+          "episodes_over_cap": 0,
+          "fraction_over_cap": 0.0
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 2826,
+          "fraction": 0.005518
+        },
+        "MoveForward": {
+          "count": 170816,
+          "fraction": 0.333506
+        },
+        "TurnRight": {
+          "count": 23972,
+          "fraction": 0.046804
+        },
+        "TurnLeft": {
+          "count": 24433,
+          "fraction": 0.047704
+        },
+        "GoUp": {
+          "count": 78128,
+          "fraction": 0.152539
+        },
+        "GoDown": {
+          "count": 212008,
+          "fraction": 0.41393
+        }
+      }
+    },
+    {
+      "group": "split=val_unseen,difficulty=easy",
+      "n": 773,
+      "teacher_success_rate_20m": 0.8577,
+      "teacher_stop_reason": {
+        "teacher_stop_distance": 757,
+        "max_steps": 16
+      },
+      "fields": {
+        "trajectory_points": {
+          "n": 773,
+          "mean": 53.71,
+          "std": 49.693,
+          "min": 8.0,
+          "p25": 22.0,
+          "median": 37.0,
+          "p75": 65.0,
+          "p90": 113.8,
+          "p95": 158.4,
+          "p99": 249.48,
+          "max": 339.0
+        },
+        "teacher_steps": {
+          "n": 773,
+          "mean": 141.578,
+          "std": 81.511,
+          "min": 30.0,
+          "p25": 80.0,
+          "median": 113.0,
+          "p75": 181.0,
+          "p90": 250.8,
+          "p95": 313.8,
+          "p99": 401.0,
+          "max": 401.0
+        },
+        "start_target_m": {
+          "n": 773,
+          "mean": 132.974,
+          "std": 25.009,
+          "min": 60.156,
+          "p25": 115.034,
+          "median": 135.675,
+          "p75": 154.73,
+          "p90": 164.147,
+          "p95": 167.308,
+          "p99": 169.983,
+          "max": 170.977
+        },
+        "human_path_m": {
+          "n": 773,
+          "mean": 385.882,
+          "std": 326.285,
+          "min": 55.452,
+          "p25": 167.766,
+          "median": 294.508,
+          "p75": 478.414,
+          "p90": 748.772,
+          "p95": 1016.41,
+          "p99": 1526.518,
+          "max": 2726.652
+        },
+        "teacher_path_m": {
+          "n": 773,
+          "mean": 364.93,
+          "std": 228.219,
+          "min": 58.0,
+          "p25": 207.0,
+          "median": 288.0,
+          "p75": 452.0,
+          "p90": 667.0,
+          "p95": 869.6,
+          "p99": 1193.2,
+          "max": 1414.0
+        },
+        "actions_per_point": {
+          "n": 773,
+          "mean": 3.713,
+          "std": 1.79,
+          "min": 0.201,
+          "p25": 2.635,
+          "median": 3.75,
+          "p75": 4.778,
+          "p90": 5.973,
+          "p95": 6.603,
+          "p99": 8.0,
+          "max": 11.375
+        }
+      },
+      "coverage": {
+        "50": {
+          "episodes_over_cap": 761,
+          "fraction_over_cap": 0.984476
+        },
+        "100": {
+          "episodes_over_cap": 439,
+          "fraction_over_cap": 0.567917
+        },
+        "150": {
+          "episodes_over_cap": 287,
+          "fraction_over_cap": 0.371281
+        },
+        "200": {
+          "episodes_over_cap": 163,
+          "fraction_over_cap": 0.210867
+        },
+        "250": {
+          "episodes_over_cap": 78,
+          "fraction_over_cap": 0.100906
+        },
+        "300": {
+          "episodes_over_cap": 51,
+          "fraction_over_cap": 0.065977
+        },
+        "400": {
+          "episodes_over_cap": 16,
+          "fraction_over_cap": 0.020699
+        },
+        "500": {
+          "episodes_over_cap": 0,
+          "fraction_over_cap": 0.0
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 773,
+          "fraction": 0.007063
+        },
+        "MoveForward": {
+          "count": 28585,
+          "fraction": 0.261193
+        },
+        "TurnRight": {
+          "count": 5173,
+          "fraction": 0.047268
+        },
+        "TurnLeft": {
+          "count": 5326,
+          "fraction": 0.048666
+        },
+        "GoUp": {
+          "count": 16935,
+          "fraction": 0.154742
+        },
+        "GoDown": {
+          "count": 52648,
+          "fraction": 0.481067
+        }
+      }
+    },
+    {
+      "group": "split=val_unseen,difficulty=medium",
+      "n": 972,
+      "teacher_success_rate_20m": 0.8652,
+      "teacher_stop_reason": {
+        "teacher_stop_distance": 951,
+        "max_steps": 21
+      },
+      "fields": {
+        "trajectory_points": {
+          "n": 972,
+          "mean": 64.386,
+          "std": 60.685,
+          "min": 12.0,
+          "p25": 33.0,
+          "median": 46.0,
+          "p75": 71.0,
+          "p90": 118.0,
+          "p95": 176.45,
+          "p99": 316.19,
+          "max": 802.0
+        },
+        "teacher_steps": {
+          "n": 972,
+          "mean": 171.53,
+          "std": 78.137,
+          "min": 70.0,
+          "p25": 110.0,
+          "median": 147.0,
+          "p75": 215.0,
+          "p90": 289.0,
+          "p95": 341.0,
+          "p99": 401.0,
+          "max": 401.0
+        },
+        "start_target_m": {
+          "n": 972,
+          "mean": 214.617,
+          "std": 24.551,
+          "min": 171.022,
+          "p25": 194.066,
+          "median": 215.239,
+          "p75": 234.375,
+          "p90": 248.132,
+          "p95": 253.712,
+          "p99": 257.062,
+          "max": 257.816
+        },
+        "human_path_m": {
+          "n": 972,
+          "mean": 463.25,
+          "std": 283.708,
+          "min": 161.46,
+          "p25": 273.576,
+          "median": 382.831,
+          "p75": 550.566,
+          "p90": 782.9,
+          "p95": 1074.001,
+          "p99": 1581.295,
+          "max": 2655.802
+        },
+        "teacher_path_m": {
+          "n": 972,
+          "mean": 473.547,
+          "std": 198.147,
+          "min": 224.0,
+          "p25": 327.0,
+          "median": 417.0,
+          "p75": 563.25,
+          "p90": 743.0,
+          "p95": 912.45,
+          "p99": 1109.58,
+          "max": 1272.0
+        },
+        "actions_per_point": {
+          "n": 972,
+          "mean": 3.612,
+          "std": 1.681,
+          "min": 0.256,
+          "p25": 2.591,
+          "median": 3.571,
+          "p75": 4.551,
+          "p90": 5.675,
+          "p95": 6.523,
+          "p99": 8.146,
+          "max": 11.4
+        }
+      },
+      "coverage": {
+        "50": {
+          "episodes_over_cap": 972,
+          "fraction_over_cap": 1.0
+        },
+        "100": {
+          "episodes_over_cap": 837,
+          "fraction_over_cap": 0.861111
+        },
+        "150": {
+          "episodes_over_cap": 469,
+          "fraction_over_cap": 0.48251
+        },
+        "200": {
+          "episodes_over_cap": 274,
+          "fraction_over_cap": 0.281893
+        },
+        "250": {
+          "episodes_over_cap": 152,
+          "fraction_over_cap": 0.156379
+        },
+        "300": {
+          "episodes_over_cap": 85,
+          "fraction_over_cap": 0.087449
+        },
+        "400": {
+          "episodes_over_cap": 21,
+          "fraction_over_cap": 0.021605
+        },
+        "500": {
+          "episodes_over_cap": 0,
+          "fraction_over_cap": 0.0
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 972,
+          "fraction": 0.00583
+        },
+        "MoveForward": {
+          "count": 53380,
+          "fraction": 0.320164
+        },
+        "TurnRight": {
+          "count": 7739,
+          "fraction": 0.046417
+        },
+        "TurnLeft": {
+          "count": 7942,
+          "fraction": 0.047635
+        },
+        "GoUp": {
+          "count": 24511,
+          "fraction": 0.147013
+        },
+        "GoDown": {
+          "count": 72183,
+          "fraction": 0.432941
+        }
+      }
+    },
+    {
+      "group": "split=val_unseen,difficulty=hard",
+      "n": 1081,
+      "teacher_success_rate_20m": 0.8464,
+      "teacher_stop_reason": {
+        "teacher_stop_distance": 1014,
+        "max_steps": 67
+      },
+      "fields": {
+        "trajectory_points": {
+          "n": 1081,
+          "mean": 87.03,
+          "std": 77.69,
+          "min": 2.0,
+          "p25": 47.0,
+          "median": 67.0,
+          "p75": 95.0,
+          "p90": 152.0,
+          "p95": 221.0,
+          "p99": 415.6,
+          "max": 1112.0
+        },
+        "teacher_steps": {
+          "n": 1081,
+          "mean": 218.331,
+          "std": 85.423,
+          "min": 91.0,
+          "p25": 145.0,
+          "median": 198.0,
+          "p75": 272.0,
+          "p90": 357.0,
+          "p95": 401.0,
+          "p99": 401.0,
+          "max": 401.0
+        },
+        "start_target_m": {
+          "n": 1081,
+          "mean": 326.683,
+          "std": 49.999,
+          "min": 258.005,
+          "p25": 285.765,
+          "median": 319.063,
+          "p75": 356.041,
+          "p90": 397.561,
+          "p95": 422.244,
+          "p99": 464.337,
+          "max": 554.075
+        },
+        "human_path_m": {
+          "n": 1081,
+          "mean": 641.017,
+          "std": 407.772,
+          "min": 247.315,
+          "p25": 394.47,
+          "median": 545.484,
+          "p75": 739.075,
+          "p90": 1010.932,
+          "p95": 1231.884,
+          "p99": 2424.52,
+          "max": 4203.46
+        },
+        "teacher_path_m": {
+          "n": 1081,
+          "mean": 640.123,
+          "std": 214.325,
+          "min": 309.0,
+          "p25": 467.0,
+          "median": 592.0,
+          "p75": 764.0,
+          "p90": 959.0,
+          "p95": 1083.0,
+          "p99": 1220.2,
+          "max": 1298.0
+        },
+        "actions_per_point": {
+          "n": 1081,
+          "mean": 3.344,
+          "std": 2.299,
+          "min": 0.138,
+          "p25": 2.43,
+          "median": 3.145,
+          "p75": 4.023,
+          "p90": 5.043,
+          "p95": 5.972,
+          "p99": 8.507,
+          "max": 59.5
+        }
+      },
+      "coverage": {
+        "50": {
+          "episodes_over_cap": 1081,
+          "fraction_over_cap": 1.0
+        },
+        "100": {
+          "episodes_over_cap": 1078,
+          "fraction_over_cap": 0.997225
+        },
+        "150": {
+          "episodes_over_cap": 772,
+          "fraction_over_cap": 0.714154
+        },
+        "200": {
+          "episodes_over_cap": 532,
+          "fraction_over_cap": 0.492137
+        },
+        "250": {
+          "episodes_over_cap": 347,
+          "fraction_over_cap": 0.320999
+        },
+        "300": {
+          "episodes_over_cap": 188,
+          "fraction_over_cap": 0.173913
+        },
+        "400": {
+          "episodes_over_cap": 67,
+          "fraction_over_cap": 0.06198
+        },
+        "500": {
+          "episodes_over_cap": 0,
+          "fraction_over_cap": 0.0
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 1081,
+          "fraction": 0.00458
+        },
+        "MoveForward": {
+          "count": 88851,
+          "fraction": 0.376462
+        },
+        "TurnRight": {
+          "count": 11060,
+          "fraction": 0.046861
+        },
+        "TurnLeft": {
+          "count": 11165,
+          "fraction": 0.047306
+        },
+        "GoUp": {
+          "count": 36682,
+          "fraction": 0.155422
+        },
+        "GoDown": {
+          "count": 87177,
+          "fraction": 0.369369
+        }
+      }
+    },
+    {
+      "group": "split=val_unseen,distance_bin=easy",
+      "n": 773,
+      "teacher_success_rate_20m": 0.8577,
+      "teacher_stop_reason": {
+        "teacher_stop_distance": 757,
+        "max_steps": 16
+      },
+      "fields": {
+        "trajectory_points": {
+          "n": 773,
+          "mean": 53.71,
+          "std": 49.693,
+          "min": 8.0,
+          "p25": 22.0,
+          "median": 37.0,
+          "p75": 65.0,
+          "p90": 113.8,
+          "p95": 158.4,
+          "p99": 249.48,
+          "max": 339.0
+        },
+        "teacher_steps": {
+          "n": 773,
+          "mean": 141.578,
+          "std": 81.511,
+          "min": 30.0,
+          "p25": 80.0,
+          "median": 113.0,
+          "p75": 181.0,
+          "p90": 250.8,
+          "p95": 313.8,
+          "p99": 401.0,
+          "max": 401.0
+        },
+        "start_target_m": {
+          "n": 773,
+          "mean": 132.974,
+          "std": 25.009,
+          "min": 60.156,
+          "p25": 115.034,
+          "median": 135.675,
+          "p75": 154.73,
+          "p90": 164.147,
+          "p95": 167.308,
+          "p99": 169.983,
+          "max": 170.977
+        },
+        "human_path_m": {
+          "n": 773,
+          "mean": 385.882,
+          "std": 326.285,
+          "min": 55.452,
+          "p25": 167.766,
+          "median": 294.508,
+          "p75": 478.414,
+          "p90": 748.772,
+          "p95": 1016.41,
+          "p99": 1526.518,
+          "max": 2726.652
+        },
+        "teacher_path_m": {
+          "n": 773,
+          "mean": 364.93,
+          "std": 228.219,
+          "min": 58.0,
+          "p25": 207.0,
+          "median": 288.0,
+          "p75": 452.0,
+          "p90": 667.0,
+          "p95": 869.6,
+          "p99": 1193.2,
+          "max": 1414.0
+        },
+        "actions_per_point": {
+          "n": 773,
+          "mean": 3.713,
+          "std": 1.79,
+          "min": 0.201,
+          "p25": 2.635,
+          "median": 3.75,
+          "p75": 4.778,
+          "p90": 5.973,
+          "p95": 6.603,
+          "p99": 8.0,
+          "max": 11.375
+        }
+      },
+      "coverage": {
+        "50": {
+          "episodes_over_cap": 761,
+          "fraction_over_cap": 0.984476
+        },
+        "100": {
+          "episodes_over_cap": 439,
+          "fraction_over_cap": 0.567917
+        },
+        "150": {
+          "episodes_over_cap": 287,
+          "fraction_over_cap": 0.371281
+        },
+        "200": {
+          "episodes_over_cap": 163,
+          "fraction_over_cap": 0.210867
+        },
+        "250": {
+          "episodes_over_cap": 78,
+          "fraction_over_cap": 0.100906
+        },
+        "300": {
+          "episodes_over_cap": 51,
+          "fraction_over_cap": 0.065977
+        },
+        "400": {
+          "episodes_over_cap": 16,
+          "fraction_over_cap": 0.020699
+        },
+        "500": {
+          "episodes_over_cap": 0,
+          "fraction_over_cap": 0.0
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 773,
+          "fraction": 0.007063
+        },
+        "MoveForward": {
+          "count": 28585,
+          "fraction": 0.261193
+        },
+        "TurnRight": {
+          "count": 5173,
+          "fraction": 0.047268
+        },
+        "TurnLeft": {
+          "count": 5326,
+          "fraction": 0.048666
+        },
+        "GoUp": {
+          "count": 16935,
+          "fraction": 0.154742
+        },
+        "GoDown": {
+          "count": 52648,
+          "fraction": 0.481067
+        }
+      }
+    },
+    {
+      "group": "split=val_unseen,distance_bin=medium",
+      "n": 972,
+      "teacher_success_rate_20m": 0.8652,
+      "teacher_stop_reason": {
+        "teacher_stop_distance": 951,
+        "max_steps": 21
+      },
+      "fields": {
+        "trajectory_points": {
+          "n": 972,
+          "mean": 64.386,
+          "std": 60.685,
+          "min": 12.0,
+          "p25": 33.0,
+          "median": 46.0,
+          "p75": 71.0,
+          "p90": 118.0,
+          "p95": 176.45,
+          "p99": 316.19,
+          "max": 802.0
+        },
+        "teacher_steps": {
+          "n": 972,
+          "mean": 171.53,
+          "std": 78.137,
+          "min": 70.0,
+          "p25": 110.0,
+          "median": 147.0,
+          "p75": 215.0,
+          "p90": 289.0,
+          "p95": 341.0,
+          "p99": 401.0,
+          "max": 401.0
+        },
+        "start_target_m": {
+          "n": 972,
+          "mean": 214.617,
+          "std": 24.551,
+          "min": 171.022,
+          "p25": 194.066,
+          "median": 215.239,
+          "p75": 234.375,
+          "p90": 248.132,
+          "p95": 253.712,
+          "p99": 257.062,
+          "max": 257.816
+        },
+        "human_path_m": {
+          "n": 972,
+          "mean": 463.25,
+          "std": 283.708,
+          "min": 161.46,
+          "p25": 273.576,
+          "median": 382.831,
+          "p75": 550.566,
+          "p90": 782.9,
+          "p95": 1074.001,
+          "p99": 1581.295,
+          "max": 2655.802
+        },
+        "teacher_path_m": {
+          "n": 972,
+          "mean": 473.547,
+          "std": 198.147,
+          "min": 224.0,
+          "p25": 327.0,
+          "median": 417.0,
+          "p75": 563.25,
+          "p90": 743.0,
+          "p95": 912.45,
+          "p99": 1109.58,
+          "max": 1272.0
+        },
+        "actions_per_point": {
+          "n": 972,
+          "mean": 3.612,
+          "std": 1.681,
+          "min": 0.256,
+          "p25": 2.591,
+          "median": 3.571,
+          "p75": 4.551,
+          "p90": 5.675,
+          "p95": 6.523,
+          "p99": 8.146,
+          "max": 11.4
+        }
+      },
+      "coverage": {
+        "50": {
+          "episodes_over_cap": 972,
+          "fraction_over_cap": 1.0
+        },
+        "100": {
+          "episodes_over_cap": 837,
+          "fraction_over_cap": 0.861111
+        },
+        "150": {
+          "episodes_over_cap": 469,
+          "fraction_over_cap": 0.48251
+        },
+        "200": {
+          "episodes_over_cap": 274,
+          "fraction_over_cap": 0.281893
+        },
+        "250": {
+          "episodes_over_cap": 152,
+          "fraction_over_cap": 0.156379
+        },
+        "300": {
+          "episodes_over_cap": 85,
+          "fraction_over_cap": 0.087449
+        },
+        "400": {
+          "episodes_over_cap": 21,
+          "fraction_over_cap": 0.021605
+        },
+        "500": {
+          "episodes_over_cap": 0,
+          "fraction_over_cap": 0.0
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 972,
+          "fraction": 0.00583
+        },
+        "MoveForward": {
+          "count": 53380,
+          "fraction": 0.320164
+        },
+        "TurnRight": {
+          "count": 7739,
+          "fraction": 0.046417
+        },
+        "TurnLeft": {
+          "count": 7942,
+          "fraction": 0.047635
+        },
+        "GoUp": {
+          "count": 24511,
+          "fraction": 0.147013
+        },
+        "GoDown": {
+          "count": 72183,
+          "fraction": 0.432941
+        }
+      }
+    },
+    {
+      "group": "split=val_unseen,distance_bin=hard",
+      "n": 1081,
+      "teacher_success_rate_20m": 0.8464,
+      "teacher_stop_reason": {
+        "teacher_stop_distance": 1014,
+        "max_steps": 67
+      },
+      "fields": {
+        "trajectory_points": {
+          "n": 1081,
+          "mean": 87.03,
+          "std": 77.69,
+          "min": 2.0,
+          "p25": 47.0,
+          "median": 67.0,
+          "p75": 95.0,
+          "p90": 152.0,
+          "p95": 221.0,
+          "p99": 415.6,
+          "max": 1112.0
+        },
+        "teacher_steps": {
+          "n": 1081,
+          "mean": 218.331,
+          "std": 85.423,
+          "min": 91.0,
+          "p25": 145.0,
+          "median": 198.0,
+          "p75": 272.0,
+          "p90": 357.0,
+          "p95": 401.0,
+          "p99": 401.0,
+          "max": 401.0
+        },
+        "start_target_m": {
+          "n": 1081,
+          "mean": 326.683,
+          "std": 49.999,
+          "min": 258.005,
+          "p25": 285.765,
+          "median": 319.063,
+          "p75": 356.041,
+          "p90": 397.561,
+          "p95": 422.244,
+          "p99": 464.337,
+          "max": 554.075
+        },
+        "human_path_m": {
+          "n": 1081,
+          "mean": 641.017,
+          "std": 407.772,
+          "min": 247.315,
+          "p25": 394.47,
+          "median": 545.484,
+          "p75": 739.075,
+          "p90": 1010.932,
+          "p95": 1231.884,
+          "p99": 2424.52,
+          "max": 4203.46
+        },
+        "teacher_path_m": {
+          "n": 1081,
+          "mean": 640.123,
+          "std": 214.325,
+          "min": 309.0,
+          "p25": 467.0,
+          "median": 592.0,
+          "p75": 764.0,
+          "p90": 959.0,
+          "p95": 1083.0,
+          "p99": 1220.2,
+          "max": 1298.0
+        },
+        "actions_per_point": {
+          "n": 1081,
+          "mean": 3.344,
+          "std": 2.299,
+          "min": 0.138,
+          "p25": 2.43,
+          "median": 3.145,
+          "p75": 4.023,
+          "p90": 5.043,
+          "p95": 5.972,
+          "p99": 8.507,
+          "max": 59.5
+        }
+      },
+      "coverage": {
+        "50": {
+          "episodes_over_cap": 1081,
+          "fraction_over_cap": 1.0
+        },
+        "100": {
+          "episodes_over_cap": 1078,
+          "fraction_over_cap": 0.997225
+        },
+        "150": {
+          "episodes_over_cap": 772,
+          "fraction_over_cap": 0.714154
+        },
+        "200": {
+          "episodes_over_cap": 532,
+          "fraction_over_cap": 0.492137
+        },
+        "250": {
+          "episodes_over_cap": 347,
+          "fraction_over_cap": 0.320999
+        },
+        "300": {
+          "episodes_over_cap": 188,
+          "fraction_over_cap": 0.173913
+        },
+        "400": {
+          "episodes_over_cap": 67,
+          "fraction_over_cap": 0.06198
+        },
+        "500": {
+          "episodes_over_cap": 0,
+          "fraction_over_cap": 0.0
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 1081,
+          "fraction": 0.00458
+        },
+        "MoveForward": {
+          "count": 88851,
+          "fraction": 0.376462
+        },
+        "TurnRight": {
+          "count": 11060,
+          "fraction": 0.046861
+        },
+        "TurnLeft": {
+          "count": 11165,
+          "fraction": 0.047306
+        },
+        "GoUp": {
+          "count": 36682,
+          "fraction": 0.155422
+        },
+        "GoDown": {
+          "count": 87177,
+          "fraction": 0.369369
+        }
+      }
+    },
+    {
+      "group": "split=train_seen",
+      "n": 22002,
+      "teacher_success_rate_20m": 0.8463,
+      "teacher_stop_reason": {
+        "teacher_stop_distance": 20497,
+        "max_steps": 1505
+      },
+      "fields": {
+        "trajectory_points": {
+          "n": 22002,
+          "mean": 87.941,
+          "std": 87.497,
+          "min": 2.0,
+          "p25": 40.0,
+          "median": 63.0,
+          "p75": 102.0,
+          "p90": 171.0,
+          "p95": 249.0,
+          "p99": 458.99,
+          "max": 1220.0
+        },
+        "teacher_steps": {
+          "n": 22002,
+          "mean": 188.936,
+          "std": 100.165,
+          "min": 20.0,
+          "p25": 109.0,
+          "median": 159.0,
+          "p75": 254.0,
+          "p90": 360.0,
+          "p95": 401.0,
+          "p99": 401.0,
+          "max": 401.0
+        },
+        "start_target_m": {
+          "n": 22002,
+          "mean": 223.777,
+          "std": 86.974,
+          "min": 33.123,
+          "p25": 151.98,
+          "median": 213.426,
+          "p75": 286.805,
+          "p90": 347.815,
+          "p95": 378.738,
+          "p99": 431.588,
+          "max": 529.979
+        },
+        "human_path_m": {
+          "n": 22002,
+          "mean": 550.868,
+          "std": 438.399,
+          "min": 33.198,
+          "p25": 276.888,
+          "median": 433.546,
+          "p75": 683.217,
+          "p90": 1030.791,
+          "p95": 1336.995,
+          "p99": 2234.011,
+          "max": 6484.644
+        },
+        "teacher_path_m": {
+          "n": 22002,
+          "mean": 523.056,
+          "std": 276.542,
+          "min": 41.0,
+          "p25": 311.0,
+          "median": 457.0,
+          "p75": 684.0,
+          "p90": 959.0,
+          "p95": 1084.0,
+          "p99": 1238.99,
+          "max": 1569.0
+        },
+        "actions_per_point": {
+          "n": 22002,
+          "mean": 3.158,
+          "std": 2.259,
+          "min": 0.066,
+          "p25": 2.064,
+          "median": 3.052,
+          "p75": 4.074,
+          "p90": 5.204,
+          "p95": 5.973,
+          "p99": 7.818,
+          "max": 68.0
+        }
+      },
+      "coverage": {
+        "50": {
+          "episodes_over_cap": 21864,
+          "fraction_over_cap": 0.993728
+        },
+        "100": {
+          "episodes_over_cap": 17572,
+          "fraction_over_cap": 0.798655
+        },
+        "150": {
+          "episodes_over_cap": 11754,
+          "fraction_over_cap": 0.534224
+        },
+        "200": {
+          "episodes_over_cap": 8131,
+          "fraction_over_cap": 0.369557
+        },
+        "250": {
+          "episodes_over_cap": 5647,
+          "fraction_over_cap": 0.256658
+        },
+        "300": {
+          "episodes_over_cap": 3729,
+          "fraction_over_cap": 0.169485
+        },
+        "400": {
+          "episodes_over_cap": 1505,
+          "fraction_over_cap": 0.068403
+        },
+        "500": {
+          "episodes_over_cap": 0,
+          "fraction_over_cap": 0.0
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 22002,
+          "fraction": 0.005293
+        },
+        "MoveForward": {
+          "count": 1362322,
+          "fraction": 0.32772
+        },
+        "TurnRight": {
+          "count": 212050,
+          "fraction": 0.051011
+        },
+        "TurnLeft": {
+          "count": 212263,
+          "fraction": 0.051062
+        },
+        "GoUp": {
+          "count": 674243,
+          "fraction": 0.162196
+        },
+        "GoDown": {
+          "count": 1674086,
+          "fraction": 0.402718
+        }
+      }
+    },
+    {
+      "group": "split=train_seen,distance_bin=easy",
+      "n": 7283,
+      "teacher_success_rate_20m": 0.8664,
+      "teacher_stop_reason": {
+        "teacher_stop_distance": 6986,
+        "max_steps": 297
+      },
+      "fields": {
+        "trajectory_points": {
+          "n": 7283,
+          "mean": 67.552,
+          "std": 70.031,
+          "min": 2.0,
+          "p25": 28.0,
+          "median": 46.0,
+          "p75": 81.0,
+          "p90": 139.0,
+          "p95": 187.0,
+          "p99": 363.0,
+          "max": 1209.0
+        },
+        "teacher_steps": {
+          "n": 7283,
+          "mean": 146.28,
+          "std": 92.723,
+          "min": 20.0,
+          "p25": 79.0,
+          "median": 109.0,
+          "p75": 187.0,
+          "p90": 293.0,
+          "p95": 374.0,
+          "p99": 401.0,
+          "max": 401.0
+        },
+        "start_target_m": {
+          "n": 7283,
+          "mean": 131.057,
+          "std": 24.998,
+          "min": 33.123,
+          "p25": 113.249,
+          "median": 133.148,
+          "p75": 151.615,
+          "p90": 163.44,
+          "p95": 167.448,
+          "p99": 170.319,
+          "max": 170.981
+        },
+        "human_path_m": {
+          "n": 7283,
+          "mean": 423.768,
+          "std": 414.529,
+          "min": 33.198,
+          "p25": 166.279,
+          "median": 287.459,
+          "p75": 522.103,
+          "p90": 885.97,
+          "p95": 1216.253,
+          "p99": 2084.24,
+          "max": 5893.616
+        },
+        "teacher_path_m": {
+          "n": 7283,
+          "mean": 375.281,
+          "std": 257.807,
+          "min": 41.0,
+          "p25": 203.0,
+          "median": 277.0,
+          "p75": 457.0,
+          "p90": 747.0,
+          "p95": 984.0,
+          "p99": 1235.18,
+          "max": 1510.0
+        },
+        "actions_per_point": {
+          "n": 7283,
+          "mean": 3.186,
+          "std": 2.036,
+          "min": 0.066,
+          "p25": 1.974,
+          "median": 3.162,
+          "p75": 4.182,
+          "p90": 5.285,
+          "p95": 6.0,
+          "p99": 7.695,
+          "max": 36.5
+        }
+      },
+      "coverage": {
+        "50": {
+          "episodes_over_cap": 7145,
+          "fraction_over_cap": 0.981052
+        },
+        "100": {
+          "episodes_over_cap": 3964,
+          "fraction_over_cap": 0.544281
+        },
+        "150": {
+          "episodes_over_cap": 2519,
+          "fraction_over_cap": 0.345874
+        },
+        "200": {
+          "episodes_over_cap": 1608,
+          "fraction_over_cap": 0.220788
+        },
+        "250": {
+          "episodes_over_cap": 1027,
+          "fraction_over_cap": 0.141013
+        },
+        "300": {
+          "episodes_over_cap": 690,
+          "fraction_over_cap": 0.094741
+        },
+        "400": {
+          "episodes_over_cap": 297,
+          "fraction_over_cap": 0.04078
+        },
+        "500": {
+          "episodes_over_cap": 0,
+          "fraction_over_cap": 0.0
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 7283,
+          "fraction": 0.006836
+        },
+        "MoveForward": {
+          "count": 282443,
+          "fraction": 0.265115
+        },
+        "TurnRight": {
+          "count": 57759,
+          "fraction": 0.054215
+        },
+        "TurnLeft": {
+          "count": 57396,
+          "fraction": 0.053875
+        },
+        "GoUp": {
+          "count": 167888,
+          "fraction": 0.157588
+        },
+        "GoDown": {
+          "count": 492591,
+          "fraction": 0.46237
+        }
+      }
+    },
+    {
+      "group": "split=train_seen,distance_bin=medium",
+      "n": 7329,
+      "teacher_success_rate_20m": 0.851,
+      "teacher_stop_reason": {
+        "teacher_stop_distance": 6863,
+        "max_steps": 466
+      },
+      "fields": {
+        "trajectory_points": {
+          "n": 7329,
+          "mean": 86.972,
+          "std": 82.913,
+          "min": 2.0,
+          "p25": 40.0,
+          "median": 61.0,
+          "p75": 100.0,
+          "p90": 172.0,
+          "p95": 245.0,
+          "p99": 424.0,
+          "max": 1220.0
+        },
+        "teacher_steps": {
+          "n": 7329,
+          "mean": 189.783,
+          "std": 94.745,
+          "min": 61.0,
+          "p25": 111.0,
+          "median": 159.0,
+          "p75": 248.0,
+          "p90": 352.0,
+          "p95": 401.0,
+          "p99": 401.0,
+          "max": 401.0
+        },
+        "start_target_m": {
+          "n": 7329,
+          "mean": 213.376,
+          "std": 25.095,
+          "min": 171.011,
+          "p25": 191.871,
+          "median": 212.872,
+          "p75": 234.731,
+          "p90": 248.502,
+          "p95": 253.466,
+          "p99": 257.119,
+          "max": 257.981
+        },
+        "human_path_m": {
+          "n": 7329,
+          "mean": 550.319,
+          "std": 435.254,
+          "min": 143.663,
+          "p25": 273.92,
+          "median": 419.988,
+          "p75": 665.881,
+          "p90": 1019.287,
+          "p95": 1336.357,
+          "p99": 2286.886,
+          "max": 6484.644
+        },
+        "teacher_path_m": {
+          "n": 7329,
+          "mean": 522.185,
+          "std": 249.044,
+          "min": 209.0,
+          "p25": 329.0,
+          "median": 440.0,
+          "p75": 648.0,
+          "p90": 923.0,
+          "p95": 1064.2,
+          "p99": 1232.72,
+          "max": 1497.0
+        },
+        "actions_per_point": {
+          "n": 7329,
+          "mean": 3.205,
+          "std": 2.361,
+          "min": 0.076,
+          "p25": 2.127,
+          "median": 3.123,
+          "p75": 4.118,
+          "p90": 5.219,
+          "p95": 5.951,
+          "p99": 7.669,
+          "max": 54.0
+        }
+      },
+      "coverage": {
+        "50": {
+          "episodes_over_cap": 7329,
+          "fraction_over_cap": 1.0
+        },
+        "100": {
+          "episodes_over_cap": 6251,
+          "fraction_over_cap": 0.852913
+        },
+        "150": {
+          "episodes_over_cap": 3925,
+          "fraction_over_cap": 0.535544
+        },
+        "200": {
+          "episodes_over_cap": 2669,
+          "fraction_over_cap": 0.36417
+        },
+        "250": {
+          "episodes_over_cap": 1801,
+          "fraction_over_cap": 0.245736
+        },
+        "300": {
+          "episodes_over_cap": 1134,
+          "fraction_over_cap": 0.154728
+        },
+        "400": {
+          "episodes_over_cap": 466,
+          "fraction_over_cap": 0.063583
+        },
+        "500": {
+          "episodes_over_cap": 0,
+          "fraction_over_cap": 0.0
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 7329,
+          "fraction": 0.005269
+        },
+        "MoveForward": {
+          "count": 448045,
+          "fraction": 0.322121
+        },
+        "TurnRight": {
+          "count": 71399,
+          "fraction": 0.051332
+        },
+        "TurnLeft": {
+          "count": 70713,
+          "fraction": 0.050839
+        },
+        "GoUp": {
+          "count": 228136,
+          "fraction": 0.164018
+        },
+        "GoDown": {
+          "count": 565299,
+          "fraction": 0.406421
+        }
+      }
+    },
+    {
+      "group": "split=train_seen,distance_bin=hard",
+      "n": 7390,
+      "teacher_success_rate_20m": 0.8219,
+      "teacher_stop_reason": {
+        "teacher_stop_distance": 6648,
+        "max_steps": 742
+      },
+      "fields": {
+        "trajectory_points": {
+          "n": 7390,
+          "mean": 108.997,
+          "std": 101.429,
+          "min": 2.0,
+          "p25": 56.0,
+          "median": 78.0,
+          "p75": 119.0,
+          "p90": 202.1,
+          "p95": 313.1,
+          "p99": 539.22,
+          "max": 1202.0
+        },
+        "teacher_steps": {
+          "n": 7390,
+          "mean": 230.133,
+          "std": 94.892,
+          "min": 91.0,
+          "p25": 145.0,
+          "median": 207.0,
+          "p75": 304.0,
+          "p90": 401.0,
+          "p95": 401.0,
+          "p99": 401.0,
+          "max": 401.0
+        },
+        "start_target_m": {
+          "n": 7390,
+          "mean": 325.469,
+          "std": 48.582,
+          "min": 258.008,
+          "p25": 286.187,
+          "median": 316.76,
+          "p75": 357.288,
+          "p90": 392.656,
+          "p95": 415.749,
+          "p99": 461.368,
+          "max": 529.979
+        },
+        "human_path_m": {
+          "n": 7390,
+          "mean": 676.671,
+          "std": 428.062,
+          "min": 254.06,
+          "p25": 403.31,
+          "median": 561.698,
+          "p75": 801.437,
+          "p90": 1131.561,
+          "p95": 1418.66,
+          "p99": 2324.607,
+          "max": 6389.05
+        },
+        "teacher_path_m": {
+          "n": 7390,
+          "mean": 669.553,
+          "std": 240.19,
+          "min": 314.0,
+          "p25": 467.25,
+          "median": 613.0,
+          "p75": 835.0,
+          "p90": 1043.0,
+          "p95": 1128.0,
+          "p99": 1248.0,
+          "max": 1569.0
+        },
+        "actions_per_point": {
+          "n": 7390,
+          "mean": 3.083,
+          "std": 2.359,
+          "min": 0.126,
+          "p25": 2.076,
+          "median": 2.896,
+          "p75": 3.894,
+          "p90": 5.093,
+          "p95": 5.951,
+          "p99": 8.021,
+          "max": 68.0
+        }
+      },
+      "coverage": {
+        "50": {
+          "episodes_over_cap": 7390,
+          "fraction_over_cap": 1.0
+        },
+        "100": {
+          "episodes_over_cap": 7357,
+          "fraction_over_cap": 0.995535
+        },
+        "150": {
+          "episodes_over_cap": 5310,
+          "fraction_over_cap": 0.718539
+        },
+        "200": {
+          "episodes_over_cap": 3854,
+          "fraction_over_cap": 0.521516
+        },
+        "250": {
+          "episodes_over_cap": 2819,
+          "fraction_over_cap": 0.381461
+        },
+        "300": {
+          "episodes_over_cap": 1905,
+          "fraction_over_cap": 0.257781
+        },
+        "400": {
+          "episodes_over_cap": 742,
+          "fraction_over_cap": 0.100406
+        },
+        "500": {
+          "episodes_over_cap": 0,
+          "fraction_over_cap": 0.0
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 7390,
+          "fraction": 0.004345
+        },
+        "MoveForward": {
+          "count": 631834,
+          "fraction": 0.371517
+        },
+        "TurnRight": {
+          "count": 82892,
+          "fraction": 0.04874
+        },
+        "TurnLeft": {
+          "count": 84154,
+          "fraction": 0.049482
+        },
+        "GoUp": {
+          "count": 278219,
+          "fraction": 0.163592
+        },
+        "GoDown": {
+          "count": 616196,
+          "fraction": 0.362322
+        }
+      }
+    },
+    {
+      "group": "all",
+      "n": 27326,
+      "teacher_success_rate_20m": 0.8468,
+      "teacher_stop_reason": {
+        "teacher_stop_distance": 25543,
+        "max_steps": 1783
+      },
+      "fields": {
+        "trajectory_points": {
+          "n": 27326,
+          "mean": 86.116,
+          "std": 85.415,
+          "min": 2.0,
+          "p25": 39.0,
+          "median": 61.0,
+          "p75": 100.0,
+          "p90": 168.0,
+          "p95": 241.0,
+          "p99": 444.0,
+          "max": 1220.0
+        },
+        "teacher_steps": {
+          "n": 27326,
+          "mean": 188.148,
+          "std": 98.982,
+          "min": 20.0,
+          "p25": 109.0,
+          "median": 159.0,
+          "p75": 251.0,
+          "p90": 354.0,
+          "p95": 401.0,
+          "p99": 401.0,
+          "max": 401.0
+        },
+        "start_target_m": {
+          "n": 27326,
+          "mean": 224.994,
+          "std": 87.108,
+          "min": 33.123,
+          "p25": 153.199,
+          "median": 215.091,
+          "p75": 288.035,
+          "p90": 348.949,
+          "p95": 379.648,
+          "p99": 433.342,
+          "max": 554.075
+        },
+        "human_path_m": {
+          "n": 27326,
+          "mean": 546.181,
+          "std": 430.007,
+          "min": 33.198,
+          "p25": 277.816,
+          "median": 432.518,
+          "p75": 677.38,
+          "p90": 1016.935,
+          "p95": 1311.512,
+          "p99": 2184.942,
+          "max": 6484.644
+        },
+        "teacher_path_m": {
+          "n": 27326,
+          "mean": 521.434,
+          "std": 272.972,
+          "min": 41.0,
+          "p25": 313.0,
+          "median": 458.0,
+          "p75": 677.0,
+          "p90": 948.0,
+          "p95": 1076.0,
+          "p99": 1232.75,
+          "max": 1569.0
+        },
+        "actions_per_point": {
+          "n": 27326,
+          "mean": 3.197,
+          "std": 2.263,
+          "min": 0.066,
+          "p25": 2.097,
+          "median": 3.085,
+          "p75": 4.115,
+          "p90": 5.25,
+          "p95": 6.0,
+          "p99": 7.878,
+          "max": 68.0
+        }
+      },
+      "coverage": {
+        "50": {
+          "episodes_over_cap": 27163,
+          "fraction_over_cap": 0.994035
+        },
+        "100": {
+          "episodes_over_cap": 21908,
+          "fraction_over_cap": 0.801727
+        },
+        "150": {
+          "episodes_over_cap": 14606,
+          "fraction_over_cap": 0.534509
+        },
+        "200": {
+          "episodes_over_cap": 10063,
+          "fraction_over_cap": 0.368257
+        },
+        "250": {
+          "episodes_over_cap": 6876,
+          "fraction_over_cap": 0.251628
+        },
+        "300": {
+          "episodes_over_cap": 4471,
+          "fraction_over_cap": 0.163617
+        },
+        "400": {
+          "episodes_over_cap": 1783,
+          "fraction_over_cap": 0.065249
+        },
+        "500": {
+          "episodes_over_cap": 0,
+          "fraction_over_cap": 0.0
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 27326,
+          "fraction": 0.005315
+        },
+        "MoveForward": {
+          "count": 1687544,
+          "fraction": 0.328231
+        },
+        "TurnRight": {
+          "count": 260427,
+          "fraction": 0.050654
+        },
+        "TurnLeft": {
+          "count": 260546,
+          "fraction": 0.050677
+        },
+        "GoUp": {
+          "count": 829045,
+          "fraction": 0.161251
+        },
+        "GoDown": {
+          "count": 2076448,
+          "fraction": 0.403873
+        }
+      }
+    }
+  ]
+}
