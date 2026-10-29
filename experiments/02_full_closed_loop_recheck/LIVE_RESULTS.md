@@ -1,15 +1,15 @@
 # Experiment 02 live results (500-step budget)
 
-- updated: 2026-10-29 19:42:40
-- completed trajectories: **57**
+- updated: 2026-10-29 19:48:47
+- completed trajectories: **59**
 - expected per run: 24; runs: 4 / 4 started
 
 | run | done | SR | NE mean (m) | stop rate | entered 20m | left after entry | mean steps | actions (top 3) |
 |---|---:|---:|---:|---:|---:|---:|---:|---|
 | val_seen_small_roundA | 24/24 | 0.0% | 2140.0 | 0.0% | 12.5% | 12.5% | 500.0 | MoveForward 92%, GoDown 8%, Stop 0% |
 | val_seen_transformer_m_roundA | 24/24 | 0.0% | 2135.6 | 0.0% | 12.5% | 12.5% | 500.0 | MoveForward 92%, GoDown 8%, Stop 0% |
-| val_unseen_small_roundA | 4/24 | 0.0% | 2246.4 | 0.0% | 25.0% | 25.0% | 500.0 | MoveForward 93%, GoDown 7%, Stop 0% |
-| val_unseen_transformer_m_roundA | 5/24 | 0.0% | 2182.7 | 0.0% | 20.0% | 20.0% | 500.0 | MoveForward 92%, GoDown 8%, Stop 0% |
+| val_unseen_small_roundA | 5/24 | 0.0% | 2191.7 | 0.0% | 20.0% | 20.0% | 500.0 | MoveForward 92%, GoDown 8%, Stop 0% |
+| val_unseen_transformer_m_roundA | 6/24 | 0.0% | 2204.5 | 0.0% | 16.7% | 16.7% | 500.0 | MoveForward 92%, GoDown 8%, Stop 0% |
 
 ## Per-trajectory results (completion order)
 
@@ -72,5 +72,7 @@
 | 55 | 19:26:23 | val_unseen_transformer_m_roundA | cambridge_block_10 | 1a91d7c0d37b | 500 | False | False | 2122.6 | 17.6 | True | True | MoveForward 460, GoDown 40 |
 | 56 | 19:28:08 | val_unseen_small_roundA | cambridge_block_10 | 1a91d7c0d37b | 500 | False | False | 2142.6 | 14.8 | True | True | MoveForward 464, GoDown 36 |
 | 57 | 19:42:40 | val_unseen_transformer_m_roundA | cambridge_block_3 | c0958ce522c1 | 500 | False | False | 1963.1 | 51.7 | False | False | MoveForward 447, GoDown 53 |
+| 58 | 19:43:23 | val_unseen_small_roundA | cambridge_block_3 | c0958ce522c1 | 500 | False | False | 1973.1 | 51.6 | False | False | MoveForward 449, GoDown 51 |
+| 59 | 19:48:47 | val_unseen_transformer_m_roundA | cambridge_block_3 | 5fbb8c918d73 | 500 | False | False | 2313.1 | 183.1 | False | False | MoveForward 453, GoDown 47 |
 
 Full per-step traces are in `runs/<run>/*.jsonl`. Test-Unseen is not used.
