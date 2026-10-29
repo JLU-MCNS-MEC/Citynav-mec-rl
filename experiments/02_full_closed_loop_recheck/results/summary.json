@@ -1,0 +1,377 @@
+{
+  "caps": [
+    500
+  ],
+  "runs": {
+    "val_seen/small/roundA": {
+      "n": 24,
+      "caps": {
+        "500": {
+          "success_rate": 0.0,
+          "ne_m_mean": 2139.9551372186475,
+          "ne_m_median": 2152.737175370582,
+          "episodes_over_cap": 24
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "MoveForward": {
+          "count": 11007,
+          "fraction": 0.91725
+        },
+        "TurnRight": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "TurnLeft": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "GoUp": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "GoDown": {
+          "count": 993,
+          "fraction": 0.08275
+        }
+      },
+      "entered_20m": 0.125,
+      "left_after_entering_20m": 0.125,
+      "stopped_within_20m": 0.0,
+      "stop_rate": 0.0,
+      "max_steps_reached": 1.0,
+      "min_dist_3d_mean": 85.01572369617135,
+      "min_dist_3d_min": 7.137701355449634,
+      "mean_steps": 500.0,
+      "mean_step_latency_s": 5.496466050861307
+    },
+    "val_seen/transformer_m/roundA": {
+      "n": 24,
+      "caps": {
+        "500": {
+          "success_rate": 0.0,
+          "ne_m_mean": 2135.6016751300335,
+          "ne_m_median": 2135.2926497226854,
+          "episodes_over_cap": 24
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "MoveForward": {
+          "count": 10986,
+          "fraction": 0.9155
+        },
+        "TurnRight": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "TurnLeft": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "GoUp": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "GoDown": {
+          "count": 1014,
+          "fraction": 0.0845
+        }
+      },
+      "entered_20m": 0.125,
+      "left_after_entering_20m": 0.125,
+      "stopped_within_20m": 0.0,
+      "stop_rate": 0.0,
+      "max_steps_reached": 1.0,
+      "min_dist_3d_mean": 85.61875311876345,
+      "min_dist_3d_min": 5.136119845055282,
+      "mean_steps": 500.0,
+      "mean_step_latency_s": 5.492847595807922
+    },
+    "val_unseen/small/roundA": {
+      "n": 24,
+      "caps": {
+        "500": {
+          "success_rate": 0.0,
+          "ne_m_mean": 2165.3071641152565,
+          "ne_m_median": 2154.843564179359,
+          "episodes_over_cap": 24
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "MoveForward": {
+          "count": 10938,
+          "fraction": 0.9115
+        },
+        "TurnRight": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "TurnLeft": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "GoUp": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "GoDown": {
+          "count": 1062,
+          "fraction": 0.0885
+        }
+      },
+      "entered_20m": 0.125,
+      "left_after_entering_20m": 0.125,
+      "stopped_within_20m": 0.0,
+      "stop_rate": 0.0,
+      "max_steps_reached": 1.0,
+      "min_dist_3d_mean": 105.07570144708758,
+      "min_dist_3d_min": 5.900151917227421,
+      "mean_steps": 500.0,
+      "mean_step_latency_s": 9.765208949303041
+    },
+    "val_unseen/transformer_m/roundA": {
+      "n": 24,
+      "caps": {
+        "500": {
+          "success_rate": 0.0,
+          "ne_m_mean": 2155.1097692556964,
+          "ne_m_median": 2135.2741213803365,
+          "episodes_over_cap": 24
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "MoveForward": {
+          "count": 10889,
+          "fraction": 0.9074166666666666
+        },
+        "TurnRight": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "TurnLeft": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "GoUp": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "GoDown": {
+          "count": 1111,
+          "fraction": 0.09258333333333334
+        }
+      },
+      "entered_20m": 0.125,
+      "left_after_entering_20m": 0.125,
+      "stopped_within_20m": 0.0,
+      "stop_rate": 0.0,
+      "max_steps_reached": 1.0,
+      "min_dist_3d_mean": 105.35470877912473,
+      "min_dist_3d_min": 5.900151917227421,
+      "mean_steps": 500.0,
+      "mean_step_latency_s": 9.747017790217418
+    }
+  },
+  "pooled": {
+    "val_seen/small": {
+      "n": 24,
+      "caps": {
+        "500": {
+          "success_rate": 0.0,
+          "ne_m_mean": 2139.9551372186475,
+          "ne_m_median": 2152.737175370582,
+          "episodes_over_cap": 24
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "MoveForward": {
+          "count": 11007,
+          "fraction": 0.91725
+        },
+        "TurnRight": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "TurnLeft": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "GoUp": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "GoDown": {
+          "count": 993,
+          "fraction": 0.08275
+        }
+      },
+      "entered_20m": 0.125,
+      "left_after_entering_20m": 0.125,
+      "stopped_within_20m": 0.0,
+      "stop_rate": 0.0,
+      "max_steps_reached": 1.0,
+      "min_dist_3d_mean": 85.01572369617135,
+      "min_dist_3d_min": 7.137701355449634,
+      "mean_steps": 500.0,
+      "mean_step_latency_s": 5.496466050861307
+    },
+    "val_seen/transformer_m": {
+      "n": 24,
+      "caps": {
+        "500": {
+          "success_rate": 0.0,
+          "ne_m_mean": 2135.6016751300335,
+          "ne_m_median": 2135.2926497226854,
+          "episodes_over_cap": 24
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "MoveForward": {
+          "count": 10986,
+          "fraction": 0.9155
+        },
+        "TurnRight": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "TurnLeft": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "GoUp": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "GoDown": {
+          "count": 1014,
+          "fraction": 0.0845
+        }
+      },
+      "entered_20m": 0.125,
+      "left_after_entering_20m": 0.125,
+      "stopped_within_20m": 0.0,
+      "stop_rate": 0.0,
+      "max_steps_reached": 1.0,
+      "min_dist_3d_mean": 85.61875311876345,
+      "min_dist_3d_min": 5.136119845055282,
+      "mean_steps": 500.0,
+      "mean_step_latency_s": 5.492847595807922
+    },
+    "val_unseen/small": {
+      "n": 24,
+      "caps": {
+        "500": {
+          "success_rate": 0.0,
+          "ne_m_mean": 2165.3071641152565,
+          "ne_m_median": 2154.843564179359,
+          "episodes_over_cap": 24
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "MoveForward": {
+          "count": 10938,
+          "fraction": 0.9115
+        },
+        "TurnRight": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "TurnLeft": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "GoUp": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "GoDown": {
+          "count": 1062,
+          "fraction": 0.0885
+        }
+      },
+      "entered_20m": 0.125,
+      "left_after_entering_20m": 0.125,
+      "stopped_within_20m": 0.0,
+      "stop_rate": 0.0,
+      "max_steps_reached": 1.0,
+      "min_dist_3d_mean": 105.07570144708758,
+      "min_dist_3d_min": 5.900151917227421,
+      "mean_steps": 500.0,
+      "mean_step_latency_s": 9.765208949303041
+    },
+    "val_unseen/transformer_m": {
+      "n": 24,
+      "caps": {
+        "500": {
+          "success_rate": 0.0,
+          "ne_m_mean": 2155.1097692556964,
+          "ne_m_median": 2135.2741213803365,
+          "episodes_over_cap": 24
+        }
+      },
+      "action_distribution": {
+        "Stop": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "MoveForward": {
+          "count": 10889,
+          "fraction": 0.9074166666666666
+        },
+        "TurnRight": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "TurnLeft": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "GoUp": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "GoDown": {
+          "count": 1111,
+          "fraction": 0.09258333333333334
+        }
+      },
+      "entered_20m": 0.125,
+      "left_after_entering_20m": 0.125,
+      "stopped_within_20m": 0.0,
+      "stop_rate": 0.0,
+      "max_steps_reached": 1.0,
+      "min_dist_3d_mean": 105.35470877912473,
+      "min_dist_3d_min": 5.900151917227421,
+      "mean_steps": 500.0,
+      "mean_step_latency_s": 9.747017790217418
+    }
+  }
+}

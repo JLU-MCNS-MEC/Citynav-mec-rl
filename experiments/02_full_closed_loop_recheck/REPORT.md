@@ -1,8 +1,7 @@
 # 实验 02：全模型闭环复测（500 步上限）
 
 - 日期：2026-10-29
-- 状态：**部分完成** —— `val_seen` round A 已完成（18:08:41）；`val_unseen` round A 仍在运行，
-  本报告先汇总 `val_seen` 的 48 条轨迹，`val_unseen` 完成后追加。
+- 状态：**完成**（`val_seen` 18:08，`val_unseen` 见 §12）；两轮均按 500 步协议跑完，结论见 §7 与 §12。
 - 依赖：实验 01（步数上限）、实验 03（STOP 与数据流审计）
 - 未读取：`test_unseen`
 - 原始结果：`runs/val_seen_{small,transformer_m}_roundA/`；逐条实时记录见 `LIVE_RESULTS.md`
@@ -225,9 +224,80 @@ setsid nohup /home/20261024_1/miniconda3/envs/DRL_migrated/bin/python -u \
 - 逐条原始记录：`runs/<run>/*.jsonl`（meta + 每条 episode 一个 JSON 行）。
 - 汇总：`runs/<run>/*_full_summary.json` / `*_summary.csv`。
 
-## 11. 待补
+## 11. 收尾状态
 
-1. `val_unseen` round A 完成后补入第 3–7 节，并运行实验级汇总
-   `scripts/aggregate_experiment_02.py --runs-dir runs --out-dir results`（当前 `results/` 尚不存在）。
-2. 更新 `experiments/README.md` 中实验 02 的状态与结果列。
-3. round B 未运行（BUDGET 规定每划分只跑 1 轮）；`selection/*_roundB_indices.json` 保留未用。
+1. val_unseen round A 已完成并汇总（见 §12）；实验级结果在 `results/`。
+2. 未运行 round B（BUDGET 规定每划分 1 轮）；`selection/*_roundB_indices.json` 保留未用。
+3. 本实验结束后不再启动新的闭环组合；后续判断见 `../STATUS_2026-10-29.md` §6。
+
+## 12. val_unseen round A 结果（自动汇总，2026-10-29 22:35:56）
+
+- 完成时间：2026-10-29 22:35:56；small:full 与 transformer_m:full 各 24 条、500 步上限。
+- 汇总文件：`runs/val_unseen_{small,transformer_m}_roundA/*_full_summary.{json,csv}`；
+  实验级汇总：`results/summary.json`、`results/cap_sensitivity.{csv,md}`（由
+  `scripts/aggregate_experiment_02.py` 生成）。
+
+| 指标 | small:full | transformer_m:full |
+|---|---:|---:|
+| SR（终点 ≤20 m） | 0/24 | 0/24 |
+| stopped / stopped_within_20m | 0 / 0 | 0 / 0 |
+| 跑满 500 步 | 24/24 | 24/24 |
+| NE 均值 / 中位 / 范围 (m) | 2165.3 / 2154.8 / 1909.1–2472.5 | 2155.1 / 2135.3 / 1909.1–2477.5 |
+| 起点距离均值 (m) | 220.1 | 220.1 |
+| min_dist 均值 / 中位 / 最小 (m) | 103.8 / 85.5 / 5.8 | 103.8 / 85.5 / 5.8 |
+| 进入 20 m（其中离开） | 3/24（3/3） | 3/24（3/3） |
+| 动作分布 | MoveForward 91.2%、GoDown 8.8% | MoveForward 90.7%、GoDown 9.3% |
+| 平均单步延迟 (s) | 9.77 | 9.75 |
+
+### 12.1 逐条结果
+
+| # | map | episode | steps | 进入20m | NE small (m) | NE tm (m) | min dist (m) | 动作（small） |
+|---:|---|---|---:|---|---:|---:|---:|---|
+| 1 | birmingham_block_5 | 0783b3d1 | 500 | — | 2393.5 | 2378.4 | 147.3 | GoDown 50, MoveForward 450 |
+| 2 | birmingham_block_5 | 21370c7b | 500 | — | 2232.0 | 2222.0 | 88.9 | GoDown 67, MoveForward 433 |
+| 3 | birmingham_block_5 | 394f31cc | 500 | — | 2009.8 | 2009.8 | 195.5 | GoDown 61, MoveForward 439 |
+| 4 | birmingham_block_5 | 4f7c8634 | 500 | — | 1977.0 | 1972.0 | 142.7 | GoDown 45, MoveForward 455 |
+| 5 | birmingham_block_5 | d9b813d1 | 500 | — | 2167.1 | 2172.1 | 238.3 | GoDown 45, MoveForward 455 |
+| 6 | birmingham_block_5 | e0da34d8 | 500 | — | 2243.3 | 2233.4 | 160.3 | GoDown 49, MoveForward 451 |
+| 7 | cambridge_block_10 | 1a91d7c0 | 500 | Y | 2142.6 | 2122.6 | 14.8 | GoDown 36, MoveForward 464 |
+| 8 | cambridge_block_10 | 6a9775a7 | 500 | — | 2186.9 | 2147.0 | 28.7 | GoDown 51, MoveForward 449 |
+| 9 | cambridge_block_10 | b0640bf1 | 500 | — | 2054.6 | 2019.5 | 71.3 | GoDown 43, MoveForward 457 |
+| 10 | cambridge_block_10 | b8c50cb5 | 500 | — | 2357.6 | 2347.6 | 54.1 | GoDown 33, MoveForward 467 |
+| 11 | cambridge_block_10 | b8f07a31 | 500 | — | 2472.5 | 2477.5 | 66.2 | GoDown 15, MoveForward 485 |
+| 12 | cambridge_block_10 | fd55c101 | 500 | — | 2408.0 | 2403.0 | 70.5 | GoDown 18, MoveForward 482 |
+| 13 | cambridge_block_2 | 4648ee8a | 500 | Y | 1921.1 | 1916.1 | 12.1 | GoDown 48, MoveForward 452 |
+| 14 | cambridge_block_2 | 5e291e7f | 500 | — | 2031.2 | 2021.2 | 115.3 | GoDown 54, MoveForward 446 |
+| 15 | cambridge_block_2 | 80c44f4e | 500 | — | 2123.6 | 2123.6 | 82.1 | GoDown 53, MoveForward 447 |
+| 16 | cambridge_block_2 | 89b2d558 | 500 | Y | 1909.1 | 1909.1 | 5.8 | GoDown 38, MoveForward 462 |
+| 17 | cambridge_block_2 | 9073b657 | 500 | — | 2322.6 | 2317.6 | 60.4 | GoDown 47, MoveForward 453 |
+| 18 | cambridge_block_2 | dce8c7e7 | 500 | — | 2212.6 | 2197.6 | 97.7 | GoDown 44, MoveForward 456 |
+| 19 | cambridge_block_3 | 2bc06359 | 500 | — | 2105.3 | 2095.4 | 199.9 | GoDown 49, MoveForward 451 |
+| 20 | cambridge_block_3 | 5c251629 | 500 | — | 2033.7 | 2023.7 | 200.2 | GoDown 51, MoveForward 449 |
+| 21 | cambridge_block_3 | 5fbb8c91 | 500 | — | 2328.1 | 2313.1 | 183.0 | GoDown 44, MoveForward 456 |
+| 22 | cambridge_block_3 | 6d16288f | 500 | — | 2247.6 | 2237.6 | 65.9 | GoDown 32, MoveForward 468 |
+| 23 | cambridge_block_3 | c0958ce5 | 500 | — | 1973.1 | 1963.1 | 51.6 | GoDown 51, MoveForward 449 |
+| 24 | cambridge_block_3 | efab1726 | 500 | — | 2114.7 | 2099.7 | 138.0 | GoDown 38, MoveForward 462 |
+
+### 12.2 与 val_seen 的对比
+
+| 指标 | val_seen（small / tm） | val_unseen（small / tm） |
+|---|---|---|
+| SR | 0/24 / 0/24 | 0/24 / 0/24 |
+| STOP | 0 / 0 | 0 / 0 |
+| 跑满 500 步 | 24/24 / 24/24 | 24/24 / 24/24 |
+| NE 均值 (m) | 2140.0 / 2135.6 | 2165.3 / 2155.1 |
+| 进入 20 m | 3/24 / 3/24 | 3/24 / 3/24 |
+| min_dist 最小 (m) | 3.3 / 3.3 | 5.8 / 5.8 |
+
+### 12.3 结论（由汇总数据直接生成）
+
+1. val_unseen 24 条 / 模型全部跑完 500 步，**SR = 0/24（small）与 0/24（transformer_m）**；STOP 次数 0 / 0。
+2. 动作仍然只有 MoveForward 与 GoDown（MoveForward 91.2%、GoDown 8.8%），Turn/GoUp/Stop 均为 0。
+3. small 有 3/24、transformer_m 有 3/24 条轨迹进入过 20 m，全部离开；两模型最近距离 5.8 m。进入的轨迹：cambridge_block_2 89b2d558 (5.8 m)、cambridge_block_2 4648ee8a (12.1 m)、cambridge_block_10 1a91d7c0 (14.8 m)。
+4. 与 val_seen 的每个指标同向且量级相同，未见留出划分上的行为差异；两模型在闭环中仍不可区分。
+
+结论：500 步上限下 val_unseen 复现了 val_seen 的全部失败模式；本实验到此结束，不再加跑 round B 或新的闭环组合（见 `../STATUS_2026-10-29.md` §6）。
+
+---
+
+_本段由 `scripts/finalize_experiment_02.py` 于 2026-10-29 22:35:56 自动生成。_
