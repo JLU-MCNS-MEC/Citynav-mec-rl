@@ -1,0 +1,193 @@
+{
+  "generated_from": "/home/20261024_1/Workspace/Citynav-mec-rl-fixed50m/experiments/06_closed_loop_success_rate/results/seed42/journal.jsonl",
+  "n_success": 12,
+  "n_failure": 6,
+  "cases": [
+    {
+      "episode_id": "val_seen:00060",
+      "kind": "success",
+      "split": "val_seen",
+      "length_group": "short",
+      "map": "birmingham_block_1",
+      "turns": 6,
+      "steps": 19,
+      "why": "success; map-diverse, turn-complex"
+    },
+    {
+      "episode_id": "val_seen:00338",
+      "kind": "success",
+      "split": "val_seen",
+      "length_group": "short",
+      "map": "birmingham_block_3",
+      "turns": 6,
+      "steps": 18,
+      "why": "success; map-diverse, turn-complex"
+    },
+    {
+      "episode_id": "val_seen:01259",
+      "kind": "success",
+      "split": "val_seen",
+      "length_group": "medium",
+      "map": "cambridge_block_9",
+      "turns": 6,
+      "steps": 39,
+      "why": "success; map-diverse, turn-complex"
+    },
+    {
+      "episode_id": "val_seen:00937",
+      "kind": "success",
+      "split": "val_seen",
+      "length_group": "medium",
+      "map": "cambridge_block_7",
+      "turns": 5,
+      "steps": 31,
+      "why": "success; map-diverse, turn-complex"
+    },
+    {
+      "episode_id": "val_seen:00504",
+      "kind": "success",
+      "split": "val_seen",
+      "length_group": "long",
+      "map": "birmingham_block_4",
+      "turns": 2,
+      "steps": 56,
+      "why": "success; map-diverse, turn-complex"
+    },
+    {
+      "episode_id": "val_seen:00709",
+      "kind": "success",
+      "split": "val_seen",
+      "length_group": "long",
+      "map": "birmingham_block_9",
+      "turns": 2,
+      "steps": 60,
+      "why": "success; map-diverse, turn-complex"
+    },
+    {
+      "episode_id": "val_unseen:00022",
+      "kind": "success",
+      "split": "val_unseen",
+      "length_group": "short",
+      "map": "birmingham_block_5",
+      "turns": 6,
+      "steps": 27,
+      "why": "success; map-diverse, turn-complex"
+    },
+    {
+      "episode_id": "val_unseen:02380",
+      "kind": "success",
+      "split": "val_unseen",
+      "length_group": "short",
+      "map": "cambridge_block_3",
+      "turns": 6,
+      "steps": 14,
+      "why": "success; map-diverse, turn-complex"
+    },
+    {
+      "episode_id": "val_unseen:01328",
+      "kind": "success",
+      "split": "val_unseen",
+      "length_group": "medium",
+      "map": "cambridge_block_10",
+      "turns": 6,
+      "steps": 43,
+      "why": "success; map-diverse, turn-complex"
+    },
+    {
+      "episode_id": "val_unseen:01968",
+      "kind": "success",
+      "split": "val_unseen",
+      "length_group": "medium",
+      "map": "cambridge_block_2",
+      "turns": 3,
+      "steps": 37,
+      "why": "success; map-diverse, turn-complex"
+    },
+    {
+      "episode_id": "val_unseen:00976",
+      "kind": "success",
+      "split": "val_unseen",
+      "length_group": "long",
+      "map": "cambridge_block_10",
+      "turns": 3,
+      "steps": 50,
+      "why": "success; map-diverse, turn-complex"
+    },
+    {
+      "episode_id": "val_unseen:02662",
+      "kind": "success",
+      "split": "val_unseen",
+      "length_group": "long",
+      "map": "cambridge_block_10",
+      "turns": 3,
+      "steps": 56,
+      "why": "success; map-diverse, turn-complex"
+    },
+    {
+      "episode_id": "val_seen:00005",
+      "kind": "failure",
+      "label": "premature_stop",
+      "split": "val_seen",
+      "length_group": "medium",
+      "map": "birmingham_block_1",
+      "failure": "premature_stop",
+      "steps": 35,
+      "why": "stopped 20-30 m from the target"
+    },
+    {
+      "episode_id": "val_seen:00003",
+      "kind": "failure",
+      "label": "reached_but_not_stopped",
+      "split": "val_seen",
+      "length_group": "medium",
+      "map": "birmingham_block_1",
+      "failure": "reached_but_not_stopped",
+      "steps": 38,
+      "why": "entered 15 m, kept flying"
+    },
+    {
+      "episode_id": "val_seen:00001",
+      "kind": "failure",
+      "label": "long_straight_oob",
+      "split": "val_seen",
+      "length_group": "long",
+      "map": "birmingham_block_1",
+      "failure": "out_of_bounds",
+      "steps": 83,
+      "why": "long task, zero turns, flew out of the map"
+    },
+    {
+      "episode_id": "val_seen:00056",
+      "kind": "failure",
+      "label": "turn_oscillation",
+      "split": "val_seen",
+      "length_group": "medium",
+      "map": "birmingham_block_1",
+      "failure": "out_of_bounds",
+      "steps": 53,
+      "why": "many turns without progress"
+    },
+    {
+      "episode_id": "val_seen:00383",
+      "kind": "failure",
+      "label": "low_valid_target",
+      "split": "val_seen",
+      "length_group": "medium",
+      "map": "birmingham_block_3",
+      "failure": "reached_but_not_stopped",
+      "steps": 81,
+      "why": "target patch < 50% valid pixels"
+    },
+    {
+      "episode_id": "val_unseen:02749",
+      "kind": "failure",
+      "label": "collision",
+      "split": "val_unseen",
+      "length_group": "medium",
+      "map": "cambridge_block_2",
+      "failure": "collision",
+      "steps": 56,
+      "why": "forward move hit a 50 m obstacle"
+    }
+  ]
+}
