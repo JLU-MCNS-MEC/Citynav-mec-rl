@@ -1,0 +1,122 @@
+{
+  "generated_from": "/home/20261024_1/Workspace/Citynav-mec-rl-fixed50m/experiments/06_closed_loop_success_rate/results/test_unseen/journal.jsonl",
+  "n_success": 6,
+  "n_failure": 5,
+  "cases": [
+    {
+      "episode_id": "test_unseen:00318",
+      "kind": "success",
+      "split": "test_unseen",
+      "length_group": null,
+      "map": "birmingham_block_0",
+      "failure": "success",
+      "steps": 20,
+      "why": "success on this unseen map; most turns"
+    },
+    {
+      "episode_id": "test_unseen:00567",
+      "kind": "success",
+      "split": "test_unseen",
+      "length_group": null,
+      "map": "birmingham_block_6",
+      "failure": "success",
+      "steps": 17,
+      "why": "success on this unseen map; most turns"
+    },
+    {
+      "episode_id": "test_unseen:01128",
+      "kind": "success",
+      "split": "test_unseen",
+      "length_group": null,
+      "map": "cambridge_block_14",
+      "failure": "success",
+      "steps": 21,
+      "why": "success on this unseen map; most turns"
+    },
+    {
+      "episode_id": "test_unseen:01828",
+      "kind": "success",
+      "split": "test_unseen",
+      "length_group": null,
+      "map": "cambridge_block_26",
+      "failure": "success",
+      "steps": 11,
+      "why": "success on this unseen map; most turns"
+    },
+    {
+      "episode_id": "test_unseen:03230",
+      "kind": "success",
+      "split": "test_unseen",
+      "length_group": null,
+      "map": "cambridge_block_32",
+      "failure": "success",
+      "steps": 1,
+      "why": "success on this unseen map; most turns"
+    },
+    {
+      "episode_id": "test_unseen:03663",
+      "kind": "success",
+      "split": "test_unseen",
+      "length_group": null,
+      "map": "cambridge_block_8",
+      "failure": "success",
+      "steps": 19,
+      "why": "success on this unseen map; most turns"
+    },
+    {
+      "episode_id": "test_unseen:00002",
+      "kind": "failure",
+      "label": "premature_stop",
+      "split": "test_unseen",
+      "length_group": null,
+      "map": "birmingham_block_0",
+      "failure": "premature_stop",
+      "steps": 23,
+      "why": "stopped 20-30 m from the target"
+    },
+    {
+      "episode_id": "test_unseen:03228",
+      "kind": "failure",
+      "label": "zero_belief_stop",
+      "split": "test_unseen",
+      "length_group": null,
+      "map": "cambridge_block_32",
+      "failure": "premature_stop",
+      "steps": 1,
+      "why": "no candidates on this map -> zero belief -> stops in ~2 steps"
+    },
+    {
+      "episode_id": "test_unseen:00000",
+      "kind": "failure",
+      "label": "out_of_bounds",
+      "split": "test_unseen",
+      "length_group": null,
+      "map": "birmingham_block_0",
+      "failure": "out_of_bounds",
+      "steps": 56,
+      "why": "flew out of the map"
+    },
+    {
+      "episode_id": "test_unseen:00008",
+      "kind": "failure",
+      "label": "reached_but_not_stopped",
+      "split": "test_unseen",
+      "length_group": null,
+      "map": "birmingham_block_0",
+      "failure": "reached_but_not_stopped",
+      "steps": 15,
+      "why": "entered 20 m and kept flying"
+    },
+    {
+      "episode_id": "test_unseen:02536",
+      "kind": "failure",
+      "label": "collision",
+      "split": "test_unseen",
+      "length_group": null,
+      "map": "cambridge_block_26",
+      "failure": "collision",
+      "steps": 28,
+      "why": "forward move hit a 50 m obstacle"
+    }
+  ]
+}

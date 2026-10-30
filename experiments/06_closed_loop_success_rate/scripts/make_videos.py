@@ -63,7 +63,8 @@ def sha256(path: Path) -> str:
 
 def out_path(case: dict) -> Path:
     sub = "success" if case["kind"] == "success" else "failure"
-    return OUT / sub / case["split"] / case["length_group"] / f"{case['episode_id'].replace(':', '_')}.mp4"
+    group = case.get("length_group") or case["map"]
+    return OUT / sub / case["split"] / group / f"{case['episode_id'].replace(':', '_')}.mp4"
 
 
 def meta_path(case: dict) -> Path:
@@ -164,7 +165,7 @@ def render_case(case: dict, rec: dict, raster: MapRaster, tmp_root: Path) -> dic
     traj = rec["trajectory"]
     target = rec["target"]
     start = rec["start"][:2]
-    title = f"{rec['episode_id']}  {rec['split']}  {rec['length_group']}"
+    title = f"{rec['episode_id']}  {rec['split']}  {rec.get('length_group') or rec['map']}"
     outcome = "SUCCESS" if rec["success"] else f"FAIL: {rec['failure']}"
     if rec["stopped"] and rec["stop_dist"] is not None:
         outcome += f" | stop {rec['stop_dist']:.1f} m"
@@ -269,11 +270,20 @@ def render_case(case: dict, rec: dict, raster: MapRaster, tmp_root: Path) -> dic
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--cases", default=str(OUT / "cases.json"))
+    parser.add_argument("--cases", default="")
+    parser.add_argument("--results", default="")
+    parser.add_argument("--out", default="")
     parser.add_argument("--only", action="append", default=[],
                         help="episode id to render (repeatable)")
     parser.add_argument("--force", action="store_true")
     args = parser.parse_args()
+    global RES, OUT
+    if args.results:
+        RES = Path(args.results)
+    if args.out:
+        OUT = Path(args.out)
+    if not args.cases:
+        args.cases = str(OUT / "cases.json")
     payload = json.loads(Path(args.cases).read_text(encoding="utf-8"))
     cases = payload["cases"]
     if args.only:

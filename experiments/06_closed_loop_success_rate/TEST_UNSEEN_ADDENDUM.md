@@ -112,7 +112,40 @@ Test 的起始距离略近（中位 176.3 m；0–50 m 占 **7.2%**，Val-Seen 5
   是"信念主导策略"的又一个直接证据。
 - 本阶段没有训练、调参或模型修改；Test-Unseen 现已解封，但**未参与任何训练或模型选择**。
 
-## 10. 复现
+## 10. 视频案例（真实逐步记录）
+
+从 5,311 条 Test-Unseen 记录中选 **6 条成功 + 5 条失败**，渲染方式与 Stage 06 视频相同
+（左：真实 North-up 地图 + 20 m 圈 + 轨迹/航向；右：该步真实 `heading_crop`；底部：step、动作、
+距离、四类概率、结果）。H.264 1280×720、10 fps、每步 3 帧，**离散动作回放**。
+
+**成功（每张未见地图 1 条）**
+
+| episode | 地图 | 步数 | 说明 |
+|---|---|---:|---|
+| test_unseen:00318 | birmingham_block_0 | 20 | 转弯最多的成功 |
+| test_unseen:00567 | birmingham_block_6 | 17 | |
+| test_unseen:01128 | cambridge_block_14 | 21 | |
+| test_unseen:01828 | cambridge_block_26 | 11 | |
+| test_unseen:03230 | cambridge_block_32 | **1** | 零候选、全零信念；起点已在 20 m 内，立即 STOP（该图 17 条成功全部是 1 步） |
+| test_unseen:03663 | cambridge_block_8 | 19 | |
+
+**失败**
+
+| episode | 类型 | 地图 | 步数 | 说明 |
+|---|---|---|---:|---|
+| test_unseen:00002 | premature_stop | birmingham_block_0 | 23 | 停在 27.3 m |
+| test_unseen:03228 | zero_belief_stop | cambridge_block_32 | 1 | 无候选 → 全零信念 → 立即 STOP |
+| test_unseen:00000 | out_of_bounds | birmingham_block_0 | 56 | 直飞出界 |
+| test_unseen:00008 | reached_but_not_stopped | birmingham_block_0 | 15 | 进入 20 m 后继续飞走 |
+| test_unseen:02536 | collision | cambridge_block_26 | 28 | 唯一一次碰撞 |
+
+- 索引：[`videos/test_unseen/VIDEO_INDEX.md`](videos/test_unseen/VIDEO_INDEX.md)
+- 成功汇总片：[`success_compilation.mp4`](videos/test_unseen/success_compilation.mp4)（6 条，3.2 MB）
+- 封面拼图：[`video_montage.png`](videos/test_unseen/video_montage.png)
+- 清单（含每个 MP4 的 SHA-256）：[`video_manifest.csv`](videos/test_unseen/video_manifest.csv)
+- 全部视频合计约 9 MB。
+
+## 11. 复现
 
 ```bash
 # 1) 任务清单（5,311 条，起点/目标解析与 03B 一致）

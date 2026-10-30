@@ -19,7 +19,18 @@ HERE = Path(__file__).resolve().parent
 OUT = HERE.parent / "videos/seed42"
 
 
+def set_out(path: str) -> None:
+    global OUT
+    OUT = Path(path)
+
+
 def main() -> int:
+    import argparse
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--out", default="")
+    args = parser.parse_args()
+    if args.out:
+        set_out(args.out)
     cases = json.loads((OUT / "cases.json").read_text(encoding="utf-8"))["cases"]
     metas = {}
     for c in cases:
@@ -99,7 +110,7 @@ def main() -> int:
                      f"{r['map']}, {r['steps']} steps): [MP4]({r['video']}) · "
                      f"[封面]({r['cover']})")
     L += ["", "## 汇总", "",
-          f"- 12 条成功轨迹汇总视频：[success_compilation.mp4](success_compilation.mp4) "
+          f"- {len(succ)} 条成功轨迹汇总视频：[success_compilation.mp4](success_compilation.mp4) "
           f"({comp.stat().st_size / 1e6:.1f} MB)",
           "- 封面拼图：[video_montage.png](video_montage.png)",
           "- 清单：[video_manifest.csv](video_manifest.csv)（含每个 MP4 的 SHA-256）", ""]
