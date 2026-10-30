@@ -1,0 +1,546 @@
+{
+  "experiment": "03b_target_directed_teacher",
+  "generated_from": "results/run_teacher.py (25 deg deadband)",
+  "files": [
+    {
+      "path": "results/analysis/action_distribution.csv",
+      "bytes": 2575,
+      "sha256": "d442d46dad76e7b06989707b229d91ee4c8b1df350b2b786398781a0ffbed700",
+      "in_git": true
+    },
+    {
+      "path": "results/analysis/analysis.json",
+      "bytes": 9602,
+      "sha256": "180dc01280a182b5cf799a31676d44d8ecdee503c874048045dbc52147e64342",
+      "in_git": true
+    },
+    {
+      "path": "results/analysis/chatter_compare.csv",
+      "bytes": 617,
+      "sha256": "ad2a37bbe1e51dab8fb5ec37d12e7c449d7beb2b1729e80c1ab1646650ab9a52",
+      "in_git": true
+    },
+    {
+      "path": "results/analysis/quality_join_train.csv",
+      "bytes": 461,
+      "sha256": "958571f9bca5adaafa82fa376b11026cb64ce44648a43123965bd5c24bfdea69",
+      "in_git": true
+    },
+    {
+      "path": "results/analysis/summary_table.csv",
+      "bytes": 835,
+      "sha256": "62ac58bbe1fcfa29e64906244b4125f3fdbbd0ab4a17cdd148ed2b4e317b5cb8",
+      "in_git": true
+    },
+    {
+      "path": "results/analysis/turns_by_distance.csv",
+      "bytes": 1859,
+      "sha256": "00b03d7be8c6a96379d0cb245d5bc40915fd7cfd0628e47ee07ff9ddea793c3b",
+      "in_git": true
+    },
+    {
+      "path": "results/summary.json",
+      "bytes": 24912,
+      "sha256": "7e19b12e288e9743c1b42381bb2834bd97d8ba2676edec0952aca5370ff5243c",
+      "in_git": true
+    },
+    {
+      "path": "results/summary_train_seen.json",
+      "bytes": 8219,
+      "sha256": "f65bda5560fefedc567b1681007d215fb94b6e491179ecf2418b7fb0f8e49ab2",
+      "in_git": true
+    },
+    {
+      "path": "results/summary_val_seen.json",
+      "bytes": 8232,
+      "sha256": "abcb525ddd36b30962c99cd030c4c68e8dbee221b6787d43cc15093169ef0b70",
+      "in_git": true
+    },
+    {
+      "path": "results/summary_val_unseen.json",
+      "bytes": 2213,
+      "sha256": "44aca5684fb6e0e0ca7da39543edc15792f8ced52aac5eafb03dec5036c17edf",
+      "in_git": true
+    },
+    {
+      "path": "results/teacher_train_seen.csv",
+      "bytes": 3683236,
+      "sha256": "481b3b479c37d8538e3a9b8e0df848f0259dac908a0a9b3a0829def04eeafb8a",
+      "in_git": true
+    },
+    {
+      "path": "results/teacher_train_seen.npz",
+      "bytes": 6867149,
+      "sha256": "1cca48381a6c7591e768918b395a91d890315f7b58405c24cae829bb0fd2b0ef",
+      "in_git": false
+    },
+    {
+      "path": "results/teacher_val_seen.csv",
+      "bytes": 410798,
+      "sha256": "e07963c4c956683394bbe77298d6ae7fc780e3c0761f05d8e402ade212e45920",
+      "in_git": true
+    },
+    {
+      "path": "results/teacher_val_seen.npz",
+      "bytes": 785699,
+      "sha256": "77a8c6b3960f85e155e862574e0fe5ac214f6ae9d58c2671de71db6a6d822b0e",
+      "in_git": false
+    },
+    {
+      "path": "results/teacher_val_unseen.csv",
+      "bytes": 469649,
+      "sha256": "702245fd07dc4486a6a14302714a2b1b97a7dd43a03ad9104e83cc709f34004e",
+      "in_git": true
+    },
+    {
+      "path": "results/teacher_val_unseen.npz",
+      "bytes": 924328,
+      "sha256": "bcd8ca9211ef57c3966c78b1a5fff1e64fc8274e151a5f0bffd27d0f3b2edcf1",
+      "in_git": false
+    },
+    {
+      "path": "results_naive_15deg/run_teacher.log",
+      "bytes": 1232,
+      "sha256": "bfd0c45e92c34752f51c9845e20c409f915d8f3a3e828abf591087c9686b89ef",
+      "in_git": false
+    },
+    {
+      "path": "results_naive_15deg/summary.json",
+      "bytes": 25110,
+      "sha256": "117b12cd9d10f8bf2d7ff4575261a9c5c1443507898000a7edfbed7cdb6f822d",
+      "in_git": false
+    },
+    {
+      "path": "results_naive_15deg/summary_train_seen.json",
+      "bytes": 8428,
+      "sha256": "dbe2a5bdec1bc6b1ce7461381f5c7c1de06e911c7d63840c80f667a599673280",
+      "in_git": false
+    },
+    {
+      "path": "results_naive_15deg/summary_val_seen.json",
+      "bytes": 8235,
+      "sha256": "b30480e9d5f172ff23d9d24277b522903be25d565185bddfbc2957ab060b3967",
+      "in_git": false
+    },
+    {
+      "path": "results_naive_15deg/summary_val_unseen.json",
+      "bytes": 2257,
+      "sha256": "3d45f768996902a30c0f00858cd1ea0c6066ddb815c6f2b74b2670f05f430a99",
+      "in_git": false
+    },
+    {
+      "path": "results_naive_15deg/teacher_train_seen.csv",
+      "bytes": 3575524,
+      "sha256": "d7c97c23b90dc194e66443f3518f446ea7294476e8ff6530833acba1e4be29fc",
+      "in_git": false
+    },
+    {
+      "path": "results_naive_15deg/teacher_train_seen.npz",
+      "bytes": 7445878,
+      "sha256": "eaed377f00e24b5a3b45ee825a0b3a4de429da5a0d286c32dbaf1e2b724954c8",
+      "in_git": false
+    },
+    {
+      "path": "results_naive_15deg/teacher_val_seen.csv",
+      "bytes": 386187,
+      "sha256": "0cd928354e002f15d29ea6ee94238ce7b900d39100c4d42882054df155fccee6",
+      "in_git": false
+    },
+    {
+      "path": "results_naive_15deg/teacher_val_seen.npz",
+      "bytes": 851644,
+      "sha256": "b6643703111c05fb87ff13948b8688e9709569504c8cc5a1e48bc6c3972c8389",
+      "in_git": false
+    },
+    {
+      "path": "results_naive_15deg/teacher_val_unseen.csv",
+      "bytes": 441920,
+      "sha256": "9e1c90ab9de1fb41bb653106100329a53baf24cc0a2d3ce6cfd580a99aab1f1e",
+      "in_git": false
+    },
+    {
+      "path": "results_naive_15deg/teacher_val_unseen.npz",
+      "bytes": 1003007,
+      "sha256": "5f929e97f895a6e5ee3ea990d054d7c96b10ccd4fb9a4fb37df46a526a9f36ef",
+      "in_git": false
+    },
+    {
+      "path": "figures/actions_by_distance.png",
+      "bytes": 42710,
+      "sha256": "2a72c4ad50e99f3482636b826e906d39476d02aef6daf050319fda76555e5b86",
+      "in_git": true
+    },
+    {
+      "path": "figures/actions_by_phase.png",
+      "bytes": 36840,
+      "sha256": "5625485406b196a947d6f3a0bef2ed0d8727dcf310396ff1486ccc4aec60f6c2",
+      "in_git": true
+    },
+    {
+      "path": "figures/chatter_compare.png",
+      "bytes": 53344,
+      "sha256": "3bf2d57394da6e470c26c0967a7a3d502d19bf1f1997d3f2d0dcc55e806d1fea",
+      "in_git": true
+    },
+    {
+      "path": "figures/path_length_compare.png",
+      "bytes": 65873,
+      "sha256": "e334bc1abb77b22003942e539a98165940db54ca236915316a85d79545a7db91",
+      "in_git": true
+    },
+    {
+      "path": "figures/steps_hist.png",
+      "bytes": 45334,
+      "sha256": "cc0f910b0bacc3f231b55bfb45611fb54eefed6ceee2806e47e2cf770dd3bc7f",
+      "in_git": true
+    },
+    {
+      "path": "figures/tasks_by_map.png",
+      "bytes": 67358,
+      "sha256": "c376b59f6125784b8d91d3f6af1e2702ffd507d594e8b0f67f57ef554d4bf63b",
+      "in_git": true
+    },
+    {
+      "path": "figures/trajectory_examples.png",
+      "bytes": 1507882,
+      "sha256": "65de39c1bf9c681645b0bbb35663677959f6bd645f2064b582d3ad3b5a138517",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/birmingham_block_1.json",
+      "bytes": 275,
+      "sha256": "ae375a014368b7a9fe04957606ed3a4dde9191b5b8d86473b195746b5190aed1",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/birmingham_block_1.npz",
+      "bytes": 390,
+      "sha256": "ed96dddd73119eb76ffb9abd6e2ff8f282697f32b60c5d257e9e3cbe65d34db5",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/birmingham_block_10.json",
+      "bytes": 277,
+      "sha256": "dfea16c1bc8365c991c5fdc2b98c016dc6351b63b0214fb619c2b5a572970f23",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/birmingham_block_10.npz",
+      "bytes": 274,
+      "sha256": "d268eb2c3b6df5c58036e1ec54b48bb0912acc542d57b0ae4de48fe64312f3e6",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/birmingham_block_11.json",
+      "bytes": 281,
+      "sha256": "c81886b6f47adef5ca05f3f838ab195792e087b29a57cb3892ea07ab577168f2",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/birmingham_block_11.npz",
+      "bytes": 251,
+      "sha256": "d30ae038e3991147118d488a95719a9da5bc206aea72478af2a86abda72bb3cb",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/birmingham_block_12.json",
+      "bytes": 278,
+      "sha256": "46fe2c5b7f8c51117101a95675c48a4e80ef19796fbc893ee34170c4ba4c5b61",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/birmingham_block_12.npz",
+      "bytes": 270,
+      "sha256": "ad346591a3aabddf9ecf1c9dde9cf9a6d2eea9cfa669a72fe999fa021b429d0e",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/birmingham_block_13.json",
+      "bytes": 277,
+      "sha256": "ad6f3c2bdd5720bd4a97fbb3963a96a52ad773fc04429d621dc5148fdf7c9acc",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/birmingham_block_13.npz",
+      "bytes": 243,
+      "sha256": "b72481b845083096521b795fbb44a34d9a6a087f7695d5ee802da1fe204023c0",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/birmingham_block_3.json",
+      "bytes": 273,
+      "sha256": "b7115d01da7dcbd049c02f764fc1f7e67e3458f2da73da9e4b96673c302c3f85",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/birmingham_block_3.npz",
+      "bytes": 396,
+      "sha256": "3ed61a6bde962e1ebc150b7c08fb7300f061fec4b6ccd5070b50383d2b633074",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/birmingham_block_4.json",
+      "bytes": 280,
+      "sha256": "5e733b5e348ed1fca7944470a64518f6599a4335b1e2245b71a81480eefaf8da",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/birmingham_block_4.npz",
+      "bytes": 404,
+      "sha256": "e8739d68f5f01e9c79abd8b5065679d6c8c8ffb7964f97efaa8f6916b2823089",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/birmingham_block_5.json",
+      "bytes": 276,
+      "sha256": "fc224fc70fe4f76d227e4442773515c5d4684db0740f2d927e0433dc2ac24ad1",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/birmingham_block_5.npz",
+      "bytes": 396,
+      "sha256": "3ed61a6bde962e1ebc150b7c08fb7300f061fec4b6ccd5070b50383d2b633074",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/birmingham_block_7.json",
+      "bytes": 291,
+      "sha256": "bbdb8a0c50c9332f4285254b12305740bd302972227d7be2d631e7c1fb61faad",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/birmingham_block_7.npz",
+      "bytes": 295,
+      "sha256": "3a47bea6b5af304400c7f29d0fd83cdac6760dda4ae458ec6cdbd93444b2ec70",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/birmingham_block_9.json",
+      "bytes": 275,
+      "sha256": "aa377d1cf63a9005fb37415672ed335227e80b5b1b008d85f95461b00fc30f8b",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/birmingham_block_9.npz",
+      "bytes": 396,
+      "sha256": "3ed61a6bde962e1ebc150b7c08fb7300f061fec4b6ccd5070b50383d2b633074",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_10.json",
+      "bytes": 275,
+      "sha256": "4748f9f1e94e6bc7a9439f6320d6391112c3ed2df591785c466da5ac29f58e88",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_10.npz",
+      "bytes": 401,
+      "sha256": "8b5813ee8a2d8a44955c25d5348bb92ab510267bdc61bdbae437573ff42c2bca",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_12.json",
+      "bytes": 282,
+      "sha256": "a040b82bd8d9f576d98cdcba32805c8546725b6a431ac493582443660c6c5ffa",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_12.npz",
+      "bytes": 388,
+      "sha256": "df75910310b21777eeba2433385a95f0927451644a30510a6eb40d5beb697321",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_13.json",
+      "bytes": 275,
+      "sha256": "39f9975e6f924d49bc4b3f1b27321e12e96fb3898f6ea667340325bfd296ccaa",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_13.npz",
+      "bytes": 397,
+      "sha256": "620f6160f815bcb7095e18469129491cb8cbad4a133f37df03d6586b9ca55c6b",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_17.json",
+      "bytes": 278,
+      "sha256": "516ea8153ca69ba0a180b8df1de95b694689274d66ff02daad8771b1a93ebcb2",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_17.npz",
+      "bytes": 294,
+      "sha256": "d84b2ff52a2907d763da2001a86109898ff5f162ccee4760c408c36f77cb6c4c",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_18.json",
+      "bytes": 282,
+      "sha256": "a167e0796076ac9ce4723e78e6129a7d91629d2f6e660cc3608ff2777f24e2e7",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_18.npz",
+      "bytes": 313,
+      "sha256": "1055944f3b9e6a78cba8dbcf3e8cc20339e0fa65a5574edf7c96d930f6309b66",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_19.json",
+      "bytes": 276,
+      "sha256": "baf4e16da2666cceea0bc84fc998c1fc159b00ffc779ae23437941fb3dbab8a4",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_19.npz",
+      "bytes": 397,
+      "sha256": "620f6160f815bcb7095e18469129491cb8cbad4a133f37df03d6586b9ca55c6b",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_2.json",
+      "bytes": 301,
+      "sha256": "46fc8780587086e5f5884927c3a673be3ca9f37c5540aec2f436a583392d179a",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_2.npz",
+      "bytes": 409,
+      "sha256": "9d9ca2f6e58f1cb9f2ff154d9fb19e3e4f11d2a18a0497ee1fff5921a2201095",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_20.json",
+      "bytes": 289,
+      "sha256": "57c31be13d2b1114f0461274386aa6060f20e4115696ed972195ac65ea1a34ae",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_20.npz",
+      "bytes": 397,
+      "sha256": "620f6160f815bcb7095e18469129491cb8cbad4a133f37df03d6586b9ca55c6b",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_21.json",
+      "bytes": 278,
+      "sha256": "2453f3c515067d9be19bc63a2d4c0c440d3e3bc65314673bd225c216858fdbaa",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_21.npz",
+      "bytes": 397,
+      "sha256": "620f6160f815bcb7095e18469129491cb8cbad4a133f37df03d6586b9ca55c6b",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_23.json",
+      "bytes": 290,
+      "sha256": "0d16c772cec3e5d40e48b5eae692510ded7843a7d7e36eab59e3d0725eaa3042",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_23.npz",
+      "bytes": 268,
+      "sha256": "05aa46658f9315bcdcbf12a21aec1b51822827740d558f38dbe7b313224c0d3c",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_25.json",
+      "bytes": 286,
+      "sha256": "ef085db2a52a3350606c726219ca19bb5e2eb9e99ddd228c512b5c9b84e58311",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_25.npz",
+      "bytes": 301,
+      "sha256": "4ff3c5e345483676b392721887d986c0b2631d6f04c9abdc440d6d3c936a5984",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_28.json",
+      "bytes": 279,
+      "sha256": "8470fd1e835bad644c821f859a9f5f5d077624429b1b2768956319987a8f42cb",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_28.npz",
+      "bytes": 364,
+      "sha256": "07629c8cc3d541c052a49563f38d1e627ff739c55d65290d05bdf501c6449dfc",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_3.json",
+      "bytes": 273,
+      "sha256": "0d989a592d1c1402c1ac55cf13e9e95e5a09a24852663c97dc7237430678aaea",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_3.npz",
+      "bytes": 392,
+      "sha256": "451ab7f560ee40472a04cc961c5a096664377f0998f7d90b301050fcacd3ed02",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_33.json",
+      "bytes": 277,
+      "sha256": "d95aae7f81682723ad954df4302b90fd519cbe6ac3f6776bec6592760b1bf117",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_33.npz",
+      "bytes": 300,
+      "sha256": "7fb910382ab5ca6139460137297ca7b5fce7e912d6391d0d70fcbbd191339482",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_4.json",
+      "bytes": 279,
+      "sha256": "40a49c904f8992c678553407d2cb63666d80916799972f199e88efe6e8e2a4e6",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_4.npz",
+      "bytes": 297,
+      "sha256": "d9a7341d749b61f97f6d316f7fa62bb00d8d2188d8d891a9012dd4ca3c85d8f8",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_6.json",
+      "bytes": 270,
+      "sha256": "67c9610c7d4bbdb74705ef932311d4ac2cfeaaf7bcb847b57a28958a4b0e87bf",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_6.npz",
+      "bytes": 397,
+      "sha256": "620f6160f815bcb7095e18469129491cb8cbad4a133f37df03d6586b9ca55c6b",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_7.json",
+      "bytes": 273,
+      "sha256": "75f937074139e4a225fa599825cc1864b4d653cc89641eaaca3208e7dd8369fc",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_7.npz",
+      "bytes": 397,
+      "sha256": "620f6160f815bcb7095e18469129491cb8cbad4a133f37df03d6586b9ca55c6b",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_9.json",
+      "bytes": 274,
+      "sha256": "2f6ced908b2b72a88f815439ccfa08e1568dea428328d35e01c0078812342b51",
+      "in_git": true
+    },
+    {
+      "path": "cache/obstacles/cambridge_block_9.npz",
+      "bytes": 397,
+      "sha256": "620f6160f815bcb7095e18469129491cb8cbad4a133f37df03d6586b9ca55c6b",
+      "in_git": true
+    }
+  ]
+}

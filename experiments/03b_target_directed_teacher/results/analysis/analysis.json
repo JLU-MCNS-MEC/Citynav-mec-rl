@@ -1,0 +1,376 @@
+{
+  "train_seen": {
+    "steps": {
+      "n": 22002,
+      "mean": 39.832651577129354,
+      "median": 39.0,
+      "p95": 74.0,
+      "p99": 85.0,
+      "max": 127.0,
+      "min": 1.0
+    },
+    "start_target_m": {
+      "n": 22002,
+      "mean": 195.75318652849742,
+      "median": 189.5735,
+      "p95": 366.02330000000006,
+      "p99": 420.26583000000005,
+      "max": 520.477,
+      "min": 1.634
+    },
+    "turns_per_episode": {
+      "n": 22002,
+      "mean": 2.3526497591128077,
+      "median": 2.0,
+      "p95": 5.0,
+      "p99": 6.990000000001601,
+      "max": 54.0,
+      "min": 0.0
+    },
+    "turns_by_length_group": {
+      "short": 2.6203407880724177,
+      "medium": 2.342443729903537,
+      "long": 2.0772843723313406
+    },
+    "length_group_counts": {
+      "medium": 7464,
+      "long": 7026,
+      "short": 7512
+    },
+    "episodes_starting_inside_20m": 236
+  },
+  "val_seen": {
+    "steps": {
+      "n": 2498,
+      "mean": 40.01040832666133,
+      "median": 39.0,
+      "p95": 74.0,
+      "p99": 84.0,
+      "max": 100.0,
+      "min": 1.0
+    },
+    "start_target_m": {
+      "n": 2498,
+      "mean": 196.43640792634108,
+      "median": 190.3475,
+      "p95": 364.72825000000006,
+      "p99": 422.1170200000002,
+      "max": 500.591,
+      "min": 4.305
+    },
+    "turns_per_episode": {
+      "n": 2498,
+      "mean": 2.381104883907126,
+      "median": 2.0,
+      "p95": 5.0,
+      "p99": 7.0,
+      "max": 24.0,
+      "min": 0.0
+    },
+    "turns_by_length_group": {
+      "short": 2.7264367816091952,
+      "medium": 2.3793517406962783,
+      "long": 2.0050314465408805
+    },
+    "length_group_counts": {
+      "long": 795,
+      "medium": 833,
+      "short": 870
+    },
+    "episodes_starting_inside_20m": 25
+  },
+  "val_unseen": {
+    "steps": {
+      "n": 2826,
+      "mean": 42.31528662420382,
+      "median": 41.0,
+      "p95": 76.75,
+      "p99": 87.0,
+      "max": 108.0,
+      "min": 1.0
+    },
+    "start_target_m": {
+      "n": 2826,
+      "mean": 208.14555874026894,
+      "median": 204.87599999999998,
+      "p95": 375.5085,
+      "p99": 427.968,
+      "max": 549.188,
+      "min": 1.834
+    },
+    "turns_per_episode": {
+      "n": 2826,
+      "mean": 2.31033262561925,
+      "median": 2.0,
+      "p95": 5.0,
+      "p99": 6.0,
+      "max": 27.0,
+      "min": 0.0
+    },
+    "turns_by_length_group": {
+      "short": 2.5060975609756095,
+      "medium": 2.3183673469387753,
+      "long": 2.146198830409357
+    },
+    "length_group_counts": {
+      "short": 820,
+      "long": 1026,
+      "medium": 980
+    },
+    "episodes_starting_inside_20m": 22
+  },
+  "teacher_config": {
+    "cruise_trigger_deg": 25.0
+  },
+  "length_groups": {
+    "short_max": 29,
+    "medium_max": 49,
+    "n": 22002,
+    "counts": {
+      "short": 7512,
+      "medium": 7464,
+      "long": 7026
+    }
+  },
+  "mode_counts": {
+    "train_seen": {
+      "straight": 22001,
+      "astar": 1
+    },
+    "val_seen": {
+      "straight": 2498
+    },
+    "val_unseen": {
+      "straight": 2826
+    }
+  },
+  "obstacle_scan": {
+    "birmingham_block_1": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 26.262784223833712,
+      "ceiling_m": 59.52721669169363
+    },
+    "birmingham_block_10": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 21.46648113981257,
+      "ceiling_m": 57.66352374299993
+    },
+    "birmingham_block_11": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 10.96114914477749,
+      "ceiling_m": 56.8688526862772
+    },
+    "birmingham_block_12": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 17.05371578057485,
+      "ceiling_m": 53.97628299872203
+    },
+    "birmingham_block_13": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 16.74429110069033,
+      "ceiling_m": 56.88571378212217
+    },
+    "birmingham_block_3": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 23.941833658388042,
+      "ceiling_m": 62.67816908819399
+    },
+    "birmingham_block_4": {
+      "blocked_ratio": 1.25e-05,
+      "max_above_ground_m": 60.12969127960486,
+      "ceiling_m": 62.010308110043574
+    },
+    "birmingham_block_5": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 22.294277218472892,
+      "ceiling_m": 58.535724612581795
+    },
+    "birmingham_block_7": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 15.610027873096355,
+      "ceiling_m": 58.569972432079425
+    },
+    "birmingham_block_9": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 20.80099165056345,
+      "ceiling_m": 59.33900773908499
+    },
+    "cambridge_block_10": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 36.85580323891469,
+      "ceiling_m": 83.52419401450328
+    },
+    "cambridge_block_12": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 28.389412784044083,
+      "ceiling_m": 91.14058599525279
+    },
+    "cambridge_block_13": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 28.932542636643177,
+      "ceiling_m": 93.19745461677479
+    },
+    "cambridge_block_17": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 19.245765747038355,
+      "ceiling_m": 85.18423455813743
+    },
+    "cambridge_block_18": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 45.804041963212676,
+      "ceiling_m": 89.48595895231466
+    },
+    "cambridge_block_19": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 26.65595279399897,
+      "ceiling_m": 90.56404842670415
+    },
+    "cambridge_block_2": {
+      "blocked_ratio": 1.8656600394276155e-05,
+      "max_above_ground_m": 68.190033669723,
+      "ceiling_m": 87.11996388887076
+    },
+    "cambridge_block_20": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 24.551485119192556,
+      "ceiling_m": 91.34850877729181
+    },
+    "cambridge_block_21": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 23.881104832935108,
+      "ceiling_m": 86.24889242048286
+    },
+    "cambridge_block_23": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 16.493792732241175,
+      "ceiling_m": 83.9362075729346
+    },
+    "cambridge_block_25": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 27.249081695746796,
+      "ceiling_m": 90.11091891460477
+    },
+    "cambridge_block_28": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 22.521491402223592,
+      "ceiling_m": 81.10850585119438
+    },
+    "cambridge_block_3": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 28.42942414531715,
+      "ceiling_m": 87.30057158222192
+    },
+    "cambridge_block_33": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 24.81957865788555,
+      "ceiling_m": 87.83041905329608
+    },
+    "cambridge_block_4": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 26.825213583965038,
+      "ceiling_m": 86.9447906884959
+    },
+    "cambridge_block_6": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 32.15746640480527,
+      "ceiling_m": 85.34253359519474
+    },
+    "cambridge_block_7": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 33.24543407722354,
+      "ceiling_m": 88.96456500724912
+    },
+    "cambridge_block_9": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 42.29775146042359,
+      "ceiling_m": 87.99224945510375
+    }
+  },
+  "chatter_compare": [
+    {
+      "variant": "naive15",
+      "episodes": 22002,
+      "success": 22002,
+      "steps_mean": 55.321061721661664,
+      "steps_p99": 140.0,
+      "turns_per_episode": 17.87719298245614,
+      "turn_share": 0.3231534686084323,
+      "episodes_gt6_turns": 0.6921643486955731,
+      "flown_over_ideal": 1.0220482304061898
+    },
+    {
+      "variant": "deadband25 (final)",
+      "episodes": 22002,
+      "success": 22002,
+      "steps_mean": 39.832651577129354,
+      "steps_p99": 85.0,
+      "turns_per_episode": 2.3526497591128077,
+      "turn_share": 0.05906334793096287,
+      "episodes_gt6_turns": 0.010044541405326788,
+      "flown_over_ideal": 1.0235039722826706
+    },
+    {
+      "variant": "deadband20",
+      "episodes": 22002,
+      "success": 22002,
+      "steps_mean": 40.55044995909463,
+      "steps_p99": 87.0,
+      "turns_per_episode": 3.097582037996546,
+      "turn_share": 0.076388351821527,
+      "episodes_gt6_turns": 0.02508862830651759,
+      "flown_over_ideal": 1.0224440740062224
+    },
+    {
+      "variant": "deadband30",
+      "episodes": 22002,
+      "success": 22002,
+      "steps_mean": 39.782837923825106,
+      "steps_p99": 85.0,
+      "turns_per_episode": 2.182574311426234,
+      "turn_share": 0.054862207558077095,
+      "episodes_gt6_turns": 0.008908281065357695,
+      "flown_over_ideal": 1.0274455968737894
+    }
+  ],
+  "human_quality_join": [
+    {
+      "human_quality": "high",
+      "episodes": 14237,
+      "steps_mean": 42.5074805085341,
+      "steps_median": 42.0,
+      "turns_per_episode": 2.3566762660672893,
+      "flown_over_ideal": 1.023450017041319,
+      "length_group_share": {
+        "short": 4065,
+        "medium": 5034,
+        "long": 5138
+      }
+    },
+    {
+      "human_quality": "medium",
+      "episodes": 4284,
+      "steps_mean": 29.338702147525677,
+      "steps_median": 27.0,
+      "turns_per_episode": 2.4124649859943976,
+      "flown_over_ideal": 1.0234957496096488,
+      "length_group_share": {
+        "long": 648,
+        "short": 2398,
+        "medium": 1238
+      }
+    },
+    {
+      "human_quality": "low",
+      "episodes": 3481,
+      "steps_mean": 41.8075265728239,
+      "steps_median": 41.0,
+      "turns_per_episode": 2.2625682275208274,
+      "flown_over_ideal": 1.0237376667107694,
+      "length_group_share": {
+        "medium": 1192,
+        "short": 1049,
+        "long": 1240
+      }
+    }
+  ]
+}

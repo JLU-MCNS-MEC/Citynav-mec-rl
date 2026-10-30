@@ -2,7 +2,7 @@
 
 - 分支：`exp/citynav-mec-fixed50m-topdown`
 - 起点：`ebe557f`（旧版 `archive/citynav-token-v1-20261029`）
-- 最近更新：2026-10-30 07:30（中断恢复检查，见
+- 最近更新：2026-10-30 08:20（实验 03B 完成、实验 04 修正完成，见
   `00_archive_and_token_cleanup/RECOVERY_2026-10-30.md`）
 - 任务定义：UAV 固定离地 50 m；输入为俯视局部 RGB、目标参考图像、16 步因果历史、
   全局俯视地图/地标候选与目标信念；**无语言输入、无 BERT、无网络状态**；
@@ -18,8 +18,8 @@
 | 01 | 俯视地图资产审计 | **完成**：34 张栅格、28 图 PLY、GROUND_LEVEL 全覆盖 | `01_topdown_asset_audit/REPORT.md` | `fa31e99` |
 | 02 | 人工轨迹质量审计 | **完成**：高 14,237 / 中 4,284 / 低 3,481；四动作回放成功 19,059 | `02_trajectory_quality_audit/REPORT.md` | `12f2d89` |
 | 03 | 固定 50 m 与四动作教师 | **完成**：19,105/22,002 可重放，8 项契约全过 | `03_fixed50m_four_action_teacher/REPORT.md` | `0664591` |
-| 04 | 视觉目标与全局地图输入管线 | **初版完成，修正中**：报告写 7×7×2048 但 `encode_episode()` 实际返回 2048 全局池化；高位掩码、Recall@10 有缺陷 | `04_visual_goal_global_map_pipeline/REPORT.md`（旧版）+ 修正 ADDENDUM | `722b62b` |
-| 03B | 直接目标导向教师 | **进行中**（新阶段） | `03b_target_directed_teacher/REPORT.md` | — |
+| 04 | 视觉目标与全局地图输入管线 | **完成（修正）**：空间特征 7×7×2048、高程有效掩码、Recall@1/5/10 已修正；48 m 与 24 m 网格双划分全量验证 | `04_visual_goal_global_map_pipeline/REPORT.md`（旧版）+ `ADDENDUM_2026-10-30.md` | `722b62b`、`f058b82` |
+| 03B | 直接目标导向教师 | **完成**：22,002/22,002 成功；修复 15°+30° 极限环（转向占比 32.3%→5.9%）；11 项契约通过 | `03b_target_directed_teacher/REPORT.md` | `0f79b22` |
 | 05 | Transformer-M 训练与小规模诊断 | **未开始**；2026-10-29 23:06 之前的初步产物**已作废**，见 `05_transformer_m_training/INVALID_PRELIMINARY.md` | — | — |
 | 06 | 闭环 SR 验证 | **未开始**；2026-10-29 的 3 条初步 episode **已作废**，见 `06_closed_loop_success_rate/INVALID_PRELIMINARY.md` | — | — |
 | 07 | 采样/覆盖未解决问题 | 未开始 | `07_sampling_coverage_open_issue/OPEN_ISSUE.md` | — |
@@ -42,8 +42,17 @@
 - 高程 TIF 的 `nodata` 标签是 `-9999`，实测最小值也为 `-9999`（并非 `min_z-1`）；
   开发地图 nodata 比例为 20–30%，`cambridge_block_4` 达 74.7%。
 - 建筑高度：`cambridge_block_2` 最高比 `GROUND_LEVEL` 高 68.19 m，`birmingham_block_4`
-  高 60.13 m，`cambridge_block_26` 高 52.65 m —— **固定 50 m 不能越过全部建筑**，
-  实验 03B 必须使用高程障碍图 + A*。
+  高 60.13 m，`cambridge_block_26` 高 52.65 m（不在开发划分内）。按 1 m 高程障碍栅格统计，
+  28 张开发地图中只有 **5 个 1 m 单元** 高过 50 m（`cambridge_block_2` 3 个、
+  `birmingham_block_4` 2 个），因此固定 50 m 事实上越过几乎所有建筑；
+  实验 03B 仍按协议保留高程障碍图 + A*，全量只有 1 条任务触发绕行。
+- 实验 03B（直接目标导向教师）：三个划分 **100% 成功**（22,002 / 2,498 / 2,826），
+  每条任务恰好 1 个 STOP 且距离 ≤ 20 m；步数 均值 39.8 / 中位 39 / p95 74 / p99 85 / 最大 127；
+  动作占比 Forward 91.6%、TurnLeft 2.95%、TurnRight 2.95%、Stop 2.5%。
+- 03B 发现的真实缺陷：**15° 阈值 + 30° 离散转向会形成 L-F-R-F 二步极限环**
+  （字面规则下转向占 32.3%、每任务 17.9 次、59.3% 的任务左右转次数几乎相等）。
+  改成“15° 对齐、已对齐后 25° 才重新触发”的双阈值后，转向占比降到 5.9%，
+  步数 55.3→39.8，航程开销 2.4%。旧产物完整保留在 `results_naive_15deg/`（服务器）。
 - 旧 Token 数据集共 13.49 GB（核心 10.63 GB + 审计派生 2.91 GB），已于 21:25 删除，残留 0。
 - `mec-v8.2` 无本地 Token 数据集；全盘无 `token_dataset_*` 目录。
 
@@ -56,8 +65,11 @@
 
 ## 未解决问题
 
-- 实验 04 的输入契约与验证数值需按修正报告重算（空间特征、掩码、Recall@K、双划分验证）。
-- 实验 03B 直接目标导向教师尚未产出；实验 05 必须等 03B 与 04 修正完成后再启动。
+- 实验 05 的输入契约已具备（04 修正报告 + 03B 标签），但训练尚未开始；
+  类别极不平衡（Forward 91.6% / Turn 5.9% / Stop 2.5%）且协议禁止加权，需靠采样与逐类诊断处理。
+- `nodata` 区域在 03B 与 04 中都按“无数据、可飞/置 0”处理；若 nodata 中藏有未测绘建筑，
+  两处会同时忽略它。这是一个共同假设，尚未被独立数据验证。
+- 03B 的 A* 分支只在 1 条任务上生效，避障能力没有被充分检验。
 - 官方 CityNav 仓库未在本机；`/tmp/citynav-official/` 的 `mapdata.py` 可用，
   但 `rasterize.py` / `cropclient.py` / `mturk_trajectory.py` 仍需核对（实验 01 已按 TIF 实测口径处理）。
 - 目标参考图像只能提供图像内容，不得提供真实坐标/ID；全局定位靠视觉候选匹配。

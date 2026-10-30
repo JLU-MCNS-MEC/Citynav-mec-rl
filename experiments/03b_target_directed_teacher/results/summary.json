@@ -1,0 +1,1057 @@
+{
+  "teacher_config": {
+    "cruise_trigger_deg": 25.0
+  },
+  "train_seen": {
+    "split": "train_seen",
+    "records": 22002,
+    "success": 22002,
+    "success_rate": 1.0,
+    "reason_counts": {
+      "success": 22002
+    },
+    "mode_counts": {
+      "straight": 22001,
+      "astar": 1
+    },
+    "steps_success": {
+      "mean": 39.832651577129354,
+      "median": 39.0,
+      "p95": 74.0,
+      "p99": 85.0,
+      "max": 127.0,
+      "min": 1.0,
+      "n": 22002
+    },
+    "start_target_m": {
+      "mean": 195.75318652849742,
+      "median": 189.5735,
+      "p95": 366.02330000000006,
+      "p99": 420.26583000000005,
+      "max": 520.477,
+      "min": 1.634,
+      "n": 22002
+    },
+    "path_len_m": {
+      "mean": 195.75421948004728,
+      "median": 189.5735,
+      "p95": 366.02330000000006,
+      "p99": 420.26583000000005,
+      "max": 520.477,
+      "min": 1.634,
+      "n": 22002
+    },
+    "min_dist": {
+      "mean": 17.526105126806655,
+      "median": 17.571,
+      "p95": 19.754,
+      "p99": 19.952,
+      "max": 20.0,
+      "min": 1.634,
+      "n": 22002
+    },
+    "by_map": {
+      "birmingham_block_1": {
+        "records": 2894,
+        "success": 2894,
+        "steps": {
+          "mean": 45.08154803040774,
+          "median": 45.0,
+          "p95": 77.0,
+          "p99": 87.07000000000016,
+          "max": 101.0,
+          "min": 1.0,
+          "n": 2894
+        },
+        "success_rate": 1.0
+      },
+      "birmingham_block_3": {
+        "records": 1543,
+        "success": 1543,
+        "steps": {
+          "mean": 40.443292287751134,
+          "median": 39.0,
+          "p95": 73.0,
+          "p99": 85.57999999999993,
+          "max": 98.0,
+          "min": 1.0,
+          "n": 1543
+        },
+        "success_rate": 1.0
+      },
+      "birmingham_block_4": {
+        "records": 894,
+        "success": 894,
+        "steps": {
+          "mean": 43.439597315436245,
+          "median": 43.0,
+          "p95": 76.0,
+          "p99": 85.0,
+          "max": 101.0,
+          "min": 1.0,
+          "n": 894
+        },
+        "success_rate": 1.0
+      },
+      "birmingham_block_7": {
+        "records": 352,
+        "success": 352,
+        "steps": {
+          "mean": 26.363636363636363,
+          "median": 24.0,
+          "p95": 51.0,
+          "p99": 56.0,
+          "max": 60.0,
+          "min": 1.0,
+          "n": 352
+        },
+        "success_rate": 1.0
+      },
+      "birmingham_block_9": {
+        "records": 915,
+        "success": 915,
+        "steps": {
+          "mean": 46.27540983606557,
+          "median": 47.0,
+          "p95": 78.0,
+          "p99": 87.0,
+          "max": 91.0,
+          "min": 1.0,
+          "n": 915
+        },
+        "success_rate": 1.0
+      },
+      "birmingham_block_10": {
+        "records": 310,
+        "success": 310,
+        "steps": {
+          "mean": 33.99032258064516,
+          "median": 32.0,
+          "p95": 69.0,
+          "p99": 75.91000000000003,
+          "max": 79.0,
+          "min": 1.0,
+          "n": 310
+        },
+        "success_rate": 1.0
+      },
+      "birmingham_block_11": {
+        "records": 17,
+        "success": 17,
+        "steps": {
+          "mean": 9.705882352941176,
+          "median": 10.0,
+          "p95": 19.599999999999998,
+          "p99": 21.52,
+          "max": 22.0,
+          "min": 1.0,
+          "n": 17
+        },
+        "success_rate": 1.0
+      },
+      "birmingham_block_12": {
+        "records": 781,
+        "success": 781,
+        "steps": {
+          "mean": 29.382842509603073,
+          "median": 28.0,
+          "p95": 62.0,
+          "p99": 66.20000000000005,
+          "max": 73.0,
+          "min": 1.0,
+          "n": 781
+        },
+        "success_rate": 1.0
+      },
+      "birmingham_block_13": {
+        "records": 30,
+        "success": 30,
+        "steps": {
+          "mean": 6.833333333333333,
+          "median": 8.0,
+          "p95": 13.0,
+          "p99": 13.71,
+          "max": 14.0,
+          "min": 1.0,
+          "n": 30
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_4": {
+        "records": 298,
+        "success": 298,
+        "steps": {
+          "mean": 24.614093959731544,
+          "median": 25.0,
+          "p95": 44.14999999999998,
+          "p99": 54.0,
+          "max": 62.0,
+          "min": 1.0,
+          "n": 298
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_6": {
+        "records": 280,
+        "success": 280,
+        "steps": {
+          "mean": 47.92857142857143,
+          "median": 47.0,
+          "p95": 78.0,
+          "p99": 89.20999999999998,
+          "max": 93.0,
+          "min": 1.0,
+          "n": 280
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_7": {
+        "records": 1349,
+        "success": 1349,
+        "steps": {
+          "mean": 41.39807264640474,
+          "median": 40.0,
+          "p95": 75.0,
+          "p99": 85.51999999999998,
+          "max": 102.0,
+          "min": 1.0,
+          "n": 1349
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_9": {
+        "records": 1544,
+        "success": 1544,
+        "steps": {
+          "mean": 43.47862694300518,
+          "median": 42.0,
+          "p95": 77.0,
+          "p99": 88.0,
+          "max": 104.0,
+          "min": 1.0,
+          "n": 1544
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_12": {
+        "records": 1406,
+        "success": 1406,
+        "steps": {
+          "mean": 38.75675675675676,
+          "median": 38.0,
+          "p95": 69.0,
+          "p99": 82.0,
+          "max": 127.0,
+          "min": 1.0,
+          "n": 1406
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_13": {
+        "records": 1775,
+        "success": 1775,
+        "steps": {
+          "mean": 40.50478873239437,
+          "median": 39.0,
+          "p95": 76.0,
+          "p99": 87.0,
+          "max": 98.0,
+          "min": 1.0,
+          "n": 1775
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_17": {
+        "records": 374,
+        "success": 374,
+        "steps": {
+          "mean": 29.644385026737968,
+          "median": 25.0,
+          "p95": 64.34999999999997,
+          "p99": 73.0,
+          "max": 74.0,
+          "min": 1.0,
+          "n": 374
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_18": {
+        "records": 521,
+        "success": 521,
+        "steps": {
+          "mean": 26.491362763915546,
+          "median": 26.0,
+          "p95": 47.0,
+          "p99": 54.0,
+          "max": 56.0,
+          "min": 1.0,
+          "n": 521
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_19": {
+        "records": 384,
+        "success": 384,
+        "steps": {
+          "mean": 49.268229166666664,
+          "median": 50.0,
+          "p95": 79.0,
+          "p99": 91.17000000000002,
+          "max": 96.0,
+          "min": 1.0,
+          "n": 384
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_20": {
+        "records": 1884,
+        "success": 1884,
+        "steps": {
+          "mean": 41.359872611464965,
+          "median": 41.0,
+          "p95": 75.0,
+          "p99": 84.0,
+          "max": 102.0,
+          "min": 1.0,
+          "n": 1884
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_21": {
+        "records": 1667,
+        "success": 1667,
+        "steps": {
+          "mean": 44.90761847630474,
+          "median": 45.0,
+          "p95": 77.69999999999982,
+          "p99": 88.0,
+          "max": 99.0,
+          "min": 1.0,
+          "n": 1667
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_23": {
+        "records": 285,
+        "success": 285,
+        "steps": {
+          "mean": 19.533333333333335,
+          "median": 18.0,
+          "p95": 38.0,
+          "p99": 44.160000000000025,
+          "max": 50.0,
+          "min": 1.0,
+          "n": 285
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_25": {
+        "records": 157,
+        "success": 157,
+        "steps": {
+          "mean": 28.03184713375796,
+          "median": 27.0,
+          "p95": 52.0,
+          "p99": 60.44,
+          "max": 63.0,
+          "min": 1.0,
+          "n": 157
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_28": {
+        "records": 1452,
+        "success": 1452,
+        "steps": {
+          "mean": 37.400826446280995,
+          "median": 36.0,
+          "p95": 71.0,
+          "p99": 80.0,
+          "max": 90.0,
+          "min": 1.0,
+          "n": 1452
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_33": {
+        "records": 890,
+        "success": 890,
+        "steps": {
+          "mean": 31.720224719101125,
+          "median": 29.0,
+          "p95": 65.0,
+          "p99": 74.0,
+          "max": 78.0,
+          "min": 1.0,
+          "n": 890
+        },
+        "success_rate": 1.0
+      }
+    },
+    "actions_success": {
+      "stop": 22002,
+      "forward": 802633,
+      "right": 25873,
+      "left": 25890
+    },
+    "seconds": 3.8
+  },
+  "val_seen": {
+    "split": "val_seen",
+    "records": 2498,
+    "success": 2498,
+    "success_rate": 1.0,
+    "reason_counts": {
+      "success": 2498
+    },
+    "mode_counts": {
+      "straight": 2498
+    },
+    "steps_success": {
+      "mean": 40.01040832666133,
+      "median": 39.0,
+      "p95": 74.0,
+      "p99": 84.0,
+      "max": 100.0,
+      "min": 1.0,
+      "n": 2498
+    },
+    "start_target_m": {
+      "mean": 196.43640792634108,
+      "median": 190.3475,
+      "p95": 364.72825000000006,
+      "p99": 422.1170200000002,
+      "max": 500.591,
+      "min": 4.305,
+      "n": 2498
+    },
+    "path_len_m": {
+      "mean": 196.43640792634108,
+      "median": 190.3475,
+      "p95": 364.72825000000006,
+      "p99": 422.1170200000002,
+      "max": 500.591,
+      "min": 4.305,
+      "n": 2498
+    },
+    "min_dist": {
+      "mean": 17.480974779823857,
+      "median": 17.4925,
+      "p95": 19.763150000000003,
+      "p99": 19.95103,
+      "max": 19.998,
+      "min": 4.305,
+      "n": 2498
+    },
+    "by_map": {
+      "birmingham_block_1": {
+        "records": 326,
+        "success": 326,
+        "steps": {
+          "mean": 46.84355828220859,
+          "median": 47.0,
+          "p95": 79.75,
+          "p99": 86.75,
+          "max": 96.0,
+          "min": 1.0,
+          "n": 326
+        },
+        "success_rate": 1.0
+      },
+      "birmingham_block_3": {
+        "records": 161,
+        "success": 161,
+        "steps": {
+          "mean": 39.47204968944099,
+          "median": 38.0,
+          "p95": 70.0,
+          "p99": 77.4,
+          "max": 99.0,
+          "min": 1.0,
+          "n": 161
+        },
+        "success_rate": 1.0
+      },
+      "birmingham_block_4": {
+        "records": 101,
+        "success": 101,
+        "steps": {
+          "mean": 45.32673267326733,
+          "median": 46.0,
+          "p95": 77.0,
+          "p99": 92.0,
+          "max": 95.0,
+          "min": 1.0,
+          "n": 101
+        },
+        "success_rate": 1.0
+      },
+      "birmingham_block_7": {
+        "records": 40,
+        "success": 40,
+        "steps": {
+          "mean": 30.8,
+          "median": 29.0,
+          "p95": 52.29999999999998,
+          "p99": 62.879999999999995,
+          "max": 66.0,
+          "min": 1.0,
+          "n": 40
+        },
+        "success_rate": 1.0
+      },
+      "birmingham_block_9": {
+        "records": 105,
+        "success": 105,
+        "steps": {
+          "mean": 44.60952380952381,
+          "median": 44.0,
+          "p95": 74.0,
+          "p99": 78.91999999999999,
+          "max": 93.0,
+          "min": 4.0,
+          "n": 105
+        },
+        "success_rate": 1.0
+      },
+      "birmingham_block_10": {
+        "records": 37,
+        "success": 37,
+        "steps": {
+          "mean": 41.108108108108105,
+          "median": 39.0,
+          "p95": 71.39999999999999,
+          "p99": 78.12,
+          "max": 81.0,
+          "min": 12.0,
+          "n": 37
+        },
+        "success_rate": 1.0
+      },
+      "birmingham_block_11": {
+        "records": 5,
+        "success": 5,
+        "steps": {
+          "mean": 8.0,
+          "median": 7.0,
+          "p95": 12.799999999999999,
+          "p99": 13.76,
+          "max": 14.0,
+          "min": 5.0,
+          "n": 5
+        },
+        "success_rate": 1.0
+      },
+      "birmingham_block_12": {
+        "records": 88,
+        "success": 88,
+        "steps": {
+          "mean": 30.147727272727273,
+          "median": 27.5,
+          "p95": 62.64999999999999,
+          "p99": 69.0,
+          "max": 69.0,
+          "min": 1.0,
+          "n": 88
+        },
+        "success_rate": 1.0
+      },
+      "birmingham_block_13": {
+        "records": 6,
+        "success": 6,
+        "steps": {
+          "mean": 8.166666666666666,
+          "median": 8.0,
+          "p95": 12.25,
+          "p99": 12.850000000000001,
+          "max": 13.0,
+          "min": 4.0,
+          "n": 6
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_4": {
+        "records": 31,
+        "success": 31,
+        "steps": {
+          "mean": 23.70967741935484,
+          "median": 28.0,
+          "p95": 41.5,
+          "p99": 51.69999999999999,
+          "max": 55.0,
+          "min": 1.0,
+          "n": 31
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_6": {
+        "records": 33,
+        "success": 33,
+        "steps": {
+          "mean": 48.75757575757576,
+          "median": 49.0,
+          "p95": 73.4,
+          "p99": 78.75999999999999,
+          "max": 81.0,
+          "min": 9.0,
+          "n": 33
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_7": {
+        "records": 162,
+        "success": 162,
+        "steps": {
+          "mean": 43.623456790123456,
+          "median": 45.0,
+          "p95": 75.94999999999999,
+          "p99": 87.16999999999996,
+          "max": 91.0,
+          "min": 1.0,
+          "n": 162
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_9": {
+        "records": 180,
+        "success": 180,
+        "steps": {
+          "mean": 41.455555555555556,
+          "median": 41.5,
+          "p95": 75.0,
+          "p99": 83.21000000000001,
+          "max": 89.0,
+          "min": 2.0,
+          "n": 180
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_12": {
+        "records": 157,
+        "success": 157,
+        "steps": {
+          "mean": 36.605095541401276,
+          "median": 36.0,
+          "p95": 69.19999999999999,
+          "p99": 76.44,
+          "max": 81.0,
+          "min": 4.0,
+          "n": 157
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_13": {
+        "records": 190,
+        "success": 190,
+        "steps": {
+          "mean": 40.16842105263158,
+          "median": 41.0,
+          "p95": 71.09999999999997,
+          "p99": 80.10999999999999,
+          "max": 85.0,
+          "min": 1.0,
+          "n": 190
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_17": {
+        "records": 45,
+        "success": 45,
+        "steps": {
+          "mean": 26.244444444444444,
+          "median": 21.0,
+          "p95": 66.6,
+          "p99": 70.92000000000002,
+          "max": 74.0,
+          "min": 1.0,
+          "n": 45
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_18": {
+        "records": 60,
+        "success": 60,
+        "steps": {
+          "mean": 26.666666666666668,
+          "median": 26.0,
+          "p95": 46.05,
+          "p99": 50.68999999999997,
+          "max": 56.0,
+          "min": 1.0,
+          "n": 60
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_19": {
+        "records": 47,
+        "success": 47,
+        "steps": {
+          "mean": 52.723404255319146,
+          "median": 53.0,
+          "p95": 83.39999999999999,
+          "p99": 92.01999999999998,
+          "max": 98.0,
+          "min": 11.0,
+          "n": 47
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_20": {
+        "records": 208,
+        "success": 208,
+        "steps": {
+          "mean": 43.65384615384615,
+          "median": 42.0,
+          "p95": 74.0,
+          "p99": 83.79000000000002,
+          "max": 100.0,
+          "min": 3.0,
+          "n": 208
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_21": {
+        "records": 190,
+        "success": 190,
+        "steps": {
+          "mean": 44.084210526315786,
+          "median": 45.0,
+          "p95": 77.54999999999998,
+          "p99": 89.0,
+          "max": 91.0,
+          "min": 1.0,
+          "n": 190
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_23": {
+        "records": 33,
+        "success": 33,
+        "steps": {
+          "mean": 21.0,
+          "median": 19.0,
+          "p95": 44.0,
+          "p99": 48.08,
+          "max": 50.0,
+          "min": 1.0,
+          "n": 33
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_25": {
+        "records": 24,
+        "success": 24,
+        "steps": {
+          "mean": 26.166666666666668,
+          "median": 23.5,
+          "p95": 51.55,
+          "p99": 53.54,
+          "max": 54.0,
+          "min": 3.0,
+          "n": 24
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_28": {
+        "records": 170,
+        "success": 170,
+        "steps": {
+          "mean": 35.858823529411765,
+          "median": 32.5,
+          "p95": 68.0,
+          "p99": 72.31,
+          "max": 73.0,
+          "min": 1.0,
+          "n": 170
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_33": {
+        "records": 99,
+        "success": 99,
+        "steps": {
+          "mean": 32.111111111111114,
+          "median": 28.0,
+          "p95": 68.1,
+          "p99": 77.03999999999999,
+          "max": 79.0,
+          "min": 1.0,
+          "n": 99
+        },
+        "success_rate": 1.0
+      }
+    },
+    "actions_success": {
+      "stop": 2498,
+      "forward": 91500,
+      "right": 2983,
+      "left": 2965
+    },
+    "seconds": 0.6
+  },
+  "val_unseen": {
+    "split": "val_unseen",
+    "records": 2826,
+    "success": 2826,
+    "success_rate": 1.0,
+    "reason_counts": {
+      "success": 2826
+    },
+    "mode_counts": {
+      "straight": 2826
+    },
+    "steps_success": {
+      "mean": 42.31528662420382,
+      "median": 41.0,
+      "p95": 76.75,
+      "p99": 87.0,
+      "max": 108.0,
+      "min": 1.0,
+      "n": 2826
+    },
+    "start_target_m": {
+      "mean": 208.14555874026894,
+      "median": 204.87599999999998,
+      "p95": 375.5085,
+      "p99": 427.968,
+      "max": 549.188,
+      "min": 1.834,
+      "n": 2826
+    },
+    "path_len_m": {
+      "mean": 208.14555874026894,
+      "median": 204.87599999999998,
+      "p95": 375.5085,
+      "p99": 427.968,
+      "max": 549.188,
+      "min": 1.834,
+      "n": 2826
+    },
+    "min_dist": {
+      "mean": 17.573473460721868,
+      "median": 17.6425,
+      "p95": 19.753500000000003,
+      "p99": 19.95675,
+      "max": 19.997,
+      "min": 1.834,
+      "n": 2826
+    },
+    "by_map": {
+      "birmingham_block_5": {
+        "records": 973,
+        "success": 973,
+        "steps": {
+          "mean": 41.54162384378212,
+          "median": 40.0,
+          "p95": 72.0,
+          "p99": 84.0,
+          "max": 98.0,
+          "min": 1.0,
+          "n": 973
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_10": {
+        "records": 942,
+        "success": 942,
+        "steps": {
+          "mean": 41.03609341825902,
+          "median": 40.0,
+          "p95": 77.0,
+          "p99": 88.59000000000003,
+          "max": 106.0,
+          "min": 1.0,
+          "n": 942
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_2": {
+        "records": 316,
+        "success": 316,
+        "steps": {
+          "mean": 43.32911392405063,
+          "median": 43.0,
+          "p95": 77.0,
+          "p99": 83.0,
+          "max": 88.0,
+          "min": 7.0,
+          "n": 316
+        },
+        "success_rate": 1.0
+      },
+      "cambridge_block_3": {
+        "records": 595,
+        "success": 595,
+        "steps": {
+          "mean": 45.0672268907563,
+          "median": 45.0,
+          "p95": 79.29999999999995,
+          "p99": 89.0,
+          "max": 108.0,
+          "min": 1.0,
+          "n": 595
+        },
+        "success_rate": 1.0
+      }
+    },
+    "actions_success": {
+      "stop": 2826,
+      "forward": 110228,
+      "right": 3221,
+      "left": 3308
+    },
+    "seconds": 0.6
+  },
+  "length_groups": {
+    "short_max": 29,
+    "medium_max": 49,
+    "n": 22002,
+    "counts": {
+      "short": 7512,
+      "medium": 7464,
+      "long": 7026
+    }
+  },
+  "obstacle_scan": {
+    "birmingham_block_1": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 26.262784223833712,
+      "ceiling_m": 59.52721669169363
+    },
+    "birmingham_block_10": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 21.46648113981257,
+      "ceiling_m": 57.66352374299993
+    },
+    "birmingham_block_11": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 10.96114914477749,
+      "ceiling_m": 56.8688526862772
+    },
+    "birmingham_block_12": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 17.05371578057485,
+      "ceiling_m": 53.97628299872203
+    },
+    "birmingham_block_13": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 16.74429110069033,
+      "ceiling_m": 56.88571378212217
+    },
+    "birmingham_block_3": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 23.941833658388042,
+      "ceiling_m": 62.67816908819399
+    },
+    "birmingham_block_4": {
+      "blocked_ratio": 1.25e-05,
+      "max_above_ground_m": 60.12969127960486,
+      "ceiling_m": 62.010308110043574
+    },
+    "birmingham_block_5": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 22.294277218472892,
+      "ceiling_m": 58.535724612581795
+    },
+    "birmingham_block_7": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 15.610027873096355,
+      "ceiling_m": 58.569972432079425
+    },
+    "birmingham_block_9": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 20.80099165056345,
+      "ceiling_m": 59.33900773908499
+    },
+    "cambridge_block_10": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 36.85580323891469,
+      "ceiling_m": 83.52419401450328
+    },
+    "cambridge_block_12": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 28.389412784044083,
+      "ceiling_m": 91.14058599525279
+    },
+    "cambridge_block_13": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 28.932542636643177,
+      "ceiling_m": 93.19745461677479
+    },
+    "cambridge_block_17": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 19.245765747038355,
+      "ceiling_m": 85.18423455813743
+    },
+    "cambridge_block_18": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 45.804041963212676,
+      "ceiling_m": 89.48595895231466
+    },
+    "cambridge_block_19": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 26.65595279399897,
+      "ceiling_m": 90.56404842670415
+    },
+    "cambridge_block_2": {
+      "blocked_ratio": 1.8656600394276155e-05,
+      "max_above_ground_m": 68.190033669723,
+      "ceiling_m": 87.11996388887076
+    },
+    "cambridge_block_20": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 24.551485119192556,
+      "ceiling_m": 91.34850877729181
+    },
+    "cambridge_block_21": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 23.881104832935108,
+      "ceiling_m": 86.24889242048286
+    },
+    "cambridge_block_23": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 16.493792732241175,
+      "ceiling_m": 83.9362075729346
+    },
+    "cambridge_block_25": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 27.249081695746796,
+      "ceiling_m": 90.11091891460477
+    },
+    "cambridge_block_28": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 22.521491402223592,
+      "ceiling_m": 81.10850585119438
+    },
+    "cambridge_block_3": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 28.42942414531715,
+      "ceiling_m": 87.30057158222192
+    },
+    "cambridge_block_33": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 24.81957865788555,
+      "ceiling_m": 87.83041905329608
+    },
+    "cambridge_block_4": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 26.825213583965038,
+      "ceiling_m": 86.9447906884959
+    },
+    "cambridge_block_6": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 32.15746640480527,
+      "ceiling_m": 85.34253359519474
+    },
+    "cambridge_block_7": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 33.24543407722354,
+      "ceiling_m": 88.96456500724912
+    },
+    "cambridge_block_9": {
+      "blocked_ratio": 0.0,
+      "max_above_ground_m": 42.29775146042359,
+      "ceiling_m": 87.99224945510375
+    }
+  }
+}
