@@ -302,7 +302,7 @@ def evaluate_task(model, encoder, rasters, cands, task: dict, step_cap: int,
 
 def record_summary(record: dict) -> dict:
     """Journal line: everything needed to resume/report, without the trajectory."""
-    keys = ("episode_id", "split", "index", "map", "length_group", "cohort", "steps",
+    keys = ("episode_id", "split", "index", "map", "length_group", "cohort", "step_cap", "steps",
             "stopped", "stop_step", "stop_dist", "stop_prob", "final_dist", "min_dist",
             "min_dist_step", "osr", "success", "failure", "collision", "out_of_bounds",
             "path_len_m", "teacher_path_len_m", "action_counts", "goal_image_invalid",

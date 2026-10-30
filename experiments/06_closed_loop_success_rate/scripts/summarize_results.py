@@ -61,11 +61,16 @@ def metrics(rows: list[dict]) -> dict:
     stop_d = [r["stop_dist"] for r in stopped if r.get("stop_dist") is not None]
     steps = [r["steps"] for r in rows if r.get("steps") is not None]
     loops = [r for r in rows if r.get("steps") == r.get("step_cap")]
+    # standard SPL: success-weighted mean over ALL episodes, l_i / max(p_i, l_i)
     spl_terms = []
+    spl_success = []
     for r in rows:
         tp, mp_ = r.get("teacher_path_len_m") or 0.0, max(r.get("path_len_m") or 0.0, 1e-9)
         if r.get("success") and tp > 0:
             spl_terms.append(tp / max(mp_, tp))
+            spl_success.append(tp / max(mp_, tp))
+        else:
+            spl_terms.append(0.0)
     action_totals = {c: sum(r.get("action_counts", {}).get(c, 0) for r in rows) for c in CLASSES}
     step_total = max(sum(action_totals.values()), 1)
     lo, hi = wilson(succ, n)
@@ -88,7 +93,8 @@ def metrics(rows: list[dict]) -> dict:
         "steps_mean": mean(steps), "steps_median": median(steps),
         "step_cap_hits": len(loops),
         "spl": mean(spl_terms),
-        "spl_n": len(spl_terms),
+        "spl_conditional": mean(spl_success),
+        "spl_n": len(spl_success),
         "action_totals": action_totals,
         "action_share": {c: action_totals[c] / step_total for c in CLASSES},
         "steps_total": step_total,
@@ -121,8 +127,13 @@ def main() -> int:
     rows = [json.loads(line) for line in
             (res_dir / "journal.jsonl").read_text(encoding="utf-8").splitlines() if line.strip()]
     manifest = json.loads((res_dir / "manifest.json").read_text(encoding="utf-8"))
+    config_path = res_dir / "eval_config.json"
+    step_cap = 200
+    if config_path.exists():
+        step_cap = int(json.loads(config_path.read_text(encoding="utf-8")).get("step_cap", 200))
     task_by_id = {t["episode_id"]: t for t in manifest["tasks"]}
     for r in rows:
+        r.setdefault("step_cap", step_cap)      # older journals did not store it
         t = task_by_id.get(r["episode_id"], {})
         r.setdefault("target_valid_fraction", t.get("target_valid_fraction"))
         r.setdefault("goal_image_invalid", t.get("goal_image_invalid", False))
@@ -156,7 +167,7 @@ def main() -> int:
         "episodes_scored": len(rows),
         "checkpoint_sha": manifest["checkpoint_sha"],
         "manifest_sha": (res_dir / "manifest.sha256").read_text(encoding="utf-8").strip(),
-        "step_cap": rows[0].get("step_cap") if rows else None,
+        "step_cap": step_cap,
         "scopes": scopes,
         "per_map": per_map,
         "failures_all": scopes["all"]["failures"],

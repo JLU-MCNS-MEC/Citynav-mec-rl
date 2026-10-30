@@ -127,6 +127,8 @@ def main() -> int:
     # 8. case trajectories
     import sys
     sys.path.insert(0, str(HERE))
+    sys.path.insert(0, str(ROOT / "05_transformer_m_training/scripts"))
+    sys.path.insert(0, str(ROOT / "04_visual_goal_global_map_pipeline/scripts"))
     from dataset_v2 import RasterStore
 
     by_id = {r["episode_id"]: r for r in rows}
@@ -149,7 +151,8 @@ def main() -> int:
     for ax, (name, rec) in zip(axes.ravel(), picks):
         if rec is None:
             ax.axis("off")
-            ax.set_title(f"{name}: none", fontsize=8)
+            ax.text(0.5, 0.5, f"no episode in this category\n({name})", ha="center",
+                    va="center", fontsize=9)
             continue
         path = res_dir / "episodes" / f"{rec['episode_id'].replace(':', '_')}.json"
         full = json.loads(path.read_text(encoding="utf-8"))
