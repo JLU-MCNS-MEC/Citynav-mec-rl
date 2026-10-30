@@ -21,7 +21,7 @@
 | 04 | 视觉目标与全局地图输入管线 | **完成（修正）**：空间特征 7×7×2048、高程有效掩码、Recall@1/5/10 已修正；48 m 与 24 m 网格双划分全量验证 | `04_visual_goal_global_map_pipeline/REPORT.md`（旧版）+ `ADDENDUM_2026-10-30.md` | `722b62b`、`f058b82` |
 | 03B | 直接目标导向教师 | **完成**：22,002/22,002 成功；修复 15°+30° 极限环（转向占比 32.3%→5.9%）；11 项契约通过 | `03b_target_directed_teacher/REPORT.md` | `0f79b22` |
 | 05 | Transformer-M 正式训练（seed 42） | **完成**：30/30 epoch，79.97 min；best Val-Seen Macro-F1 **0.784**（epoch 1）；全量诊断 Val-Seen acc 0.934 / Macro-F1 0.762 / STOP 0.485、Val-Unseen acc 0.936 / Macro-F1 0.747；**STOP 是瓶颈**。09:02 的 candidates48 运行已判 INVALID | `05_transformer_m_training/REPORT.md` | `8b35c3b` |
-| 06 | 闭环 SR 验证 | **完成**：5,324 条（Seen 2,498 + Unseen 2,826），**SR 23.7%** [22.5, 24.8]；Val-Seen 24.9% / Val-Unseen 22.5%；OSR 29.6%，越界 43.3%、过早停 27.0%；进入 20 m 后条件成功率 79.9%。旧 3 条初步结果仍作废 | `06_closed_loop_success_rate/REPORT.md` | 待填 |
+| 06 | 闭环 SR 验证 | **完成**：5,324 条（Seen 2,498 + Unseen 2,826），**SR 23.7%** [22.5, 24.8]；Val-Seen 24.9% / Val-Unseen 22.5%；OSR 29.6%，越界 43.3%、过早停 27.0%；进入 20 m 后条件成功率 79.9%。旧 3 条初步结果仍作废 | `06_closed_loop_success_rate/REPORT.md` | `c44ffbf` |
 | 07 | 采样/覆盖未解决问题 | **OPEN**：已建立归档文件并写入 03B 的覆盖数据，问题未解决 | `07_sampling_coverage_open_issue/OPEN_ISSUE.md` | 待填 |
 
 ## 已确认事实
