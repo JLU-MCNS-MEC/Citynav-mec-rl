@@ -74,7 +74,8 @@ def completed(results_dir: Path, checkpoint_sha: str, manifest_sha: str) -> dict
 
 
 def _worker(job: tuple) -> dict:
-    part, tasks, checkpoint, expected_sha, manifest_sha, step_cap, device, out_dir = job
+    (part, tasks, checkpoint, expected_sha, manifest_sha, step_cap, device, out_dir,
+     cands_root) = job
     out_dir = Path(out_dir)
     episodes = out_dir / "episodes"
     episodes.mkdir(parents=True, exist_ok=True)
@@ -82,7 +83,8 @@ def _worker(job: tuple) -> dict:
 
     model, _ = load_model(Path(checkpoint), device, expected_sha)
     encoder = FrozenEncoder(device)
-    rasters, cands = RasterStore(), CandidateStore()
+    rasters = RasterStore()
+    cands = CandidateStore(Path(cands_root)) if cands_root else CandidateStore()
     journal = out_dir / f"journal.part{part:02d}.jsonl"
     started = time.time()
     ok = 0
@@ -116,6 +118,8 @@ def main() -> int:
     parser.add_argument("--step-cap", type=int, default=DEFAULT_STEP_CAP)
     parser.add_argument("--workers", type=int, default=4)
     parser.add_argument("--device", default="cuda")
+    parser.add_argument("--candidates", default="",
+                        help="candidate-library directory (default: cache_v2/candidates24)")
     parser.add_argument("--task-ids", default="",
                         help="comma-separated episode ids to run (smoke selection)")
     parser.add_argument("--task-file", default="",
@@ -166,7 +170,8 @@ def main() -> int:
     workers = max(1, min(args.workers, len(pending)))
     chunks = [pending[i::workers] for i in range(workers)]
     jobs = [(i, chunks[i], args.checkpoint, CHECKPOINT_SHA, manifest_sha,
-             args.step_cap, args.device, str(out_dir)) for i in range(workers)]
+             args.step_cap, args.device, str(out_dir), args.candidates)
+            for i in range(workers)]
     started = time.time()
     ctx = mp.get_context("spawn")
     with ctx.Pool(workers) as pool:

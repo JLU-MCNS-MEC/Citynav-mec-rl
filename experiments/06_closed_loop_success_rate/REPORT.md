@@ -1,5 +1,7 @@
 # Stage 06 — Transformer-M（seed 42）闭环导航成功率
 
+> **2026-10-30 追加**：用户指示 Test-Unseen 解封。已用同一 checkpoint 追加闭环评测（5,311 条，SR 25.0%），见 [`TEST_UNSEEN_ADDENDUM.md`](TEST_UNSEEN_ADDENDUM.md)。本文正文保持不变。
+
 ## 1. 目的与协议
 
 在固定 50 m 俯视视觉目标导航任务上，用 Stage 05 训练好的 Transformer-M 自己的
