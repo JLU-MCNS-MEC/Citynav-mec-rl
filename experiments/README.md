@@ -35,6 +35,7 @@
 | 05 | `05_transformer_m_training/` | Transformer-M 正式训练（seed 42，30 epochs） | 03B、04 | **完成** | best Macro-F1 0.784（epoch 1）；Val-Seen STOP 0.485；见 `REPORT.md` |
 | 06 | `06_closed_loop_success_rate/` | 闭环 SR 验证（Val-Seen / Val-Unseen） | 05 | **完成** | 5,324 条，SR 23.7%，OSR 29.6%；见 `REPORT.md` |
 | 07 | `07_sampling_coverage_open_issue/` | 采样与覆盖率未解决问题（保持 OPEN，已完成诊断） | 03B–06 | **OPEN — DIAGNOSIS COMPLETED** | 见 `AUDIT_REPORT.md`；主因：协变量偏移 + argmax 坍缩 |
+| 08 | `08_belief_only_geometric_navigation/` | 仅用 12 维目标信念的几何导航基线 | 04、06 | **完成** | Top-1 44.9% / Top-5 40.2% vs Transformer-M 23.7%；见 `REPORT.md` |
 
 ## 依赖关系
 
