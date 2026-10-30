@@ -22,7 +22,7 @@
 | 03B | 直接目标导向教师 | **完成**：22,002/22,002 成功；修复 15°+30° 极限环（转向占比 32.3%→5.9%）；11 项契约通过 | `03b_target_directed_teacher/REPORT.md` | `0f79b22` |
 | 05 | Transformer-M 训练与小规模诊断 | **未开始**；2026-10-29 23:06 之前的初步产物**已作废**，见 `05_transformer_m_training/INVALID_PRELIMINARY.md` | — | — |
 | 06 | 闭环 SR 验证 | **未开始**；2026-10-29 的 3 条初步 episode **已作废**，见 `06_closed_loop_success_rate/INVALID_PRELIMINARY.md` | — | — |
-| 07 | 采样/覆盖未解决问题 | 未开始 | `07_sampling_coverage_open_issue/OPEN_ISSUE.md` | — |
+| 07 | 采样/覆盖未解决问题 | **OPEN**：已建立归档文件并写入 03B 的覆盖数据，问题未解决 | `07_sampling_coverage_open_issue/OPEN_ISSUE.md` | 待填 |
 
 ## 已确认事实
 
