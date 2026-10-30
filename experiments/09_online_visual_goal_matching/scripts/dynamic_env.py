@@ -53,6 +53,7 @@ class DynamicBelief:
         self.logp -= self.logp.max()
         self.logp -= math.log(np.exp(self.logp).sum())
         self.last_update = -99
+        self.last_conf_pos = None
 
     def entropy(self) -> float:
         p = np.exp(self.logp)
@@ -60,6 +61,16 @@ class DynamicBelief:
 
     def map_index(self) -> int:
         return int(np.argmax(self.logp))
+
+    def gate(self, r_vis: np.ndarray, agree_m: float) -> bool:
+        """Two consecutive confident matches must agree before an update."""
+        if agree_m <= 0:
+            self.last_conf_pos = r_vis
+            return True
+        ok = (self.last_conf_pos is not None
+              and float(np.linalg.norm(r_vis - self.last_conf_pos)) <= agree_m)
+        self.last_conf_pos = r_vis
+        return ok
 
     def update(self, r_vis: np.ndarray, uav_xy: np.ndarray, sigma: float,
                eta: float, rho: float, step: int) -> bool:
@@ -119,7 +130,7 @@ def run_episode(task: dict, fe: FrozenEncoder, matcher: matching.Encoder,
         map_pos = belief.positions[map_i]
         consistent = float(np.linalg.norm(map_pos - r_vis)) <= CONSISTENCY_M
         updated = False
-        if confident and consistent:
+        if confident and consistent and belief.gate(r_vis, params.get("agree_m", 0.0)):
             belief.update(r_vis, pos, params["sigma"], params["eta"], params["rho"], step)
             updates += 1
             updated = True

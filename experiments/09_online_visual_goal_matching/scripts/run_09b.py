@@ -76,7 +76,7 @@ def main() -> int:
     calib_sha = sha256(calib_path)
     best = calib["best"]
     params = {"temperature": best["T"], "sigma": best["sigma"], "eta": best["eta"],
-              "rho": best["rho"], "tau": json.loads(
+              "rho": best["rho"], "agree_m": best.get("agree_m", 0.0), "tau": json.loads(
                   (RES / "09a_calibration.json").read_text(encoding="utf-8"))["tau"]["layer2"],
               "margin_tau": json.loads(
                   (RES / "09a_calibration.json").read_text(encoding="utf-8"))["margin_tau"]["layer2"]}

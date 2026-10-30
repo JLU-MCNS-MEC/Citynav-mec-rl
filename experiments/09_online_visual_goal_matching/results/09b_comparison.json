@@ -1,0 +1,1677 @@
+{
+  "episodes": 5324,
+  "methods": {
+    "transformer": {
+      "n": 5324,
+      "sr": 0.236664162283997,
+      "sr_ci95": [
+        0.22543953902454125,
+        0.24826852423666187
+      ],
+      "osr": 0.2963936889556724,
+      "stop_rate": 0.5122088655146506,
+      "premature_stop_rate": 0.270473328324568,
+      "reached_but_not_stopped_rate": 0.05972952667167543,
+      "never_stop_rate": 0.0,
+      "collision_rate": 0.00018782870022539445,
+      "out_of_bounds_rate": 0.4329451540195342,
+      "collision_any_rate": 0.00018782870022539445,
+      "out_of_bounds_any_rate": 0.48760330578512395,
+      "goal_image_invalid_rate": 0.0,
+      "other_failure_rate": 0.0,
+      "failures": {
+        "success": 1260,
+        "premature_stop": 1440,
+        "reached_but_not_stopped": 318,
+        "never_stop": 0,
+        "collision": 1,
+        "out_of_bounds": 2305,
+        "goal_image_invalid": 0,
+        "other_failure": 0
+      },
+      "ne_mean": 71.11255901266182,
+      "ne_median": 37.66760777163646,
+      "min_dist_mean": 35.98441398349977,
+      "min_dist_median": 27.28014486649194,
+      "stop_error_mean": 22.395890433676133,
+      "stop_error_median": 20.756849728937198,
+      "steps_mean": 49.987978963185576,
+      "steps_median": 50.0,
+      "step_cap_hits": 0,
+      "spl": 0.23523316612020792,
+      "spl_conditional": 0.9939534733523706,
+      "spl_n": 1260,
+      "action_totals": {
+        "Stop": 2727,
+        "Forward": 256081,
+        "TurnLeft": 3688,
+        "TurnRight": 3640
+      },
+      "action_share": {
+        "Stop": 0.010246640815222292,
+        "Forward": 0.9622185649442391,
+        "TurnLeft": 0.013857576577389005,
+        "TurnRight": 0.013677217663149667
+      },
+      "steps_total": 266136
+    },
+    "top1_static": {
+      "n": 5324,
+      "sr": 0.4485349361382419,
+      "sr_ci95": [
+        0.4352174316905399,
+        0.46192665485266243
+      ],
+      "osr": 0.4596168294515402,
+      "stop_rate": 0.9966190833959429,
+      "premature_stop_rate": 0.5373779113448535,
+      "reached_but_not_stopped_rate": 0.011081893313298272,
+      "never_stop_rate": 0.0,
+      "collision_rate": 0.0003756574004507889,
+      "out_of_bounds_rate": 0.002629601803155522,
+      "collision_any_rate": 0.0003756574004507889,
+      "out_of_bounds_any_rate": 0.003005259203606311,
+      "goal_image_invalid_rate": 0.0,
+      "other_failure_rate": 0.0,
+      "failures": {
+        "success": 2388,
+        "premature_stop": 2861,
+        "reached_but_not_stopped": 59,
+        "never_stop": 0,
+        "collision": 2,
+        "out_of_bounds": 14,
+        "goal_image_invalid": 0,
+        "other_failure": 0
+      },
+      "ne_mean": 27.389418394852804,
+      "ne_median": 21.394825108843577,
+      "min_dist_mean": 25.382481320380776,
+      "min_dist_median": 21.095110051373524,
+      "stop_error_mean": 27.211797662362084,
+      "stop_error_median": 21.341716908326312,
+      "steps_mean": 40.944402704733285,
+      "steps_median": 40.0,
+      "step_cap_hits": 0,
+      "spl": 0.4458764470135047,
+      "spl_conditional": 0.9940729497068255,
+      "spl_n": 2388,
+      "action_totals": {
+        "Stop": 5306,
+        "Forward": 201236,
+        "TurnLeft": 5719,
+        "TurnRight": 5727
+      },
+      "action_share": {
+        "Stop": 0.024340789401251443,
+        "Forward": 0.9231517331229242,
+        "TurnLeft": 0.026235389103987376,
+        "TurnRight": 0.02627208837183698
+      },
+      "steps_total": 217988
+    },
+    "top5_static": {
+      "n": 5324,
+      "sr": 0.4017655897821187,
+      "sr_ci95": [
+        0.3886720267121709,
+        0.41500081001080286
+      ],
+      "osr": 0.7625845229151015,
+      "stop_rate": 0.4513523666416228,
+      "premature_stop_rate": 0.04432757325319309,
+      "reached_but_not_stopped_rate": 0.36081893313298274,
+      "never_stop_rate": 0.1919609316303531,
+      "collision_rate": 0.0,
+      "out_of_bounds_rate": 0.0011269722013523666,
+      "collision_any_rate": 0.0,
+      "out_of_bounds_any_rate": 0.0011269722013523666,
+      "goal_image_invalid_rate": 0.0,
+      "other_failure_rate": 0.0,
+      "failures": {
+        "success": 2139,
+        "premature_stop": 236,
+        "reached_but_not_stopped": 1921,
+        "never_stop": 1022,
+        "collision": 0,
+        "out_of_bounds": 6,
+        "goal_image_invalid": 0,
+        "other_failure": 0
+      },
+      "ne_mean": 22.460363918182658,
+      "ne_median": 13.445978084496778,
+      "min_dist_mean": 18.437708763861025,
+      "min_dist_median": 11.264774885464163,
+      "stop_error_mean": 11.613156268342992,
+      "stop_error_median": 10.738588282759055,
+      "steps_mean": 129.5584147257701,
+      "steps_median": 200.0,
+      "step_cap_hits": 2915,
+      "spl": 0.3938069207241204,
+      "spl_conditional": 0.9801907648130982,
+      "spl_n": 2139,
+      "action_totals": {
+        "Stop": 2403,
+        "Forward": 283130,
+        "TurnLeft": 200596,
+        "TurnRight": 203640
+      },
+      "action_share": {
+        "Stop": 0.0034837750029357655,
+        "Forward": 0.410470751802415,
+        "TurnLeft": 0.29081620078606024,
+        "TurnRight": 0.295229272408589
+      },
+      "steps_total": 689769
+    },
+    "dynamic": {
+      "n": 5324,
+      "sr": 0.47595792637114953,
+      "sr_ci95": [
+        0.46256490940125594,
+        0.4893856127795101
+      ],
+      "osr": 0.4797145003756574,
+      "stop_rate": 0.9966190833959429,
+      "premature_stop_rate": 0.5172802404207363,
+      "reached_but_not_stopped_rate": 0.003756574004507889,
+      "never_stop_rate": 0.0,
+      "collision_rate": 0.0003756574004507889,
+      "out_of_bounds_rate": 0.002629601803155522,
+      "collision_any_rate": 0.0003756574004507889,
+      "out_of_bounds_any_rate": 0.003005259203606311,
+      "goal_image_invalid_rate": 0.0,
+      "other_failure_rate": 0.0,
+      "failures": {
+        "success": 2534,
+        "premature_stop": 2754,
+        "reached_but_not_stopped": 20,
+        "never_stop": 0,
+        "collision": 2,
+        "out_of_bounds": 14,
+        "goal_image_invalid": 0,
+        "other_failure": 0
+      },
+      "ne_mean": 27.319718482634652,
+      "ne_median": 20.565528584596752,
+      "min_dist_mean": 25.527946719035896,
+      "min_dist_median": 20.475843129683934,
+      "stop_error_mean": 27.14186130113907,
+      "stop_error_median": 20.522260265275783,
+      "steps_mean": 40.90251690458302,
+      "steps_median": 40.0,
+      "step_cap_hits": 0,
+      "spl": 0.4740703816364414,
+      "spl_conditional": 0.9960342193498083,
+      "spl_n": 2534,
+      "action_totals": {
+        "Stop": 5306,
+        "Forward": 199850,
+        "TurnLeft": 6299,
+        "TurnRight": 6310
+      },
+      "action_share": {
+        "Stop": 0.02436571533533855,
+        "Forward": 0.9177324179735036,
+        "TurnLeft": 0.02892567676164673,
+        "TurnRight": 0.02897618992951117
+      },
+      "steps_total": 217765
+    }
+  },
+  "paired": {
+    "dynamic_vs_transformer": {
+      "n": 5324,
+      "both": 800,
+      "only_a": 460,
+      "only_b": 1734,
+      "neither": 2330,
+      "sr_a": 0.236664162283997,
+      "sr_b": 0.47595792637114953,
+      "diff_b_minus_a": 0.23929376408715253,
+      "ci95": [
+        0.22329265569865434,
+        0.25529487247565075
+      ],
+      "mcnemar_p": 3.879869312912001e-173
+    },
+    "dynamic_vs_top1": {
+      "n": 5324,
+      "both": 1881,
+      "only_a": 507,
+      "only_b": 653,
+      "neither": 2283,
+      "sr_a": 0.4485349361382419,
+      "sr_b": 0.47595792637114953,
+      "diff_b_minus_a": 0.027422990232907587,
+      "ci95": [
+        0.01490610598756748,
+        0.03993987447824769
+      ],
+      "mcnemar_p": 2.0204940630033467e-05
+    },
+    "top1_vs_transformer": {
+      "n": 5324,
+      "both": 922,
+      "only_a": 338,
+      "only_b": 1466,
+      "neither": 2598,
+      "sr_a": 0.236664162283997,
+      "sr_b": 0.4485349361382419,
+      "diff_b_minus_a": 0.21187077385424494,
+      "ci95": [
+        0.197306912002588,
+        0.2264346357059019
+      ],
+      "mcnemar_p": 4.595840071562905e-167
+    }
+  },
+  "by_group": {
+    "val_seen|short": {
+      "transformer": {
+        "n": 870,
+        "sr": 0.42873563218390803,
+        "sr_ci95": [
+          0.3962344804669256,
+          0.461863348666352
+        ],
+        "osr": 0.5103448275862069,
+        "stop_rate": 0.7931034482758621,
+        "premature_stop_rate": 0.34942528735632183,
+        "reached_but_not_stopped_rate": 0.08160919540229886,
+        "never_stop_rate": 0.0,
+        "collision_rate": 0.0,
+        "out_of_bounds_rate": 0.14022988505747128,
+        "collision_any_rate": 0.0,
+        "out_of_bounds_any_rate": 0.20689655172413793,
+        "goal_image_invalid_rate": 0.0,
+        "other_failure_rate": 0.0,
+        "failures": {
+          "success": 373,
+          "premature_stop": 304,
+          "reached_but_not_stopped": 71,
+          "never_stop": 0,
+          "collision": 0,
+          "out_of_bounds": 122,
+          "goal_image_invalid": 0,
+          "other_failure": 0
+        },
+        "ne_mean": 43.51108369128241,
+        "ne_median": 21.643668027643965,
+        "min_dist_mean": 21.578451721300134,
+        "min_dist_median": 19.594757344335754,
+        "stop_error_mean": 20.48914407652732,
+        "stop_error_median": 19.074390673303714,
+        "steps_mean": 23.967816091954024,
+        "steps_median": 21.0,
+        "step_cap_hits": 0,
+        "spl": 0.424864860852128,
+        "spl_conditional": 0.9909716593601913,
+        "spl_n": 373,
+        "action_totals": {
+          "Stop": 690,
+          "Forward": 18286,
+          "TurnLeft": 932,
+          "TurnRight": 944
+        },
+        "action_share": {
+          "Stop": 0.03309035104546326,
+          "Forward": 0.8769422597352772,
+          "TurnLeft": 0.044695952426625746,
+          "TurnRight": 0.0452714367926338
+        },
+        "steps_total": 20852
+      },
+      "top1_static": {
+        "n": 870,
+        "sr": 0.5126436781609195,
+        "sr_ci95": [
+          0.47944725793857096,
+          0.5457289336668151
+        ],
+        "osr": 0.5310344827586206,
+        "stop_rate": 1.0,
+        "premature_stop_rate": 0.4689655172413793,
+        "reached_but_not_stopped_rate": 0.01839080459770115,
+        "never_stop_rate": 0.0,
+        "collision_rate": 0.0,
+        "out_of_bounds_rate": 0.0,
+        "collision_any_rate": 0.0,
+        "out_of_bounds_any_rate": 0.0,
+        "goal_image_invalid_rate": 0.0,
+        "other_failure_rate": 0.0,
+        "failures": {
+          "success": 446,
+          "premature_stop": 408,
+          "reached_but_not_stopped": 16,
+          "never_stop": 0,
+          "collision": 0,
+          "out_of_bounds": 0,
+          "goal_image_invalid": 0,
+          "other_failure": 0
+        },
+        "ne_mean": 23.388729035473272,
+        "ne_median": 19.69482667333909,
+        "min_dist_mean": 21.45225193309941,
+        "min_dist_median": 19.38403882466126,
+        "stop_error_mean": 23.388729035473272,
+        "stop_error_median": 19.69482667333909,
+        "steps_mean": 18.72873563218391,
+        "steps_median": 19.0,
+        "step_cap_hits": 0,
+        "spl": 0.5078438855764027,
+        "spl_conditional": 0.9906371759001578,
+        "spl_n": 446,
+        "action_totals": {
+          "Stop": 870,
+          "Forward": 13232,
+          "TurnLeft": 1082,
+          "TurnRight": 1110
+        },
+        "action_share": {
+          "Stop": 0.05339388732048607,
+          "Forward": 0.8120780655455996,
+          "TurnLeft": 0.06640481158708728,
+          "TurnRight": 0.06812323554682705
+        },
+        "steps_total": 16294
+      },
+      "top5_static": {
+        "n": 870,
+        "sr": 0.332183908045977,
+        "sr_ci95": [
+          0.30168454136642586,
+          0.36415873368935714
+        ],
+        "osr": 0.7931034482758621,
+        "stop_rate": 0.37126436781609196,
+        "premature_stop_rate": 0.03103448275862069,
+        "reached_but_not_stopped_rate": 0.46091954022988507,
+        "never_stop_rate": 0.17586206896551723,
+        "collision_rate": 0.0,
+        "out_of_bounds_rate": 0.0,
+        "collision_any_rate": 0.0,
+        "out_of_bounds_any_rate": 0.0,
+        "goal_image_invalid_rate": 0.0,
+        "other_failure_rate": 0.0,
+        "failures": {
+          "success": 289,
+          "premature_stop": 27,
+          "reached_but_not_stopped": 401,
+          "never_stop": 153,
+          "collision": 0,
+          "out_of_bounds": 0,
+          "goal_image_invalid": 0,
+          "other_failure": 0
+        },
+        "ne_mean": 20.271615816449607,
+        "ne_median": 13.80210897676816,
+        "min_dist_mean": 14.97225078816001,
+        "min_dist_median": 10.423363713503612,
+        "stop_error_mean": 11.583656302768192,
+        "stop_error_median": 10.710526808772407,
+        "steps_mean": 133.80689655172415,
+        "steps_median": 200.0,
+        "step_cap_hits": 547,
+        "spl": 0.32223016707657115,
+        "spl_conditional": 0.9700354510609581,
+        "spl_n": 289,
+        "action_totals": {
+          "Stop": 323,
+          "Forward": 30365,
+          "TurnLeft": 41834,
+          "TurnRight": 43890
+        },
+        "action_share": {
+          "Stop": 0.002774628045218706,
+          "Forward": 0.260840806789678,
+          "TurnLeft": 0.3593615778442085,
+          "TurnRight": 0.37702298732089473
+        },
+        "steps_total": 116412
+      },
+      "dynamic": {
+        "n": 870,
+        "sr": 0.5160919540229885,
+        "sr_ci95": [
+          0.4828869186593838,
+          0.5491555070201986
+        ],
+        "osr": 0.5229885057471264,
+        "stop_rate": 1.0,
+        "premature_stop_rate": 0.47701149425287354,
+        "reached_but_not_stopped_rate": 0.006896551724137931,
+        "never_stop_rate": 0.0,
+        "collision_rate": 0.0,
+        "out_of_bounds_rate": 0.0,
+        "collision_any_rate": 0.0,
+        "out_of_bounds_any_rate": 0.0,
+        "goal_image_invalid_rate": 0.0,
+        "other_failure_rate": 0.0,
+        "failures": {
+          "success": 449,
+          "premature_stop": 415,
+          "reached_but_not_stopped": 6,
+          "never_stop": 0,
+          "collision": 0,
+          "out_of_bounds": 0,
+          "goal_image_invalid": 0,
+          "other_failure": 0
+        },
+        "ne_mean": 23.875685855649962,
+        "ne_median": 19.69482667333909,
+        "min_dist_mean": 22.18380254947051,
+        "min_dist_median": 19.532352594159374,
+        "stop_error_mean": 23.875685855649962,
+        "stop_error_median": 19.69482667333909,
+        "steps_mean": 18.52413793103448,
+        "steps_median": 19.0,
+        "step_cap_hits": 0,
+        "spl": 0.513611798889221,
+        "spl_conditional": 0.9951943541951499,
+        "spl_n": 449,
+        "action_totals": {
+          "Stop": 870,
+          "Forward": 12889,
+          "TurnLeft": 1160,
+          "TurnRight": 1197
+        },
+        "action_share": {
+          "Stop": 0.05398361876396128,
+          "Forward": 0.7997642094812608,
+          "TurnLeft": 0.07197815835194837,
+          "TurnRight": 0.07427401340282949
+        },
+        "steps_total": 16116
+      },
+      "paired_vs_top1": {
+        "n": 870,
+        "both": 343,
+        "only_a": 103,
+        "only_b": 106,
+        "neither": 318,
+        "sr_a": 0.5126436781609195,
+        "sr_b": 0.5160919540229885,
+        "diff_b_minus_a": 0.0034482758620689655,
+        "ci95": [
+          -0.029120333372159968,
+          0.0360168850962979
+        ],
+        "mcnemar_p": 0.8900124838455309
+      }
+    },
+    "val_seen|medium": {
+      "transformer": {
+        "n": 833,
+        "sr": 0.19207683073229292,
+        "sr_ci95": [
+          0.16676289880554543,
+          0.22021775972571647
+        ],
+        "osr": 0.24849939975990396,
+        "stop_rate": 0.48139255702280914,
+        "premature_stop_rate": 0.2857142857142857,
+        "reached_but_not_stopped_rate": 0.056422569027611044,
+        "never_stop_rate": 0.0,
+        "collision_rate": 0.0,
+        "out_of_bounds_rate": 0.4657863145258103,
+        "collision_any_rate": 0.0,
+        "out_of_bounds_any_rate": 0.5186074429771909,
+        "goal_image_invalid_rate": 0.0,
+        "other_failure_rate": 0.0,
+        "failures": {
+          "success": 160,
+          "premature_stop": 238,
+          "reached_but_not_stopped": 47,
+          "never_stop": 0,
+          "collision": 0,
+          "out_of_bounds": 388,
+          "goal_image_invalid": 0,
+          "other_failure": 0
+        },
+        "ne_mean": 70.71406980023612,
+        "ne_median": 40.526332969472726,
+        "min_dist_mean": 31.5874816874759,
+        "min_dist_median": 28.051269701451304,
+        "stop_error_mean": 23.036800643016527,
+        "stop_error_median": 21.5233745431139,
+        "steps_mean": 49.895558223289314,
+        "steps_median": 46.0,
+        "step_cap_hits": 0,
+        "spl": 0.19168947202022854,
+        "spl_conditional": 0.9979833137053149,
+        "spl_n": 160,
+        "action_totals": {
+          "Stop": 401,
+          "Forward": 39941,
+          "TurnLeft": 589,
+          "TurnRight": 632
+        },
+        "action_share": {
+          "Stop": 0.009648004234535525,
+          "Forward": 0.9609749055650458,
+          "TurnLeft": 0.014171258090128239,
+          "TurnRight": 0.015205832110290403
+        },
+        "steps_total": 41563
+      },
+      "top1_static": {
+        "n": 833,
+        "sr": 0.46218487394957986,
+        "sr_ci95": [
+          0.4285786982125858,
+          0.4961382247649376
+        ],
+        "osr": 0.4669867947178872,
+        "stop_rate": 0.9963985594237695,
+        "premature_stop_rate": 0.5306122448979592,
+        "reached_but_not_stopped_rate": 0.004801920768307323,
+        "never_stop_rate": 0.0,
+        "collision_rate": 0.0012004801920768306,
+        "out_of_bounds_rate": 0.0012004801920768306,
+        "collision_any_rate": 0.0012004801920768306,
+        "out_of_bounds_any_rate": 0.0024009603841536613,
+        "goal_image_invalid_rate": 0.0,
+        "other_failure_rate": 0.0,
+        "failures": {
+          "success": 385,
+          "premature_stop": 442,
+          "reached_but_not_stopped": 4,
+          "never_stop": 0,
+          "collision": 1,
+          "out_of_bounds": 1,
+          "goal_image_invalid": 0,
+          "other_failure": 0
+        },
+        "ne_mean": 23.969883251149483,
+        "ne_median": 20.695167629161595,
+        "min_dist_mean": 23.102159828937065,
+        "min_dist_median": 20.60943806095927,
+        "stop_error_mean": 23.800228628360728,
+        "stop_error_median": 20.6795467702297,
+        "steps_mean": 39.47418967587035,
+        "steps_median": 40.0,
+        "step_cap_hits": 0,
+        "spl": 0.46017958384029684,
+        "spl_conditional": 0.9956612813999149,
+        "spl_n": 385,
+        "action_totals": {
+          "Stop": 830,
+          "Forward": 30157,
+          "TurnLeft": 911,
+          "TurnRight": 984
+        },
+        "action_share": {
+          "Stop": 0.02524177361474363,
+          "Forward": 0.9171279119274983,
+          "TurnLeft": 0.02770512742533909,
+          "TurnRight": 0.029925187032418952
+        },
+        "steps_total": 32882
+      },
+      "top5_static": {
+        "n": 833,
+        "sr": 0.3817527010804322,
+        "sr_ci95": [
+          0.34937566656936375,
+          0.4152153465508284
+        ],
+        "osr": 0.8259303721488596,
+        "stop_rate": 0.4177671068427371,
+        "premature_stop_rate": 0.030012004801920768,
+        "reached_but_not_stopped_rate": 0.44417767106842737,
+        "never_stop_rate": 0.14405762304921968,
+        "collision_rate": 0.0,
+        "out_of_bounds_rate": 0.0,
+        "collision_any_rate": 0.0,
+        "out_of_bounds_any_rate": 0.0,
+        "goal_image_invalid_rate": 0.0,
+        "other_failure_rate": 0.0,
+        "failures": {
+          "success": 318,
+          "premature_stop": 25,
+          "reached_but_not_stopped": 370,
+          "never_stop": 120,
+          "collision": 0,
+          "out_of_bounds": 0,
+          "goal_image_invalid": 0,
+          "other_failure": 0
+        },
+        "ne_mean": 18.878984056415767,
+        "ne_median": 12.608070942334932,
+        "min_dist_mean": 16.025933827770412,
+        "min_dist_median": 10.36365994556684,
+        "stop_error_mean": 10.981093685137402,
+        "stop_error_median": 10.585234614679786,
+        "steps_mean": 134.4189675870348,
+        "steps_median": 200.0,
+        "step_cap_hits": 485,
+        "spl": 0.3764174482723668,
+        "spl_conditional": 0.9860243220467974,
+        "spl_n": 318,
+        "action_totals": {
+          "Stop": 348,
+          "Forward": 43680,
+          "TurnLeft": 34630,
+          "TurnRight": 33313
+        },
+        "action_share": {
+          "Stop": 0.003107947593573336,
+          "Forward": 0.3901010082967911,
+          "TurnLeft": 0.30927650909610527,
+          "TurnRight": 0.2975145350135303
+        },
+        "steps_total": 111971
+      },
+      "dynamic": {
+        "n": 833,
+        "sr": 0.4849939975990396,
+        "sr_ci95": [
+          0.45120173003582614,
+          0.5189240330504926
+        ],
+        "osr": 0.48739495798319327,
+        "stop_rate": 0.9963985594237695,
+        "premature_stop_rate": 0.5102040816326531,
+        "reached_but_not_stopped_rate": 0.0024009603841536613,
+        "never_stop_rate": 0.0,
+        "collision_rate": 0.0012004801920768306,
+        "out_of_bounds_rate": 0.0012004801920768306,
+        "collision_any_rate": 0.0012004801920768306,
+        "out_of_bounds_any_rate": 0.0024009603841536613,
+        "goal_image_invalid_rate": 0.0,
+        "other_failure_rate": 0.0,
+        "failures": {
+          "success": 404,
+          "premature_stop": 425,
+          "reached_but_not_stopped": 2,
+          "never_stop": 0,
+          "collision": 1,
+          "out_of_bounds": 1,
+          "goal_image_invalid": 0,
+          "other_failure": 0
+        },
+        "ne_mean": 24.303924421475653,
+        "ne_median": 20.211669576429365,
+        "min_dist_mean": 23.559606713060706,
+        "min_dist_median": 20.16299396263355,
+        "stop_error_mean": 24.135477176410973,
+        "stop_error_median": 20.20348389842993,
+        "steps_mean": 39.39495798319328,
+        "steps_median": 40.0,
+        "step_cap_hits": 0,
+        "spl": 0.4835209081163498,
+        "spl_conditional": 0.9969626645072261,
+        "spl_n": 404,
+        "action_totals": {
+          "Stop": 830,
+          "Forward": 29879,
+          "TurnLeft": 1002,
+          "TurnRight": 1105
+        },
+        "action_share": {
+          "Stop": 0.02529254022428084,
+          "Forward": 0.9105009751340809,
+          "TurnLeft": 0.03053388590931253,
+          "TurnRight": 0.0336725987323257
+        },
+        "steps_total": 32816
+      },
+      "paired_vs_top1": {
+        "n": 833,
+        "both": 293,
+        "only_a": 92,
+        "only_b": 111,
+        "neither": 337,
+        "sr_a": 0.46218487394957986,
+        "sr_b": 0.4849939975990396,
+        "diff_b_minus_a": 0.022809123649459785,
+        "ci95": [
+          -0.010679324115494583,
+          0.05629757141441415
+        ],
+        "mcnemar_p": 0.20635238230278738
+      }
+    },
+    "val_seen|long": {
+      "transformer": {
+        "n": 795,
+        "sr": 0.11320754716981132,
+        "sr_ci95": [
+          0.09301711964500724,
+          0.1371179801182096
+        ],
+        "osr": 0.14465408805031446,
+        "stop_rate": 0.31069182389937106,
+        "premature_stop_rate": 0.19371069182389938,
+        "reached_but_not_stopped_rate": 0.031446540880503145,
+        "never_stop_rate": 0.0,
+        "collision_rate": 0.0,
+        "out_of_bounds_rate": 0.6616352201257861,
+        "collision_any_rate": 0.0,
+        "out_of_bounds_any_rate": 0.6893081761006289,
+        "goal_image_invalid_rate": 0.0,
+        "other_failure_rate": 0.0,
+        "failures": {
+          "success": 90,
+          "premature_stop": 154,
+          "reached_but_not_stopped": 25,
+          "never_stop": 0,
+          "collision": 0,
+          "out_of_bounds": 526,
+          "goal_image_invalid": 0,
+          "other_failure": 0
+        },
+        "ne_mean": 72.62175505209939,
+        "ne_median": 66.80430009293973,
+        "min_dist_mean": 48.16402993797827,
+        "min_dist_median": 41.70833198398804,
+        "stop_error_mean": 23.347353809782355,
+        "stop_error_median": 23.05044035232137,
+        "steps_mean": 70.54842767295598,
+        "steps_median": 72.0,
+        "step_cap_hits": 0,
+        "spl": 0.11307191293147498,
+        "spl_conditional": 0.9988018975613623,
+        "spl_n": 90,
+        "action_totals": {
+          "Stop": 247,
+          "Forward": 55318,
+          "TurnLeft": 267,
+          "TurnRight": 254
+        },
+        "action_share": {
+          "Stop": 0.004403951075134614,
+          "Forward": 0.9863067432157758,
+          "TurnLeft": 0.004760546303890454,
+          "TurnRight": 0.004528759405199158
+        },
+        "steps_total": 56086
+      },
+      "top1_static": {
+        "n": 795,
+        "sr": 0.45031446540880504,
+        "sr_ci95": [
+          0.4160514689248848,
+          0.48505531624795123
+        ],
+        "osr": 0.45660377358490567,
+        "stop_rate": 0.9924528301886792,
+        "premature_stop_rate": 0.5358490566037736,
+        "reached_but_not_stopped_rate": 0.006289308176100629,
+        "never_stop_rate": 0.0,
+        "collision_rate": 0.0012578616352201257,
+        "out_of_bounds_rate": 0.006289308176100629,
+        "collision_any_rate": 0.0012578616352201257,
+        "out_of_bounds_any_rate": 0.006289308176100629,
+        "goal_image_invalid_rate": 0.0,
+        "other_failure_rate": 0.0,
+        "failures": {
+          "success": 358,
+          "premature_stop": 426,
+          "reached_but_not_stopped": 5,
+          "never_stop": 0,
+          "collision": 1,
+          "out_of_bounds": 5,
+          "goal_image_invalid": 0,
+          "other_failure": 0
+        },
+        "ne_mean": 25.066341555411295,
+        "ne_median": 21.17933634154511,
+        "min_dist_mean": 24.766942157622932,
+        "min_dist_median": 21.083034532833153,
+        "stop_error_mean": 24.57433054177559,
+        "stop_error_median": 21.095110051373524,
+        "steps_mean": 63.00251572327044,
+        "steps_median": 62.0,
+        "step_cap_hits": 0,
+        "spl": 0.44887995712129514,
+        "spl_conditional": 0.9968144299201945,
+        "spl_n": 358,
+        "action_totals": {
+          "Stop": 789,
+          "Forward": 47885,
+          "TurnLeft": 728,
+          "TurnRight": 685
+        },
+        "action_share": {
+          "Stop": 0.015752590492542975,
+          "Forward": 0.9560364964960968,
+          "TurnLeft": 0.014534709605286801,
+          "TurnRight": 0.013676203406073431
+        },
+        "steps_total": 50087
+      },
+      "top5_static": {
+        "n": 795,
+        "sr": 0.4138364779874214,
+        "sr_ci95": [
+          0.38009430702750113,
+          0.4484073330823537
+        ],
+        "osr": 0.7484276729559748,
+        "stop_rate": 0.46540880503144655,
+        "premature_stop_rate": 0.05157232704402516,
+        "reached_but_not_stopped_rate": 0.33459119496855344,
+        "never_stop_rate": 0.1949685534591195,
+        "collision_rate": 0.0,
+        "out_of_bounds_rate": 0.005031446540880503,
+        "collision_any_rate": 0.0,
+        "out_of_bounds_any_rate": 0.005031446540880503,
+        "goal_image_invalid_rate": 0.0,
+        "other_failure_rate": 0.0,
+        "failures": {
+          "success": 329,
+          "premature_stop": 41,
+          "reached_but_not_stopped": 266,
+          "never_stop": 155,
+          "collision": 0,
+          "out_of_bounds": 4,
+          "goal_image_invalid": 0,
+          "other_failure": 0
+        },
+        "ne_mean": 20.370432799297088,
+        "ne_median": 13.740375772350557,
+        "min_dist_mean": 18.5605648955013,
+        "min_dist_median": 12.10549881171074,
+        "stop_error_mean": 11.525977210252268,
+        "stop_error_median": 11.247359694113616,
+        "steps_mean": 137.04528301886793,
+        "steps_median": 200.0,
+        "step_cap_hits": 421,
+        "spl": 0.40841838332097496,
+        "spl_conditional": 0.9869076435871583,
+        "spl_n": 329,
+        "action_totals": {
+          "Stop": 370,
+          "Forward": 58073,
+          "TurnLeft": 25088,
+          "TurnRight": 25420
+        },
+        "action_share": {
+          "Stop": 0.003396022064964984,
+          "Forward": 0.5330194307532744,
+          "TurnLeft": 0.23026865288065276,
+          "TurnRight": 0.23331589430110783
+        },
+        "steps_total": 108951
+      },
+      "dynamic": {
+        "n": 795,
+        "sr": 0.47924528301886793,
+        "sr_ci95": [
+          0.44470211746074156,
+          0.5139880586241139
+        ],
+        "osr": 0.47924528301886793,
+        "stop_rate": 0.9924528301886792,
+        "premature_stop_rate": 0.5132075471698113,
+        "reached_but_not_stopped_rate": 0.0,
+        "never_stop_rate": 0.0,
+        "collision_rate": 0.0012578616352201257,
+        "out_of_bounds_rate": 0.006289308176100629,
+        "collision_any_rate": 0.0012578616352201257,
+        "out_of_bounds_any_rate": 0.006289308176100629,
+        "goal_image_invalid_rate": 0.0,
+        "other_failure_rate": 0.0,
+        "failures": {
+          "success": 381,
+          "premature_stop": 408,
+          "reached_but_not_stopped": 0,
+          "never_stop": 0,
+          "collision": 1,
+          "out_of_bounds": 5,
+          "goal_image_invalid": 0,
+          "other_failure": 0
+        },
+        "ne_mean": 26.214222457999956,
+        "ne_median": 20.701100349482743,
+        "min_dist_mean": 26.02979586742498,
+        "min_dist_median": 20.701100349482743,
+        "stop_error_mean": 25.730940576703308,
+        "stop_error_median": 20.62118215861714,
+        "steps_mean": 62.82012578616352,
+        "steps_median": 62.0,
+        "step_cap_hits": 0,
+        "spl": 0.4773887508574921,
+        "spl_conditional": 0.996126133679019,
+        "spl_n": 381,
+        "action_totals": {
+          "Stop": 789,
+          "Forward": 47552,
+          "TurnLeft": 822,
+          "TurnRight": 779
+        },
+        "action_share": {
+          "Stop": 0.015798326058227542,
+          "Forward": 0.9521444876056225,
+          "TurnLeft": 0.01645909254735493,
+          "TurnRight": 0.015598093788795002
+        },
+        "steps_total": 49942
+      },
+      "paired_vs_top1": {
+        "n": 795,
+        "both": 281,
+        "only_a": 77,
+        "only_b": 100,
+        "neither": 337,
+        "sr_a": 0.45031446540880504,
+        "sr_b": 0.47924528301886793,
+        "diff_b_minus_a": 0.028930817610062894,
+        "ci95": [
+          -0.0038076012146250893,
+          0.061669236434750876
+        ],
+        "mcnemar_p": 0.0979297103970036
+      }
+    },
+    "val_unseen|short": {
+      "transformer": {
+        "n": 820,
+        "sr": 0.41585365853658535,
+        "sr_ci95": [
+          0.3825881322650121,
+          0.4499039103210175
+        ],
+        "osr": 0.49390243902439024,
+        "stop_rate": 0.7914634146341464,
+        "premature_stop_rate": 0.36829268292682926,
+        "reached_but_not_stopped_rate": 0.07804878048780488,
+        "never_stop_rate": 0.0,
+        "collision_rate": 0.0,
+        "out_of_bounds_rate": 0.1378048780487805,
+        "collision_any_rate": 0.0,
+        "out_of_bounds_any_rate": 0.20853658536585365,
+        "goal_image_invalid_rate": 0.0,
+        "other_failure_rate": 0.0,
+        "failures": {
+          "success": 341,
+          "premature_stop": 302,
+          "reached_but_not_stopped": 64,
+          "never_stop": 0,
+          "collision": 0,
+          "out_of_bounds": 113,
+          "goal_image_invalid": 0,
+          "other_failure": 0
+        },
+        "ne_mean": 59.79397870103487,
+        "ne_median": 22.28716827562245,
+        "min_dist_mean": 22.80654264832654,
+        "min_dist_median": 20.04746761802199,
+        "stop_error_mean": 21.356704629479616,
+        "stop_error_median": 19.419625568042182,
+        "steps_mean": 27.025609756097563,
+        "steps_median": 21.0,
+        "step_cap_hits": 0,
+        "spl": 0.4120065715205459,
+        "spl_conditional": 0.990748940313336,
+        "spl_n": 341,
+        "action_totals": {
+          "Stop": 649,
+          "Forward": 20002,
+          "TurnLeft": 766,
+          "TurnRight": 744
+        },
+        "action_share": {
+          "Stop": 0.02928568205405893,
+          "Forward": 0.9025765985289472,
+          "TurnLeft": 0.03456522720093859,
+          "TurnRight": 0.03357249221605523
+        },
+        "steps_total": 22161
+      },
+      "top1_static": {
+        "n": 820,
+        "sr": 0.4719512195121951,
+        "sr_ci95": [
+          0.43799294567196334,
+          0.5061710685233798
+        ],
+        "osr": 0.4902439024390244,
+        "stop_rate": 0.998780487804878,
+        "premature_stop_rate": 0.5097560975609756,
+        "reached_but_not_stopped_rate": 0.018292682926829267,
+        "never_stop_rate": 0.0,
+        "collision_rate": 0.0,
+        "out_of_bounds_rate": 0.0,
+        "collision_any_rate": 0.0,
+        "out_of_bounds_any_rate": 0.0012195121951219512,
+        "goal_image_invalid_rate": 0.0,
+        "other_failure_rate": 0.0,
+        "failures": {
+          "success": 387,
+          "premature_stop": 418,
+          "reached_but_not_stopped": 15,
+          "never_stop": 0,
+          "collision": 0,
+          "out_of_bounds": 0,
+          "goal_image_invalid": 0,
+          "other_failure": 0
+        },
+        "ne_mean": 28.34422701927934,
+        "ne_median": 20.732048545725046,
+        "min_dist_mean": 22.90397985723682,
+        "min_dist_median": 20.301766303348405,
+        "stop_error_mean": 28.355430192973703,
+        "stop_error_median": 20.732048545725046,
+        "steps_mean": 19.58170731707317,
+        "steps_median": 19.0,
+        "step_cap_hits": 0,
+        "spl": 0.4679126301531439,
+        "spl_conditional": 0.9914427822366356,
+        "spl_n": 387,
+        "action_totals": {
+          "Stop": 819,
+          "Forward": 13414,
+          "TurnLeft": 914,
+          "TurnRight": 910
+        },
+        "action_share": {
+          "Stop": 0.05100579186647568,
+          "Forward": 0.8353988914492122,
+          "TurnLeft": 0.05692221461045027,
+          "TurnRight": 0.056673102073861864
+        },
+        "steps_total": 16057
+      },
+      "top5_static": {
+        "n": 820,
+        "sr": 0.4609756097560976,
+        "sr_ci95": [
+          0.42711866411016847,
+          0.495196486074657
+        ],
+        "osr": 0.7890243902439025,
+        "stop_rate": 0.5097560975609756,
+        "premature_stop_rate": 0.03902439024390244,
+        "reached_but_not_stopped_rate": 0.3280487804878049,
+        "never_stop_rate": 0.1719512195121951,
+        "collision_rate": 0.0,
+        "out_of_bounds_rate": 0.0,
+        "collision_any_rate": 0.0,
+        "out_of_bounds_any_rate": 0.0,
+        "goal_image_invalid_rate": 0.0,
+        "other_failure_rate": 0.0,
+        "failures": {
+          "success": 378,
+          "premature_stop": 32,
+          "reached_but_not_stopped": 269,
+          "never_stop": 141,
+          "collision": 0,
+          "out_of_bounds": 0,
+          "goal_image_invalid": 0,
+          "other_failure": 0
+        },
+        "ne_mean": 23.38426739524276,
+        "ne_median": 12.664891995949171,
+        "min_dist_mean": 15.2266876018448,
+        "min_dist_median": 10.416775820946148,
+        "stop_error_mean": 11.103393380588873,
+        "stop_error_median": 10.397863412470002,
+        "steps_mean": 109.14756097560975,
+        "steps_median": 36.0,
+        "step_cap_hits": 402,
+        "spl": 0.4459450194261939,
+        "spl_conditional": 0.9673939574853943,
+        "spl_n": 378,
+        "action_totals": {
+          "Stop": 418,
+          "Forward": 26551,
+          "TurnLeft": 30994,
+          "TurnRight": 31538
+        },
+        "action_share": {
+          "Stop": 0.004670338878895208,
+          "Forward": 0.2966559032859968,
+          "TurnLeft": 0.3462978067284164,
+          "TurnRight": 0.35237595110669157
+        },
+        "steps_total": 89501
+      },
+      "dynamic": {
+        "n": 820,
+        "sr": 0.5024390243902439,
+        "sr_ci95": [
+          0.46828548076323545,
+          0.5365698223502129
+        ],
+        "osr": 0.5121951219512195,
+        "stop_rate": 0.998780487804878,
+        "premature_stop_rate": 0.4878048780487805,
+        "reached_but_not_stopped_rate": 0.00975609756097561,
+        "never_stop_rate": 0.0,
+        "collision_rate": 0.0,
+        "out_of_bounds_rate": 0.0,
+        "collision_any_rate": 0.0,
+        "out_of_bounds_any_rate": 0.0012195121951219512,
+        "goal_image_invalid_rate": 0.0,
+        "other_failure_rate": 0.0,
+        "failures": {
+          "success": 412,
+          "premature_stop": 400,
+          "reached_but_not_stopped": 8,
+          "never_stop": 0,
+          "collision": 0,
+          "out_of_bounds": 0,
+          "goal_image_invalid": 0,
+          "other_failure": 0
+        },
+        "ne_mean": 27.541476224334257,
+        "ne_median": 19.947305556405674,
+        "min_dist_mean": 22.38749846477224,
+        "min_dist_median": 19.44844344050358,
+        "stop_error_mean": 27.55169923832784,
+        "stop_error_median": 19.947305556405674,
+        "steps_mean": 19.641463414634146,
+        "steps_median": 19.0,
+        "step_cap_hits": 0,
+        "spl": 0.499586645047052,
+        "spl_conditional": 0.9943229343169482,
+        "spl_n": 412,
+        "action_totals": {
+          "Stop": 819,
+          "Forward": 13290,
+          "TurnLeft": 1005,
+          "TurnRight": 992
+        },
+        "action_share": {
+          "Stop": 0.050850614677759844,
+          "Forward": 0.825158326089656,
+          "TurnLeft": 0.06239910592325841,
+          "TurnRight": 0.061591953309325716
+        },
+        "steps_total": 16106
+      },
+      "paired_vs_top1": {
+        "n": 820,
+        "both": 316,
+        "only_a": 71,
+        "only_b": 96,
+        "neither": 337,
+        "sr_a": 0.4719512195121951,
+        "sr_b": 0.5024390243902439,
+        "diff_b_minus_a": 0.03048780487804878,
+        "ci95": [
+          -0.0003303842979253263,
+          0.061305994054022886
+        ],
+        "mcnemar_p": 0.06296242380456342
+      }
+    },
+    "val_unseen|medium": {
+      "transformer": {
+        "n": 980,
+        "sr": 0.2030612244897959,
+        "sr_ci95": [
+          0.17905702481712177,
+          0.22938424914827032
+        ],
+        "osr": 0.26224489795918365,
+        "stop_rate": 0.45918367346938777,
+        "premature_stop_rate": 0.2540816326530612,
+        "reached_but_not_stopped_rate": 0.05918367346938776,
+        "never_stop_rate": 0.0,
+        "collision_rate": 0.0010204081632653062,
+        "out_of_bounds_rate": 0.4826530612244898,
+        "collision_any_rate": 0.0010204081632653062,
+        "out_of_bounds_any_rate": 0.539795918367347,
+        "goal_image_invalid_rate": 0.0,
+        "other_failure_rate": 0.0,
+        "failures": {
+          "success": 199,
+          "premature_stop": 249,
+          "reached_but_not_stopped": 58,
+          "never_stop": 0,
+          "collision": 1,
+          "out_of_bounds": 473,
+          "goal_image_invalid": 0,
+          "other_failure": 0
+        },
+        "ne_mean": 90.12626185761218,
+        "ne_median": 51.954760422734694,
+        "min_dist_mean": 35.121336555389085,
+        "min_dist_median": 28.542324216315397,
+        "stop_error_mean": 23.4492021962374,
+        "stop_error_median": 21.680119305828516,
+        "steps_mean": 53.066326530612244,
+        "steps_median": 48.0,
+        "step_cap_hits": 0,
+        "spl": 0.2025163476390852,
+        "spl_conditional": 0.9973166868658467,
+        "spl_n": 199,
+        "action_totals": {
+          "Stop": 450,
+          "Forward": 50148,
+          "TurnLeft": 728,
+          "TurnRight": 679
+        },
+        "action_share": {
+          "Stop": 0.008653014133256417,
+          "Forward": 0.9642918950100952,
+          "TurnLeft": 0.013998653975579272,
+          "TurnRight": 0.013056436881069129
+        },
+        "steps_total": 52005
+      },
+      "top1_static": {
+        "n": 980,
+        "sr": 0.4306122448979592,
+        "sr_ci95": [
+          0.3999410982837864,
+          0.46182524752255966
+        ],
+        "osr": 0.4448979591836735,
+        "stop_rate": 1.0,
+        "premature_stop_rate": 0.5551020408163265,
+        "reached_but_not_stopped_rate": 0.014285714285714285,
+        "never_stop_rate": 0.0,
+        "collision_rate": 0.0,
+        "out_of_bounds_rate": 0.0,
+        "collision_any_rate": 0.0,
+        "out_of_bounds_any_rate": 0.0,
+        "goal_image_invalid_rate": 0.0,
+        "other_failure_rate": 0.0,
+        "failures": {
+          "success": 422,
+          "premature_stop": 544,
+          "reached_but_not_stopped": 14,
+          "never_stop": 0,
+          "collision": 0,
+          "out_of_bounds": 0,
+          "goal_image_invalid": 0,
+          "other_failure": 0
+        },
+        "ne_mean": 29.72313688924517,
+        "ne_median": 22.040451069809734,
+        "min_dist_mean": 27.057972129382517,
+        "min_dist_median": 21.672839503214703,
+        "stop_error_mean": 29.72313688924517,
+        "stop_error_median": 22.040451069809734,
+        "steps_mean": 39.27857142857143,
+        "steps_median": 39.0,
+        "step_cap_hits": 0,
+        "spl": 0.4285334507223453,
+        "spl_conditional": 0.9951724685021289,
+        "spl_n": 422,
+        "action_totals": {
+          "Stop": 980,
+          "Forward": 35310,
+          "TurnLeft": 1128,
+          "TurnRight": 1075
+        },
+        "action_share": {
+          "Stop": 0.02545917439534461,
+          "Forward": 0.917309640713896,
+          "TurnLeft": 0.029304029304029304,
+          "TurnRight": 0.027927155586730056
+        },
+        "steps_total": 38493
+      },
+      "top5_static": {
+        "n": 980,
+        "sr": 0.4479591836734694,
+        "sr_ci95": [
+          0.4170882028010414,
+          0.4792365565537181
+        ],
+        "osr": 0.7581632653061224,
+        "stop_rate": 0.503061224489796,
+        "premature_stop_rate": 0.04897959183673469,
+        "reached_but_not_stopped_rate": 0.31020408163265306,
+        "never_stop_rate": 0.19285714285714287,
+        "collision_rate": 0.0,
+        "out_of_bounds_rate": 0.0,
+        "collision_any_rate": 0.0,
+        "out_of_bounds_any_rate": 0.0,
+        "goal_image_invalid_rate": 0.0,
+        "other_failure_rate": 0.0,
+        "failures": {
+          "success": 439,
+          "premature_stop": 48,
+          "reached_but_not_stopped": 304,
+          "never_stop": 189,
+          "collision": 0,
+          "out_of_bounds": 0,
+          "goal_image_invalid": 0,
+          "other_failure": 0
+        },
+        "ne_mean": 23.697712723660192,
+        "ne_median": 13.288584334978669,
+        "min_dist_mean": 19.560775484686445,
+        "min_dist_median": 11.149767583679765,
+        "stop_error_mean": 11.646138057025803,
+        "stop_error_median": 10.647652624793851,
+        "steps_mean": 120.79489795918367,
+        "steps_median": 63.0,
+        "step_cap_hits": 487,
+        "spl": 0.44044705612846674,
+        "spl_conditional": 0.9832303303095613,
+        "spl_n": 439,
+        "action_totals": {
+          "Stop": 493,
+          "Forward": 49401,
+          "TurnLeft": 33401,
+          "TurnRight": 35084
+        },
+        "action_share": {
+          "Stop": 0.004164590003294503,
+          "Forward": 0.41731219219625104,
+          "TurnLeft": 0.28215308458425903,
+          "TurnRight": 0.29637013321619543
+        },
+        "steps_total": 118379
+      },
+      "dynamic": {
+        "n": 980,
+        "sr": 0.4806122448979592,
+        "sr_ci95": [
+          0.4494681482183236,
+          0.5119077425216849
+        ],
+        "osr": 0.4826530612244898,
+        "stop_rate": 1.0,
+        "premature_stop_rate": 0.5173469387755102,
+        "reached_but_not_stopped_rate": 0.0020408163265306124,
+        "never_stop_rate": 0.0,
+        "collision_rate": 0.0,
+        "out_of_bounds_rate": 0.0,
+        "collision_any_rate": 0.0,
+        "out_of_bounds_any_rate": 0.0,
+        "goal_image_invalid_rate": 0.0,
+        "other_failure_rate": 0.0,
+        "failures": {
+          "success": 471,
+          "premature_stop": 507,
+          "reached_but_not_stopped": 2,
+          "never_stop": 0,
+          "collision": 0,
+          "out_of_bounds": 0,
+          "goal_image_invalid": 0,
+          "other_failure": 0
+        },
+        "ne_mean": 28.59351075701734,
+        "ne_median": 20.475843129683934,
+        "min_dist_mean": 26.2499846202276,
+        "min_dist_median": 20.372876859816078,
+        "stop_error_mean": 28.59351075701734,
+        "stop_error_median": 20.475843129683934,
+        "steps_mean": 39.41836734693877,
+        "steps_median": 39.0,
+        "step_cap_hits": 0,
+        "spl": 0.4791291113956428,
+        "spl_conditional": 0.9969140746660933,
+        "spl_n": 471,
+        "action_totals": {
+          "Stop": 980,
+          "Forward": 35231,
+          "TurnLeft": 1241,
+          "TurnRight": 1178
+        },
+        "action_share": {
+          "Stop": 0.025368884286823712,
+          "Forward": 0.9120113901113125,
+          "TurnLeft": 0.03212529122443697,
+          "TurnRight": 0.030494434377426872
+        },
+        "steps_total": 38630
+      },
+      "paired_vs_top1": {
+        "n": 980,
+        "both": 347,
+        "only_a": 75,
+        "only_b": 124,
+        "neither": 434,
+        "sr_a": 0.4306122448979592,
+        "sr_b": 0.4806122448979592,
+        "diff_b_minus_a": 0.05,
+        "ci95": [
+          0.021960741807244617,
+          0.0780392581927554
+        ],
+        "mcnemar_p": 0.0006307710005619384
+      }
+    },
+    "val_unseen|long": {
+      "transformer": {
+        "n": 1026,
+        "sr": 0.09454191033138401,
+        "sr_ci95": [
+          0.07812106763868673,
+          0.11398758862695729
+        ],
+        "osr": 0.14619883040935672,
+        "stop_rate": 0.2826510721247563,
+        "premature_stop_rate": 0.1881091617933723,
+        "reached_but_not_stopped_rate": 0.05165692007797271,
+        "never_stop_rate": 0.0,
+        "collision_rate": 0.0,
+        "out_of_bounds_rate": 0.665692007797271,
+        "collision_any_rate": 0.0,
+        "out_of_bounds_any_rate": 0.7173489278752436,
+        "goal_image_invalid_rate": 0.0,
+        "other_failure_rate": 0.0,
+        "failures": {
+          "success": 97,
+          "premature_stop": 193,
+          "reached_but_not_stopped": 53,
+          "never_stop": 0,
+          "collision": 0,
+          "out_of_bounds": 683,
+          "goal_image_invalid": 0,
+          "other_failure": 0
+        },
+        "ne_mean": 84.556244450946,
+        "ne_median": 72.73843373470224,
+        "min_dist_mean": 53.68880722061693,
+        "min_dist_median": 45.18969997143856,
+        "stop_error_mean": 25.92720020043462,
+        "stop_error_median": 22.698881968341762,
+        "steps_mean": 71.60721247563353,
+        "steps_median": 72.0,
+        "step_cap_hits": 0,
+        "spl": 0.0944132915946508,
+        "spl_conditional": 0.9986395585166156,
+        "spl_n": 97,
+        "action_totals": {
+          "Stop": 290,
+          "Forward": 72386,
+          "TurnLeft": 406,
+          "TurnRight": 387
+        },
+        "action_share": {
+          "Stop": 0.003947243054893901,
+          "Forward": 0.9852590888674134,
+          "TurnLeft": 0.005526140276851462,
+          "TurnRight": 0.005267527800841171
+        },
+        "steps_total": 73469
+      },
+      "top1_static": {
+        "n": 1026,
+        "sr": 0.38011695906432746,
+        "sr_ci95": [
+          0.3509140646932715,
+          0.4102142158852721
+        ],
+        "osr": 0.38499025341130605,
+        "stop_rate": 0.9922027290448343,
+        "premature_stop_rate": 0.6072124756335283,
+        "reached_but_not_stopped_rate": 0.004873294346978557,
+        "never_stop_rate": 0.0,
+        "collision_rate": 0.0,
+        "out_of_bounds_rate": 0.007797270955165692,
+        "collision_any_rate": 0.0,
+        "out_of_bounds_any_rate": 0.007797270955165692,
+        "goal_image_invalid_rate": 0.0,
+        "other_failure_rate": 0.0,
+        "failures": {
+          "success": 390,
+          "premature_stop": 623,
+          "reached_but_not_stopped": 5,
+          "never_stop": 0,
+          "collision": 0,
+          "out_of_bounds": 8,
+          "goal_image_invalid": 0,
+          "other_failure": 0
+        },
+        "ne_mean": 32.36595972836829,
+        "ne_median": 22.957105198602022,
+        "min_dist_mean": 31.42395423525061,
+        "min_dist_median": 22.83854446884821,
+        "stop_error_mean": 31.96708850405261,
+        "stop_error_median": 22.72310796384676,
+        "steps_mean": 62.54873294346979,
+        "steps_median": 61.0,
+        "step_cap_hits": 0,
+        "spl": 0.37834476195375727,
+        "spl_conditional": 0.9953377583706539,
+        "spl_n": 390,
+        "action_totals": {
+          "Stop": 1018,
+          "Forward": 61238,
+          "TurnLeft": 956,
+          "TurnRight": 963
+        },
+        "action_share": {
+          "Stop": 0.015862874951305027,
+          "Forward": 0.9542345149980522,
+          "TurnLeft": 0.01489676665368134,
+          "TurnRight": 0.015005843396961434
+        },
+        "steps_total": 64175
+      },
+      "top5_static": {
+        "n": 1026,
+        "sr": 0.3762183235867446,
+        "sr_ci95": [
+          0.34708956382747796,
+          0.4062705307536199
+        ],
+        "osr": 0.6793372319688109,
+        "stop_rate": 0.4395711500974659,
+        "premature_stop_rate": 0.06140350877192982,
+        "reached_but_not_stopped_rate": 0.3031189083820663,
+        "never_stop_rate": 0.2573099415204678,
+        "collision_rate": 0.0,
+        "out_of_bounds_rate": 0.001949317738791423,
+        "collision_any_rate": 0.0,
+        "out_of_bounds_any_rate": 0.001949317738791423,
+        "goal_image_invalid_rate": 0.0,
+        "other_failure_rate": 0.0,
+        "failures": {
+          "success": 386,
+          "premature_stop": 63,
+          "reached_but_not_stopped": 311,
+          "never_stop": 264,
+          "collision": 0,
+          "out_of_bounds": 2,
+          "goal_image_invalid": 0,
+          "other_failure": 0
+        },
+        "ne_mean": 26.923124963325318,
+        "ne_median": 14.712990271765086,
+        "min_dist_mean": 24.7327558422369,
+        "min_dist_median": 13.357925118733043,
+        "stop_error_mean": 12.629926522423581,
+        "stop_error_median": 11.171348486064323,
+        "steps_mean": 140.8918128654971,
+        "steps_median": 200.0,
+        "step_cap_hits": 573,
+        "spl": 0.3710783825459719,
+        "spl_conditional": 0.9863378769227129,
+        "spl_n": 386,
+        "action_totals": {
+          "Stop": 451,
+          "Forward": 75060,
+          "TurnLeft": 34649,
+          "TurnRight": 34395
+        },
+        "action_share": {
+          "Stop": 0.003119919753726955,
+          "Forward": 0.5192487288575283,
+          "TurnLeft": 0.23969423402857043,
+          "TurnRight": 0.23793711736017434
+        },
+        "steps_total": 144555
+      },
+      "dynamic": {
+        "n": 1026,
+        "sr": 0.4064327485380117,
+        "sr_ci95": [
+          0.3767817434161685,
+          0.4367817926451339
+        ],
+        "osr": 0.4083820662768031,
+        "stop_rate": 0.9922027290448343,
+        "premature_stop_rate": 0.5838206627680312,
+        "reached_but_not_stopped_rate": 0.001949317738791423,
+        "never_stop_rate": 0.0,
+        "collision_rate": 0.0,
+        "out_of_bounds_rate": 0.007797270955165692,
+        "collision_any_rate": 0.0,
+        "out_of_bounds_any_rate": 0.007797270955165692,
+        "goal_image_invalid_rate": 0.0,
+        "other_failure_rate": 0.0,
+        "failures": {
+          "success": 417,
+          "premature_stop": 599,
+          "reached_but_not_stopped": 2,
+          "never_stop": 0,
+          "collision": 0,
+          "out_of_bounds": 8,
+          "goal_image_invalid": 0,
+          "other_failure": 0
+        },
+        "ne_mean": 32.1512744289484,
+        "ne_median": 22.139927902420187,
+        "min_dist_mean": 31.39308609998925,
+        "min_dist_median": 22.139927902420187,
+        "stop_error_mean": 31.750716090295427,
+        "stop_error_median": 22.08721258085365,
+        "steps_mean": 62.52923976608187,
+        "steps_median": 61.0,
+        "step_cap_hits": 0,
+        "spl": 0.4050720227094092,
+        "spl_conditional": 0.9966520270979708,
+        "spl_n": 417,
+        "action_totals": {
+          "Stop": 1018,
+          "Forward": 61009,
+          "TurnLeft": 1069,
+          "TurnRight": 1059
+        },
+        "action_share": {
+          "Stop": 0.01586782012313927,
+          "Forward": 0.9509625126646403,
+          "TurnLeft": 0.016662769854259216,
+          "TurnRight": 0.016506897357961188
+        },
+        "steps_total": 64155
+      },
+      "paired_vs_top1": {
+        "n": 1026,
+        "both": 301,
+        "only_a": 89,
+        "only_b": 116,
+        "neither": 520,
+        "sr_a": 0.38011695906432746,
+        "sr_b": 0.4064327485380117,
+        "diff_b_minus_a": 0.02631578947368421,
+        "ci95": [
+          -0.000988551916617085,
+          0.0536201308639855
+        ],
+        "mcnemar_p": 0.06912209170665883
+      }
+    }
+  },
+  "updates": {
+    "n": 30443,
+    "improved": 1543,
+    "worsened": 724,
+    "unchanged": 28176,
+    "pre_median_m": 10.738806945373351,
+    "post_median_m": 10.538728854088628,
+    "visual_match_median_m": 3.596721582004885
+  }
+}

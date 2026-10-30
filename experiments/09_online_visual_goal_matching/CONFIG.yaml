@@ -69,12 +69,14 @@ calibration:
   locked: true
 
 dynamic_belief:
-  prior_temperature: null    # softmax temperature over candidate similarities (calibrated)
-  eta: null                  # evidence power per update (calibrated)
-  evidence_discount: null    # discount for temporally correlated frames
-  variance_m: null           # visual localisation variance used in the likelihood
-  min_confidence: null       # below tau -> no update
-  observable_radius_m: 50.0  # no negative evidence outside the current view
+  prior_temperature: 0.1   # calibrated on Train-Seen
+  sigma_m: 5.0
+  eta: 0.1                # evidence power per update
+  evidence_discount: 0.7  # adjacent-frame discount
+  agree_m: 10.0  # two consecutive matches must agree
+  min_confidence: 0.875             # layer2 tau from 09A
+  observable_radius_m: 50.0         # no negative evidence outside the current view
+  status: frozen-on-train-seen
 
 control:                     # identical to Stage 08 Top-1 geometry
   stop_radius_m: 20.0

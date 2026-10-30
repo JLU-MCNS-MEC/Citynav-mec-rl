@@ -78,22 +78,34 @@ def main() -> int:
             col, row = m[0], m[1]
             dx, dy = matching.pixel_to_offset(col, row)
             conf = float(m[2] >= tau and m[3] >= mtau)
+            d_true = float(np.linalg.norm(s[j, :2] - t))
+            col_t, row_t = matching.offset_to_pixel(t[0] - s[j, 0], t[1] - s[j, 1])
+            in_view = (d_true <= 48.0 and 0 <= col_t <= 223 and 0 <= row_t <= 223)
             per_state.append({"pos": s[j, :2].astype(np.float64),
                               "r_vis": np.array([s[j, 0] + dx, s[j, 1] + dy]),
-                              "conf": conf, "score": float(m[2])})
+                              "conf": conf and in_view, "score": float(m[2]),
+                              "in_view": bool(in_view)})
         episodes.append({"name": name, "target": t.astype(np.float64),
                          "positions": lib.positions.astype(np.float64),
                          "sims": sims.astype(np.float64), "states": per_state})
 
-    def evaluate(T, sigma, eta, rho):
+    def evaluate(T, sigma, eta, rho, agree_m=0.0):
         errs, ents = [], []
+        premature = good_stop = 0
         for ep in episodes:
             logits = ep["sims"] / T
             logp = logits - logits.max()
             logp -= np.log(np.exp(logp).sum())
             last = -99
+            last_conf = None
             for j, st in enumerate(ep["states"]):
-                if st["conf"]:
+                do_update = bool(st["conf"])
+                if do_update and agree_m > 0:
+                    ok = last_conf is not None and float(
+                        np.linalg.norm(st["r_vis"] - last_conf)) <= agree_m
+                    last_conf = st["r_vis"]
+                    do_update = ok
+                if do_update:
                     d = ep["positions"] - st["r_vis"]
                     d2 = np.einsum("ij,ij->i", d, d)
                     ll = -0.5 * d2 / (sigma * sigma)
@@ -102,27 +114,46 @@ def main() -> int:
                     logp -= np.log(np.exp(logp).sum())
                     last = j
                 k = int(np.argmax(logp))
-                errs.append(float(np.linalg.norm(ep["positions"][k] - ep["target"])))
-                p = np.exp(logp)
-                ents.append(float(-(p * np.log(p + 1e-12)).sum() / math.log(len(p))))
-        return float(np.median(errs)), float(np.mean(ents))
+                err = float(np.linalg.norm(ep["positions"][k] - ep["target"]))
+                true_d = float(np.linalg.norm(st["pos"] - ep["target"]))
+                est_d = float(np.linalg.norm(ep["positions"][k] - st["pos"]))
+                if est_d <= 20.0:
+                    if true_d > 25.0:
+                        premature += 1
+                    else:
+                        good_stop += 1
+                if st["in_view"]:
+                    errs.append(err)
+                    p = np.exp(logp)
+                    ents.append(float(-(p * np.log(p + 1e-12)).sum() / math.log(len(p))))
+        prec = premature / max(premature + good_stop, 1)
+        return (float(np.median(errs)), float(np.mean(ents)), float(prec),
+                int(good_stop), int(premature))
 
     best = None
     grid = []
     for T in (0.05, 0.1, 0.2):
-        for sigma in (5.0, 10.0, 20.0):
-            for eta in (0.1, 0.3, 0.6):
-                for rho in (0.3, 0.7):
-                    med, ent = evaluate(T, sigma, eta, rho)
-                    grid.append({"T": T, "sigma": sigma, "eta": eta, "rho": rho,
-                                 "median_map_err_m": med, "mean_entropy": ent})
-                    if ent < 0.15:          # collapsed posterior -> reject
+        for sigma in (5.0, 10.0):
+            for eta in (0.1, 0.3):
+                for agree in (0.0, 10.0, 20.0):
+                    med, ent, prec, good, bad = evaluate(T, sigma, eta, 0.7, agree)
+                    row = {"T": T, "sigma": sigma, "eta": eta, "rho": 0.7,
+                           "agree_m": agree, "median_map_err_m": med,
+                           "mean_entropy": ent, "premature_stop_rate": prec,
+                           "stops_good": good, "stops_premature": bad}
+                    grid.append(row)
+                    if ent < 0.15:
                         continue
-                    if best is None or med < best["median_map_err_m"]:
-                        best = {"T": T, "sigma": sigma, "eta": eta, "rho": rho,
-                                "median_map_err_m": med, "mean_entropy": ent}
+                    key = (prec, med)
+                    if best is None or key < (best["premature_stop_rate"],
+                                              best["median_map_err_m"]):
+                        best = row
     assert best is not None
+    gate_grid = [g for g in grid if g["T"] == best["T"] and g["sigma"] == best["sigma"]
+                 and g["eta"] == best["eta"]]
     out = {"source": "150 Train-Seen teacher episodes (seed 20261030)",
+           "rule": "min premature-stop rate, then min median MAP error, entropy >= 0.15",
+           "gate_grid": gate_grid,
            "episodes": len(episodes), "best": best,
            "rule": "min median MAP distance; mean normalised entropy >= 0.15",
            "grid": grid, "frozen": True}
