@@ -1,0 +1,85 @@
+# Stage 09 configuration (frozen visual encoder matching + dynamic belief).
+# Thresholds marked null are calibrated on Train-Seen only, then written back
+# and frozen; validation splits are evaluation-only.
+
+stage: 09
+branch: exp/citynav-mec-fixed50m-topdown
+run_ids:
+  "09a": 09a_v1
+  "09b": 09b_v1
+
+paths:
+  stage06_episodes: experiments/06_closed_loop_success_rate/results/seed42/episodes
+  stage06_manifest: experiments/06_closed_loop_success_rate/results/seed42/manifest.json
+  stage08_top1_journal: experiments/08_belief_only_geometric_navigation/results/top1/journal.jsonl
+  candidates24: experiments/04_visual_goal_global_map_pipeline/cache_v2/candidates24
+  rgbd: /home/20261024_1/Workspace/DATA/rgbd
+  teacher_train_seen: experiments/03b_target_directed_teacher/results/teacher_train_seen.npz
+
+sampling:
+  per_episode: 12
+  distance_bins_m: [0, 20, 40, 60, 80, 1.0e9]
+  seed: 20261030
+
+encoder:
+  model: torchvision resnet50
+  weights: ResNet50_Weights.IMAGENET1K_V2
+  frozen: true
+  precision: fp32            # matching module only; Stage 05 cache untouched
+  layers:
+    layer2: [28, 28, 512]
+    layer3: [14, 14, 1024]
+    layer4: [7, 7, 2048]
+  imagenet_mean: [0.485, 0.456, 0.406]
+  imagenet_std: [0.229, 0.224, 0.225]
+
+observation:
+  current_crop: heading_crop
+  current_half_m: 50.0
+  goal_crop: north_crop
+  goal_half_m: 48.0
+  out_px: 224
+  goal_scale_px: 214         # 96 m at the 100 m / 224 px scale, centre-padded
+
+matching:
+  rgb:
+    method: TM_CCOEFF_NORMED
+    template_px: 96
+  layer3:
+    block: 3                 # 3x3 cells around the goal centre
+    similarity: cosine
+  layer2:
+    block: 5
+    similarity: cosine
+  confidence:
+    tau:
+      rgb_ncc: 0.55          # calibrated on Train-Seen (09a_calibration.json)
+      layer3: 0.80
+      layer2: 0.875
+    margin_tau:
+      rgb_ncc: 0.06
+      layer3: 0.02
+      layer2: 0.0
+    status: frozen-on-train-seen
+
+calibration:
+  source: train_seen teacher states (independent subset)
+  n_states: 2000
+  rule: maximise F1 of "localised within 10 m" on the calibration subset
+  locked: true
+
+dynamic_belief:
+  prior_temperature: null    # softmax temperature over candidate similarities (calibrated)
+  eta: null                  # evidence power per update (calibrated)
+  evidence_discount: null    # discount for temporally correlated frames
+  variance_m: null           # visual localisation variance used in the likelihood
+  min_confidence: null       # below tau -> no update
+  observable_radius_m: 50.0  # no negative evidence outside the current view
+
+control:                     # identical to Stage 08 Top-1 geometry
+  stop_radius_m: 20.0
+  align_deg: 25.0
+  forward_m: 5.0
+  turn_deg: 30.0
+  step_cap: 200
+  candidate_selection: MAP

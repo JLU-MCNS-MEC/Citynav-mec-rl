@@ -1,0 +1,33 @@
+{
+  "source": "teacher_train_seen (independent of validation)",
+  "n_states": 800,
+  "tau": {
+    "rgb_ncc": 0.5500000000000003,
+    "layer3": 0.8000000000000005,
+    "layer2": 0.8750000000000004
+  },
+  "margin_tau": {
+    "rgb_ncc": 0.06,
+    "layer3": 0.02,
+    "layer2": 0.0
+  },
+  "f1": {
+    "rgb_ncc": 0.9022265246853823,
+    "layer3": 0.9055793991416309,
+    "layer2": 0.9595894804361771
+  },
+  "grid": {
+    "rgb_ncc": {
+      "positive_rate": 0.6825,
+      "neg_goal_false_accept": 0.0175
+    },
+    "layer3": {
+      "positive_rate": 0.85375,
+      "neg_goal_false_accept": 0.02375
+    },
+    "layer2": {
+      "positive_rate": 0.98125,
+      "neg_goal_false_accept": 0.02
+    }
+  }
+}
