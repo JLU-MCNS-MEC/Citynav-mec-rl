@@ -2,12 +2,12 @@
 
 - 分支：`exp/citynav-mec-fixed50m-topdown`
 - 起点：`ebe557f`（旧版 `archive/citynav-token-v1-20261029`）
-- 最近更新：2026-10-30 08:20（实验 03B 完成、实验 04 修正完成，见
-  `00_archive_and_token_cleanup/RECOVERY_2026-10-30.md`）
+- 最近更新：2026-10-30 11:05（实验 05 正式训练完成：Transformer-M / seed 42 / 30 epochs）
+- 训练种子：**只训练 seed 42**，seed 43 不再执行
 - 任务定义：UAV 固定离地 50 m；输入为俯视局部 RGB、目标参考图像、16 步因果历史、
   全局俯视地图/地标候选与目标信念；**无语言输入、无 BERT、无网络状态**；
   动作四类（STOP / Forward 5 m / TurnLeft 30° / TurnRight 30°）；只训练 Transformer-M
-  （seed 42/43）；不使用类别加权。评测器可用真实目标坐标算 SR，但不把它输入模型。
+  （seed 42）；不使用类别加权。评测器可用真实目标坐标算 SR，但不把它输入模型。
 - `test_unseen` 保持封存，任何阶段不读取。
 
 ## 阶段状态
@@ -20,7 +20,7 @@
 | 03 | 固定 50 m 与四动作教师 | **完成**：19,105/22,002 可重放，8 项契约全过 | `03_fixed50m_four_action_teacher/REPORT.md` | `0664591` |
 | 04 | 视觉目标与全局地图输入管线 | **完成（修正）**：空间特征 7×7×2048、高程有效掩码、Recall@1/5/10 已修正；48 m 与 24 m 网格双划分全量验证 | `04_visual_goal_global_map_pipeline/REPORT.md`（旧版）+ `ADDENDUM_2026-10-30.md` | `722b62b`、`f058b82` |
 | 03B | 直接目标导向教师 | **完成**：22,002/22,002 成功；修复 15°+30° 极限环（转向占比 32.3%→5.9%）；11 项契约通过 | `03b_target_directed_teacher/REPORT.md` | `0f79b22` |
-| 05 | Transformer-M 训练与小规模诊断 | **未开始**；2026-10-29 23:06 之前的初步产物**已作废**，见 `05_transformer_m_training/INVALID_PRELIMINARY.md` | — | — |
+| 05 | Transformer-M 正式训练（seed 42） | **完成**：30/30 epoch，79.97 min；best Val-Seen Macro-F1 **0.784**（epoch 1）；全量诊断 Val-Seen acc 0.934 / Macro-F1 0.762 / STOP 0.485、Val-Unseen acc 0.936 / Macro-F1 0.747；**STOP 是瓶颈**。09:02 的 candidates48 运行已判 INVALID | `05_transformer_m_training/REPORT.md` | 待填 |
 | 06 | 闭环 SR 验证 | **未开始**；2026-10-29 的 3 条初步 episode **已作废**，见 `06_closed_loop_success_rate/INVALID_PRELIMINARY.md` | — | — |
 | 07 | 采样/覆盖未解决问题 | **OPEN**：已建立归档文件并写入 03B 的覆盖数据，问题未解决 | `07_sampling_coverage_open_issue/OPEN_ISSUE.md` | 待填 |
 
@@ -55,6 +55,17 @@
   步数 55.3→39.8，航程开销 2.4%。旧产物完整保留在 `results_naive_15deg/`（服务器）。
 - 旧 Token 数据集共 13.49 GB（核心 10.63 GB + 审计派生 2.91 GB），已于 21:25 删除，残留 0。
 - `mec-v8.2` 无本地 Token 数据集；全盘无 `token_dataset_*` 目录。
+- 实验 05（seed 42，30 epochs，candidates24，普通 CE）：
+  - 训练 22,002 条 / 876,398 状态；30/30 epoch，墙钟 79.97 min，平均 159 s/epoch。
+  - 训练损失 0.193→0.100 单调下降，梯度范数 0.51–0.67（裁剪阈值 1.0 从未触发），无 NaN/OOM。
+  - best（按 Val-Seen Macro-F1）为 **epoch 1**：val acc 0.9426、Macro-F1 0.784、
+    STOP 0.617、转向 0.742/0.671。按 acc 选会选 epoch 5（0.9461），但其 STOP 只有 0.35。
+  - 全量教师强制诊断（best.pt）：Val-Seen acc 0.934 / Macro-F1 0.762 / STOP 0.485；
+    Val-Unseen acc 0.936 / Macro-F1 0.747 → 跨地图泛化与已见地图基本一致。
+  - 混淆结构：STOP 有 47–48% 被判成 Forward，同时 34/1747 个 Forward 被误判 Stop；
+    转向错误几乎全部是“转成 Forward”，左右转之间混淆仅 0.01。
+  - 归一化改为单一路径（uint8→GPU），缓存与训练特征 `max_abs_diff = 0`；
+    缓存为 episode 级 npz + journal（大小/SHA-256），全量校验 27,326 条 0 bad。
 
 ## 已核实的历史差异（不是数据错误）
 
@@ -65,8 +76,13 @@
 
 ## 未解决问题
 
-- 实验 05 的输入契约已具备（04 修正报告 + 03B 标签），但训练尚未开始；
-  类别极不平衡（Forward 91.6% / Turn 5.9% / Stop 2.5%）且协议禁止加权，需靠采样与逐类诊断处理。
+- **STOP 是实验 05 暴露的主要瓶颈**：类别极不平衡（Forward 91.6% / Turn 5.9% / Stop 2.5%）
+  且协议禁止加权，普通 CE 下 STOP 召回在 epoch 间 0.20–0.83 震荡、后段稳定在 0.46 左右，
+  全量诊断 0.485。转向 F1 0.78–0.83 可用。Stage 06 闭环必须重点测 STOP；
+  在此之前不得用类别加权“修”这个结果。
+- 实验 05 的 best checkpoint 出现在 epoch 1、val acc 在 epoch 5 见顶，之后 25 个 epoch
+  主要是过拟合（末 epoch train 0.963 / val 0.937）；这是固定 30 epoch 协议的产物，
+  没有早停。
 - `nodata` 区域在 03B 与 04 中都按“无数据、可飞/置 0”处理；若 nodata 中藏有未测绘建筑，
   两处会同时忽略它。这是一个共同假设，尚未被独立数据验证。
 - 03B 的 A* 分支只在 1 条任务上生效，避障能力没有被充分检验。

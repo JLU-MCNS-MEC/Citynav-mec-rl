@@ -40,18 +40,21 @@ def main() -> int:
         return 1
 
     rows = []
+    series: dict[str, list[dict]] = {name: [] for name in histories}
     for name, hist in histories.items():
         for h in hist:
-            rows.append({"run": name, "epoch": h["epoch"], "train_loss": h["train_loss"],
-                         "train_acc": h["train_acc"], "train_subset_acc": h["train_subset"]["accuracy"],
-                         "train_subset_macro_f1": h["train_subset"]["macro_f1"],
-                         "val_acc": h["val_seen"]["accuracy"],
-                         "val_macro_f1": h["val_seen"]["macro_f1"],
-                         "val_stop_recall": h["val_seen"]["per_class"]["Stop"]["recall"],
-                         "val_turn_recall": 0.5 * (h["val_seen"]["per_class"]["TurnLeft"]["recall"]
-                                                   + h["val_seen"]["per_class"]["TurnRight"]["recall"]),
-                         "grad_norm": h.get("grad_norm"), "lr": h["lr"],
-                         "seconds": h["seconds"]})
+            flat = {"run": name, "epoch": h["epoch"], "train_loss": h["train_loss"],
+                    "train_acc": h["train_acc"], "train_subset_acc": h["train_subset"]["accuracy"],
+                    "train_subset_macro_f1": h["train_subset"]["macro_f1"],
+                    "val_acc": h["val_seen"]["accuracy"],
+                    "val_macro_f1": h["val_seen"]["macro_f1"],
+                    "val_stop_recall": h["val_seen"]["per_class"]["Stop"]["recall"],
+                    "val_turn_recall": 0.5 * (h["val_seen"]["per_class"]["TurnLeft"]["recall"]
+                                              + h["val_seen"]["per_class"]["TurnRight"]["recall"]),
+                    "grad_norm": h.get("grad_norm"), "lr": h["lr"],
+                    "seconds": h["seconds"]}
+            series[name].append(flat)
+            rows.append(flat)
     with (RESULTS / f"training_curves_{args.tag}.csv").open("w", newline="", encoding="utf-8") as fh:
         writer = csv.DictWriter(fh, fieldnames=list(rows[0]))
         writer.writeheader()
@@ -63,16 +66,9 @@ def main() -> int:
               ("val_turn_recall", "val-seen turn recall (L/R mean)")]
     fig, axes = plt.subplots(2, 3, figsize=(13, 6.5))
     for ax, (key, title) in zip(axes.ravel(), panels):
-        for name in histories:
-            xs = [h["epoch"] for h in histories[name]]
-            ys = []
-            for h in histories[name]:
-                if key == "val_turn_recall":
-                    ys.append(0.5 * (h["val_seen"]["per_class"]["TurnLeft"]["recall"]
-                                     + h["val_seen"]["per_class"]["TurnRight"]["recall"]))
-                else:
-                    ys.append(h[key])
-            ax.plot(xs, ys, label=name, lw=1.4)
+        for name in series:
+            ax.plot([h["epoch"] for h in series[name]],
+                    [h[key] for h in series[name]], label=name, lw=1.4)
         ax.set_title(title, fontsize=9)
         ax.set_xlabel("epoch", fontsize=8)
         ax.grid(alpha=0.3)
