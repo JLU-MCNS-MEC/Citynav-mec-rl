@@ -84,7 +84,7 @@ features_v2（val_seen 2,498 条 / val_unseen 2,826 条）由新服务器用冻�
 
 ## 6. 旧服务器清理
 
-按用户最终授权：仅删除 mec-v8.2 本地目录与主线分支（visual-encoder-ablation）工作区文件（保留 .git 以维持 fixed50m worktree 可用）；其余数据按用户要求保留。删除清单见 `OLD_SERVER_DELETE_MANIFEST.csv`（脱敏版见 MIGRATION_MANIFEST_SUMMARY.md）。
+用户最终决定：**不删除任何数据，M6 清理阶段跳过**。旧服务器（含 mec-v8.2、主线 checkout、fixed50m 工作区、DATA/PLY 等全部目录与运行环境）作为完整备份保留，会话与进程不动。此前生成的删除清单仅作记录，未执行。
 
 ## 7. 遗留事项
 
