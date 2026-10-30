@@ -1,0 +1,25 @@
+{
+  "n_images": 126,
+  "sources": [
+    "birmingham_block_1",
+    "birmingham_block_1",
+    "birmingham_block_1",
+    "birmingham_block_1",
+    "birmingham_block_1",
+    "birmingham_block_1"
+  ],
+  "candidate_library": "/home/20261024_1/Workspace/Citynav-mec-rl-fixed50m/experiments/04_visual_goal_global_map_pipeline/cache_v2/candidates24",
+  "candidate_version": "candidates24",
+  "encoder": "frozen torchvision resnet50 IMAGENET1K_V2 (layer4, fp16)",
+  "production": "uint8 HWC -> GPU -> float32 / 255 -> ImageNet mean-std",
+  "cache_vs_train_max_abs_diff": 0.0,
+  "cpu_reference_max_abs_diff": 7.152557373046875e-07,
+  "cpu_reference_ulp": 3.0,
+  "cpu_reference_fp16_mismatch_elements": 0,
+  "cpu_reference_feature_max_abs_diff": 0.125,
+  "cross_batch_max_abs_diff": 0.09375,
+  "tolerance": {
+    "production": 0.0
+  },
+  "pass": true
+}

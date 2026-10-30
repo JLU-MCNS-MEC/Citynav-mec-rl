@@ -326,15 +326,22 @@ def target_embedding(raster: MapRaster, target_xy: np.ndarray, encoder: FrozenRe
 
 
 def belief_features(library: CandidateLibrary, target_emb: np.ndarray, pose_xy: np.ndarray,
-                    yaw: float, topk: int = 5) -> tuple[np.ndarray, dict]:
-    """Visual match + relative geometry; never uses the true target coordinates."""
+                    yaw: float, topk: int = 5,
+                    sims: np.ndarray | None = None) -> tuple[np.ndarray, dict]:
+    """Visual match + relative geometry; never uses the true target coordinates.
+
+    ``sims`` optionally supplies the already computed ``library.embeddings @
+    target_emb`` for this episode; it must be the same array, and passing it only
+    avoids recomputing a per-episode constant once per decision state.
+    """
     if len(library.positions) == 0:
         return np.zeros(12, np.float32), {
             "top_indices": np.zeros(0, int), "sims": np.zeros(0),
             "distances": np.zeros(0), "positions": np.zeros((0, 2)),
             "order": np.zeros(0, int), "rank_distances": np.zeros(0),
             "top5_positions": np.zeros((0, 2)), "top5_weights": np.zeros(0)}
-    sims = library.embeddings @ target_emb
+    if sims is None:
+        sims = library.embeddings @ target_emb
     order = np.argsort(-sims)
     # the 12-d belief is always defined on the top-5; `topk` only widens the
     # ranking information returned for Recall@K, it must not change the feature
