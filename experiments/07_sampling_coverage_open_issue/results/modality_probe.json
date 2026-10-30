@@ -1,0 +1,33 @@
+{
+  "checkpoint": "/home/20261024_1/Workspace/Citynav-mec-rl-fixed50m/experiments/05_transformer_m_training/runs_v2/seed42/best.pt",
+  "split": "val_seen",
+  "states": 1188,
+  "note": "inference-only perturbation; not a retrained ablation",
+  "conditions": {
+    "none": {
+      "accuracy": 0.9419191919191919,
+      "macro_f1": 0.7862340486618896,
+      "stop_recall": 0.6578947368421053
+    },
+    "belief": {
+      "accuracy": 0.13215488215488216,
+      "macro_f1": 0.1775260070379829,
+      "stop_recall": 1.0
+    },
+    "history": {
+      "accuracy": 0.6952861952861953,
+      "macro_f1": 0.5066566449908316,
+      "stop_recall": 0.7105263157894737
+    },
+    "target": {
+      "accuracy": 0.9427609427609428,
+      "macro_f1": 0.78806592516241,
+      "stop_recall": 0.6578947368421053
+    },
+    "current": {
+      "accuracy": 0.9444444444444444,
+      "macro_f1": 0.777633462953769,
+      "stop_recall": 0.5
+    }
+  }
+}

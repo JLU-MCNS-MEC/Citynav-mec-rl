@@ -1,5 +1,17 @@
 # 实验 07：采样与覆盖率未解决问题（OPEN）
 
+> **状态更新（2026-10-30，Stage 07 审计完成后追加；以下原文保留不改）**
+>
+> - 当前正式配置：**candidates24**、**seed 42**；Stage 05 训练完成（best.pt，Val-Seen Macro-F1 0.7844），
+>   Stage 06 闭环完成（5,324 条，SR 23.7%）。
+> - 本阶段完成了**诊断审计**，没有重新训练、没有解决采样/覆盖问题本身。
+>   结论见 [`AUDIT_REPORT.md`](AUDIT_REPORT.md) 与五个子报告：
+>   `DATA_LINEAGE.md`、`TRAINING_SAMPLING_AUDIT.md`、`FEATURE_LEAKAGE_AUDIT.md`、
+>   `CLOSED_LOOP_FAILURE_AUDIT.md`、`LITERATURE_PROTOCOL_COMPARISON.md`。
+> - 本文件状态：**OPEN — DIAGNOSIS COMPLETED**。
+> - 下文中与最新证据不一致的旧描述（例如“48 m 网格”“实验 06 结果待补”），以审计报告和
+>   `experiments/STATUS.md` 为准。
+
 - 状态：**OPEN**（未解决；在任何充分实验证据之前，不得默认“数据覆盖问题已经解决”）
 - 建立日期：2026-10-30
 - 依赖证据：实验 03B（直接目标导向教师，22,002 条 Train-Seen）、实验 04（候选库与信念）、

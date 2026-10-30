@@ -1,0 +1,16 @@
+scope,key,n,sr,oob_rate,turn_rate,extra
+length_group,short,1690,0.422485,0.207692,0.078720,start_dist=90.8
+length_group,medium,1813,0.198014,0.530061,0.028087,start_dist=194.4
+length_group,long,1821,0.102691,0.705107,0.010142,start_dist=314.7
+start_distance,0-20,47,0.851064,0.085106,,
+start_distance,20-50,202,0.579208,0.069307,,
+start_distance,50-100,695,0.453237,0.142446,,
+start_distance,100-200,1763,0.245604,0.424844,,
+start_distance,>200,2617,0.135652,0.661062,,
+target_validity,<0.25,16,0.000000,,0.250000,osr=0.062500
+target_validity,0.25-0.5,202,0.000000,,0.227723,osr=0.178218
+target_validity,0.5-0.75,505,0.108911,,0.348515,osr=0.299010
+target_validity,>=0.75,4601,0.261900,,0.543577,osr=0.302108
+target_validity,==0,0,0.000000,,0.000000,osr=0.000000
+split,val_seen,2498,0.249400,,,steps=47.4;start=196.4
+split,val_unseen,2826,0.225407,,,steps=52.2;start=208.1

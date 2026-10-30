@@ -34,7 +34,7 @@
 | 04 | `04_visual_goal_global_map_pipeline/` | 视觉目标 + 全局地图候选 + 目标信念输入管线 | 01 | **完成（修正）** | 空间特征 7×7×2048、高程掩码、Recall@K 已修正；`ADDENDUM_2026-10-30.md` |
 | 05 | `05_transformer_m_training/` | Transformer-M 正式训练（seed 42，30 epochs） | 03B、04 | **完成** | best Macro-F1 0.784（epoch 1）；Val-Seen STOP 0.485；见 `REPORT.md` |
 | 06 | `06_closed_loop_success_rate/` | 闭环 SR 验证（Val-Seen / Val-Unseen） | 05 | **完成** | 5,324 条，SR 23.7%，OSR 29.6%；见 `REPORT.md` |
-| 07 | `07_sampling_coverage_open_issue/` | 采样与覆盖率未解决问题（保持 OPEN） | 03B–06 | **OPEN** | 问题未解决，见 `OPEN_ISSUE.md` |
+| 07 | `07_sampling_coverage_open_issue/` | 采样与覆盖率未解决问题（保持 OPEN，已完成诊断） | 03B–06 | **OPEN — DIAGNOSIS COMPLETED** | 见 `AUDIT_REPORT.md`；主因：协变量偏移 + argmax 坍缩 |
 
 ## 依赖关系
 

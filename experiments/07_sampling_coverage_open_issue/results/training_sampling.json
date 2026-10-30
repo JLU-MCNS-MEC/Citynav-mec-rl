@@ -1,0 +1,480 @@
+{
+  "split": "train_seen",
+  "epochs": 30,
+  "k_per_episode": 8,
+  "batch": 128,
+  "seed": 42,
+  "supervisor_pool": {
+    "episodes": 22002,
+    "states": 876398,
+    "actions": {
+      "Stop": 22002,
+      "Forward": 802633,
+      "TurnLeft": 25890,
+      "TurnRight": 25873
+    }
+  },
+  "draws": {
+    "total": 5193210,
+    "per_epoch": 173107,
+    "optimizer_steps": 40590,
+    "steps_per_epoch": 1353,
+    "unique_states_covered": 866106,
+    "coverage": 0.9882564770800482,
+    "mean_draws_per_covered_state": 5.996044364084765,
+    "max_draws_per_state": 30,
+    "draws_per_pool_state": 5.925629679666088
+  },
+  "stop": {
+    "pool_states": 22002,
+    "draws": 189146,
+    "unique_covered": 21867,
+    "coverage": 0.9938641941641669,
+    "p_sampled_per_epoch_mean": 0.2862248086425344,
+    "p_sampled_at_least_once_30ep_mean": 0.9932027600295994,
+    "p_sampled_at_least_once_30ep_min": 0.8579971001927909,
+    "p_sampled_at_least_once_30ep_p10": 0.9765970755661133
+  },
+  "by_action": {
+    "Stop": {
+      "pool_states": 22002,
+      "draws": 189146,
+      "covered_states": 21867,
+      "coverage": 0.9938641941641669,
+      "draw_share": 0.03642178922092502
+    },
+    "Forward": {
+      "pool_states": 802633,
+      "draws": 4554804,
+      "covered_states": 792805,
+      "coverage": 0.9877553003676649,
+      "draw_share": 0.8770690959926519
+    },
+    "TurnLeft": {
+      "pool_states": 25890,
+      "draws": 222620,
+      "covered_states": 25727,
+      "coverage": 0.993704132869834,
+      "draw_share": 0.042867513541720824
+    },
+    "TurnRight": {
+      "pool_states": 25873,
+      "draws": 226640,
+      "covered_states": 25707,
+      "coverage": 0.993584045143586,
+      "draw_share": 0.04364160124470222
+    }
+  },
+  "by_group": {
+    "short": {
+      "pool_states": 136578,
+      "draws": 1715610,
+      "covered_states": 136578,
+      "coverage": 1.0,
+      "draw_share": 0.33035636918206657
+    },
+    "medium": {
+      "pool_states": 293249,
+      "draws": 1791360,
+      "covered_states": 292732,
+      "coverage": 0.9982369931355265,
+      "draw_share": 0.3449427232867533
+    },
+    "long": {
+      "pool_states": 446571,
+      "draws": 1686240,
+      "covered_states": 436796,
+      "coverage": 0.9781109834718331,
+      "draw_share": 0.32470090753118014
+    }
+  },
+  "by_map": {
+    "birmingham_block_1": {
+      "pool_states": 130466,
+      "draws": 685230,
+      "covered_states": 128565,
+      "coverage": 0.9854291539558199,
+      "draw_share": 0.13194729271491043
+    },
+    "birmingham_block_10": {
+      "pool_states": 10537,
+      "draws": 71460,
+      "covered_states": 10457,
+      "coverage": 0.992407706178229,
+      "draw_share": 0.013760275436579688
+    },
+    "birmingham_block_11": {
+      "pool_states": 165,
+      "draws": 3120,
+      "covered_states": 165,
+      "coverage": 1.0,
+      "draw_share": 0.0006007844858960065
+    },
+    "birmingham_block_12": {
+      "pool_states": 22948,
+      "draws": 178230,
+      "covered_states": 22834,
+      "coverage": 0.9950322468188949,
+      "draw_share": 0.03431981375680937
+    },
+    "birmingham_block_13": {
+      "pool_states": 205,
+      "draws": 5280,
+      "covered_states": 205,
+      "coverage": 1.0,
+      "draw_share": 0.001016712206900934
+    },
+    "birmingham_block_3": {
+      "pool_states": 62404,
+      "draws": 367350,
+      "covered_states": 61741,
+      "coverage": 0.9893756810460868,
+      "draw_share": 0.07073659644035192
+    },
+    "birmingham_block_4": {
+      "pool_states": 38835,
+      "draws": 212010,
+      "covered_states": 38329,
+      "coverage": 0.9869705162868546,
+      "draw_share": 0.04082446117141421
+    },
+    "birmingham_block_7": {
+      "pool_states": 9280,
+      "draws": 81990,
+      "covered_states": 9264,
+      "coverage": 0.9982758620689656,
+      "draw_share": 0.01578792307647871
+    },
+    "birmingham_block_9": {
+      "pool_states": 42342,
+      "draws": 216960,
+      "covered_states": 41685,
+      "coverage": 0.9844834915686552,
+      "draw_share": 0.04177762886538384
+    },
+    "cambridge_block_12": {
+      "pool_states": 54492,
+      "draws": 332910,
+      "covered_states": 53998,
+      "coverage": 0.9909344490934449,
+      "draw_share": 0.06410485999988447
+    },
+    "cambridge_block_13": {
+      "pool_states": 71896,
+      "draws": 420450,
+      "covered_states": 70990,
+      "coverage": 0.9873984644486481,
+      "draw_share": 0.08096148624838972
+    },
+    "cambridge_block_17": {
+      "pool_states": 11087,
+      "draws": 86820,
+      "covered_states": 11023,
+      "coverage": 0.9942274736177505,
+      "draw_share": 0.01671798367483695
+    },
+    "cambridge_block_18": {
+      "pool_states": 13802,
+      "draws": 122160,
+      "covered_states": 13784,
+      "coverage": 0.9986958411824374,
+      "draw_share": 0.023523023332389793
+    },
+    "cambridge_block_19": {
+      "pool_states": 18919,
+      "draws": 91560,
+      "covered_states": 18576,
+      "coverage": 0.981870077699667,
+      "draw_share": 0.017630713951486653
+    },
+    "cambridge_block_20": {
+      "pool_states": 77922,
+      "draws": 445920,
+      "covered_states": 77054,
+      "coverage": 0.9888606555273222,
+      "draw_share": 0.08586596729190617
+    },
+    "cambridge_block_21": {
+      "pool_states": 74861,
+      "draws": 395730,
+      "covered_states": 73747,
+      "coverage": 0.9851190873752689,
+      "draw_share": 0.07620142455244444
+    },
+    "cambridge_block_23": {
+      "pool_states": 5567,
+      "draws": 65340,
+      "covered_states": 5563,
+      "coverage": 0.9992814801508891,
+      "draw_share": 0.01258181356039906
+    },
+    "cambridge_block_25": {
+      "pool_states": 4401,
+      "draws": 36840,
+      "covered_states": 4391,
+      "coverage": 0.9977277891388321,
+      "draw_share": 0.007093878352695154
+    },
+    "cambridge_block_28": {
+      "pool_states": 54306,
+      "draws": 342750,
+      "covered_states": 53811,
+      "coverage": 0.990884985084521,
+      "draw_share": 0.06599964184001803
+    },
+    "cambridge_block_33": {
+      "pool_states": 28231,
+      "draws": 207780,
+      "covered_states": 28039,
+      "coverage": 0.9931989656760299,
+      "draw_share": 0.040009936051112895
+    },
+    "cambridge_block_4": {
+      "pool_states": 7335,
+      "draws": 68880,
+      "covered_states": 7331,
+      "coverage": 0.9994546693933197,
+      "draw_share": 0.013263472880934914
+    },
+    "cambridge_block_6": {
+      "pool_states": 13420,
+      "draws": 66810,
+      "covered_states": 13182,
+      "coverage": 0.9822652757078987,
+      "draw_share": 0.012864875481638524
+    },
+    "cambridge_block_7": {
+      "pool_states": 55846,
+      "draws": 320460,
+      "covered_states": 55175,
+      "coverage": 0.9879848153851664,
+      "draw_share": 0.06170749883020329
+    },
+    "cambridge_block_9": {
+      "pool_states": 67131,
+      "draws": 367170,
+      "covered_states": 66197,
+      "coverage": 0.9860869047087039,
+      "draw_share": 0.07070193579693484
+    }
+  },
+  "by_distance": {
+    "0-20": {
+      "pool_states": 22002,
+      "draws": 189146,
+      "covered_states": 21867,
+      "coverage": 0.9938641941641669,
+      "draw_share": 0.03642178922092502
+    },
+    "20-50": {
+      "pool_states": 143631,
+      "draws": 1189749,
+      "covered_states": 142611,
+      "coverage": 0.9928984689934625,
+      "draw_share": 0.2290970324712461
+    },
+    "50-100": {
+      "pool_states": 212333,
+      "draws": 1472416,
+      "covered_states": 210797,
+      "coverage": 0.9927660796955725,
+      "draw_share": 0.2835271440977738
+    },
+    "100-200": {
+      "pool_states": 308129,
+      "draws": 1618843,
+      "covered_states": 304933,
+      "coverage": 0.9896277208571734,
+      "draw_share": 0.31172299984017593
+    },
+    ">200": {
+      "pool_states": 190303,
+      "draws": 723056,
+      "covered_states": 185898,
+      "coverage": 0.9768527033204941,
+      "draw_share": 0.13923103436987913
+    }
+  },
+  "per_epoch": [
+    {
+      "epoch": 0,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 1,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 2,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 3,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 4,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 5,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 6,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 7,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 8,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 9,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 10,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 11,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 12,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 13,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 14,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 15,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 16,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 17,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 18,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 19,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 20,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 21,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 22,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 23,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 24,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 25,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 26,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 27,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 28,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    },
+    {
+      "epoch": 29,
+      "draws": 173107,
+      "batches": 1353,
+      "unique_states": 173107
+    }
+  ]
+}
