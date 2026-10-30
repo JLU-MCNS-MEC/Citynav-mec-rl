@@ -20,7 +20,9 @@
 |---|---:|---|---|
 | val_seen | 2,498 | 数值一致（最大绝对差 3.05e-5） | ✅ |
 | val_unseen | 2,826 | 数值一致（最大绝对差 3.05e-5） | ✅ |
-| train_seen | 22,002 | 后台重生成 | ⏳→✅ |
+| train_seen | 22,002 | 重建完成（同管线；val 分片已与源数值比对一致 3.05e-5） | ✅ |
+
+normalization_check（verify_normalization.py）：通过（生产路径 cache_vs_train 差异 = 0.0）
 
 ## 已知事项
 
