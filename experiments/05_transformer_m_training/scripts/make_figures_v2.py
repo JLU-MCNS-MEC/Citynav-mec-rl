@@ -28,7 +28,7 @@ def load_history(run: str) -> list[dict]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--runs", nargs="+", default=["seed42", "seed43"])
+    parser.add_argument("--runs", nargs="+", default=["seed42"])
     parser.add_argument("--tag", default="formal")
     args = parser.parse_args()
     FIG.mkdir(exist_ok=True)
@@ -50,7 +50,8 @@ def main() -> int:
                          "val_stop_recall": h["val_seen"]["per_class"]["Stop"]["recall"],
                          "val_turn_recall": 0.5 * (h["val_seen"]["per_class"]["TurnLeft"]["recall"]
                                                    + h["val_seen"]["per_class"]["TurnRight"]["recall"]),
-                         "lr": h["lr"], "seconds": h["seconds"]})
+                         "grad_norm": h.get("grad_norm"), "lr": h["lr"],
+                         "seconds": h["seconds"]})
     with (RESULTS / f"training_curves_{args.tag}.csv").open("w", newline="", encoding="utf-8") as fh:
         writer = csv.DictWriter(fh, fieldnames=list(rows[0]))
         writer.writeheader()

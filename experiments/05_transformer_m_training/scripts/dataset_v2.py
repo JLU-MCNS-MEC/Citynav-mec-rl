@@ -402,7 +402,7 @@ class EpisodeStore:
         if hit is not None:
             self._cache.move_to_end(e)
             return hit
-        path = self.root / self.split / item["file"]
+        path = self.root / item["file"]          # journal paths are cache-root relative
         with np.load(path) as z:
             meta = json.loads(str(z["meta"]))
             if meta["key"] != item["key"] or meta["candidate_library"] != str(CANDS):

@@ -240,7 +240,9 @@ def main() -> int:
     log_path = run_dir / "history.jsonl"
     ckpt_path = run_dir / "checkpoint.pt"
     if args.resume and ckpt_path.exists():
-        ckpt = torch.load(ckpt_path, map_location=device, weights_only=False)
+        # load on the CPU: a CUDA map_location would also move the RNG state
+        # ByteTensors and torch.set_rng_state would reject them
+        ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=False)
         saved = ckpt.get("cache", {})
         if saved.get("candidate_library") != cache_id["candidate_library"] or \
                 saved.get("cache_version") != cache_id["cache_version"] or \
