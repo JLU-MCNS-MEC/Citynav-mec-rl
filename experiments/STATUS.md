@@ -23,7 +23,7 @@
 | 05 | Transformer-M 正式训练（seed 42） | **完成**：30/30 epoch，79.97 min；best Val-Seen Macro-F1 **0.784**（epoch 1）；全量诊断 Val-Seen acc 0.934 / Macro-F1 0.762 / STOP 0.485、Val-Unseen acc 0.936 / Macro-F1 0.747。教师强制视角下 **STOP 是瓶颈**——该判断已被 06 闭环修正为“主瓶颈是到达目标”，见 06 行。09:02 的 candidates48 运行已判 INVALID | `05_transformer_m_training/REPORT.md` | `8b35c3b` |
 | 06 | 闭环 SR 验证 | **完成**：5,324 条（Seen 2,498 + Unseen 2,826），**SR 23.7%** [22.5, 24.8]；Val-Seen 24.9% / Val-Unseen 22.5%；OSR 29.6%，越界 43.3%、过早停 27.0%；进入 20 m 后条件成功率 79.9%；cohort A/B 差 ≤1.1 pp；4 worker 共 18.3 分钟；已生成 18 条真实闭环回放视频（12 成功 + 6 失败）与 149 s 成功汇总片。旧 3 条初步结果仍作废。Test-Unseen 追加评测：5,311 条，SR 25.0%（附录） | `06_closed_loop_success_rate/REPORT.md`、`TEST_UNSEEN_ADDENDUM.md` | `c44ffbf`、`d499e97`、`186eb89` |
 | 07 | 采样/覆盖未解决问题 | **OPEN — DIAGNOSIS COMPLETED**：已诊断、未解决。主因是教师/闭环协变量偏移（目标在身后 0.65% vs 20.6%）、argmax 坍缩（越界前 5 步目标 128.7°、转向率 0.04%），以及 12 维信念近似目标偏移真值（方向误差中位 4.4°） | `07_sampling_coverage_open_issue/AUDIT_REPORT.md`（含 5 个子报告） | `08abbe0` |
-| 08 | 信念几何导航基线 | **完成**：5,324 条配对任务。Top-1 SR **44.9%**、Top-5 **40.2%**，Transformer-M 23.7%；配对 +21.2 pp [19.7, 22.6]，McNemar p≈1e-167；越界 0.3% vs T 48.8%；Top-1 过早 STOP 53.7%（候选距离低估约 10 m） | `08_belief_only_geometric_navigation/REPORT.md` | 待填 |
+| 08 | 信念几何导航基线 | **完成**：5,324 条配对任务。Top-1 SR **44.9%**、Top-5 **40.2%**，Transformer-M 23.7%；配对 +21.2 pp [19.7, 22.6]，McNemar p≈1e-167；越界 0.3% vs T 48.8%；Top-1 过早 STOP 53.7%（候选距离低估约 10 m） | `08_belief_only_geometric_navigation/REPORT.md` | `4ee6f2a` |
 
 ## 已确认事实
 
