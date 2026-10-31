@@ -2,7 +2,7 @@
 
 - 分支：`exp/citynav-mec-fixed50m-topdown`
 - 起点：`ebe557f`（旧版 `archive/citynav-token-v1-20261029`）
-- 最近更新：2026-10-31 10:30（实验 09C 完成：连续目标定位，C1 SR 64.7%；硬门控 C2 61.2%）
+- 最近更新：2026-10-31 14:10（Stage 10A 完成：PQ/CA 对比 C1 为负结果，推荐 C1 进入 10B）
 - 训练种子：**只训练 seed 42**，seed 43 不再执行
 - 任务定义：UAV 固定离地 50 m；输入为俯视局部 RGB、目标参考图像、16 步因果历史、
   全局俯视地图/地标候选与目标信念；**无语言输入、无 BERT、无网络状态**；
@@ -26,6 +26,7 @@
 | 08 | 信念几何导航基线 | **完成**：5,324 条配对任务。Top-1 SR **44.9%**、Top-5 **40.2%**，Transformer-M 23.7%；配对 +21.2 pp [19.7, 22.6]，McNemar p≈1e-167；越界 0.3% vs T 48.8%；Top-1 过早 STOP 53.7%（候选距离低估约 10 m） | `08_belief_only_geometric_navigation/REPORT.md` | `4ee6f2a` |
 | 09 | 实时视觉匹配与动态信念 | **完成**：09A 匹配 58,891 状态（ResNet layer2 中位 3.6 m、P@10 m 0.878）；09B 动态闭环 5,324 条 **SR 47.6%** [46.3, 48.9]，比 Static Top-1 +2.74 pp （McNemar p=2e-5）、比 Transformer-M +23.9 pp；93% 更新被 24 m 候选网格吸收，10.7% 的置信匹配误差 >20 m | `09_online_visual_goal_matching/REPORT.md`（含 09A/09B） | `237a55b`、`9312f45` |
 | 09C | 连续定位与可观测性门控 | **完成**：5,324 条。**Continuous C1 SR 64.7%** [63.4, 66.0]，比 Dynamic 24 m（47.6%）+17.11 pp、比 Static Top-1 +19.85 pp；连续估计中位 **3.21 m**、P@5 m 84.1%（亚网格偏移保留）。C2 加入硬可观测门控后 **61.2%**，比 C1 **低 3.49 pp**：视野外误接受 1.04%→0.86%，但拒绝了 13.4% 的正确更新 | `09_online_visual_goal_matching/09C_continuous_localization/REPORT.md` | `a1296e8` |
+| 10A | 目标查询视觉匹配对比（PQ / CA vs C1） | **完成（负结果）**：58,891 状态离线评测，C1 median 3.27 m / P@10 m 87.8% ≫ PQ 26.7 m / 12.2% > CA 33.0 m / 6.0%；CA tau=0.09 致视野外误接受 37.6%。**推荐 C1 进入 10B**（10B/10C 后续进行，10D 训练需用户确认） | `10_goal_query_mec_training/10A_point_query_cross_attention/REPORT.md` | 待填 |
 
 ## 已确认事实
 

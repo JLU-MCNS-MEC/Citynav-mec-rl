@@ -1,0 +1,34 @@
+# Stage 10：目标查询式 MEC 训练 — 阶段状态
+
+- 分支：`exp/citynav-mec-fixed50m-topdown`
+- 目录：`experiments/10_goal_query_mec_training/`
+- 起点：`223f11d`（M0 新服务器检查与同步）
+- 研究路线（用户 2026-10-31 确认）：
+  - **09C-1 连续目标定位（C1）保留为正式基线**，历史结果不修改、不重新解释
+  - **C2 永久排除**：不再引入/调试/验证硬门控，仅作负结果归档
+  - 在 C1 框架上对比 **Point Query（PQ）** 与 **Cross-Attention（CA）** 两种视觉匹配
+  - 10B 闭环比较选出最终方案 → 10C 确定 MEC 输入模态并生成训练数据（含 cross-fitting 泄露审计）
+  - 10D 只训练一次 Transformer-M（seed 42，30 epoch，early stopping）
+  - 10E 最终闭环验证；完成后停止，等待用户指示
+- 固定条件：冻结 ResNet-50（layer2 空间特征为主）、不引入 C2 硬门控、
+  不改变 09C-1 连续信念更新主框架、不用 Test-Unseen 调参
+- 数据协议：Train-Seen 训练/校准（2,000 状态校准子集，seed 20261030）、
+  Val-Seen + Val-Unseen 评测（5,324 任务），沿用 09A 状态采样清单
+
+## 阶段状态
+
+| 阶段 | 名称 | 状态 | 关键结论 | commit |
+|---|---|---|---|---|
+| 10A | Point Query / Cross-Attention 视觉匹配对比 | **完成（负结果）**：C1 离线定位 median 3.27 m / P@10m 87.8%，PQ 26.7 m / 12.2%，CA 33.0 m / 6.0%；PQ/CA 不满足替换条件，**推荐 C1 进入 10B** | 待填 | — |
+| 10B | 几何控制器闭环比较（C1/PQ/CA × 5,324 条） | 未开始（依赖 10A） | — | — |
+| 10C | MEC 输入模态与训练数据生成（cross-fitting 审计） | 未开始（依赖 10B） | — | — |
+| 10D | Transformer-M 正式训练（seed 42，仅一次） | 未开始（依赖 10C） | — | — |
+| 10E | 最终闭环验证（5 种控制器对比） | 未开始（依赖 10D） | — | — |
+
+## 运行环境备忘
+
+- 服务器：新服务器 `ubuntu`（RTX 5090 32 GB）
+- conda 环境：`citynav-mec`（/mnt/hdd2t/conda/envs/citynav-mec）
+- 数据根：`CITYNAV_DATA=/mnt/hdd8t/Citynav-MEC/DATA`（pipeline.py 已支持该环境变量）
+- tmux 会话：`citynav10_pointquery_mec`
+- 10A 训练图像缓存：`10A.../results/cache` → NVMe `/home/tenant2/dataext/stage10/10A_image_cache`（28 GB）

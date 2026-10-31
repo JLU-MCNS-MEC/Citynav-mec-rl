@@ -1,0 +1,12 @@
+{
+  "method": "ca",
+  "seed": 42,
+  "epochs": 12,
+  "batch": 128,
+  "lr": 0.001,
+  "params": 2240515,
+  "cache_manifest_sha": null,
+  "encoder": "frozen resnet50 IMAGENET1K_V2 layer2 fp32",
+  "loss": "smoothL1(col,row) masked in-view + BCE(score, pred-within-10m)",
+  "started": "2026-10-31T11:46:15+0800"
+}
