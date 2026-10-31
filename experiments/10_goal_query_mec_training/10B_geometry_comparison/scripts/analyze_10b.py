@@ -21,7 +21,7 @@ from pathlib import Path
 import numpy as np
 
 HERE = Path(__file__).resolve().parent
-REPO = HERE.parents[4]
+REPO = HERE.parents[3]
 RES = HERE.parent / "results"
 FIG = HERE.parent / "figures"
 J09C_C1 = (REPO / "experiments/09_online_visual_goal_matching"
@@ -219,35 +219,42 @@ def main() -> int:
         fig.savefig(FIG / "10b_paired.png", dpi=150)
         plt.close(fig)
 
-    # trajectory examples: pick cases where outcomes differ
-    if "10b_pq" in journals and "10b_ca" in journals and ref is not None:
-        ids = sorted(set(ref) & set(journals["10b_pq"]) & set(journals["10b_ca"]))
-        diff = [i for i in ids
-                if not (ref[i]["success"] == journals["10b_pq"][i]["success"]
-                        == journals["10b_ca"][i]["success"])]
+    # trajectory examples: CA success/failure cases (09C-1 episodes are not
+    # stored locally; C1 has no trajectory figures here)
+    def load_traj(key: str, eid: str) -> dict | None:
+        for root in (RES / key / "episodes", RES / f"{key}_seen" / "episodes",
+                     RES / f"{key}_unseen" / "episodes"):
+            p = root / f"{eid.replace(':', '_')}.json"
+            if p.exists():
+                return json.loads(p.read_text(encoding="utf-8"))
+        return None
+
+    for key in ("10b_ca",):
+        if key not in journals:
+            continue
+        succ = [i for i in journals[key] if journals[key][i]["success"]]
+        fail = [i for i in journals[key] if not journals[key][i]["success"]]
         rng = np.random.default_rng(42)
-        picks = list(rng.choice(diff, size=min(3, len(diff)), replace=False)) \
-            if diff else []
-        if picks:
-            fig, axes = plt.subplots(3, len(picks), figsize=(4.5 * len(picks), 11))
-            if len(picks) == 1:
-                axes = axes[:, None]
-            for j, eid in enumerate(picks):
-                for i, k in enumerate(("09c_c1", "10b_pq", "10b_ca")):
-                    ax = axes[i, j]
-                    rec = journals[k][eid]
-                    xs = [s["x"] for s in rec["trajectory"]]
-                    ys = [s["y"] for s in rec["trajectory"]]
-                    ax.plot(xs, ys, ".-", color=COLORS[k], ms=3, lw=1)
-                    ax.plot(rec["target"][0], rec["target"][1], "g*", ms=14)
-                    ax.set_title(f"{LABELS[k]} | {'SUCCESS' if rec['success'] else 'fail'} "
-                                 f"| {rec['steps']} steps", fontsize=8)
-                    ax.set_axis_off()
-                axes[0, j].set_title(f"{eid}\n{split_title(ref[eid])}", fontsize=8)
-            fig.suptitle("10B: trajectory examples (divergent outcomes)")
-            fig.tight_layout()
-            fig.savefig(FIG / "10b_trajectories.png", dpi=150)
-            plt.close(fig)
+        ps = list(rng.choice(succ, size=min(3, len(succ)), replace=False)) if succ else []
+        pf = list(rng.choice(fail, size=min(3, len(fail)), replace=False)) if fail else []
+        fig, axes = plt.subplots(2, 3, figsize=(13.5, 8))
+        for j, (eid, ax) in enumerate(zip(ps + pf, axes.flat)):
+            rec = load_traj(key, eid)
+            if rec is None:
+                ax.set_axis_off()
+                continue
+            xs = [s["x"] for s in rec["trajectory"]]
+            ys = [s["y"] for s in rec["trajectory"]]
+            ax.plot(xs, ys, ".-", color=COLORS[key], ms=3, lw=1)
+            ax.plot(rec["target"][0], rec["target"][1], "g*", ms=14)
+            tag = "SUCCESS" if rec["success"] else "fail"
+            ax.set_title(f"{eid} | {tag} | {rec['steps']} steps | "
+                         f"final {rec['final_dist']:.0f} m", fontsize=8)
+            ax.set_axis_off()
+        fig.suptitle("10B: CA closed-loop trajectory examples (3 success + 3 fail)")
+        fig.tight_layout()
+        fig.savefig(FIG / "10b_trajectories.png", dpi=150)
+        plt.close(fig)
 
     print("10B analysis written", flush=True)
     return 0

@@ -31,7 +31,7 @@ from pathlib import Path
 import numpy as np
 
 HERE = Path(__file__).resolve().parent
-REPO = HERE.parents[4]
+REPO = HERE.parents[3]
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(REPO / "experiments/06_closed_loop_success_rate/scripts"))
 sys.path.insert(0, str(REPO / "experiments/05_transformer_m_training/scripts"))
@@ -56,6 +56,8 @@ STAGE06 = REPO / "experiments/06_closed_loop_success_rate/results/seed42"
 RES09C = (REPO / "experiments/09_online_visual_goal_matching"
           "/09C_continuous_localization/results")
 RES = HERE.parent / "results"
+RES10A = (REPO / "experiments/10_goal_query_mec_training"
+          "/10A_point_query_cross_attention/results")
 ALIGN_RAD = math.radians(25.0)
 DEFAULT_STEP_CAP = 200
 
@@ -304,10 +306,10 @@ def main() -> int:
         cal_sha = sha256(RES09C / "09c_calibration.json") + sha256(
             RES09C / "09c_belief_calibration.json")
     else:
-        cal10 = json.loads((RES / args.mode / "calibration.json").read_text(
+        cal10 = json.loads((RES10A / args.mode / "calibration.json").read_text(
             encoding="utf-8"))
         tau = cal10["tau"]
-        cal_sha = sha256(RES / args.mode / "calibration.json") + sha256(
+        cal_sha = sha256(RES10A / args.mode / "calibration.json") + sha256(
             RES09C / "09c_belief_calibration.json")
     gate = {"tau": tau, "agree_m": 10.0}
     params = {"temperature": 0.1, "sigma_prior_m": 12.0, "k": 8,
@@ -346,7 +348,7 @@ def main() -> int:
         matcher = C1Matcher(args.device)
     else:
         matcher = LearnedMatcher(args.mode,
-                                 str(RES / args.mode / "checkpoints" / "best.pt"),
+                                 str(RES10A / args.mode / "checkpoints" / "best.pt"),
                                  args.device)
     goal_cache: dict = {}
     goal_feat_cache: dict = {}
