@@ -20,6 +20,7 @@ build a fused token cache.
 from __future__ import annotations
 
 import math
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -27,7 +28,8 @@ import cv2
 import numpy as np
 import rasterio
 
-DATA = Path("/home/20261024_1/Workspace/DATA")
+# New-server portability: CITYNAV_DATA overrides the old-server data root.
+DATA = Path(os.environ.get("CITYNAV_DATA", "/home/20261024_1/Workspace/DATA"))
 RGBD = DATA / "rgbd"
 GROUND_SRC = Path("/tmp/citynav-official/gsamllavanav/mapdata.py")
 
