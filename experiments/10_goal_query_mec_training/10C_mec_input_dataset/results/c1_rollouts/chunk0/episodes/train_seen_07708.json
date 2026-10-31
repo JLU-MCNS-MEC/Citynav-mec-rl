@@ -1,0 +1,120 @@
+{
+ "episode_id": "train_seen:07708",
+ "split": "train_seen",
+ "index": 7708,
+ "map": "birmingham_block_13",
+ "length_group": "short",
+ "cohort": "train",
+ "controller": "10b_c1",
+ "mode": "c1",
+ "start": [
+  1248.0679,
+  1202.3554,
+  1.960764
+ ],
+ "target": [
+  1208.25,
+  1207.625
+ ],
+ "step_cap": 200,
+ "steps": 1,
+ "stopped": true,
+ "stop_step": 0,
+ "stop_dist": 40.165082404621074,
+ "final_pos": [
+  1248.0679,
+  1202.3554,
+  1.960764
+ ],
+ "final_dist": 40.165082404621074,
+ "min_dist": 40.165082404621074,
+ "min_dist_step": 0,
+ "osr": false,
+ "success": false,
+ "collision": false,
+ "out_of_bounds": false,
+ "path_len_m": 0.0,
+ "teacher_path_len_m": 40.165,
+ "action_counts": {
+  "Stop": 1,
+  "Forward": 0,
+  "TurnLeft": 0,
+  "TurnRight": 0
+ },
+ "goal_image_invalid": false,
+ "target_valid_fraction": 1.0,
+ "belief_updates": 0,
+ "mean_entropy": 0.9530871636928171,
+ "final_entropy": 0.9530871636928171,
+ "trajectory": [
+  {
+   "step": 0,
+   "x": 1248.0679,
+   "y": 1202.3554,
+   "yaw": 1.960764,
+   "action": 0,
+   "estimate": [
+    1232.0,
+    1208.0
+   ],
+   "est_distance_m": 17.030529045511216,
+   "est_bearing_deg": 48.30029204752093,
+   "visual_score": 0.8974366784095764,
+   "visual_margin": 0.14550668001174927,
+   "visual_z": [
+    1210.2353466644984,
+    1206.1965683194867
+   ],
+   "visual_err_to_true_m": 2.445816518900973,
+   "estimate_err_to_true_m": 23.752960341818447,
+   "accept": false,
+   "updated": false,
+   "agree": false,
+   "validity": 0.9882352941176471,
+   "mahalanobis": 1.8199368451509508,
+   "n_modes": 4,
+   "entropy": 0.9530871636928171,
+   "true_dist_m": 40.165082404621074,
+   "belief_state": {
+    "means": [
+     [
+      1232.0,
+      1208.0
+     ],
+     [
+      1256.0,
+      1208.0
+     ],
+     [
+      1256.0,
+      1232.0
+     ],
+     [
+      1232.0,
+      1232.0
+     ]
+    ],
+    "vars": [
+     144.0,
+     144.0,
+     144.0,
+     144.0
+    ],
+    "weights": [
+     0.3738220521240455,
+     0.28872417907223136,
+     0.19975838744724236,
+     0.13769538135648085
+    ],
+    "last_accept": [
+     1210.2353466644984,
+     1206.1965683194867
+    ],
+    "last_update": -99
+   }
+  }
+ ],
+ "seconds": 0.033,
+ "manifest_sha": "a184ac3048a0d670bea84d3c02ff14aa0bdfdf215b5969b9f02ec39b2aa5a363",
+ "failure": "premature_stop"
+}

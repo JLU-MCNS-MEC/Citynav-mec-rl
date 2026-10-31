@@ -28,6 +28,7 @@
 | 09C | 连续定位与可观测性门控 | **完成**：5,324 条。**Continuous C1 SR 64.7%** [63.4, 66.0]，比 Dynamic 24 m（47.6%）+17.11 pp、比 Static Top-1 +19.85 pp；连续估计中位 **3.21 m**、P@5 m 84.1%（亚网格偏移保留）。C2 加入硬可观测门控后 **61.2%**，比 C1 **低 3.49 pp**：视野外误接受 1.04%→0.86%，但拒绝了 13.4% 的正确更新 | `09_online_visual_goal_matching/09C_continuous_localization/REPORT.md` | `a1296e8` |
 | 10A | 目标查询视觉匹配对比（PQ / CA vs C1，v2 公平版） | **完成**：公平性契约（零初始化 PQ= C1，验证 1.2e-7）下 CA 达 C1 量级但未超过（median 3.74 vs 3.27 m，fp_oov 23% vs 4.3%）；PQ 因 MSE 监督塌陷（F1=0）不可用；v1（b161f05）因破坏公平性作废归档。**推荐 C1 进入 10B** | `10_goal_query_mec_training/10A_point_query_cross_attention/REPORT.md` | 待填 |
 | 10B | 几何控制器闭环比较（C1 复用 / CA 作证） | **完成**：C1 SR 64.7% vs CA 26.0%（Δ −38.7 pp，McNemar p≈0，5,324 配对）；CA 过早 STOP 73.9% + 视野外误接受 23% 致信念坍缩；**最终视觉匹配方案 = C1，进入 10C** | `10_goal_query_mec_training/10B_geometry_comparison/REPORT.md` | 待填 |
+| 10C | MEC 输入模态与训练数据生成 | **完成**：新输入契约（C1 目标描述子 + 09C 连续信念 + 16 步因果历史）；250,000 训练状态（教师逐状态均匀采样，修正 Stage 07 缺陷；C1 恢复状态 20% 配比）；泄露审计通过 | `10_goal_query_mec_training/10C_mec_input_dataset/REPORT.md` | 待填 |
 
 ## 已确认事实
 

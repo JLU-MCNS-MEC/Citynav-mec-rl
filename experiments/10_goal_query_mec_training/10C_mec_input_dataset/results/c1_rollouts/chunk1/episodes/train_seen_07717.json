@@ -1,0 +1,312 @@
+{
+ "episode_id": "train_seen:07717",
+ "split": "train_seen",
+ "index": 7717,
+ "map": "birmingham_block_13",
+ "length_group": "short",
+ "cohort": "train",
+ "controller": "10b_c1",
+ "mode": "c1",
+ "start": [
+  1233.4796,
+  1234.304,
+  -0.89972
+ ],
+ "target": [
+  1205.2656,
+  1203.7812
+ ],
+ "step_cap": 200,
+ "steps": 4,
+ "stopped": true,
+ "stop_step": 3,
+ "stop_dist": 36.149121509182656,
+ "final_pos": [
+  1234.9490353527779,
+  1224.412551180742,
+  -1.4233187755982988
+ ],
+ "final_dist": 36.149121509182656,
+ "min_dist": 36.149121509182656,
+ "min_dist_step": 3,
+ "osr": false,
+ "success": false,
+ "collision": false,
+ "out_of_bounds": false,
+ "path_len_m": 10.0,
+ "teacher_path_len_m": 41.565,
+ "action_counts": {
+  "Stop": 1,
+  "Forward": 2,
+  "TurnLeft": 0,
+  "TurnRight": 1
+ },
+ "goal_image_invalid": false,
+ "target_valid_fraction": 1.0,
+ "belief_updates": 0,
+ "mean_entropy": 0.9588991073815327,
+ "final_entropy": 0.9588991073815327,
+ "trajectory": [
+  {
+   "step": 0,
+   "x": 1233.4796,
+   "y": 1234.304,
+   "yaw": -0.89972,
+   "action": 3,
+   "estimate": [
+    1232.0,
+    1208.0
+   ],
+   "est_distance_m": 26.345580884846786,
+   "est_bearing_deg": -41.66933615334216,
+   "visual_score": 0.8427835702896118,
+   "visual_margin": 0.06676137447357178,
+   "visual_z": [
+    1208.2900573449358,
+    1202.3309651912807
+   ],
+   "visual_err_to_true_m": 3.354179964127926,
+   "estimate_err_to_true_m": 27.065225230912148,
+   "accept": false,
+   "updated": false,
+   "agree": false,
+   "validity": 0.983957219251337,
+   "mahalanobis": 2.031521276315802,
+   "n_modes": 4,
+   "entropy": 0.9588991073815327,
+   "true_dist_m": 41.565263331777516,
+   "belief_state": {
+    "means": [
+     [
+      1232.0,
+      1208.0
+     ],
+     [
+      1256.0,
+      1208.0
+     ],
+     [
+      1256.0,
+      1232.0
+     ],
+     [
+      1232.0,
+      1232.0
+     ]
+    ],
+    "vars": [
+     144.0,
+     144.0,
+     144.0,
+     144.0
+    ],
+    "weights": [
+     0.36077892941149753,
+     0.2956960015181326,
+     0.1977443277805243,
+     0.14578074128984558
+    ],
+    "last_accept": null,
+    "last_update": -99
+   }
+  },
+  {
+   "step": 1,
+   "x": 1233.4796,
+   "y": 1234.304,
+   "yaw": -1.4233187755982988,
+   "action": 1,
+   "estimate": [
+    1232.0,
+    1208.0
+   ],
+   "est_distance_m": 26.345580884846786,
+   "est_bearing_deg": -11.669336153342165,
+   "visual_score": 0.8482958078384399,
+   "visual_margin": 0.08157336711883545,
+   "visual_z": [
+    1208.1441484968525,
+    1201.421439224975
+   ],
+   "visual_err_to_true_m": 3.7221650103236703,
+   "estimate_err_to_true_m": 27.065225230912148,
+   "accept": false,
+   "updated": false,
+   "agree": false,
+   "validity": 0.9823529411764705,
+   "mahalanobis": 2.062191237087737,
+   "n_modes": 4,
+   "entropy": 0.9588991073815327,
+   "true_dist_m": 41.565263331777516,
+   "belief_state": {
+    "means": [
+     [
+      1232.0,
+      1208.0
+     ],
+     [
+      1256.0,
+      1208.0
+     ],
+     [
+      1256.0,
+      1232.0
+     ],
+     [
+      1232.0,
+      1232.0
+     ]
+    ],
+    "vars": [
+     144.0,
+     144.0,
+     144.0,
+     144.0
+    ],
+    "weights": [
+     0.36077892941149753,
+     0.2956960015181326,
+     0.1977443277805243,
+     0.14578074128984558
+    ],
+    "last_accept": null,
+    "last_update": -99
+   }
+  },
+  {
+   "step": 2,
+   "x": 1234.2143176763889,
+   "y": 1229.358275590371,
+   "yaw": -1.4233187755982988,
+   "action": 1,
+   "estimate": [
+    1232.0,
+    1208.0
+   ],
+   "est_distance_m": 21.47275340905788,
+   "est_bearing_deg": -14.3688307615492,
+   "visual_score": 0.8837815523147583,
+   "visual_margin": 0.13275837898254395,
+   "visual_z": [
+    1208.6689645130139,
+    1201.6825095064069
+   ],
+   "visual_err_to_true_m": 3.9984236639381048,
+   "estimate_err_to_true_m": 27.065225230912148,
+   "accept": false,
+   "updated": false,
+   "agree": false,
+   "validity": 0.9823529411764705,
+   "mahalanobis": 2.014268372439705,
+   "n_modes": 4,
+   "entropy": 0.9588991073815327,
+   "true_dist_m": 38.62919945925402,
+   "belief_state": {
+    "means": [
+     [
+      1232.0,
+      1208.0
+     ],
+     [
+      1256.0,
+      1208.0
+     ],
+     [
+      1256.0,
+      1232.0
+     ],
+     [
+      1232.0,
+      1232.0
+     ]
+    ],
+    "vars": [
+     144.0,
+     144.0,
+     144.0,
+     144.0
+    ],
+    "weights": [
+     0.36077892941149753,
+     0.2956960015181326,
+     0.1977443277805243,
+     0.14578074128984558
+    ],
+    "last_accept": [
+     1208.6689645130139,
+     1201.6825095064069
+    ],
+    "last_update": -99
+   }
+  },
+  {
+   "step": 3,
+   "x": 1234.9490353527779,
+   "y": 1224.412551180742,
+   "yaw": -1.4233187755982988,
+   "action": 0,
+   "estimate": [
+    1232.0,
+    1208.0
+   ],
+   "est_distance_m": 16.67539042338763,
+   "est_bearing_deg": -18.63614995797931,
+   "visual_score": 0.8625754117965698,
+   "visual_margin": 0.10118043422698975,
+   "visual_z": [
+    1208.5836000077634,
+    1202.287778838484
+   ],
+   "visual_err_to_true_m": 3.6386028660987035,
+   "estimate_err_to_true_m": 27.065225230912148,
+   "accept": false,
+   "updated": false,
+   "agree": true,
+   "validity": 0.983957219251337,
+   "mahalanobis": 2.008587907724232,
+   "n_modes": 4,
+   "entropy": 0.9588991073815327,
+   "true_dist_m": 36.149121509182656,
+   "belief_state": {
+    "means": [
+     [
+      1232.0,
+      1208.0
+     ],
+     [
+      1256.0,
+      1208.0
+     ],
+     [
+      1256.0,
+      1232.0
+     ],
+     [
+      1232.0,
+      1232.0
+     ]
+    ],
+    "vars": [
+     144.0,
+     144.0,
+     144.0,
+     144.0
+    ],
+    "weights": [
+     0.36077892941149753,
+     0.2956960015181326,
+     0.1977443277805243,
+     0.14578074128984558
+    ],
+    "last_accept": [
+     1208.6689645130139,
+     1201.6825095064069
+    ],
+    "last_update": -99
+   }
+  }
+ ],
+ "seconds": 0.258,
+ "manifest_sha": "a184ac3048a0d670bea84d3c02ff14aa0bdfdf215b5969b9f02ec39b2aa5a363",
+ "failure": "premature_stop"
+}

@@ -1,0 +1,114 @@
+{
+ "episode_id": "train_seen:06919",
+ "split": "train_seen",
+ "index": 6919,
+ "map": "birmingham_block_11",
+ "length_group": "short",
+ "cohort": "train",
+ "controller": "10b_c1",
+ "mode": "c1",
+ "start": [
+  1221.5657,
+  763.5943,
+  -1.37135
+ ],
+ "target": [
+  1212.7344,
+  655.3125
+ ],
+ "step_cap": 200,
+ "steps": 1,
+ "stopped": true,
+ "stop_step": 0,
+ "stop_dist": 108.64133684252047,
+ "final_pos": [
+  1221.5657,
+  763.5943,
+  -1.37135
+ ],
+ "final_dist": 108.64133684252047,
+ "min_dist": 108.64133684252047,
+ "min_dist_step": 0,
+ "osr": false,
+ "success": false,
+ "collision": false,
+ "out_of_bounds": false,
+ "path_len_m": 0.0,
+ "teacher_path_len_m": 108.641,
+ "action_counts": {
+  "Stop": 1,
+  "Forward": 0,
+  "TurnLeft": 0,
+  "TurnRight": 0
+ },
+ "goal_image_invalid": false,
+ "target_valid_fraction": 1.0,
+ "belief_updates": 0,
+ "mean_entropy": 0.8803052037832884,
+ "final_entropy": 0.8803052037832884,
+ "trajectory": [
+  {
+   "step": 0,
+   "x": 1221.5657,
+   "y": 763.5943,
+   "yaw": -1.37135,
+   "action": 0,
+   "estimate": [
+    1208.0,
+    772.4375
+   ],
+   "est_distance_m": 16.193529656316542,
+   "est_bearing_deg": -134.52693310967052,
+   "visual_score": 0.8901627063751221,
+   "visual_margin": 0.014814794063568115,
+   "visual_z": [
+    1241.4031740025328,
+    722.5702484892176
+   ],
+   "visual_err_to_true_m": 73.11294915845724,
+   "estimate_err_to_true_m": 117.22064736367906,
+   "accept": false,
+   "updated": false,
+   "agree": false,
+   "validity": 0.2837370242214533,
+   "mahalanobis": 3.5206599777544327,
+   "n_modes": 3,
+   "entropy": 0.8803052037832884,
+   "true_dist_m": 108.64133684252047,
+   "belief_state": {
+    "means": [
+     [
+      1208.0,
+      772.4375
+     ],
+     [
+      1208.0,
+      748.4375
+     ],
+     [
+      1232.0,
+      772.4375
+     ]
+    ],
+    "vars": [
+     144.0,
+     144.0,
+     144.0
+    ],
+    "weights": [
+     0.488055164777761,
+     0.39569956899641867,
+     0.11624526622582027
+    ],
+    "last_accept": [
+     1241.4031740025328,
+     722.5702484892176
+    ],
+    "last_update": -99
+   }
+  }
+ ],
+ "seconds": 0.041,
+ "manifest_sha": "a184ac3048a0d670bea84d3c02ff14aa0bdfdf215b5969b9f02ec39b2aa5a363",
+ "failure": "premature_stop"
+}

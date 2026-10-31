@@ -1,0 +1,456 @@
+{
+ "episode_id": "train_seen:06916",
+ "split": "train_seen",
+ "index": 6916,
+ "map": "birmingham_block_11",
+ "length_group": "short",
+ "cohort": "train",
+ "controller": "10b_c1",
+ "mode": "c1",
+ "start": [
+  1210.2298,
+  790.4429,
+  -1.302305
+ ],
+ "target": [
+  1219.5625,
+  721.4531
+ ],
+ "step_cap": 200,
+ "steps": 7,
+ "stopped": true,
+ "stop_step": 6,
+ "stop_dist": 45.53731333007168,
+ "final_pos": [
+  1211.6854629609911,
+  766.3039549841271,
+  -1.8259037755982988
+ ],
+ "final_dist": 45.53731333007168,
+ "min_dist": 45.53731333007168,
+ "min_dist_step": 6,
+ "osr": false,
+ "success": false,
+ "collision": false,
+ "out_of_bounds": false,
+ "path_len_m": 25.0,
+ "teacher_path_len_m": 69.618,
+ "action_counts": {
+  "Stop": 1,
+  "Forward": 5,
+  "TurnLeft": 0,
+  "TurnRight": 1
+ },
+ "goal_image_invalid": false,
+ "target_valid_fraction": 1.0,
+ "belief_updates": 0,
+ "mean_entropy": 0.8394323376493541,
+ "final_entropy": 0.8394323376493541,
+ "trajectory": [
+  {
+   "step": 0,
+   "x": 1210.2298,
+   "y": 790.4429,
+   "yaw": -1.302305,
+   "action": 1,
+   "estimate": [
+    1208.0,
+    748.4375
+   ],
+   "est_distance_m": 42.06454132877239,
+   "est_bearing_deg": -18.422037027983823,
+   "visual_score": 0.84348064661026,
+   "visual_margin": 0.006849348545074463,
+   "visual_z": [
+    1222.259916921686,
+    751.4376156571172
+   ],
+   "visual_err_to_true_m": 30.105601426334445,
+   "estimate_err_to_true_m": 29.357269110222134,
+   "accept": false,
+   "updated": false,
+   "agree": false,
+   "validity": 1.0,
+   "mahalanobis": 1.2143411653799787,
+   "n_modes": 3,
+   "entropy": 0.8394323376493541,
+   "true_dist_m": 69.61818579458966,
+   "belief_state": {
+    "means": [
+     [
+      1208.0,
+      748.4375
+     ],
+     [
+      1208.0,
+      772.4375
+     ],
+     [
+      1232.0,
+      772.4375
+     ]
+    ],
+    "vars": [
+     144.0,
+     144.0,
+     144.0
+    ],
+    "weights": [
+     0.621950980637583,
+     0.21254339719701623,
+     0.16550562216540082
+    ],
+    "last_accept": null,
+    "last_update": -99
+   }
+  },
+  {
+   "step": 1,
+   "x": 1211.5561855918013,
+   "y": 785.6220389501602,
+   "yaw": -1.302305,
+   "action": 1,
+   "estimate": [
+    1208.0,
+    748.4375
+   ],
+   "est_distance_m": 37.35420181049675,
+   "est_bearing_deg": -20.846352050114525,
+   "visual_score": 0.8467487692832947,
+   "visual_margin": 0.005595982074737549,
+   "visual_z": [
+    1222.9271444958856,
+    747.7870803120511
+   ],
+   "visual_err_to_true_m": 26.54805739897349,
+   "estimate_err_to_true_m": 29.357269110222134,
+   "accept": false,
+   "updated": false,
+   "agree": false,
+   "validity": 1.0,
+   "mahalanobis": 1.2451090063313268,
+   "n_modes": 3,
+   "entropy": 0.8394323376493541,
+   "true_dist_m": 64.66648124331745,
+   "belief_state": {
+    "means": [
+     [
+      1208.0,
+      748.4375
+     ],
+     [
+      1208.0,
+      772.4375
+     ],
+     [
+      1232.0,
+      772.4375
+     ]
+    ],
+    "vars": [
+     144.0,
+     144.0,
+     144.0
+    ],
+    "weights": [
+     0.621950980637583,
+     0.21254339719701623,
+     0.16550562216540082
+    ],
+    "last_accept": null,
+    "last_update": -99
+   }
+  },
+  {
+   "step": 2,
+   "x": 1212.8825711836025,
+   "y": 780.8011779003205,
+   "yaw": -1.302305,
+   "action": 1,
+   "estimate": [
+    1208.0,
+    748.4375
+   ],
+   "est_distance_m": 32.729912138571905,
+   "est_bearing_deg": -23.962692709007914,
+   "visual_score": 0.8527519106864929,
+   "visual_margin": 0.010497450828552246,
+   "visual_z": [
+    1221.1464965611926,
+    770.7044591420294
+   ],
+   "visual_err_to_true_m": 49.2768243948718,
+   "estimate_err_to_true_m": 29.357269110222134,
+   "accept": false,
+   "updated": false,
+   "agree": false,
+   "validity": 1.0,
+   "mahalanobis": 0.9159162332539856,
+   "n_modes": 3,
+   "entropy": 0.8394323376493541,
+   "true_dist_m": 59.7228247779243,
+   "belief_state": {
+    "means": [
+     [
+      1208.0,
+      748.4375
+     ],
+     [
+      1208.0,
+      772.4375
+     ],
+     [
+      1232.0,
+      772.4375
+     ]
+    ],
+    "vars": [
+     144.0,
+     144.0,
+     144.0
+    ],
+    "weights": [
+     0.621950980637583,
+     0.21254339719701623,
+     0.16550562216540082
+    ],
+    "last_accept": null,
+    "last_update": -99
+   }
+  },
+  {
+   "step": 3,
+   "x": 1214.2089567754037,
+   "y": 775.9803168504807,
+   "yaw": -1.302305,
+   "action": 3,
+   "estimate": [
+    1208.0,
+    748.4375
+   ],
+   "est_distance_m": 28.233984917080946,
+   "est_bearing_deg": -28.087210781469825,
+   "visual_score": 0.8408877849578857,
+   "visual_margin": 0.0056149959564208984,
+   "visual_z": [
+    1220.2910230594903,
+    770.9389325887889
+   ],
+   "visual_err_to_true_m": 49.49119490226376,
+   "estimate_err_to_true_m": 29.357269110222134,
+   "accept": false,
+   "updated": false,
+   "agree": false,
+   "validity": 1.0,
+   "mahalanobis": 0.9837070063725677,
+   "n_modes": 3,
+   "entropy": 0.8394323376493541,
+   "true_dist_m": 54.78939498221321,
+   "belief_state": {
+    "means": [
+     [
+      1208.0,
+      748.4375
+     ],
+     [
+      1208.0,
+      772.4375
+     ],
+     [
+      1232.0,
+      772.4375
+     ]
+    ],
+    "vars": [
+     144.0,
+     144.0,
+     144.0
+    ],
+    "weights": [
+     0.621950980637583,
+     0.21254339719701623,
+     0.16550562216540082
+    ],
+    "last_accept": null,
+    "last_update": -99
+   }
+  },
+  {
+   "step": 4,
+   "x": 1214.2089567754037,
+   "y": 775.9803168504807,
+   "yaw": -1.8259037755982988,
+   "action": 1,
+   "estimate": [
+    1208.0,
+    748.4375
+   ],
+   "est_distance_m": 28.233984917080946,
+   "est_bearing_deg": 1.9127892185301685,
+   "visual_score": 0.8550789952278137,
+   "visual_margin": 0.005972445011138916,
+   "visual_z": [
+    1220.8183575643272,
+    770.756618272958
+   ],
+   "visual_err_to_true_m": 49.319510260279216,
+   "estimate_err_to_true_m": 29.357269110222134,
+   "accept": false,
+   "updated": false,
+   "agree": false,
+   "validity": 1.0,
+   "mahalanobis": 0.9422729981998577,
+   "n_modes": 3,
+   "entropy": 0.8394323376493541,
+   "true_dist_m": 54.78939498221321,
+   "belief_state": {
+    "means": [
+     [
+      1208.0,
+      748.4375
+     ],
+     [
+      1208.0,
+      772.4375
+     ],
+     [
+      1232.0,
+      772.4375
+     ]
+    ],
+    "vars": [
+     144.0,
+     144.0,
+     144.0
+    ],
+    "weights": [
+     0.621950980637583,
+     0.21254339719701623,
+     0.16550562216540082
+    ],
+    "last_accept": null,
+    "last_update": -99
+   }
+  },
+  {
+   "step": 5,
+   "x": 1212.9472098681974,
+   "y": 771.1421359173039,
+   "yaw": -1.8259037755982988,
+   "action": 1,
+   "estimate": [
+    1208.0,
+    748.4375
+   ],
+   "est_distance_m": 23.237370281882512,
+   "est_bearing_deg": 2.324292402552784,
+   "visual_score": 0.8710888624191284,
+   "visual_margin": 0.016428232192993164,
+   "visual_z": [
+    1221.6467410420478,
+    722.6446819595718
+   ],
+   "visual_err_to_true_m": 2.4008182537904723,
+   "estimate_err_to_true_m": 29.357269110222134,
+   "accept": false,
+   "updated": false,
+   "agree": false,
+   "validity": 1.0,
+   "mahalanobis": 2.4317103571899383,
+   "n_modes": 3,
+   "entropy": 0.8394323376493541,
+   "true_dist_m": 50.12746107593169,
+   "belief_state": {
+    "means": [
+     [
+      1208.0,
+      748.4375
+     ],
+     [
+      1208.0,
+      772.4375
+     ],
+     [
+      1232.0,
+      772.4375
+     ]
+    ],
+    "vars": [
+     144.0,
+     144.0,
+     144.0
+    ],
+    "weights": [
+     0.621950980637583,
+     0.21254339719701623,
+     0.16550562216540082
+    ],
+    "last_accept": null,
+    "last_update": -99
+   }
+  },
+  {
+   "step": 6,
+   "x": 1211.6854629609911,
+   "y": 766.3039549841271,
+   "yaw": -1.8259037755982988,
+   "action": 0,
+   "estimate": [
+    1208.0,
+    748.4375
+   ],
+   "est_distance_m": 18.242610858555267,
+   "est_bearing_deg": 2.961181176982705,
+   "visual_score": 0.9169246554374695,
+   "visual_margin": 0.04269307851791382,
+   "visual_z": [
+    1220.9416503728746,
+    719.5794744107425
+   ],
+   "visual_err_to_true_m": 2.3264841713883655,
+   "estimate_err_to_true_m": 29.357269110222134,
+   "accept": false,
+   "updated": false,
+   "agree": false,
+   "validity": 0.9204152249134948,
+   "mahalanobis": 2.6355896825126077,
+   "n_modes": 3,
+   "entropy": 0.8394323376493541,
+   "true_dist_m": 45.53731333007168,
+   "belief_state": {
+    "means": [
+     [
+      1208.0,
+      748.4375
+     ],
+     [
+      1208.0,
+      772.4375
+     ],
+     [
+      1232.0,
+      772.4375
+     ]
+    ],
+    "vars": [
+     144.0,
+     144.0,
+     144.0
+    ],
+    "weights": [
+     0.621950980637583,
+     0.21254339719701623,
+     0.16550562216540082
+    ],
+    "last_accept": [
+     1220.9416503728746,
+     719.5794744107425
+    ],
+    "last_update": -99
+   }
+  }
+ ],
+ "seconds": 0.117,
+ "manifest_sha": "a184ac3048a0d670bea84d3c02ff14aa0bdfdf215b5969b9f02ec39b2aa5a363",
+ "failure": "premature_stop"
+}

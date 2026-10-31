@@ -1,0 +1,144 @@
+{
+ "episode_id": "train_seen:17939",
+ "split": "train_seen",
+ "index": 17939,
+ "map": "cambridge_block_21",
+ "length_group": "short",
+ "cohort": "train",
+ "controller": "10b_c1",
+ "mode": "c1",
+ "start": [
+  1293.5012,
+  1254.1332,
+  0.940147
+ ],
+ "target": [
+  1273.375,
+  1248.0781
+ ],
+ "step_cap": 200,
+ "steps": 1,
+ "stopped": true,
+ "stop_step": 0,
+ "stop_dist": 21.01733005046068,
+ "final_pos": [
+  1293.5012,
+  1254.1332,
+  0.940147
+ ],
+ "final_dist": 21.01733005046068,
+ "min_dist": 21.01733005046068,
+ "min_dist_step": 0,
+ "osr": false,
+ "success": false,
+ "collision": false,
+ "out_of_bounds": false,
+ "path_len_m": 0.0,
+ "teacher_path_len_m": 21.017,
+ "action_counts": {
+  "Stop": 1,
+  "Forward": 0,
+  "TurnLeft": 0,
+  "TurnRight": 0
+ },
+ "goal_image_invalid": false,
+ "target_valid_fraction": 1.0,
+ "belief_updates": 0,
+ "mean_entropy": 0.9679460356697034,
+ "final_entropy": 0.9679460356697034,
+ "trajectory": [
+  {
+   "step": 0,
+   "x": 1293.5012,
+   "y": 1254.1332,
+   "yaw": 0.940147,
+   "action": 0,
+   "estimate": [
+    1280.0,
+    1256.0
+   ],
+   "est_distance_m": 13.629649433496008,
+   "est_bearing_deg": 118.26121913802957,
+   "visual_score": 0.917314350605011,
+   "visual_margin": 0.09272724390029907,
+   "visual_z": [
+    1275.059533435323,
+    1245.6734282420075
+   ],
+   "visual_err_to_true_m": 2.9360005378758562,
+   "estimate_err_to_true_m": 10.327009470800382,
+   "accept": false,
+   "updated": false,
+   "agree": false,
+   "validity": 0.9238754325259516,
+   "mahalanobis": 0.9539621077657612,
+   "n_modes": 8,
+   "entropy": 0.9679460356697034,
+   "true_dist_m": 21.01733005046068,
+   "belief_state": {
+    "means": [
+     [
+      1280.0,
+      1256.0
+     ],
+     [
+      1256.0,
+      1256.0
+     ],
+     [
+      1280.0,
+      1232.0
+     ],
+     [
+      1280.0,
+      1280.0
+     ],
+     [
+      1568.0,
+      1448.0
+     ],
+     [
+      1544.0,
+      1448.0
+     ],
+     [
+      1520.0,
+      1448.0
+     ],
+     [
+      1232.0,
+      1256.0
+     ]
+    ],
+    "vars": [
+     144.0,
+     144.0,
+     144.0,
+     144.0,
+     144.0,
+     144.0,
+     144.0,
+     144.0
+    ],
+    "weights": [
+     0.22002501382551704,
+     0.17931907723189444,
+     0.13020841024753121,
+     0.12254355805549985,
+     0.09336947375877688,
+     0.09206142699517969,
+     0.08363390913355705,
+     0.07883913075204378
+    ],
+    "last_accept": [
+     1275.059533435323,
+     1245.6734282420075
+    ],
+    "last_update": -99
+   }
+  }
+ ],
+ "seconds": 0.027,
+ "manifest_sha": "a184ac3048a0d670bea84d3c02ff14aa0bdfdf215b5969b9f02ec39b2aa5a363",
+ "failure": "premature_stop"
+}

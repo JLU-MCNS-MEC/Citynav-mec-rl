@@ -20,8 +20,8 @@
 | 阶段 | 名称 | 状态 | 关键结论 | commit |
 |---|---|---|---|---|
 | 10A | Point Query / Cross-Attention 视觉匹配对比 | **完成（v2 公平版，v1 作废）**：公平性契约下 CA 达 C1 量级（median 3.74 vs 3.27 m）但未超过、门控更弱（fp_oov 23% vs 4.3%）；PQ 因 MSE 监督塌陷不可用（修复需用户同意）；**推荐 C1 进入 10B，CA 可加跑闭环作证** | `10A_point_query_cross_attention/REPORT.md` | 待填 |
-| 10B | 几何控制器闭环比较（C1/PQ/CA × 5,324 条） | 未开始（依赖 10A） | — | — |
-| 10C | MEC 输入模态与训练数据生成（cross-fitting 审计） | 未开始（依赖 10B） | — | — |
+| 10B | 几何控制器闭环比较（C1 复用 09C-1 / CA 全量跑证） | **完成**：C1 SR 64.7% vs CA 26.0%（Δ −38.7pp，McNemar p≈0，n=5,324 配对）；CA 过早 STOP 73.9%、视野外误接受 23% 毒化信念；**最终方案 = C1**，PQ/CA 负结果归档 | `10B_geometry_comparison/REPORT.md` | 待填 |
+| 10C | MEC 输入模态与训练数据生成 | **完成**：契约 = layer4 当前视觉 + 16 步因果历史 + C1 目标描述子(512) + 09C 信念(10-d) + C1 匹配(5-d)；训练 250,000 状态（教师 200k 逐状态均匀采样 + C1 恢复 50k，DAgger 式）；泄露审计通过（C1 无参数 → cross-fitting 不适用，已论证） | `10C_mec_input_dataset/REPORT.md` + `INPUT_CONTRACT.md` + `LEAK_AUDIT.md` | 待填 |
 | 10D | Transformer-M 正式训练（seed 42，仅一次） | 未开始（依赖 10C） | — | — |
 | 10E | 最终闭环验证（5 种控制器对比） | 未开始（依赖 10D） | — | — |
 

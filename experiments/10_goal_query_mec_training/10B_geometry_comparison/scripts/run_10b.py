@@ -219,6 +219,13 @@ def run_episode(task: dict, matcher, encoder, fe: FrozenEncoder,
                       "agree": bool(agree), "validity": validity,
                       "mahalanobis": maha, "n_modes": int(len(belief.weights)),
                       "entropy": ent, "true_dist_m": dist})
+        if params.get("record_belief"):   # 10C recovery-state feature building
+            steps[-1]["belief_state"] = {
+                "means": belief.means.tolist(), "vars": belief.vars.tolist(),
+                "weights": belief.weights.tolist(),
+                "last_accept": None if belief.last_accept is None
+                else belief.last_accept.tolist(),
+                "last_update": int(belief.last_update)}
 
         if action == 0:
             stopped = True
@@ -284,6 +291,8 @@ def main() -> int:
     parser.add_argument("--task-file", default="")
     parser.add_argument("--step-cap", type=int, default=DEFAULT_STEP_CAP)
     parser.add_argument("--device", default="cuda")
+    parser.add_argument("--record-belief", action="store_true",
+                        help="store belief internals per step (10C recovery data)")
     args = parser.parse_args()
 
     if not os.environ.get("CITYNAV_DATA"):
@@ -292,8 +301,8 @@ def main() -> int:
 
     manifest_path = Path(args.manifest)
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    manifest_sha = (manifest_path.parent / "manifest.sha256").read_text(
-        encoding="utf-8").strip()
+    sha_path = manifest_path.with_name(manifest_path.name + ".sha256")
+    manifest_sha = sha_path.read_text(encoding="utf-8").strip()
 
     # belief update parameters: frozen from 09C calibration (identical for all
     # modes -- only the matcher differs)
@@ -314,7 +323,8 @@ def main() -> int:
     gate = {"tau": tau, "agree_m": 10.0}
     params = {"temperature": 0.1, "sigma_prior_m": 12.0, "k": 8,
               "sigma_vis_m": cal_9c["sigma_vis_m"], "eta": best["eta"],
-              "rho": best["rho"], "gate": gate}
+              "rho": best["rho"], "gate": gate,
+              "record_belief": bool(args.record_belief)}
     print("mode", args.mode, "tau", tau, "params", json.dumps(params), flush=True)
 
     out = Path(args.out_dir) if args.out_dir else RES / f"10b_{args.mode}"
