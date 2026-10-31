@@ -1,19 +1,29 @@
 #!/usr/bin/env python3
-"""Stage 10A learned matchers: Point Query (PQ) and Cross-Attention (CA).
+"""Stage 10A learned matchers v2 -- FAIR variants built ON the C1 mechanism.
 
-Both consume the frozen ResNet-50 layer2 feature maps (512 x 28 x 28) of the
-north-up observation and of the goal image, and output per-proposal
-(col, row, score) in the 224 px north-up frame -- the same interface as
-09C's ``subpixel_match`` (top-1 proposal + score margin).
+Fairness contract (the only parts that may differ from C1 are marked):
 
-* PQ (learnable point query): a set of learnable query tokens conditioned on
-  the goal descriptor cross-attend to the observation feature cells; each
-  query predicts an offset proposal and a confidence.
-* CA (cross-attention): goal-derived tokens (3x3 block descriptors + global)
-  cross-attend to the observation, then refine each other with self-attention;
-  each token predicts an offset proposal and a confidence.
-
-Only the heads are trained; the ResNet backbone stays frozen.
+* goal descriptor:  IDENTICAL to C1 -- central 2x2 block of the goal layer2
+                    map, mean-pooled, L2-normalised (``matching._dense_descriptor``);
+* observation map: IDENTICAL to C1 -- 2x2-neighbourhood pooled layer2 cells
+                    (``uniform_filter(size=(1,2,2), mode='nearest')``, replicated
+                    exactly with replicate-pad + avg_pool2d on the same 28x28 grid);
+* match map:        28x28, same grid and resolution as C1;
+    - C1: cosine(desc, cell)                       [baseline, untouched]
+    - PQ: cosine(MLP(desc), W_v . cell)            [LEARNABLE: query + value
+                                                    projection; reduces to C1
+                                                    for identity weights]
+    - CA: softmax_c(q(desc) . k(cell) * scale)     [LEARNABLE: attention-weight
+                                                    map replaces the cosine map]
+* position:         IDENTICAL to C1 -- argmax peak + 3x3 weighted sub-pixel
+                    centroid + margin suppression (faithful port of
+                    ``continuous_belief.subpixel_match``);
+* score:            map peak (same semantics as C1); gate tau re-calibrated on
+                    the same 2,000-state Train-Seen subset;
+* training:         map-level supervision only.  In-view: Gaussian blob
+                    (sigma=1.5 cells) at the true cell; out-of-view: all-low.
+                    PQ: MSE to the [-1,1] cosine map; CA: BCE on pre-softmax
+                    logits.  Frozen ResNet-50 layer2, seed 42, no val tuning.
 """
 
 from __future__ import annotations
@@ -23,127 +33,157 @@ import math
 import numpy as np
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 OUT = 224.0
 D = 512
+EPS = 1e-8
 
 
-def sinusoidal_pos_2d(h: int, w: int, d: int, device) -> torch.Tensor:
-    """Fixed sinusoidal 2-D position encoding (DETR-style), (d, h, w)."""
-    assert d % 4 == 0
-    half = d // 4
-    ys = torch.arange(h, device=device, dtype=torch.float32).view(h, 1).repeat(1, w)
-    xs = torch.arange(w, device=device, dtype=torch.float32).view(1, w).repeat(h, 1)
-    emb = []
-    for v, scale in ((ys, h), (xs, w)):
-        freqs = torch.arange(half, device=device, dtype=torch.float32)
-        freqs = 1.0 / (scale ** (freqs / max(half - 1, 1)))
-        ang = v.unsqueeze(-1) * freqs
-        emb.append(torch.sin(ang))
-        emb.append(torch.cos(ang))
-    return torch.cat(emb, dim=-1).permute(2, 0, 1)  # (d, h, w)
+# --------------------------------------------------------------------------
+# C1-identical preprocessing (torch ports, verified against matching.py)
+# --------------------------------------------------------------------------
+def goal_desc(goal_feat: torch.Tensor) -> torch.Tensor:
+    """Central 2x2 block of the 28x28 goal map, mean-pooled, L2-normalised.
+    Exact torch port of ``matching._dense_descriptor(goal_feat, block=2)``."""
+    h, w = goal_feat.shape[2], goal_feat.shape[3]
+    ci = cj = (h - 1) / 2.0
+    r0 = int(math.floor(ci - 2 / 2 + 0.5))
+    r1 = int(math.ceil(ci + 2 / 2 - 0.5)) + 1
+    c0 = int(math.floor(cj - 2 / 2 + 0.5))
+    c1 = int(math.ceil(cj + 2 / 2 - 0.5)) + 1
+    desc = goal_feat[:, :, r0:r1, c0:c1].mean(dim=(2, 3))
+    return F.normalize(desc, dim=1, eps=EPS)
 
 
-class _ProposalHead(nn.Module):
-    """token -> (col, row, score_logit); col/row in [0,223], logit unconstrained."""
-
-    def __init__(self, d: int = D):
-        super().__init__()
-        self.net = nn.Sequential(nn.Linear(d, 256), nn.ReLU(inplace=True),
-                                 nn.Linear(256, 3))
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        out = self.net(x)
-        out = torch.cat([out[..., :2].sigmoid() * (OUT - 1), out[..., 2:]], dim=-1)
-        return out
-
-
-def pick_top(out: torch.Tensor) -> tuple[torch.Tensor, ...]:
-    """(B,N,3) [col,row,logit] -> top-1 (col,row,score) and margin = s1 - s2."""
-    scores = out[..., 2].sigmoid()
-    s1, i1 = scores.max(dim=1)
-    masked = scores.scatter(1, i1.unsqueeze(1),
-                            torch.full_like(scores[:, :1], -1e9))
-    s2 = masked.max(dim=1).values
-    top = out.gather(1, i1.unsqueeze(1).unsqueeze(-1).expand(-1, 1, 3)).squeeze(1)
-    return top[..., 0], top[..., 1], s1, (s1 - s2)
+def obs_pooled(obs_feat: torch.Tensor) -> torch.Tensor:
+    """2x2-neighbourhood mean pooling with edge replication.
+    Exact torch port of ``uniform_filter(x, size=(1,2,2), mode='nearest')``:
+    scipy's even-size window is asymmetric (mean over x[{i-1,i}, {j-1,j}] with
+    the border replicated) -> separable: horizontal pair mean, then vertical
+    pair mean, each with replicate padding on the left/top edge."""
+    x = obs_feat
+    left = F.pad(x[:, :, :, :-1], (1, 0, 0, 0), mode="replicate")
+    h = (x + left) * 0.5
+    up = F.pad(h[:, :, :-1, :], (0, 0, 1, 0), mode="replicate")
+    return (h + up) * 0.5
 
 
+def map_to_match(score: torch.Tensor) -> dict:
+    """Faithful port of the tail of ``continuous_belief.subpixel_match``:
+    argmax peak + 3x3 weighted sub-pixel centroid + margin suppression.
+    score: (B,28,28) -> dict of (col,row,score,margin,sharpness,heatmap)."""
+    from matching import _suppress_margin  # identical margin logic (numpy)
+
+    out = {"col": [], "row": [], "score": [], "margin": [], "sharpness": [],
+           "heatmap": []}
+    for s in score.detach().float().cpu().numpy():
+        h, w = s.shape
+        idx = np.unravel_index(int(np.argmax(s)), s.shape)
+        r0, c0 = idx
+        r_lo, r_hi = max(r0 - 1, 0), min(r0 + 2, h)
+        c_lo, c_hi = max(c0 - 1, 0), min(c0 + 2, w)
+        win = s[r_lo:r_hi, c_lo:c_hi].astype(np.float64)
+        wgt = np.clip(win - win.min(), 0, None) ** 2
+        if wgt.sum() <= 0:
+            dr = dc = 0.0
+        else:
+            rr, cc = np.mgrid[r_lo:r_hi, c_lo:c_hi]
+            dr = float((wgt * (rr - r0)).sum() / wgt.sum())
+            dc = float((wgt * (cc - c0)).sum() / wgt.sum())
+        cell = OUT / float(h)
+        col = (c0 + 0.5 + dc) * cell
+        row = (r0 + 0.5 + dr) * cell
+        margin = _suppress_margin(s, idx, 1)
+        peak = float(s[r0, c0])
+        spread = float(np.clip(peak - win.mean(), 0.0, 1.0))
+        out["col"].append(col)
+        out["row"].append(row)
+        out["score"].append(peak)
+        out["margin"].append(margin)
+        out["sharpness"].append(spread)
+        out["heatmap"].append(s)
+    out["col"] = torch.tensor(out["col"], device=score.device)
+    out["row"] = torch.tensor(out["row"], device=score.device)
+    out["score"] = torch.tensor(out["score"], device=score.device)
+    out["margin"] = torch.tensor(out["margin"], device=score.device)
+    return out
+
+
+def pack(out: dict) -> dict:
+    """Public interface: (col,row,score,margin) like subpixel_match."""
+    return {"col": out["col"], "row": out["row"], "score": out["score"],
+            "margin": out["margin"], "map": out["heatmap"],
+            "sharpness": out["sharpness"]}
+
+
+# --------------------------------------------------------------------------
+# Fair learned matchers
+# --------------------------------------------------------------------------
 class PointQueryMatcher(nn.Module):
-    """Learnable point queries conditioned on the goal descriptor."""
+    """PQ (fair): learnable query on the C1 mechanism.
 
-    def __init__(self, d: int = D, n_queries: int = 12, heads: int = 8):
+    q = MLP(desc);  map(c) = cos(q, W_v . pooled_cell(c)).
+    With identity weights the map is numerically identical to C1's cosine map.
+    """
+
+    def __init__(self, d: int = D, hidden: int = 512):
         super().__init__()
-        self.n_queries = n_queries
-        self.query = nn.Parameter(torch.randn(n_queries, d) * 0.02)
-        self.anchor = nn.Parameter(torch.zeros(n_queries, 2))
-        self.anchor_proj = nn.Sequential(nn.Linear(2, d), nn.GELU())
-        self.goal_proj = nn.Sequential(nn.Linear(d, d), nn.GELU())
-        self.cross = nn.MultiheadAttention(d, heads, batch_first=True)
-        self.norm = nn.LayerNorm(d)
-        self.head = _ProposalHead(d)
+        self.query_mlp = nn.Sequential(nn.Linear(d, hidden), nn.ReLU(inplace=True),
+                                       nn.Linear(hidden, d))
+        self.value_proj = nn.Linear(d, d)
+        self._init_identity()
+
+    def _init_identity(self):
+        """Zero the residual path so the untrained model reduces to C1."""
+        for m in self.query_mlp:
+            if isinstance(m, nn.Linear):
+                nn.init.zeros_(m.weight)
+                nn.init.zeros_(m.bias)
+        nn.init.zeros_(self.value_proj.weight)
+        nn.init.zeros_(self.value_proj.bias)
+
+    def match_map(self, obs_feat: torch.Tensor, goal_feat: torch.Tensor):
+        desc = goal_desc(goal_feat)                          # (B,512)
+        pooled = obs_pooled(obs_feat)                        # (B,512,28,28)
+        q = F.normalize(desc + self.query_mlp(desc), dim=1, eps=EPS)
+        v = pooled.permute(0, 2, 3, 1) + self.value_proj(
+            pooled.permute(0, 2, 3, 1))                      # (B,28,28,512)
+        vn = F.normalize(v, dim=-1, eps=EPS)
+        sim = torch.einsum("bhwc,bc->bhw", vn, q)            # (B,28,28) cosine
+        return sim
 
     def forward(self, obs_feat: torch.Tensor, goal_feat: torch.Tensor):
-        """obs/goal: (B,512,28,28) -> dict with top-1 (col,row,score,margin)."""
-        b = obs_feat.shape[0]
-        pos = sinusoidal_pos_2d(obs_feat.shape[2], obs_feat.shape[3], D,
-                                obs_feat.device).flatten(1).T  # (HW,d)
-        obs_tokens = obs_feat.flatten(2).permute(0, 2, 1)       # (B,HW,d)
-        kv = obs_tokens + pos.unsqueeze(0)
-        g = goal_feat.mean(dim=(2, 3))                          # (B,d)
-        ctx = self.goal_proj(g).unsqueeze(1)                    # (B,1,d)
-        anc = torch.tanh(self.anchor)
-        q = self.query.unsqueeze(0) + ctx + self.anchor_proj(anc).unsqueeze(0)
-        q2, attn = self.cross(q, kv, kv)
-        q2 = self.norm(q + q2)
-        out = self.head(q2)                                     # (B,N,3)
-        col, row, score, margin = pick_top(out)
-        return {"col": col, "row": row, "score": score, "margin": margin,
-                "out": out, "attn": attn, "queries": q2, "anchor": anc}
+        return pack(map_to_match(self.match_map(obs_feat, goal_feat)))
 
 
 class CrossAttnMatcher(nn.Module):
-    """Goal-derived tokens (3x3 block descriptors + global) with cross-attention."""
+    """CA (fair): attention-weight match map on the C1 mechanism.
 
-    def __init__(self, d: int = D, heads: int = 8):
+    map(c) = softmax_c( q_proj(desc) . k_proj(pooled_cell(c)) * scale ).
+    Everything downstream (peak + centroid + margin + gate) is C1-identical.
+    """
+
+    def __init__(self, d: int = D):
         super().__init__()
-        self.n_tokens = 10
-        self.pos_pe = nn.Parameter(torch.randn(self.n_tokens, d) * 0.02)
-        self.cross = nn.MultiheadAttention(d, heads, batch_first=True)
-        self.norm1 = nn.LayerNorm(d)
-        self.self_attn = nn.MultiheadAttention(d, heads, batch_first=True)
-        self.norm2 = nn.LayerNorm(d)
-        self.head = _ProposalHead(d)
+        self.q_proj = nn.Linear(d, d)
+        self.k_proj = nn.Linear(d, d)
+        self.log_scale = nn.Parameter(torch.tensor(0.0))     # scale = e^log_scale
 
-    def goal_tokens(self, goal_feat: torch.Tensor) -> torch.Tensor:
-        """(B,512,28,28) -> (B,10,512): 3x3 block means + global mean."""
-        b = goal_feat.shape[0]
-        h = w = goal_feat.shape[2]
-        tokens = []
-        for r in range(3):
-            for c in range(3):
-                r0, r1 = r * h // 3, (r + 1) * h // 3
-                c0, c1 = c * w // 3, (c + 1) * w // 3
-                tokens.append(goal_feat[:, :, r0:r1, c0:c1].mean(dim=(2, 3)))
-        tokens.append(goal_feat.mean(dim=(2, 3)))
-        return torch.stack(tokens, dim=1)                       # (B,10,d)
+    def match_logits(self, obs_feat: torch.Tensor, goal_feat: torch.Tensor):
+        desc = goal_desc(goal_feat)                          # (B,512)
+        pooled = obs_pooled(obs_feat).permute(0, 2, 3, 1)    # (B,28,28,512)
+        q = self.q_proj(desc)                                # (B,512)
+        k = self.k_proj(pooled)                              # (B,28,28,512)
+        scale = torch.exp(self.log_scale) / math.sqrt(D)
+        return torch.einsum("bhwc,bc->bhw", k, q) * scale    # (B,28,28)
+
+    def match_map(self, obs_feat: torch.Tensor, goal_feat: torch.Tensor):
+        logits = self.match_logits(obs_feat, goal_feat)
+        return torch.softmax(logits.view(logits.shape[0], -1), dim=1).view_as(logits)
 
     def forward(self, obs_feat: torch.Tensor, goal_feat: torch.Tensor):
-        b = obs_feat.shape[0]
-        pos = sinusoidal_pos_2d(obs_feat.shape[2], obs_feat.shape[3], D,
-                                obs_feat.device).flatten(1).T
-        obs_tokens = obs_feat.flatten(2).permute(0, 2, 1)
-        kv = obs_tokens + pos.unsqueeze(0)
-        q = self.goal_tokens(goal_feat) + self.pos_pe.unsqueeze(0)
-        q2, attn_cross = self.cross(q, kv, kv)
-        q2 = self.norm1(q + q2)
-        q3, attn_self = self.self_attn(q2, q2, q2)
-        q3 = self.norm2(q2 + q3)
-        out = self.head(q3)
-        col, row, score, margin = pick_top(out)
-        return {"col": col, "row": row, "score": score, "margin": margin,
-                "out": out, "attn_cross": attn_cross, "attn_self": attn_self,
-                "tokens": q3}
+        return pack(map_to_match(self.match_map(obs_feat, goal_feat)))
 
 
 def n_params(model: nn.Module) -> int:

@@ -1,12 +1,13 @@
 {
   "method": "pq",
+  "version": "v2-fair-on-C1",
   "seed": 42,
   "epochs": 12,
   "batch": 128,
   "lr": 0.001,
-  "params": 1454107,
-  "cache_manifest_sha": null,
+  "params": 787968,
   "encoder": "frozen resnet50 IMAGENET1K_V2 layer2 fp32",
-  "loss": "smoothL1(col,row) masked in-view + BCE(score, pred-within-10m)",
-  "started": "2026-10-31T11:46:15+0800"
+  "fairness_contract": "goal desc = C1 central 2x2 block; obs map = C1 2x2-neighbourhood pooling; position = C1 peak + 3x3 subpixel centroid + margin suppression; PQ = learnable query/value projection (identity init reduces to C1 exactly, verified 1.2e-7); CA = attention-weight map replaces the cosine map; score = map peak (C1 semantics)",
+  "loss": "map-level: in-view Gaussian blob (sigma 1.5 cells) at true cell; out-of-view all-low. PQ: MSE on cosine map [-1,1]; CA: BCE on pre-softmax logits",
+  "started": "2026-10-31T14:16:06+0800"
 }

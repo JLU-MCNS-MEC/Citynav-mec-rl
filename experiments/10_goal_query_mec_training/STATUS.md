@@ -19,7 +19,7 @@
 
 | 阶段 | 名称 | 状态 | 关键结论 | commit |
 |---|---|---|---|---|
-| 10A | Point Query / Cross-Attention 视觉匹配对比 | **完成（负结果）**：C1 离线定位 median 3.27 m / P@10m 87.8%，PQ 26.7 m / 12.2%，CA 33.0 m / 6.0%；PQ/CA 不满足替换条件，**推荐 C1 进入 10B** | 待填 | — |
+| 10A | Point Query / Cross-Attention 视觉匹配对比 | **完成（v2 公平版，v1 作废）**：公平性契约下 CA 达 C1 量级（median 3.74 vs 3.27 m）但未超过、门控更弱（fp_oov 23% vs 4.3%）；PQ 因 MSE 监督塌陷不可用（修复需用户同意）；**推荐 C1 进入 10B，CA 可加跑闭环作证** | `10A_point_query_cross_attention/REPORT.md` | 待填 |
 | 10B | 几何控制器闭环比较（C1/PQ/CA × 5,324 条） | 未开始（依赖 10A） | — | — |
 | 10C | MEC 输入模态与训练数据生成（cross-fitting 审计） | 未开始（依赖 10B） | — | — |
 | 10D | Transformer-M 正式训练（seed 42，仅一次） | 未开始（依赖 10C） | — | — |

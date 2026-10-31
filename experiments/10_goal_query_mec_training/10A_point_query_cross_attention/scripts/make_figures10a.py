@@ -224,7 +224,6 @@ def fig_examples(rows, rasters, encoder, models, device):
 
 
 def fig_attention(rows, rasters, encoder, models, device):
-    from model10a import sinusoidal_pos_2d
     rng = np.random.default_rng(7)
     cand = [r for r in rows if r["split"] == "val_seen" and r["target_in_view"]
             and 0 < r["true_dist_m"] < 40]
@@ -245,22 +244,12 @@ def fig_attention(rows, rasters, encoder, models, device):
     axes[0].set_axis_off()
     for ax, m in zip(axes[1:], ("pq", "ca")):
         rr = models[m](of_t, gf_t)
-        attn = rr["attn"] if m == "pq" else rr["attn_cross"]
-        # winning proposal
-        out = rr["out"][0]
-        scores = out[:, 2].sigmoid()
-        w = int(scores.argmax())
-        a = attn[0, w].detach().cpu().numpy().reshape(28, 28)
-        hm = np.repeat(np.repeat(a, 8, axis=0), 8, axis=1)
+        smap = rr["map"][0]                       # (28,28) match map
+        hm = np.repeat(np.repeat(smap, 8, axis=0), 8, axis=1)
         ax.imshow(obs)
         ax.imshow(hm, cmap="jet", alpha=0.45)
         ax.plot(float(rr["col"][0]), float(rr["row"][0]), "r+", ms=14, mew=4)
-        if m == "pq":
-            anc = rr["anchor"].detach().cpu().numpy()
-            ax.plot(anc[:, 0] * 111.5 + 111.5, anc[:, 1] * 111.5 + 111.5,
-                    "yo", ms=5, label="query anchors")
-            ax.legend(fontsize=8)
-        ax.set_title(f"{m.upper()} winning-proposal attention "
+        ax.set_title(f"{m.upper()} match map + peak "
                      f"(err {r[f'{m}_err_m']:.1f} m)")
         ax.set_axis_off()
     fig.suptitle(f"10A: attention visualisation | {r['episode_id']} step {r['step']}")

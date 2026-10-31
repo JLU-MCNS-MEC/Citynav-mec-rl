@@ -26,7 +26,7 @@
 | 08 | 信念几何导航基线 | **完成**：5,324 条配对任务。Top-1 SR **44.9%**、Top-5 **40.2%**，Transformer-M 23.7%；配对 +21.2 pp [19.7, 22.6]，McNemar p≈1e-167；越界 0.3% vs T 48.8%；Top-1 过早 STOP 53.7%（候选距离低估约 10 m） | `08_belief_only_geometric_navigation/REPORT.md` | `4ee6f2a` |
 | 09 | 实时视觉匹配与动态信念 | **完成**：09A 匹配 58,891 状态（ResNet layer2 中位 3.6 m、P@10 m 0.878）；09B 动态闭环 5,324 条 **SR 47.6%** [46.3, 48.9]，比 Static Top-1 +2.74 pp （McNemar p=2e-5）、比 Transformer-M +23.9 pp；93% 更新被 24 m 候选网格吸收，10.7% 的置信匹配误差 >20 m | `09_online_visual_goal_matching/REPORT.md`（含 09A/09B） | `237a55b`、`9312f45` |
 | 09C | 连续定位与可观测性门控 | **完成**：5,324 条。**Continuous C1 SR 64.7%** [63.4, 66.0]，比 Dynamic 24 m（47.6%）+17.11 pp、比 Static Top-1 +19.85 pp；连续估计中位 **3.21 m**、P@5 m 84.1%（亚网格偏移保留）。C2 加入硬可观测门控后 **61.2%**，比 C1 **低 3.49 pp**：视野外误接受 1.04%→0.86%，但拒绝了 13.4% 的正确更新 | `09_online_visual_goal_matching/09C_continuous_localization/REPORT.md` | `a1296e8` |
-| 10A | 目标查询视觉匹配对比（PQ / CA vs C1） | **完成（负结果）**：58,891 状态离线评测，C1 median 3.27 m / P@10 m 87.8% ≫ PQ 26.7 m / 12.2% > CA 33.0 m / 6.0%；CA tau=0.09 致视野外误接受 37.6%。**推荐 C1 进入 10B**（10B/10C 后续进行，10D 训练需用户确认） | `10_goal_query_mec_training/10A_point_query_cross_attention/REPORT.md` | 待填 |
+| 10A | 目标查询视觉匹配对比（PQ / CA vs C1，v2 公平版） | **完成**：公平性契约（零初始化 PQ= C1，验证 1.2e-7）下 CA 达 C1 量级但未超过（median 3.74 vs 3.27 m，fp_oov 23% vs 4.3%）；PQ 因 MSE 监督塌陷（F1=0）不可用；v1（b161f05）因破坏公平性作废归档。**推荐 C1 进入 10B** | `10_goal_query_mec_training/10A_point_query_cross_attention/REPORT.md` | 待填 |
 
 ## 已确认事实
 

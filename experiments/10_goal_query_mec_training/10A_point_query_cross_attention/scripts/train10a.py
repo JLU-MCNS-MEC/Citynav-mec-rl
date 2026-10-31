@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
-"""10A training: Point Query / Cross-Attention matcher heads (seed 42).
+"""10A training v2: fair PQ / CA matchers on the C1 mechanism (seed 42).
 
 * data:    Train-Seen teacher state image cache (build_cache10a.py), with the
            2,000-state calibration subset excluded;
 * encoder: frozen ResNet-50 layer2 features (matching.Encoder, fp32), on the
            fly, never fine-tuned;
-* loss:    smooth-L1 on (col,row) for every proposal, masked to states whose
-           target is inside the 100 m view (out-of-view offsets are
-           unrepresentable in the bounded head); BCE on the per-proposal
-           confidence whose label is "predicted offset within 10 m";
-* resume:  --resume loads last.pt (model + optimizer + epoch); best.pt is
-           tracked by the lowest validation-free training loss;
+* loss:    map-level supervision only.  In-view states: Gaussian blob
+           (sigma=1.5 cells) centred at the true cell of the 28x28 match map;
+           out-of-view states: all-low target (PQ: -1 cosine map / CA: zero
+           logits), which trains the peak score to stay low when the target
+           is outside the view -- the C1 gate semantics;
+* PQ:      MSE on the cosine map; CA: BCE on the pre-softmax attention logits;
+* position extraction, score, margin: identical to C1 (see model10a.py);
+* resume:  --resume loads last.pt (model + optimizer + epoch); best.pt tracks
+           the lowest training loss;
 * outputs: results/{method}/checkpoints/{best,last,epoch_NN}.pt,
            history.jsonl, config.json (all atomic).
 """
@@ -27,6 +30,7 @@ from pathlib import Path
 
 import numpy as np
 import torch
+import torch.nn.functional as F
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import common10a  # noqa: E402
@@ -39,10 +43,12 @@ import matching  # noqa: E402
 
 CACHE = RES / "cache"
 SCALE = common10a.SCALE
+CELL = common10a.OUT / 28.0          # 8 px per map cell
 BATCH = 128
 LR = 1e-3
 EPOCHS = 12
 SEED = 42
+BLOB_SIGMA = 1.5
 
 
 class StateDataset(torch.utils.data.Dataset):
@@ -105,7 +111,7 @@ def main() -> int:
 
     last_pt = ckpt_dir / "last.pt"
     if args.resume and last_pt.exists():
-        st = torch.load(last_pt, map_location=device, weights_only=True)
+        st = torch.load(last_pt, map_location=device, weights_only=False)
         model.load_state_dict(st["model"])
         opt.load_state_dict(st["opt"])
         start_epoch = st["epoch"] + 1
@@ -115,20 +121,26 @@ def main() -> int:
               f"(best_loss {best_loss:.4f})", flush=True)
 
     (out_dir / "config.json").write_text(json.dumps({
-        "method": args.method, "seed": args.seed, "epochs": args.epochs,
-        "batch": args.batch, "lr": args.lr, "params": n_params(model),
-        "cache_manifest_sha": None, "encoder": "frozen resnet50 IMAGENET1K_V2 "
-        "layer2 fp32", "loss": "smoothL1(col,row) masked in-view + BCE(score, "
-        "pred-within-10m)", "started": time.strftime("%Y-%m-%dT%H:%M:%S%z")},
-        indent=2) + "\n", encoding="utf-8")
+        "method": args.method, "version": "v2-fair-on-C1", "seed": args.seed,
+        "epochs": args.epochs, "batch": args.batch, "lr": args.lr,
+        "params": n_params(model),
+        "encoder": "frozen resnet50 IMAGENET1K_V2 layer2 fp32",
+        "fairness_contract": "goal desc = C1 central 2x2 block; obs map = C1 "
+        "2x2-neighbourhood pooling; position = C1 peak + 3x3 subpixel centroid "
+        "+ margin suppression; PQ = learnable query/value projection (identity "
+        "init reduces to C1 exactly, verified 1.2e-7); CA = attention-weight "
+        "map replaces the cosine map; score = map peak (C1 semantics)",
+        "loss": "map-level: in-view Gaussian blob (sigma 1.5 cells) at true "
+        "cell; out-of-view all-low. PQ: MSE on cosine map [-1,1]; "
+        "CA: BCE on pre-softmax logits",
+        "started": time.strftime("%Y-%m-%dT%H:%M:%S%z")}, indent=2) + "\n",
+        encoding="utf-8")
 
     ds = StateDataset(rows)
     dl = torch.utils.data.DataLoader(ds, batch_size=args.batch, shuffle=True,
                                      num_workers=args.workers, drop_last=False,
                                      persistent_workers=True)
-    reg_fn = torch.nn.SmoothL1Loss(reduction="none")
-    bce = torch.nn.BCEWithLogitsLoss(reduction="none")
-    # score logits: use the pre-sigmoid score for BCE
+    grid = torch.arange(28, device=device, dtype=torch.float32)
     step = 0
     started = time.time()
     for epoch in range(start_epoch, args.epochs):
@@ -145,30 +157,32 @@ def main() -> int:
                 gf = encoder.features(goal, ("layer2",))["layer2"]
             of_t = torch.from_numpy(of).to(device)
             gf_t = torch.from_numpy(gf).to(device)
-            res = model(of_t, gf_t)
-            out = res["out"]                       # (B,N,3) col,row,score_logit
-            err_px = torch.hypot(out[..., 0] - target[:, 0][:, None],
-                                 out[..., 1] - target[:, 1][:, None])
-            reg = reg_fn(out[..., 0], target[:, 0][:, None].expand_as(out[..., 0])) \
-                + reg_fn(out[..., 1], target[:, 1][:, None].expand_as(out[..., 1]))
-            reg = reg * in_view[:, None].float()
-            err_m = err_px * SCALE
-            label = (err_m <= 10.0).float().detach()       # per-proposal quality
-            b = bce(out[..., 2], label)
-            loss = reg.mean() + b.mean()
+            b = of_t.shape[0]
+            cell_col = target[:, 0] / CELL
+            cell_row = target[:, 1] / CELL
+            dx = grid.view(1, 1, -1) - cell_col.view(b, 1, 1)
+            dy = grid.view(1, -1, 1) - cell_row.view(b, 1, 1)
+            blob = torch.exp(-(dx ** 2 + dy ** 2) / (2 * BLOB_SIGMA ** 2))
+            blob = blob * in_view.view(b, 1, 1).float()
+            if args.method == "pq":
+                m = model.match_map(of_t, gf_t)
+                loss = F.mse_loss(m, 2 * blob - 1)
+            else:
+                logits = model.match_logits(of_t, gf_t)
+                loss = F.binary_cross_entropy_with_logits(logits, blob)
             opt.zero_grad()
             loss.backward()
             opt.step()
             with torch.no_grad():
-                top_err = err_m.gather(1, out[..., 2].max(1).indices.unsqueeze(1)
-                                       ).squeeze(1)
-                tot[0] += float(loss.item()) * len(obs)
-                tot[1] += float((top_err[in_view.bool()] <= 5).sum()) \
-                    if in_view.any() else 0.0
-                tot[2] += float((top_err[in_view.bool()] <= 10).sum()) \
-                    if in_view.any() else 0.0
-                tot[3] += float(in_view.sum())
-            n += len(obs)
+                r = model(of_t, gf_t)
+                err_m = torch.hypot(r["col"] - target[:, 0],
+                                    r["row"] - target[:, 1]) * SCALE
+                tot[0] += float(loss.item()) * b
+                iv = in_view.bool()
+                tot[1] += float((err_m[iv] <= 5).sum()) if iv.any() else 0.0
+                tot[2] += float((err_m[iv] <= 10).sum()) if iv.any() else 0.0
+                tot[3] += float(iv.sum())
+            n += b
             step += 1
             if step % 50 == 0:
                 print(f"e{epoch} step {step} loss {loss.item():.4f} | "
