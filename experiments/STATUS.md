@@ -29,6 +29,8 @@
 | 10A | 目标查询视觉匹配对比（PQ / CA vs C1，v2 公平版） | **完成**：公平性契约（零初始化 PQ= C1，验证 1.2e-7）下 CA 达 C1 量级但未超过（median 3.74 vs 3.27 m，fp_oov 23% vs 4.3%）；PQ 因 MSE 监督塌陷（F1=0）不可用；v1（b161f05）因破坏公平性作废归档。**推荐 C1 进入 10B** | `10_goal_query_mec_training/10A_point_query_cross_attention/REPORT.md` | 待填 |
 | 10B | 几何控制器闭环比较（C1 复用 / CA 作证） | **完成**：C1 SR 64.7% vs CA 26.0%（Δ −38.7 pp，McNemar p≈0，5,324 配对）；CA 过早 STOP 73.9% + 视野外误接受 23% 致信念坍缩；**最终视觉匹配方案 = C1，进入 10C** | `10_goal_query_mec_training/10B_geometry_comparison/REPORT.md` | 待填 |
 | 10C | MEC 输入模态与训练数据生成 | **完成**：新输入契约（C1 目标描述子 + 09C 连续信念 + 16 步因果历史）；250,000 训练状态（教师逐状态均匀采样，修正 Stage 07 缺陷；C1 恢复状态 20% 配比）；泄露审计通过 | `10_goal_query_mec_training/10C_mec_input_dataset/REPORT.md` | 待填 |
+| 10D | Transformer-M 正式训练（seed 42） | **完成**：Val Macro-F1 0.923（旧 0.784），STOP 召回 0.941（旧 0.485）；early stop 16/30；best.pt SHA 5f01a52d… | `10_goal_query_mec_training/10D_transformer_m_training/REPORT.md` | 待填 |
+| 10E | 最终闭环验证 | **完成**：新 M-v3 SR **55.4%**（旧 23.7%，+31.7pp），超 Top-1/09B，差 C1 9.3pp（过早 STOP 为主因）；**Stage 10 完成，停止等待用户指示** | `10_goal_query_mec_training/10E_final_closed_loop/REPORT.md` | 待填 |
 
 ## 已确认事实
 
