@@ -115,12 +115,19 @@ def main() -> int:
     RES.mkdir(parents=True, exist_ok=True)
     FIG.mkdir(parents=True, exist_ok=True)
     journals = {k: load_journal(p) for k, p in SOURCES.items()}
-    print("journals:", {k: len(v) for k, v in journals.items()}, flush=True)
-    summary = {k: stats(v) for k, v in journals.items() if v}
-    # Stage 06 has no local per-episode journal: use its committed aggregates
+    # Stage 06 journal was recovered from the migration archive
+    # (results_06/results/seed42/journal.jsonl, 5,324 lines) and copied to
+    # results/stage06_journal.jsonl for the paired comparison
+    s6_j = RES / "stage06_journal.jsonl"
+    if not journals.get("stage06") and s6_j.exists():
+        journals["stage06"] = load_journal(s6_j)
     s6_path = (REPO / "experiments/06_closed_loop_success_rate/results/seed42"
                "/summary.json")
     if not journals.get("stage06") and s6_path.exists():
+        pass
+    print("journals:", {k: len(v) for k, v in journals.items()}, flush=True)
+    summary = {k: stats(v) for k, v in journals.items() if v}
+    if not summary.get("stage06") and s6_path.exists():
         sc = json.loads(s6_path.read_text(encoding="utf-8"))["scopes"]
         all_ = sc["all"]
         s6 = {"n": int(all_["n"]), "sr": float(all_["sr"]),
@@ -137,15 +144,13 @@ def main() -> int:
         for lg in ("short", "medium", "long"):
             if f"all|{lg}" in sc:
                 s6[f"{lg}_sr"] = float(sc[f"all|{lg}"]["sr"])
-        summary["stage06"] = s6
-        journals.pop("stage06", None)   # no paired rows for stage06
     (RES / "10e_comparison.json").write_text(json.dumps(
         {"summary": summary, "labels": LABELS}, indent=2) + "\n", encoding="utf-8")
 
     # paired vs the new M
     rows = []
     ref = journals.get("m10e", {})
-    for key in ("stage06", "top1", "dyn09b", "c1_09c"):
+    for key in ("top1", "dyn09b", "c1_09c", "stage06"):
         if key not in journals or not ref:
             continue
         ids = sorted(set(ref) & set(journals[key]))

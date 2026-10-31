@@ -20,7 +20,7 @@
 
 | 对比 | Δ (pp) | p | 新 M 独胜 | 对方独胜 |
 |---|---|---|---|---|
-| M-v3 vs Stage06 M-v2 | **+31.7** | 无 journal（聚合对比） | — | — |
+| M-v3 vs Stage06 M-v2 | **+31.7** | **2.0e-261**（旧 M journal 自迁移归档恢复，配对） | 2,162 | 472 |
 | M-v3 vs Top-1 | **+10.5** | 4.1e-31 | 1,196 | 637 |
 | M-v3 vs 09B | **+7.8** | 3.8e-19 | 1,061 | 645 |
 | M-v3 vs C1 09C-1 | **−9.3** | 7.8e-40 | 716 | 1,212 |
@@ -49,8 +49,14 @@
 
 ## 5. 产物
 
-- `results/10e_loop/journal.jsonl`（5,324 条）+ `episodes/`（轨迹）
+- `results/10e_loop/journal.jsonl`（5,324 条）+ `episodes/`（轨迹，分片目录）
+- `results/stage06_journal.jsonl`（旧 M 5,324 条 journal，自迁移归档
+  `results_06/results/seed42/journal.jsonl` 恢复，用于配对检验）
 - `results/10e_comparison.json`、`10e_comparison_tables.csv`
 - `figures/10e_sr_bars.png`、`10e_breakdown.png`、`10e_trajectories.png`
-- 视频：未生成 MP4（轨迹图已足以说明；如需可补）
+- **视频**：`videos/` 11 个旧 M-v2（橙）vs 新 M-v3（蓝）对比 MP4
+  （720p x264，共 ~1.3 MB），`videos/MANIFEST.json` 记录案例标签：
+  - 新 M 成功 / 旧 M 失败 ×6（**Short/Medium/Long 各 2 条**——用户要求的重点案例）
+  - 旧 M 成功 / 新 M 失败 ×3（S/M/L 各 1 条）
+  - 双双成功 ×1、双双失败 ×1
 - 权重：10D `best.pt`（SHA 5f01a52d…，本地保存、不入库）
