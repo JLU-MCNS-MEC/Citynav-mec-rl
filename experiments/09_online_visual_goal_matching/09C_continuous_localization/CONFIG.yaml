@@ -1,0 +1,59 @@
+# Stage 09C configuration (continuous localisation + observability gating).
+# Every threshold was calibrated on Train-Seen and frozen; validation splits are
+# evaluation-only.  No training is performed in this stage.
+
+stage: 09C
+branch: exp/citynav-mec-fixed50m-topdown
+run_ids:
+  c1: 09c_c1_v1
+  c2: 09c_c2_v1
+
+paths:
+  stage06_manifest: experiments/06_closed_loop_success_rate/results/seed42/manifest.json
+  stage08_journals: experiments/08_belief_only_geometric_navigation/results/
+  stage09b_journal: experiments/09_online_visual_goal_matching/results/09b_dynamic/journal.jsonl
+  candidates24: experiments/04_visual_goal_global_map_pipeline/cache_v2/candidates24
+  results: experiments/09_online_visual_goal_matching/09C_continuous_localization/results
+
+encoder: frozen torchvision resnet50 IMAGENET1K_V2 (layer2 28x28x512, fp32)
+matching: layer2 dense, block 2, sub-pixel 3x3 weighted centroid
+
+continuous_belief:
+  components: 8            # top-K prior candidates
+  prior_temperature: 0.1   # calibrated in 09B (Train-Seen)
+  sigma_prior_m: 12.0
+  sigma_vis_m: 3.7628593595293554
+  eta: 0.1
+  rho: 0.5
+  merge_m: 10.0
+  estimate: MAP component mean (continuous, sub-grid preserved)
+
+gates:
+  c1:                      # continuous localisation only (09B gate)
+    tau: 0.875
+    agree_m: 10.0
+  c2:                      # observability / hard-negative gate
+    tau2: 0.8600000000000001
+    margin2: 0.0
+    agree_m: 1.973253452538075
+    v_min: 0.740484429065744
+    border_px: 12
+    d_max: 3.0
+
+control:                   # identical to Stage 08/09B
+  stop_radius_m: 20.0
+  align_deg: 25.0
+  forward_m: 5.0
+  turn_deg: 30.0
+  step_cap: 200
+
+calibration:
+  source: Train-Seen teacher states / trajectories (seeds 20261031)
+  sigma_vis_m: 3.7628593595293554
+  tau2: 0.8600000000000001
+  margin2: 0.0
+  agree_m: 1.973253452538075
+  v_min: 0.740484429065744
+  eta: 0.1
+  rho: 0.5
+  locked: true

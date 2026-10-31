@@ -37,6 +37,7 @@
 | 07 | `07_sampling_coverage_open_issue/` | 采样与覆盖率未解决问题（保持 OPEN，已完成诊断） | 03B–06 | **OPEN — DIAGNOSIS COMPLETED** | 见 `AUDIT_REPORT.md`；主因：协变量偏移 + argmax 坍缩 |
 | 08 | `08_belief_only_geometric_navigation/` | 仅用 12 维目标信念的几何导航基线 | 04、06 | **完成** | Top-1 44.9% / Top-5 40.2% vs Transformer-M 23.7%；见 `REPORT.md` |
 | 09 | `09_online_visual_goal_matching/` | 实时视觉目标匹配 + 动态信念更新 | 04、06、08 | **完成** | L2 匹配中位 3.6 m；Dynamic SR 47.6% vs 静态 44.9%；见 `REPORT.md` |
+| 09C | `09_online_visual_goal_matching/09C_continuous_localization/` | 连续目标定位 + 可观测性门控 | 09A、09B | **完成** | **C1 64.7%**（+17.1 pp vs 24 m）；硬门控 C2 61.2%；见 `REPORT.md` |
 
 ## 依赖关系
 
