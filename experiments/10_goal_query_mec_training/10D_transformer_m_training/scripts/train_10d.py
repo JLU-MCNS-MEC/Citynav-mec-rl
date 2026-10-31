@@ -73,54 +73,33 @@ def restore_rng(state: dict) -> None:
         torch.cuda.set_rng_state_all(state["cuda"])
 
 
-class StateDataset(Dataset):
-    """One sample = one decision state (teacher or recovery episode cache)."""
+class RamDataset(Dataset):
+    """One sample = one decision state, served from RAM materialised arrays
+    (materialize_10d.py); the only per-sample IO is the current-image crop."""
 
-    def __init__(self, rows: list[dict]):
-        self.rows = rows
+    def __init__(self, z, idx):
+        self.z = z
+        self.idx = idx
         self.rasters: RasterStore | None = None
-        self._lru: OrderedDict[str, dict] = OrderedDict()
-
-    def _load(self, rel: str) -> dict:
-        hit = self._lru.get(rel)
-        if hit is not None:
-            self._lru.move_to_end(rel)
-            return hit
-        with np.load(CACHE / rel) as z:
-            data = {k: z[k] for k in ("pooled", "belief", "match", "states",
-                                      "actions", "target_emb", "meta")}
-        # target_emb is stored as the C1 goal layer2 map (512,28,28); the model
-        # consumes the C1 goal query descriptor = central 2x2 block mean, L2-
-        # normalised (identical to matching._dense_descriptor block=2)
-        g = np.asarray(data["target_emb"], np.float32)
-        desc = g[:, 13:15, 13:15].mean(axis=(1, 2))
-        data["target_emb"] = (desc / np.maximum(
-            np.linalg.norm(desc, keepdims=True), 1e-8)).astype(np.float32)
-        self._lru[rel] = data
-        if len(self._lru) > 64:
-            self._lru.popitem(last=False)
-        return data
 
     def __len__(self):
-        return len(self.rows)
+        return len(self.idx)
 
     def __getitem__(self, i: int) -> dict:
         if self.rasters is None:      # one raster cache per worker process
             self.rasters = RasterStore()
-        r = self.rows[i]
-        data = self._load(r["file"])
-        t = int(r["t"])
-        states, actions = data["states"], data["actions"]
-        hist = history_block(np.asarray(data["pooled"], np.float32), states,
-                             actions, t)
-        raster = self.rasters.get(r["map"])
-        image = raster.heading_crop(float(states[t, 0]), float(states[t, 1]),
-                                    float(states[t, 2]))
+        k = self.idx[i]
+        x, y, yaw = (float(v) for v in self.z["states"][k])
+        image = self.rasters.get(self.z["maps"][k]).heading_crop(x, y, yaw)
         return {"image": image,
-                "target_emb": np.asarray(data["target_emb"], np.float32),
-                "belief": np.asarray(data["belief"][t], np.float32),
-                "match": np.asarray(data["match"][t], np.float32),
-                "label": int(actions[t]), **hist}
+                "target_emb": self.z["target_emb"][k],
+                "belief": self.z["belief"][k],
+                "match": self.z["match"][k],
+                "history_vis": self.z["hist_vis"][k].astype(np.float32),
+                "history_pose": self.z["hist_pose"][k],
+                "history_action": np.eye(4, dtype=np.float32)[self.z["hist_act"][k]],
+                "history_mask": self.z["hist_mask"][k],
+                "label": int(self.z["labels"][k])}
 
 
 def collate(samples: list[dict]) -> dict:
@@ -234,20 +213,20 @@ def main() -> int:
     config = vars(args).copy()
     config["classes"] = CLASSES
 
-    # ---- load the 10C state lists -----------------------------------------
-    def load_rows(split: str) -> list[dict]:
-        with (CACHE / split / "states.csv").open(encoding="utf-8") as fh:
-            rows = [dict(r) for r in csv.DictReader(fh)]
-        for r in rows:
-            r["t"] = int(r["t"])
-            r["file"] = f"{split}/{r['file']}"     # file is split-root relative
-        return rows
+    # ---- load the 10C materialised arrays ----------------------------------
+    def load_ram(name: str) -> dict:
+        d = HERE.parent / "results" / name
+        if not d.is_dir():
+            raise SystemExit(f"missing {d} - run materialize_10d.py first")
+        z = {f.stem: np.load(f, allow_pickle=(f.stem == "maps"))
+             for f in sorted(d.glob("*.npy"))}
+        return z
 
-    train_rows = load_rows("train_seen")
-    rec_rows = load_rows("recovery")
-    val_rows = load_rows("val_seen")
-    print(f"train teacher states {len(train_rows)} + recovery {len(rec_rows)} "
-          f"| val states {len(val_rows)}", flush=True)
+    train_z = load_ram("train_combined")
+    val_z = load_ram("val")
+    n_train = int(len(train_z["labels"]))
+    n_val = int(len(val_z["labels"]))
+    print(f"train states {n_train} (RAM) | val states {n_val} (RAM)", flush=True)
 
     model = TransformerM().to(device)
     encoder = FrozenEncoder(device)
@@ -276,16 +255,16 @@ def main() -> int:
                                          encoding="utf-8")
     print(f"params={model.n_params()} run={run_dir}", flush=True)
 
-    val_ds = StateDataset(val_rows)
+    val_ds = RamDataset(val_z, np.arange(n_val))
     n_best_epochs = 0
     for epoch in range(start_epoch, args.epochs):
         started = time.time()
         rng = np.random.default_rng(args.seed * 1000 + epoch)
-        pairs = train_rows + rec_rows
-        rng.shuffle(pairs)
+        idx = np.arange(n_train)
+        rng.shuffle(idx)
         first_batch = start_step if epoch == start_epoch else 0
-        pairs = pairs[first_batch * args.batch:]
-        loader = DataLoader(StateDataset(pairs), batch_size=args.batch,
+        idx = idx[first_batch * args.batch:]
+        loader = DataLoader(RamDataset(train_z, idx), batch_size=args.batch,
                             shuffle=False, num_workers=args.workers,
                             collate_fn=collate,
                             persistent_workers=args.workers > 0,

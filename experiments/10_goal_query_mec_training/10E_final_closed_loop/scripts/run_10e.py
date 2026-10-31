@@ -30,8 +30,11 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[3]
 assert (REPO / "experiments").is_dir(), f"REPO 解析错误: {REPO}"
 sys.path.insert(0, str(HERE))
+sys.path.insert(0, str(REPO / "experiments/10_goal_query_mec_training"
+                       "/10D_transformer_m_training/scripts"))
 sys.path.insert(0, str(REPO / "experiments/05_transformer_m_training/scripts"))
 sys.path.insert(0, str(REPO / "experiments/04_visual_goal_global_map_pipeline/scripts"))
+sys.path.insert(0, str(REPO / "experiments/06_closed_loop_success_rate/scripts"))
 sys.path.insert(0, str(REPO / "experiments/09_online_visual_goal_matching/scripts"))
 sys.path.insert(0, str(REPO / "experiments/09_online_visual_goal_matching"
                        "/09C_continuous_localization/scripts"))
@@ -102,6 +105,8 @@ def main() -> int:
     manifest_path = Path(args.manifest)
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     sha_path = manifest_path.with_name(manifest_path.name + ".sha256")
+    if not sha_path.exists():      # historical naming: manifest.sha256
+        sha_path = manifest_path.with_name(manifest_path.stem + ".sha256")
     manifest_sha = sha_path.read_text(encoding="utf-8").strip()
     ckpt_sha = sha256(Path(args.ckpt))
 
@@ -201,8 +206,11 @@ def main() -> int:
                                      vec[0] * math.cos(yaw) + vec[1] * math.sin(yaw))
                 unc = float(math.sqrt(np.mean(belief.vars)))
                 since = float(step - belief.last_update)
+                ent = float(belief.entropy())
+                if not math.isfinite(ent):   # single-component mixture
+                    ent = 0.0
                 belief_feat = np.asarray(
-                    [fwd, lat, dist_est, bearing, score, unc, belief.entropy(),
+                    [fwd, lat, dist_est, bearing, score, unc, ent,
                      since, dx, dy], np.float32)
                 match_feat = np.asarray([dx, dy, score, margin, m["sharpness"]],
                                         np.float32)

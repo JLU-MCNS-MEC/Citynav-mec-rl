@@ -157,8 +157,11 @@ def causal_episode(ep, raster, lib, matcher_enc, enc4) -> dict:
                              vec[0] * math.cos(yaw) + vec[1] * math.sin(yaw))
         unc = float(math.sqrt(np.mean(belief.vars)))
         since = float(t - belief.last_update)
+        ent = float(belief.entropy())
+        if not math.isfinite(ent):   # single-component mixture: log(1)=0
+            ent = 0.0                # -> maximum certainty, entropy 0
         belief_feat[t] = [fwd, lat, dist, bearing, score, unc,
-                          belief.entropy(), since, dx, dy]
+                          ent, since, dx, dy]
         match_feat[t] = [dx, dy, score, margin, m["sharpness"]]
     return {"pooled": pooled, "belief": belief_feat, "match": match_feat,
             "states": states.astype(np.float32), "actions": actions.astype(np.int8),
