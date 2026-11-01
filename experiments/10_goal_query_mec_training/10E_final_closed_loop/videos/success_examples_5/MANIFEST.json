@@ -1,0 +1,57 @@
+{
+  "set": "success_examples_5",
+  "task": "Stage 10: Transformer-M v3 成功案例视频合集（双视角导航回放）",
+  "created": "2026-11-01",
+  "checkpoint": "experiments/10_goal_query_mec_training/10D_transformer_m_training/results/runs_10d/seed42/best.pt",
+  "checkpoint_sha256": "5f01a52dd5bbb53e361a",
+  "probability_replay": {
+    "method": "offline replay of saved decision states with the 10D best.pt (replay_10e.py): C1 causal belief + 16-step causal history + current visual, identical to run_10e.py",
+    "argmax_fully_consistent": true,
+    "prob_sums_all_one": true,
+    "note": "probabilities are REAL softmax outputs, not one-hot fakes"
+  },
+  "cases": [
+    {"episode_id": "val_seen:00018", "length_group": "short", "new_m": "SUCCESS",
+     "old_m": "fail", "video": "individual/val_seen_00018.mp4",
+     "duration_s": 8.1, "size_mb": 0.71},
+    {"episode_id": "val_seen:00591", "length_group": "medium", "new_m": "SUCCESS",
+     "old_m": "fail", "video": "individual/val_seen_00591.mp4",
+     "duration_s": 12.3, "size_mb": 0.83},
+    {"episode_id": "val_seen:00629", "length_group": "medium", "new_m": "SUCCESS",
+     "old_m": "fail", "video": "individual/val_seen_00629.mp4",
+     "duration_s": 10.8, "size_mb": 0.80},
+    {"episode_id": "val_seen:00776", "length_group": "long", "new_m": "SUCCESS",
+     "old_m": "fail", "video": "individual/val_seen_00776.mp4",
+     "duration_s": 16.8, "size_mb": 0.81},
+    {"episode_id": "val_seen:00960", "length_group": "long", "new_m": "FAIL",
+     "old_m": "SUCCESS", "video": "individual/val_seen_00960.mp4",
+     "duration_s": 15.6, "size_mb": 1.28,
+     "note": "对照案例：旧 M-v2 成功、新 M-v3 失败（过早 STOP）"}
+  ],
+  "compilations": [
+    {"file": "compilations/m_v3_success_compilation_4.mp4",
+     "content": "val_seen:00018, 00591, 00629, 00776 (new M-v3 success only)",
+     "duration_s": 48.0, "size_mb": 3.16},
+    {"file": "compilations/selected_5_cases_compilation.mp4",
+     "content": "00018, 00591, 00629, 00776, 00960 in order (00960 correctly marked as FAIL contrast)",
+     "duration_s": 63.6, "size_mb": 4.43}
+  ],
+  "video_spec": {
+    "codec": "h264", "width": 1280, "height": 720, "fps": 10,
+    "frames_per_step": 3, "pix_fmt": "yuv420p", "crf": 26,
+    "discrete_action_replay": true,
+    "layout": "left: north-up map (20m disc, start, target, trajectory, heading); right: heading-forward 100m observation + step/action/distance + 4 softmax bars; bottom: id/split/group/action/dist/probs/outcome"
+  },
+  "checks": {
+    "episode_ids_match_manifest": true,
+    "success_consistent_with_journal": true,
+    "no_black_or_corrupt_frames": true,
+    "uav_position_matches_trajectory": true,
+    "target_circle_and_marker_correct": true,
+    "prob_sums_to_one": true,
+    "argmax_matches_saved_action": true,
+    "compilation_order_correct": true,
+    "ffprobe_verified": true,
+    "contact_sheet": "contact_sheet_5.png"
+  }
+}
