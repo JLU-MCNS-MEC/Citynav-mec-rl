@@ -99,3 +99,14 @@ experiments/10_goal_query_mec_training/10A_point_query_cross_attention/results/v
 experiments/10_goal_query_mec_training/10D_transformer_m_training/results/train_combined/
 experiments/10_goal_query_mec_training/10D_transformer_m_training/results/val/
 experiments/10_goal_query_mec_training/10C_mec_input_dataset/results/c1_rollouts/*/episodes/
+
+# ---- Stage 11 caches / memmaps --------------------------------------------
+experiments/11_teacher_geometry_ablation/*/results/cache/
+experiments/11_teacher_geometry_ablation/*/results/data/
+
+# machine-specific data symlinks (broken on other machines)
+experiments/04_visual_goal_global_map_pipeline/cache
+experiments/04_visual_goal_global_map_pipeline/cache_v2
+experiments/05_transformer_m_training/runs
+experiments/05_transformer_m_training/runs_v2
+experiments/03b_target_directed_teacher/results_naive_15deg

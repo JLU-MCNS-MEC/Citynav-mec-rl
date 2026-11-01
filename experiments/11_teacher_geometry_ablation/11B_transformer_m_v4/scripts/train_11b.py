@@ -1,0 +1,216 @@
+#!/usr/bin/env python3
+"""11B: Transformer-M v4 training on the pure Stage 03 four-action teacher pool.
+
+* data:    11B memmap (18,521 episodes / 1,279,882 decision states, uncapped,
+           no resampling, no mixing -- pure teacher supervision); chunked
+           memmap DataLoader, no whole-pool RAM loading (doc 4.3);
+* model:   TransformerM11 (model11b.py): v4 fixes -- history time position
+           encoding, deduplicated 12-d state token;
+* loop:    v4 schedule fix -- per-BATCH OneCycleLR (total_steps = epochs x
+           steps_per_epoch, pct_start 0.03, cosine anneal) instead of v3's
+           per-epoch stepping; NaN guard skips non-finite updates; resumable
+           checkpoint.pt (model/opt/sched/RNG/batch position);
+* eval:    fixed val memmap (400 Val-Seen episodes x 4 states, Stage-03-style
+           four-action teacher labels, VALIDATION ONLY) per epoch with loss,
+           accuracy, Macro-F1, per-class P/R/F1, confusion, STOP/turn recall;
+           best.pt by Val Macro-F1; early stop patience 10;
+* outputs: runs_11b/seed42/{best.pt, epoch_NN.pt, checkpoint.pt, history.jsonl,
+           config.json, train_progress.json, gpu_util.jsonl}.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import math
+import os
+import random
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+import numpy as np
+import torch
+import torch.nn.functional as F
+from torch.utils.data import DataLoader
+
+HERE = Path(__file__).resolve().parent
+REPO = HERE.parents[3]
+assert (REPO / "experiments").is_dir(), f"REPO 解析错误: {REPO}"
+sys.path.insert(0, str(HERE))
+sys.path.insert(0, str(REPO / "experiments/10_goal_query_mec_training/10D_transformer_m_training/scripts"))
+sys.path.insert(0, str(REPO / "experiments/05_transformer_m_training/scripts"))
+sys.path.insert(0, str(REPO / "experiments/04_visual_goal_global_map_pipeline/scripts"))
+
+from dataset_v2 import FrozenEncoder  # noqa: E402
+from model11b import TransformerM11  # noqa: E402
+from dataset11b import ChunkedMemmapDataset, ValMemmapDataset  # noqa: E402
+from train_10d import (collate, evaluate, gpu_snapshot, metrics,  # noqa: E402
+                       restore_rng, rng_state, save_checkpoint, set_seed,
+                       to_model_batch)
+
+RUNS = HERE.parent / "results" / "runs_11b"
+CLASSES = ["Stop", "Forward", "TurnLeft", "TurnRight"]
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--epochs", type=int, default=30)
+    parser.add_argument("--batch", type=int, default=128)
+    parser.add_argument("--lr", type=float, default=3e-4)
+    parser.add_argument("--weight-decay", type=float, default=0.01)
+    parser.add_argument("--warmup", type=float, default=0.03)
+    parser.add_argument("--patience", type=int, default=10)
+    parser.add_argument("--workers", type=int, default=8)
+    parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--device", default="cuda")
+    args = parser.parse_args()
+    if not os.environ.get("CITYNAV_DATA"):
+        raise SystemExit("CITYNAV_DATA is not set")
+
+    set_seed(args.seed)
+    device = args.device
+    run_dir = RUNS / f"seed{args.seed}"
+    run_dir.mkdir(parents=True, exist_ok=True)
+    config = vars(args).copy()
+    config["classes"] = CLASSES
+    config["model"] = "TransformerM11"
+    config["data"] = "11B pure four-action teacher pool (11A final set, uncapped)"
+    config["scheduler"] = "OneCycleLR per-batch, total_steps=epochs*steps_per_epoch"
+
+    train_meta = json.loads((HERE.parent / "results/data/train_seen_memmap/meta.json")
+                            .read_text(encoding="utf-8"))
+    n_train = int(train_meta["n_states"])
+    val_ds = ValMemmapDataset("val_seen")
+    n_val = len(val_ds)
+    steps_per_epoch = math.ceil(n_train / args.batch)
+    print(f"train states {n_train} (memmap) | val states {n_val} | "
+          f"steps/epoch {steps_per_epoch}", flush=True)
+
+    model = TransformerM11().to(device)
+    encoder = FrozenEncoder(device)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr,
+                                  weight_decay=args.weight_decay)
+    # v4 fix 3: per-batch OneCycleLR (standard) instead of per-epoch stepping
+    scheduler = torch.optim.lr_scheduler.OneCycleLR(
+        optimizer, max_lr=args.lr, total_steps=args.epochs * steps_per_epoch,
+        pct_start=args.warmup, anneal_strategy="cos", cycle_momentum=False)
+    start_epoch, start_step, best, global_step = 0, 0, -1.0, 0
+    n_best_epochs = 0
+    ckpt_path = run_dir / "checkpoint.pt"
+    if args.resume and ckpt_path.exists():
+        ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=False)
+        model.load_state_dict(ckpt["model"])
+        optimizer.load_state_dict(ckpt["optimizer"])
+        scheduler.load_state_dict(ckpt["scheduler"])
+        best = ckpt.get("best", -1.0)
+        global_step = ckpt.get("global_step", 0)
+        if ckpt.get("epoch_done", True):
+            start_epoch, start_step = ckpt["epoch"] + 1, 0
+        else:
+            start_epoch, start_step = ckpt["epoch"], ckpt["step"]
+        restore_rng(ckpt["rng"])
+        print(f"resumed at epoch {start_epoch} step {start_step} (best={best:.4f})",
+              flush=True)
+    (run_dir / "config.json").write_text(json.dumps(config, indent=2) + "\n",
+                                         encoding="utf-8")
+    print(f"params={model.n_params()} run={run_dir}", flush=True)
+
+    nan_updates = 0
+    for epoch in range(start_epoch, args.epochs):
+        started = time.time()
+        rng = np.random.default_rng(args.seed * 1000 + epoch)
+        idx = np.arange(n_train)
+        rng.shuffle(idx)
+        first_batch = start_step if epoch == start_epoch else 0
+        idx = idx[first_batch * args.batch:]
+        loader = DataLoader(ChunkedMemmapDataset("train_seen", idx),
+                            batch_size=args.batch, shuffle=False,
+                            num_workers=args.workers, collate_fn=collate,
+                            persistent_workers=args.workers > 0,
+                            prefetch_factor=4 if args.workers else None)
+        model.train()
+        total, count, correct, gnorm_sum, steps_done = 0.0, 0, 0, 0.0, 0
+        for offset, batch in enumerate(loader):
+            step = first_batch + offset
+            logits = model(to_model_batch(batch, encoder, device))
+            label = torch.from_numpy(batch["label"]).to(device)
+            loss = F.cross_entropy(logits, label)
+            if not torch.isfinite(loss):
+                nan_updates += 1
+                if nan_updates <= 5:
+                    print(f"  WARN non-finite loss at epoch {epoch} step {step}; "
+                          f"skipping update (total {nan_updates})", flush=True)
+                continue
+            optimizer.zero_grad(set_to_none=True)
+            loss.backward()
+            gnorm = float(torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0))
+            optimizer.step()
+            scheduler.step()          # v4 fix 3: per-batch schedule step
+            global_step += 1
+            steps_done += 1
+            gnorm_sum += gnorm
+            total += float(loss.item()) * len(label)
+            correct += int((logits.argmax(-1) == label).sum())
+            count += len(label)
+        train_loss = total / max(count, 1)
+        train_acc = correct / max(count, 1)
+        val = evaluate(model, encoder, val_ds, device)
+        epoch_metrics = {"epoch": epoch, "train_loss": train_loss,
+                         "train_acc": train_acc, "train_steps": steps_done,
+                         "grad_norm": gnorm_sum / max(steps_done, 1),
+                         "val_seen": val, "lr": scheduler.get_last_lr()[0],
+                         "seconds": round(time.time() - started, 1),
+                         "global_step": global_step,
+                         "gpu": gpu_snapshot(),
+                         "resumed_from_step": first_batch,
+                         "nan_updates": nan_updates}
+        with (run_dir / "history.jsonl").open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(epoch_metrics) + "\n")
+        with (run_dir / "gpu_util.jsonl").open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps({"epoch": epoch, **epoch_metrics["gpu"]}) + "\n")
+        save_checkpoint(ckpt_path, model, optimizer, scheduler, epoch, 0, True,
+                        config, best, epoch_metrics, global_step)
+        torch.save({"model": model.state_dict(), "config": config, "epoch": epoch,
+                    "val": val, "train": {"loss": train_loss, "acc": train_acc}},
+                   run_dir / f"epoch_{epoch:02d}.pt")
+        improved = val["macro_f1"] > best
+        if improved:
+            best = val["macro_f1"]
+            n_best_epochs = 0
+            torch.save({"model": model.state_dict(), "config": config,
+                        "epoch": epoch, "val": val, "macro_f1": best},
+                       run_dir / "best.pt")
+            print(f"  new best macro_f1={best:.4f} at epoch {epoch}", flush=True)
+        else:
+            n_best_epochs += 1
+        print(json.dumps({"epoch": epoch, "loss": round(train_loss, 4),
+                          "train_acc": round(train_acc, 4),
+                          "val_loss": round(val["loss"], 4),
+                          "val_acc": round(val["accuracy"], 4),
+                          "val_macro_f1": round(val["macro_f1"], 4),
+                          "val_stop_recall": round(val["per_class"]["Stop"]["recall"], 3),
+                          "val_turn_recall": [round(val["per_class"]["TurnLeft"]["recall"], 3),
+                                              round(val["per_class"]["TurnRight"]["recall"], 3)],
+                          "pred_dist": {c: val["per_class"][c]["predicted"] for c in CLASSES},
+                          "gpu": epoch_metrics["gpu"],
+                          "sec": epoch_metrics["seconds"]}), flush=True)
+        with (run_dir / "train_progress.json").open("w", encoding="utf-8") as fh:
+            json.dump({"epoch": epoch, "epochs": args.epochs,
+                       "global_step": global_step, "train_loss": train_loss,
+                       "val_macro_f1": val["macro_f1"], "best": best,
+                       "patience_left": args.patience - n_best_epochs,
+                       "seconds": epoch_metrics["seconds"],
+                       "updated": time.strftime("%Y-%m-%dT%H:%M:%S%z")},
+                      fh, indent=2)
+        if n_best_epochs >= args.patience:
+            print(f"early stop: no val macro_f1 improvement for "
+                  f"{args.patience} epochs (best {best:.4f} at epoch "
+                  f"{epoch - n_best_epochs})", flush=True)
+            break
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
