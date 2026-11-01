@@ -46,9 +46,87 @@ sys.path.insert(0, str(REPO / "experiments/09_online_visual_goal_matching"
 sys.path.insert(0, str(REPO / "experiments/05_transformer_m_training/scripts"))
 sys.path.insert(0, str(REPO / "experiments/04_visual_goal_global_map_pipeline/scripts"))
 
-from dataset_v2 import CandidateStore, Episode, FrozenEncoder, RasterStore  # noqa: E402
-from build_features_10c import causal_episode  # noqa: E402
+from dataset_v2 import (CANDS, ENCODE_CHUNK, CandidateStore,  # noqa: E402
+                        Episode, FrozenEncoder, RasterStore)
+from build_features_10c import BEL, CAL, TAU, AGREE_M  # noqa: E402
 import matching  # noqa: E402
+from continuous_belief import ContinuousBelief, subpixel_match  # noqa: E402
+from pipeline import TARGET_HALF_M  # noqa: E402
+
+import math  # noqa: E402
+
+
+def causal_episode(ep, raster, lib, matcher_enc, enc4) -> dict:
+    """09C-1 causal loop over one teacher episode (verbatim from
+    build_features_10c.causal_episode) plus one v5 extension: per-step top-K
+    landmark state ``landmarks`` (T,K,3) = [mean_x, mean_y, weight] of the
+    09C belief mixture.  v4 training ignores this key; v5 uses it for the
+    multi-landmark geometry tokens.  All v4 arrays are computed exactly as
+    in 10C."""
+    states, actions, target = ep.states, ep.actions, ep.target
+    t_len = len(actions)
+    goal_img = matching.prepare_goal(raster, float(target[0]), float(target[1]))
+    goal_l2 = matcher_enc.features(goal_img[None], ("layer2",))["layer2"][0]
+    tvec = enc4.embed([raster.north_crop(float(target[0]), float(target[1]),
+                                         TARGET_HALF_M)])[0].astype(np.float32)
+    sims = lib.embeddings @ tvec
+    belief = ContinuousBelief(lib.positions.astype(np.float64), sims.astype(np.float64),
+                              0.1, k=8, sigma_prior_m=12.0)
+    imgs = []
+    for x, y, yaw in states:
+        imgs.append(raster.heading_crop(float(x), float(y), float(yaw)))
+    # layer4 pooled in 128-chunks (cache == training kernel, Stage-05 rule)
+    pooled = []
+    for i in range(0, len(imgs), ENCODE_CHUNK):
+        maps = enc4.spatial_maps(imgs[i:i + ENCODE_CHUNK]).transpose(0, 2, 3, 1)
+        vec = maps.mean(axis=(1, 2))
+        vec /= np.maximum(np.linalg.norm(vec, axis=1, keepdims=True), 1e-9)
+        pooled.append(vec)
+    pooled = (np.concatenate(pooled) if pooled else np.zeros((0, 2048), np.float32)
+              ).astype(np.float16)
+
+    belief_feat = np.zeros((t_len, 10), np.float32)
+    match_feat = np.zeros((t_len, 5), np.float32)
+    landmark_feat = np.zeros((t_len, 8, 3), np.float32)   # v5 extension
+    for t in range(t_len):
+        x, y, yaw = float(states[t, 0]), float(states[t, 1]), float(states[t, 2])
+        obs = matching.prepare_observation(raster, x, y, yaw)
+        of = matcher_enc.features(obs[None], ("layer2",))["layer2"][0]
+        m = subpixel_match(of, goal_l2, 2)
+        dx, dy = matching.pixel_to_offset(m["col"], m["row"])
+        z = np.array([x + dx, y + dy])
+        score, margin = m["score"], m["margin"]
+        agree = (belief.last_accept is not None
+                 and float(np.linalg.norm(z - belief.last_accept)) <= AGREE_M)
+        conf_ok = score >= TAU
+        accept = conf_ok and agree
+        if conf_ok:
+            belief.last_accept = z.copy()
+        if accept:
+            belief.update(z, CAL["sigma_vis_m"], BEL["best"]["eta"],
+                          BEL["best"]["rho"], t)
+        est = belief.estimate()
+        vec = est - np.asarray([x, y])
+        fwd = float(vec[0] * math.cos(yaw) + vec[1] * math.sin(yaw))
+        lat = float(-vec[0] * math.sin(yaw) + vec[1] * math.cos(yaw))
+        dist = float(np.linalg.norm(vec))
+        bearing = math.atan2(-vec[0] * math.sin(yaw) + vec[1] * math.cos(yaw),
+                             vec[0] * math.cos(yaw) + vec[1] * math.sin(yaw))
+        unc = float(math.sqrt(np.mean(belief.vars)))
+        since = float(t - belief.last_update)
+        ent = float(belief.entropy())
+        if not math.isfinite(ent):   # single-component mixture: log(1)=0
+            ent = 0.0                # -> maximum certainty, entropy 0
+        belief_feat[t] = [fwd, lat, dist, bearing, score, unc,
+                          ent, since, dx, dy]
+        match_feat[t] = [dx, dy, score, margin, m["sharpness"]]
+        n_k = int(belief.means.shape[0])   # mixture prunes low-weight components
+        landmark_feat[t, :n_k, :2] = belief.means.astype(np.float32)
+        landmark_feat[t, :n_k, 2] = belief.weights.astype(np.float32)
+    return {"pooled": pooled, "belief": belief_feat, "match": match_feat,
+            "states": states.astype(np.float32), "actions": actions.astype(np.int8),
+            "target_emb": goal_l2.astype(np.float32),
+            "landmarks": landmark_feat}
 
 CACHE_VERSION = "11b-fouraction-v1"
 SEED_SAMPLE = 20261101
@@ -62,19 +140,29 @@ def sha256_file(path: Path, chunk: int = 1 << 20) -> str:
     return h.hexdigest()
 
 
-def train_episodes() -> list[Episode]:
-    """Stage 03 four-action teacher, restricted to the 11A final pool."""
+def train_episodes(worker_id: int, n_workers: int) -> list[Episode]:
+    """Stage 03 four-action teacher, restricted to the 11A final pool.
+
+    Big arrays are read ONCE into locals (indexing an NpzFile re-decompresses
+    the whole member on every access -- see dataset_v2.load_split); each
+    worker only constructs the Episode objects of its own shard.
+    """
     z = np.load(S03R / "four_action_labels.npz")
     with MANIFEST_EP.open(encoding="utf-8") as fh:
-        final = {int(r["index"]) for r in csv.DictReader(fh)}
+        final = sorted(int(r["index"]) for r in csv.DictReader(fh))
+    states_all = z["states"]
+    actions_all = z["actions"]
+    targets_all = z["target_xy"]
+    maps_all = z["maps"]
     so = z["state_offsets"]
+    mine = [i for i in final if i % n_workers == worker_id]
     episodes = []
-    for i in sorted(final):
+    for i in mine:
         episodes.append(Episode(
-            key=i, map=str(z["maps"][i]),
-            states=z["states"][so[i]:so[i + 1]].astype(np.float32),
-            actions=z["actions"][so[i]:so[i + 1]].astype(np.int64),
-            target=z["target_xy"][i].astype(np.float32)))
+            key=i, map=str(maps_all[i]),
+            states=states_all[so[i]:so[i + 1]].astype(np.float32),
+            actions=actions_all[so[i]:so[i + 1]].astype(np.int64),
+            target=targets_all[i].astype(np.float32)))
     return episodes
 
 
@@ -112,10 +200,11 @@ def main() -> int:
         return assemble(args.split)
 
     if args.split == "train_seen":
-        episodes = train_episodes()
+        episodes = train_episodes(args.worker_id, args.n_workers)
+        mine = list(range(len(episodes)))   # already sharded
     else:
         episodes = val_episodes(args.val_episodes)
-    mine = [i for i in range(len(episodes)) if i % args.n_workers == args.worker_id]
+        mine = [i for i in range(len(episodes)) if i % args.n_workers == args.worker_id]
     root.mkdir(parents=True, exist_ok=True)
     (root / "episodes").mkdir(parents=True, exist_ok=True)
     journal = root / f"journal.part{args.worker_id:02d}.jsonl"
@@ -158,7 +247,7 @@ def assemble(split: str) -> int:
         for line in jf.read_text(encoding="utf-8").splitlines():
             e = json.loads(line)
             entries[int(e["key"])] = e
-    episodes = train_episodes() if split == "train_seen" else val_episodes(400)
+    episodes = train_episodes(0, 1) if split == "train_seen" else val_episodes(400)
     missing = [ep.key for ep in episodes if ep.key not in entries]
     if missing:
         raise SystemExit(f"{split}: {len(missing)} episodes missing "
@@ -167,13 +256,14 @@ def assemble(split: str) -> int:
         # ALL decision states, no cap / no subsample (doc 4.3)
         rows = []
         z = np.load(S03R / "four_action_labels.npz")
+        actions_all = z["actions"]          # read once (NpzFile re-decompresses)
         so = z["state_offsets"]
         state_id = 0
         for ep in episodes:
             n_steps = int(so[ep.key + 1] - so[ep.key])
             for t in range(n_steps):
                 rows.append({"split": split, "ep": ep.key, "key": ep.key, "t": t,
-                             "map": ep.map, "label": int(z["actions"][so[ep.key] + t]),
+                             "map": ep.map, "label": int(actions_all[so[ep.key] + t]),
                              "file": entries[ep.key]["file"], "state_id": state_id})
                 state_id += 1
     else:
