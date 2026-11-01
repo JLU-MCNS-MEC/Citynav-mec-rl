@@ -73,6 +73,7 @@ def main() -> int:
     states = open_mem(out / "states.npy", (n, 3), "float32")
     labels = open_mem(out / "labels.npy", (n,), "uint8")
     maps_arr = open_mem(out / "maps.npy", (n,), "uint8")
+    landmarks = open_mem(out / "landmarks.npy", (n, 8, 3), "float32")  # v5
 
     t0 = time.time()
     ep_cache: dict[str, tuple] = {}
@@ -84,11 +85,13 @@ def main() -> int:
             desc = g[:, 13:15, 13:15].mean(axis=(1, 2))
             desc = desc / np.maximum(np.linalg.norm(desc, keepdims=True), 1e-8)
             ep_cache[file] = (z["pooled"], z["states"], z["actions"],
-                              z["belief"], z["match"], desc)
+                              z["belief"], z["match"], desc,
+                              z["landmarks"] if "landmarks" in z.files
+                              else np.zeros((len(z["pooled"]), 8, 3), np.float32))
         return ep_cache[file]
 
     for pos, r in enumerate(rows):
-        pooled, st, act, bel, mch, desc = episode_arrays(r["file"])
+        pooled, st, act, bel, mch, desc, lm = episode_arrays(r["file"])
         t_i = int(r["t"])
         h = history_block(pooled, st, act, t_i)
         hist_vis[pos] = h["history_vis"].astype(np.float16)
@@ -101,6 +104,7 @@ def main() -> int:
         states[pos] = st[t_i]
         labels[pos] = int(r["label"])
         maps_arr[pos] = map_code[r["map"]]
+        landmarks[pos] = lm[t_i]
         if (pos + 1) % 200000 == 0:
             el = time.time() - t0
             print(f"  {pos + 1}/{n} states, {el:.0f}s, {(pos + 1) / el:.0f} st/s",
@@ -123,6 +127,7 @@ def main() -> int:
             "states": ["float32", (n, 3)],
             "labels": ["uint8", (n,)],
             "maps": ["uint8", (n,)],
+            "landmarks": ["float32", (n, 8, 3)],
         },
         "history_len": HIST,
     }

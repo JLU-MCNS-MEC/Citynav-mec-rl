@@ -45,12 +45,53 @@ sys.path.insert(0, str(REPO / "experiments/04_visual_goal_global_map_pipeline/sc
 from dataset_v2 import FrozenEncoder  # noqa: E402
 from model11b import TransformerM11  # noqa: E402
 from dataset11b import ChunkedMemmapDataset, ValMemmapDataset  # noqa: E402
-from train_10d import (collate, evaluate, gpu_snapshot, metrics,  # noqa: E402
-                       restore_rng, rng_state, save_checkpoint, set_seed,
-                       to_model_batch)
+from train_10d import (gpu_snapshot, metrics,  # noqa: E402
+                       restore_rng, rng_state, save_checkpoint, set_seed)
 
 RUNS = HERE.parent / "results" / "runs_11b"
 CLASSES = ["Stop", "Forward", "TurnLeft", "TurnRight"]
+
+
+def collate11(samples: list[dict]) -> dict:
+    out = {
+        "image": np.stack([s["image"] for s in samples]),
+        "target_emb": np.stack([s["target_emb"] for s in samples]),
+        "history_vis": np.stack([s["history_vis"] for s in samples]),
+        "history_pose": np.stack([s["history_pose"] for s in samples]),
+        "history_action": np.stack([s["history_action"] for s in samples]),
+        "history_mask": np.stack([s["history_mask"] for s in samples]),
+        "belief": np.stack([s["belief"] for s in samples]),
+        "match": np.stack([s["match"] for s in samples]),
+        "states": np.stack([s["states"] for s in samples]),
+        "landmarks": np.stack([s["landmarks"] for s in samples]),
+        "label": np.asarray([s["label"] for s in samples], np.int64),
+    }
+    return out
+
+
+def to_model_batch11(batch: dict, encoder: FrozenEncoder, device: str) -> dict:
+    out = {"current": encoder(batch["image"])}
+    for key in ("target_emb", "history_vis", "history_pose", "history_action",
+                "belief", "match", "states", "landmarks"):
+        out[key] = torch.from_numpy(batch[key]).to(device)
+    out["history_mask"] = torch.from_numpy(batch["history_mask"]).to(device)
+    return out
+
+
+@torch.no_grad()
+def evaluate11(model, encoder, dataset, device, batch_size=128) -> dict:
+    model.eval()
+    loader = DataLoader(dataset, batch_size=batch_size, shuffle=False,
+                        num_workers=4, collate_fn=collate11)
+    preds, labels, losses = [], [], []
+    for batch in loader:
+        logits = model(to_model_batch11(batch, encoder, device))
+        label = torch.from_numpy(batch["label"]).to(device)
+        losses.append(float(F.cross_entropy(logits, label).item()) * len(label))
+        preds.extend(logits.argmax(-1).cpu().numpy().tolist())
+        labels.extend(batch["label"].tolist())
+    mean_loss = float(np.sum(losses) / max(len(labels), 1))
+    return metrics(np.asarray(preds), np.asarray(labels), mean_loss)
 
 
 def main() -> int:
@@ -127,14 +168,14 @@ def main() -> int:
         idx = idx[first_batch * args.batch:]
         loader = DataLoader(ChunkedMemmapDataset("train_seen", idx),
                             batch_size=args.batch, shuffle=False,
-                            num_workers=args.workers, collate_fn=collate,
+                            num_workers=args.workers, collate_fn=collate11,
                             persistent_workers=args.workers > 0,
                             prefetch_factor=4 if args.workers else None)
         model.train()
         total, count, correct, gnorm_sum, steps_done = 0.0, 0, 0, 0.0, 0
         for offset, batch in enumerate(loader):
             step = first_batch + offset
-            logits = model(to_model_batch(batch, encoder, device))
+            logits = model(to_model_batch11(batch, encoder, device))
             label = torch.from_numpy(batch["label"]).to(device)
             loss = F.cross_entropy(logits, label)
             if not torch.isfinite(loss):
@@ -156,7 +197,7 @@ def main() -> int:
             count += len(label)
         train_loss = total / max(count, 1)
         train_acc = correct / max(count, 1)
-        val = evaluate(model, encoder, val_ds, device)
+        val = evaluate11(model, encoder, val_ds, device)
         epoch_metrics = {"epoch": epoch, "train_loss": train_loss,
                          "train_acc": train_acc, "train_steps": steps_done,
                          "grad_norm": gnorm_sum / max(steps_done, 1),

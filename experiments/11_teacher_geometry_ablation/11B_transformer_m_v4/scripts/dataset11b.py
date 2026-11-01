@@ -38,7 +38,7 @@ class ChunkedMemmapDataset(Dataset):
         root = DATA / f"{split}_memmap"
         self.z = open_memmap(root, ("hist_vis", "hist_pose", "hist_act",
                                     "hist_mask", "belief", "match", "target_emb",
-                                    "states", "labels", "maps"))
+                                    "states", "labels", "maps", "landmarks"))
         meta = json.loads((root / "meta.json").read_text(encoding="utf-8"))
         self.map_names = {v: k for k, v in meta["map_codes"].items()}
         self.idx = idx
@@ -62,6 +62,8 @@ class ChunkedMemmapDataset(Dataset):
                 "history_pose": np.asarray(self.z["hist_pose"][k], np.float32),
                 "history_action": np.eye(4, dtype=np.float32)[self.z["hist_act"][k]],
                 "history_mask": np.asarray(self.z["hist_mask"][k], np.float32),
+                "states": np.asarray(self.z["states"][k], np.float32),
+                "landmarks": np.asarray(self.z["landmarks"][k], np.float32),
                 "label": int(self.z["labels"][k])}
 
 
@@ -73,7 +75,7 @@ class ValMemmapDataset(ChunkedMemmapDataset):
         self.z = {name: np.load(root / f"{name}.npy")
                   for name in ("hist_vis", "hist_pose", "hist_act", "hist_mask",
                                "belief", "match", "target_emb", "states",
-                               "labels", "maps")}
+                               "labels", "maps", "landmarks")}
         meta = json.loads((root / "meta.json").read_text(encoding="utf-8"))
         self.map_names = {v: k for k, v in meta["map_codes"].items()}
         self.idx = np.arange(len(self.z["labels"]))
