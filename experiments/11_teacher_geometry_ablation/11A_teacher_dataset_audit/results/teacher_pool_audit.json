@@ -1,0 +1,195 @@
+{
+  "generated_at": "2026-11-01 22:19:07",
+  "inputs": {
+    "citynav_train_seen.json": "bfaabed32d56aad7",
+    "selection_high_medium_mixed.json": "91ac2e9ad3a34b62",
+    "train_quality.csv": "63abb2b2fe622b0d",
+    "teacher_episodes.csv": "17ab36cb6dc757f5",
+    "four_action_labels.npz": "19ad144c34ad74dd"
+  },
+  "intersection": {
+    "stage02_high_medium": 18521,
+    "stage03_success": 19105,
+    "final_episodes": 18521,
+    "excluded_by_low_quality_or_fail": 3481
+  },
+  "decision_states": {
+    "total": 1279882,
+    "per_episode_mean": 69.1
+  },
+  "by_map": {
+    "birmingham_block_1": {
+      "episodes": 2471,
+      "states": 170059
+    },
+    "birmingham_block_10": {
+      "episodes": 257,
+      "states": 12912
+    },
+    "birmingham_block_11": {
+      "episodes": 15,
+      "states": 237
+    },
+    "birmingham_block_12": {
+      "episodes": 707,
+      "states": 29740
+    },
+    "birmingham_block_13": {
+      "episodes": 29,
+      "states": 260
+    },
+    "birmingham_block_3": {
+      "episodes": 1320,
+      "states": 86130
+    },
+    "birmingham_block_4": {
+      "episodes": 766,
+      "states": 60902
+    },
+    "birmingham_block_7": {
+      "episodes": 322,
+      "states": 12481
+    },
+    "birmingham_block_9": {
+      "episodes": 773,
+      "states": 63094
+    },
+    "cambridge_block_12": {
+      "episodes": 1163,
+      "states": 81558
+    },
+    "cambridge_block_13": {
+      "episodes": 1430,
+      "states": 117605
+    },
+    "cambridge_block_17": {
+      "episodes": 314,
+      "states": 16333
+    },
+    "cambridge_block_18": {
+      "episodes": 425,
+      "states": 20715
+    },
+    "cambridge_block_19": {
+      "episodes": 294,
+      "states": 27112
+    },
+    "cambridge_block_20": {
+      "episodes": 1635,
+      "states": 127153
+    },
+    "cambridge_block_21": {
+      "episodes": 1425,
+      "states": 97662
+    },
+    "cambridge_block_23": {
+      "episodes": 262,
+      "states": 7697
+    },
+    "cambridge_block_25": {
+      "episodes": 139,
+      "states": 5680
+    },
+    "cambridge_block_28": {
+      "episodes": 1198,
+      "states": 85481
+    },
+    "cambridge_block_33": {
+      "episodes": 780,
+      "states": 38578
+    },
+    "cambridge_block_4": {
+      "episodes": 263,
+      "states": 10296
+    },
+    "cambridge_block_6": {
+      "episodes": 241,
+      "states": 16465
+    },
+    "cambridge_block_7": {
+      "episodes": 1055,
+      "states": 90608
+    },
+    "cambridge_block_9": {
+      "episodes": 1237,
+      "states": 101124
+    }
+  },
+  "length_groups": {
+    "terciles": [
+      44.0,
+      77.0
+    ],
+    "episodes": {
+      "long": 6050,
+      "short": 6225,
+      "medium": 6246
+    },
+    "states": {
+      "short": 164665,
+      "medium": 377456,
+      "long": 737761
+    }
+  },
+  "trajectory_length": {
+    "percentiles": {
+      "p5": 13.0,
+      "p25": 36.0,
+      "p50": 60.0,
+      "p75": 87.0,
+      "p90": 125.0,
+      "p95": 161.0,
+      "p99": 255.0
+    }
+  },
+  "action_ratios": {
+    "TurnRight": 158166,
+    "Forward": 946031,
+    "TurnLeft": 157164,
+    "Stop": 18521
+  },
+  "start_target_m": {
+    "percentiles": {
+      "p5": 44.18489456176758,
+      "p25": 114.9317855834961,
+      "p50": 187.76239013671875,
+      "p75": 266.5564270019531,
+      "p90": 331.2764892578125,
+      "p95": 363.3818054199219,
+      "p99": 417.6142395019529
+    }
+  },
+  "path_efficiency": {
+    "percentiles": {
+      "p5": 0.16505658626556396,
+      "p25": 0.4729622006416321,
+      "p50": 0.7423456311225891,
+      "p75": 0.945779025554657,
+      "p90": 1.0008474588394165,
+      "p95": 1.0165748596191406,
+      "p99": 1.0877389907836912
+    },
+    "mean": 0.6881333589553833
+  },
+  "backtrack_ratio": {
+    "percentiles": {
+      "p5": 0.0,
+      "p25": 0.0,
+      "p50": 0.03560800850391388,
+      "p75": 0.12932859361171722,
+      "p90": 0.21882322430610657,
+      "p95": 0.26553109288215637,
+      "p99": 0.3428601264953611
+    },
+    "mean": 0.07516578584909439,
+    "gt_0p1_episodes": 5871
+  },
+  "teacher_replay_success": {
+    "overall_22002": "19105/22002 (86.83%)",
+    "within_final_set": "18521/18521 (100%)"
+  },
+  "quality_mix": {
+    "medium": 4284,
+    "high": 14237
+  }
+}
