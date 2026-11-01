@@ -123,6 +123,11 @@ def main() -> int:
     train_meta = json.loads((HERE.parent / "results/data/train_seen_memmap/meta.json")
                             .read_text(encoding="utf-8"))
     n_train = int(train_meta["n_states"])
+    ep_ranges = json.loads((HERE.parent / "results/data/train_seen_memmap/ep_ranges.json")
+                           .read_text(encoding="utf-8"))
+    ep_ranges = {int(k): v for k, v in ep_ranges.items()}
+    assert sum(e - s for s, e in ep_ranges.values()) == n_train, "ep_ranges mismatch"
+    ep_list = sorted(ep_ranges)
     val_ds = ValMemmapDataset("val_seen")
     n_val = len(val_ds)
     steps_per_epoch = math.ceil(n_train / args.batch)
@@ -161,9 +166,12 @@ def main() -> int:
     nan_updates = 0
     for epoch in range(start_epoch, args.epochs):
         started = time.time()
+        # episode-block shuffle: states of one episode stay contiguous, so the
+        # memmap reads are sequential on HDD (random per-state reads otherwise)
         rng = np.random.default_rng(args.seed * 1000 + epoch)
-        idx = np.arange(n_train)
-        rng.shuffle(idx)
+        ep_order = rng.permutation(ep_list)
+        idx = np.concatenate([np.arange(s, e, dtype=np.int64)
+                              for k in ep_order for s, e in [ep_ranges[k]]])
         first_batch = start_step if epoch == start_epoch else 0
         idx = idx[first_batch * args.batch:]
         loader = DataLoader(ChunkedMemmapDataset("train_seen", idx),
@@ -195,6 +203,11 @@ def main() -> int:
             total += float(loss.item()) * len(label)
             correct += int((logits.argmax(-1) == label).sum())
             count += len(label)
+            if steps_done % 1000 == 0 and steps_done:
+                el = time.time() - started
+                print(f"  epoch {epoch} batch {steps_done}/{steps_per_epoch} "
+                      f"loss={total / count:.4f} acc={correct / count:.4f} "
+                      f"{el:.0f}s", flush=True)
         train_loss = total / max(count, 1)
         train_acc = correct / max(count, 1)
         val = evaluate11(model, encoder, val_ds, device)
