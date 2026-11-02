@@ -262,7 +262,14 @@ def main() -> int:
                           "val_stop_recall": round(val["per_class"]["Stop"]["recall"], 3),
                           "val_turn_recall": [round(val["per_class"]["TurnLeft"]["recall"], 3),
                                               round(val["per_class"]["TurnRight"]["recall"], 3)],
+                          "per_class_f1": {c: round(val["per_class"][c]["f1"], 4)
+                                           for c in CLASSES},
                           "pred_dist": {c: val["per_class"][c]["predicted"] for c in CLASSES},
+                          "lr": round(scheduler.get_last_lr()[0], 7),
+                          "grad_norm": round(epoch_metrics["grad_norm"], 4),
+                          "best": round(best, 4),
+                          "patience_left": args.patience - n_best_epochs,
+                          "nan_updates": nan_updates,
                           "gpu": epoch_metrics["gpu"],
                           "sec": epoch_metrics["seconds"]}), flush=True)
         with (run_dir / "train_progress.json").open("w", encoding="utf-8") as fh:

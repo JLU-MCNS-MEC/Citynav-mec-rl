@@ -31,6 +31,8 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[3]
 assert (REPO / "experiments").is_dir(), f"REPO 解析错误: {REPO}"
 sys.path.insert(0, str(HERE))
+sys.path.insert(0, str(REPO / "experiments/11_teacher_geometry_ablation"
+                       "/11B_transformer_m_v4/scripts"))
 sys.path.insert(0, str(REPO / "experiments/10_goal_query_mec_training"
                        "/10E_final_closed_loop/scripts"))
 sys.path.insert(0, str(REPO / "experiments/10_goal_query_mec_training"
