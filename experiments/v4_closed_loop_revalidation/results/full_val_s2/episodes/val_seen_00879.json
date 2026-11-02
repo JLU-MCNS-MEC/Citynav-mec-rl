@@ -1,0 +1,284 @@
+{
+ "episode_id": "val_seen:00879",
+ "split": "val_seen",
+ "instruction_id": "",
+ "block_id": "cambridge_block_4",
+ "index": 879,
+ "map": "cambridge_block_4",
+ "length_group": "short",
+ "cohort": "B",
+ "controller": "v4_teacher_only",
+ "start": [
+  268.5335,
+  1654.4233,
+  1.823627
+ ],
+ "target": [
+  219.3438,
+  1603.0078
+ ],
+ "step_cap": 200,
+ "manifest_sha": "2da3781677e1376c7ff37ee029956c3a8d54aa0a85f81feca5858fe611123446",
+ "ckpt_sha": "c90fd9d60d27d65a2947e01ff8f0e76f1925863367d30f8d9f14cab222e08e05",
+ "candidate_count": 13,
+ "candidate_status": "ok",
+ "steps": 15,
+ "stopped": true,
+ "stop_step": 14,
+ "stop_reason": "model_stop",
+ "stop_dist": 21.23713656753197,
+ "final_pos": [
+  232.8624951903362,
+  1619.3864705791034,
+  -2.3651632047863926
+ ],
+ "final_dist": 21.23713656753197,
+ "min_dist": 21.23713656753197,
+ "min_dist_step": 14,
+ "osr": false,
+ "success": false,
+ "collision": false,
+ "out_of_bounds": false,
+ "path_len_m": 50.0,
+ "l_star_m": 71.15602733669148,
+ "spl": 0.0,
+ "ne_m": 21.23713656753197,
+ "oracle_success": false,
+ "action_counts": {
+  "Stop": 1,
+  "Forward": 10,
+  "TurnLeft": 4,
+  "TurnRight": 0
+ },
+ "trajectory": [
+  {
+   "step": 0,
+   "x": 268.5335,
+   "y": 1654.4233,
+   "yaw": 1.823627,
+   "action": 2,
+   "estimate": [
+    241.4375,
+    1608.0
+   ],
+   "est_distance_m": 53.752358077483386,
+   "visual_score": 0.8062034249305725,
+   "accept": false,
+   "true_dist_m": 71.15602733669148
+  },
+  {
+   "step": 1,
+   "x": 268.5335,
+   "y": 1654.4233,
+   "yaw": 2.3472257755982984,
+   "action": 2,
+   "estimate": [
+    241.4375,
+    1608.0
+   ],
+   "est_distance_m": 53.752358077483386,
+   "visual_score": 0.7914801836013794,
+   "accept": false,
+   "true_dist_m": 71.15602733669148
+  },
+  {
+   "step": 2,
+   "x": 268.5335,
+   "y": 1654.4233,
+   "yaw": 2.8708245511965966,
+   "action": 2,
+   "estimate": [
+    241.4375,
+    1608.0
+   ],
+   "est_distance_m": 53.752358077483386,
+   "visual_score": 0.7946581244468689,
+   "accept": false,
+   "true_dist_m": 71.15602733669148
+  },
+  {
+   "step": 3,
+   "x": 268.5335,
+   "y": 1654.4233,
+   "yaw": -2.8887619803846913,
+   "action": 2,
+   "estimate": [
+    241.4375,
+    1608.0
+   ],
+   "est_distance_m": 53.752358077483386,
+   "visual_score": 0.8067556023597717,
+   "accept": false,
+   "true_dist_m": 71.15602733669148
+  },
+  {
+   "step": 4,
+   "x": 268.5335,
+   "y": 1654.4233,
+   "yaw": -2.3651632047863926,
+   "action": 1,
+   "estimate": [
+    241.4375,
+    1608.0
+   ],
+   "est_distance_m": 53.752358077483386,
+   "visual_score": 0.7911288738250732,
+   "accept": false,
+   "true_dist_m": 71.15602733669148
+  },
+  {
+   "step": 5,
+   "x": 264.96639951903364,
+   "y": 1650.9196170579103,
+   "yaw": -2.3651632047863926,
+   "action": 1,
+   "estimate": [
+    241.4375,
+    1608.0
+   ],
+   "est_distance_m": 48.94591546773279,
+   "visual_score": 0.779116690158844,
+   "accept": false,
+   "true_dist_m": 66.15862604879868
+  },
+  {
+   "step": 6,
+   "x": 261.3992990380673,
+   "y": 1647.4159341158206,
+   "yaw": -2.3651632047863926,
+   "action": 1,
+   "estimate": [
+    241.4375,
+    1608.0
+   ],
+   "est_distance_m": 44.18245447073867,
+   "visual_score": 0.7890176773071289,
+   "accept": false,
+   "true_dist_m": 61.1616495443802
+  },
+  {
+   "step": 7,
+   "x": 257.8321985571009,
+   "y": 1643.912251173731,
+   "yaw": -2.3651632047863926,
+   "action": 1,
+   "estimate": [
+    241.4375,
+    1608.0
+   ],
+   "est_distance_m": 39.477536969058086,
+   "visual_score": 0.780978798866272,
+   "accept": false,
+   "true_dist_m": 56.16521120154702
+  },
+  {
+   "step": 8,
+   "x": 254.26509807613454,
+   "y": 1640.4085682316413,
+   "yaw": -2.3651632047863926,
+   "action": 1,
+   "estimate": [
+    241.4375,
+    1608.0
+   ],
+   "est_distance_m": 34.85487867182729,
+   "visual_score": 0.7825028896331787,
+   "accept": false,
+   "true_dist_m": 51.169468666766335
+  },
+  {
+   "step": 9,
+   "x": 250.69799759516815,
+   "y": 1636.9048852895517,
+   "yaw": -2.3651632047863926,
+   "action": 1,
+   "estimate": [
+    241.4375,
+    1608.0
+   ],
+   "est_distance_m": 30.352087396293765,
+   "visual_score": 0.8707960247993469,
+   "accept": false,
+   "true_dist_m": 46.17464778386493
+  },
+  {
+   "step": 10,
+   "x": 247.13089711420176,
+   "y": 1633.401202347462,
+   "yaw": -2.3651632047863926,
+   "action": 1,
+   "estimate": [
+    241.4375,
+    1608.0
+   ],
+   "est_distance_m": 26.031439671994903,
+   "visual_score": 0.8889114856719971,
+   "accept": false,
+   "true_dist_m": 41.18108391347639
+  },
+  {
+   "step": 11,
+   "x": 243.56379663323537,
+   "y": 1629.8975194053723,
+   "yaw": -2.3651632047863926,
+   "action": 1,
+   "estimate": [
+    224.13819874801933,
+    1602.5626451804842
+   ],
+   "est_distance_m": 33.53429889066662,
+   "visual_score": 0.8956084847450256,
+   "accept": true,
+   "true_dist_m": 36.189297404254575
+  },
+  {
+   "step": 12,
+   "x": 239.99669615226898,
+   "y": 1626.3938364632827,
+   "yaw": -2.3651632047863926,
+   "action": 1,
+   "estimate": [
+    223.15667218460874,
+    1602.1688108068695
+   ],
+   "est_distance_m": 29.503190933952375,
+   "visual_score": 0.894542396068573,
+   "accept": true,
+   "true_dist_m": 31.20014136087193
+  },
+  {
+   "step": 13,
+   "x": 236.4295956713026,
+   "y": 1622.890153521193,
+   "yaw": -2.3651632047863926,
+   "action": 1,
+   "estimate": [
+    222.73138561182753,
+    1602.166112332265
+   ],
+   "est_distance_m": 24.842037799542407,
+   "visual_score": 0.8793226480484009,
+   "accept": true,
+   "true_dist_m": 26.21511768547295
+  },
+  {
+   "step": 14,
+   "x": 232.8624951903362,
+   "y": 1619.3864705791034,
+   "yaw": -2.3651632047863926,
+   "action": 0,
+   "estimate": [
+    222.5718917714643,
+    1602.07010443284
+   ],
+   "est_distance_m": 20.14331291610082,
+   "visual_score": 0.8804493546485901,
+   "accept": true,
+   "true_dist_m": 21.23713656753197
+  }
+ ],
+ "execution_status": "ok",
+ "exception": "",
+ "seconds": 697.909,
+ "failure": "premature_stop"
+}

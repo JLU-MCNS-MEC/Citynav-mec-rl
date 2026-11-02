@@ -1,0 +1,104 @@
+{
+ "episode_id": "test_unseen:02221",
+ "split": "test_unseen",
+ "instruction_id": "",
+ "block_id": "cambridge_block_26",
+ "index": 2221,
+ "map": "cambridge_block_26",
+ "length_group": null,
+ "cohort": "B",
+ "controller": "v5_teacher_only_landmarks",
+ "start": [
+  1729.6221652718,
+  958.9575274018,
+  0.5279550208614777
+ ],
+ "target": [
+  1751.28125,
+  979.9296875
+ ],
+ "step_cap": 200,
+ "manifest_sha": "0efcee1d8a38ea4957934209f4eeb68345b5c02906dff428b0cdd02d4adc9b4c",
+ "ckpt_sha": "11ad6692bfcbfd793de1ecab296f7dff8cc5f3c56f7d3579fea07b5948e45416",
+ "candidate_count": 214,
+ "candidate_status": "ok",
+ "steps": 3,
+ "stopped": true,
+ "stop_step": 2,
+ "stop_reason": "model_stop",
+ "stop_dist": 20.57780776580041,
+ "final_pos": [
+  1738.2605559800786,
+  963.9952060310027,
+  0.5279550208614777
+ ],
+ "final_dist": 20.57780776580041,
+ "min_dist": 20.57780776580041,
+ "min_dist_step": 2,
+ "osr": false,
+ "success": false,
+ "collision": false,
+ "out_of_bounds": false,
+ "path_len_m": 10.0,
+ "l_star_m": 30.1487553714557,
+ "spl": 0.0,
+ "ne_m": 20.57780776580041,
+ "oracle_success": false,
+ "action_counts": {
+  "Stop": 1,
+  "Forward": 2,
+  "TurnLeft": 0,
+  "TurnRight": 0
+ },
+ "trajectory": [
+  {
+   "step": 0,
+   "x": 1729.6221652718,
+   "y": 958.9575274018,
+   "yaw": 0.5279550208614777,
+   "action": 1,
+   "estimate": [
+    1752.0,
+    976.0
+   ],
+   "est_distance_m": 28.128515058264846,
+   "visual_score": 0.940618097782135,
+   "accept": false,
+   "true_dist_m": 30.1487553714557
+  },
+  {
+   "step": 1,
+   "x": 1733.9413606259393,
+   "y": 961.4763667164013,
+   "yaw": 0.5279550208614777,
+   "action": 1,
+   "estimate": [
+    1753.4333661237254,
+    977.3758134687337
+   ],
+   "est_distance_m": 25.154138533370073,
+   "visual_score": 0.9542846083641052,
+   "accept": true,
+   "true_dist_m": 25.321864296434757
+  },
+  {
+   "step": 2,
+   "x": 1738.2605559800786,
+   "y": 963.9952060310027,
+   "yaw": 0.5279550208614777,
+   "action": 0,
+   "estimate": [
+    1753.6458461741277,
+    977.3114402014046
+   ],
+   "est_distance_m": 20.34770863847036,
+   "visual_score": 0.9317005276679993,
+   "accept": true,
+   "true_dist_m": 20.57780776580041
+  }
+ ],
+ "execution_status": "ok",
+ "exception": "",
+ "seconds": 3965.316,
+ "failure": "premature_stop"
+}

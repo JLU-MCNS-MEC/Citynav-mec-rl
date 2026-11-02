@@ -1,0 +1,104 @@
+{
+ "episode_id": "val_seen:01190",
+ "split": "val_seen",
+ "instruction_id": "",
+ "block_id": "cambridge_block_9",
+ "index": 1190,
+ "map": "cambridge_block_9",
+ "length_group": "short",
+ "cohort": "A",
+ "controller": "v4_teacher_only",
+ "start": [
+  648.8558,
+  1502.9922,
+  -2.013725
+ ],
+ "target": [
+  636.5312,
+  1479.7344
+ ],
+ "step_cap": 200,
+ "manifest_sha": "2da3781677e1376c7ff37ee029956c3a8d54aa0a85f81feca5858fe611123446",
+ "ckpt_sha": "c90fd9d60d27d65a2947e01ff8f0e76f1925863367d30f8d9f14cab222e08e05",
+ "candidate_count": 269,
+ "candidate_status": "ok",
+ "steps": 3,
+ "stopped": true,
+ "stop_step": 2,
+ "stop_reason": "model_stop",
+ "stop_dist": 16.33735179580593,
+ "final_pos": [
+  644.5699264343557,
+  1493.9571965257721,
+  -2.013725
+ ],
+ "final_dist": 16.33735179580593,
+ "min_dist": 16.33735179580593,
+ "min_dist_step": 2,
+ "osr": true,
+ "success": true,
+ "collision": false,
+ "out_of_bounds": false,
+ "path_len_m": 10.0,
+ "l_star_m": 26.321493612635173,
+ "spl": 1.0,
+ "ne_m": 16.33735179580593,
+ "oracle_success": true,
+ "action_counts": {
+  "Stop": 1,
+  "Forward": 2,
+  "TurnLeft": 0,
+  "TurnRight": 0
+ },
+ "trajectory": [
+  {
+   "step": 0,
+   "x": 648.8558,
+   "y": 1502.9922,
+   "yaw": -2.013725,
+   "action": 1,
+   "estimate": [
+    648.0,
+    1472.0
+   ],
+   "est_distance_m": 31.00401352212314,
+   "visual_score": 0.8773038983345032,
+   "accept": false,
+   "true_dist_m": 26.321493612635173
+  },
+  {
+   "step": 1,
+   "x": 646.7128632171779,
+   "y": 1498.474698262886,
+   "yaw": -2.013725,
+   "action": 1,
+   "estimate": [
+    638.1672919045061,
+    1477.7404596416334
+   ],
+   "est_distance_m": 22.42622215762172,
+   "visual_score": 0.8991760015487671,
+   "accept": true,
+   "true_dist_m": 21.32756537558752
+  },
+  {
+   "step": 2,
+   "x": 644.5699264343557,
+   "y": 1493.9571965257721,
+   "yaw": -2.013725,
+   "action": 0,
+   "estimate": [
+    638.3778205909938,
+    1477.5785927774252
+   ],
+   "est_distance_m": 17.51002100286461,
+   "visual_score": 0.9318124055862427,
+   "accept": true,
+   "true_dist_m": 16.33735179580593
+  }
+ ],
+ "execution_status": "ok",
+ "exception": "",
+ "seconds": 421.992,
+ "failure": "success"
+}

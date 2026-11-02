@@ -1,0 +1,224 @@
+{
+ "episode_id": "test_unseen:03083",
+ "split": "test_unseen",
+ "instruction_id": "",
+ "block_id": "cambridge_block_26",
+ "index": 3083,
+ "map": "cambridge_block_26",
+ "length_group": null,
+ "cohort": "A",
+ "controller": "v4_teacher_only",
+ "start": [
+  1789.5192849454,
+  840.3305261109,
+  1.5052502889820867
+ ],
+ "target": [
+  1785.9375,
+  908.0625
+ ],
+ "step_cap": 200,
+ "manifest_sha": "0efcee1d8a38ea4957934209f4eeb68345b5c02906dff428b0cdd02d4adc9b4c",
+ "ckpt_sha": "c90fd9d60d27d65a2947e01ff8f0e76f1925863367d30f8d9f14cab222e08e05",
+ "candidate_count": 214,
+ "candidate_status": "ok",
+ "steps": 11,
+ "stopped": true,
+ "stop_step": 10,
+ "stop_reason": "model_stop",
+ "stop_dist": 19.111698867765302,
+ "final_pos": [
+  1792.7942406373202,
+  890.2231574828369,
+  1.5052502889820867
+ ],
+ "final_dist": 19.111698867765302,
+ "min_dist": 19.111698867765302,
+ "min_dist_step": 10,
+ "osr": true,
+ "success": true,
+ "collision": false,
+ "out_of_bounds": false,
+ "path_len_m": 50.0,
+ "l_star_m": 67.82661328939267,
+ "spl": 1.0,
+ "ne_m": 19.111698867765302,
+ "oracle_success": true,
+ "action_counts": {
+  "Stop": 1,
+  "Forward": 10,
+  "TurnLeft": 0,
+  "TurnRight": 0
+ },
+ "trajectory": [
+  {
+   "step": 0,
+   "x": 1789.5192849454,
+   "y": 840.3305261109,
+   "yaw": 1.5052502889820867,
+   "action": 1,
+   "estimate": [
+    1800.0,
+    904.0
+   ],
+   "est_distance_m": 64.52633023325058,
+   "visual_score": 0.8136752247810364,
+   "accept": false,
+   "true_dist_m": 67.82661328939267
+  },
+  {
+   "step": 1,
+   "x": 1789.846780514592,
+   "y": 845.3197892480937,
+   "yaw": 1.5052502889820867,
+   "action": 1,
+   "estimate": [
+    1800.0,
+    904.0
+   ],
+   "est_distance_m": 59.552120027812705,
+   "visual_score": 0.8192164897918701,
+   "accept": false,
+   "true_dist_m": 62.86437963297776
+  },
+  {
+   "step": 2,
+   "x": 1790.174276083784,
+   "y": 850.3090523852874,
+   "yaw": 1.5052502889820867,
+   "action": 1,
+   "estimate": [
+    1800.0,
+    904.0
+   ],
+   "est_distance_m": 54.58262274976822,
+   "visual_score": 0.8166021704673767,
+   "accept": false,
+   "true_dist_m": 57.90864342194073
+  },
+  {
+   "step": 3,
+   "x": 1790.501771652976,
+   "y": 855.2983155224811,
+   "yaw": 1.5052502889820867,
+   "action": 1,
+   "estimate": [
+    1800.0,
+    904.0
+   ],
+   "est_distance_m": 49.61925445510059,
+   "visual_score": 0.817188024520874,
+   "accept": false,
+   "true_dist_m": 52.96122864227954
+  },
+  {
+   "step": 4,
+   "x": 1790.829267222168,
+   "y": 860.2875786596748,
+   "yaw": 1.5052502889820867,
+   "action": 1,
+   "estimate": [
+    1800.0,
+    904.0
+   ],
+   "est_distance_m": 44.664058471174826,
+   "visual_score": 0.8350778818130493,
+   "accept": false,
+   "true_dist_m": 48.02470713736985
+  },
+  {
+   "step": 5,
+   "x": 1791.15676279136,
+   "y": 865.2768417968684,
+   "yaw": 1.5052502889820867,
+   "action": 1,
+   "estimate": [
+    1800.0,
+    904.0
+   ],
+   "est_distance_m": 39.72009347361898,
+   "visual_score": 0.9082351922988892,
+   "accept": false,
+   "true_dist_m": 43.10282185612068
+  },
+  {
+   "step": 6,
+   "x": 1791.484258360552,
+   "y": 870.2661049340621,
+   "yaw": 1.5052502889820867,
+   "action": 1,
+   "estimate": [
+    1788.6521922495767,
+    907.7082760687449
+   ],
+   "est_distance_m": 37.54912485978611,
+   "visual_score": 0.9013410210609436,
+   "accept": true,
+   "true_dist_m": 38.201230455193546
+  },
+  {
+   "step": 7,
+   "x": 1791.811753929744,
+   "y": 875.2553680712558,
+   "yaw": 1.5052502889820867,
+   "action": 1,
+   "estimate": [
+    1788.1324958446871,
+    906.7910237002899
+   ],
+   "est_distance_m": 31.749559304177517,
+   "visual_score": 0.9245548248291016,
+   "accept": true,
+   "true_dist_m": 33.32888783954754
+  },
+  {
+   "step": 8,
+   "x": 1792.1392494989361,
+   "y": 880.2446312084495,
+   "yaw": 1.5052502889820867,
+   "action": 1,
+   "estimate": [
+    1788.0859048494083,
+    906.6467742111571
+   ],
+   "est_distance_m": 26.711472403880645,
+   "visual_score": 0.9218597412109375,
+   "accept": true,
+   "true_dist_m": 28.500798601994884
+  },
+  {
+   "step": 9,
+   "x": 1792.4667450681281,
+   "y": 885.2338943456432,
+   "yaw": 1.5052502889820867,
+   "action": 1,
+   "estimate": [
+    1788.1720402740823,
+    906.8498283377057
+   ],
+   "est_distance_m": 22.038445762285622,
+   "visual_score": 0.906209409236908,
+   "accept": true,
+   "true_dist_m": 23.743973493958574
+  },
+  {
+   "step": 10,
+   "x": 1792.7942406373202,
+   "y": 890.2231574828369,
+   "yaw": 1.5052502889820867,
+   "action": 0,
+   "estimate": [
+    1788.1990566059078,
+    906.7763079842967
+   ],
+   "est_distance_m": 17.179130007265453,
+   "visual_score": 0.9563740491867065,
+   "accept": true,
+   "true_dist_m": 19.111698867765302
+  }
+ ],
+ "execution_status": "ok",
+ "exception": "",
+ "seconds": 4006.05,
+ "failure": "success"
+}

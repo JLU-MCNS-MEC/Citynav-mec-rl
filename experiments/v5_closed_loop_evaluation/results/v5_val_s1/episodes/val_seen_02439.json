@@ -1,0 +1,284 @@
+{
+ "episode_id": "val_seen:02439",
+ "split": "val_seen",
+ "instruction_id": "",
+ "block_id": "cambridge_block_33",
+ "index": 2439,
+ "map": "cambridge_block_33",
+ "length_group": "short",
+ "cohort": "A",
+ "controller": "v5_teacher_only_landmarks",
+ "start": [
+  2104.4211,
+  1445.1516,
+  -2.132595
+ ],
+ "target": [
+  2047.9062,
+  1388.6641
+ ],
+ "step_cap": 200,
+ "manifest_sha": "2da3781677e1376c7ff37ee029956c3a8d54aa0a85f81feca5858fe611123446",
+ "ckpt_sha": "11ad6692bfcbfd793de1ecab296f7dff8cc5f3c56f7d3579fea07b5948e45416",
+ "candidate_count": 58,
+ "candidate_status": "ok",
+ "steps": 15,
+ "stopped": true,
+ "stop_step": 14,
+ "stop_reason": "model_stop",
+ "stop_dist": 19.421415577764613,
+ "final_pos": [
+  2067.1314508961627,
+  1385.9107182567925,
+  -2.132595
+ ],
+ "final_dist": 19.421415577764613,
+ "min_dist": 19.421415577764613,
+ "min_dist_step": 14,
+ "osr": true,
+ "success": true,
+ "collision": false,
+ "out_of_bounds": false,
+ "path_len_m": 70.0,
+ "l_star_m": 79.90476567927604,
+ "spl": 1.0,
+ "ne_m": 19.421415577764613,
+ "oracle_success": true,
+ "action_counts": {
+  "Stop": 1,
+  "Forward": 14,
+  "TurnLeft": 0,
+  "TurnRight": 0
+ },
+ "trajectory": [
+  {
+   "step": 0,
+   "x": 2104.4211,
+   "y": 1445.1516,
+   "yaw": -2.132595,
+   "action": 1,
+   "estimate": [
+    2056.0,
+    1376.0
+   ],
+   "est_distance_m": 84.41887648962162,
+   "visual_score": 0.8230096697807312,
+   "accept": false,
+   "true_dist_m": 79.90476567927604
+  },
+  {
+   "step": 1,
+   "x": 2101.75755363544,
+   "y": 1440.9201084469137,
+   "yaw": -2.132595,
+   "action": 1,
+   "estimate": [
+    2056.0,
+    1376.0
+   ],
+   "est_distance_m": 79.42527428633294,
+   "visual_score": 0.8106117844581604,
+   "accept": false,
+   "true_dist_m": 75.03771523156318
+  },
+  {
+   "step": 2,
+   "x": 2099.0940072708804,
+   "y": 1436.6886168938274,
+   "yaw": -2.132595,
+   "action": 1,
+   "estimate": [
+    2056.0,
+    1376.0
+   ],
+   "est_distance_m": 74.43253108116403,
+   "visual_score": 0.804798424243927,
+   "accept": false,
+   "true_dist_m": 70.18935700009175
+  },
+  {
+   "step": 3,
+   "x": 2096.4304609063206,
+   "y": 1432.4571253407412,
+   "yaw": -2.132595,
+   "action": 1,
+   "estimate": [
+    2056.0,
+    1376.0
+   ],
+   "est_distance_m": 69.44083215830351,
+   "visual_score": 0.8149033188819885,
+   "accept": false,
+   "true_dist_m": 65.36385059801394
+  },
+  {
+   "step": 4,
+   "x": 2093.766914541761,
+   "y": 1428.225633787655,
+   "yaw": -2.132595,
+   "action": 1,
+   "estimate": [
+    2056.0,
+    1376.0
+   ],
+   "est_distance_m": 64.45042015787725,
+   "visual_score": 0.8214178085327148,
+   "accept": false,
+   "true_dist_m": 60.56665826932048
+  },
+  {
+   "step": 5,
+   "x": 2091.103368177201,
+   "y": 1423.9941422345687,
+   "yaw": -2.132595,
+   "action": 1,
+   "estimate": [
+    2056.0,
+    1376.0
+   ],
+   "est_distance_m": 59.461619101872245,
+   "visual_score": 0.8400555849075317,
+   "accept": false,
+   "true_dist_m": 55.80508241034866
+  },
+  {
+   "step": 6,
+   "x": 2088.439821812641,
+   "y": 1419.7626506814825,
+   "yaw": -2.132595,
+   "action": 1,
+   "estimate": [
+    2056.0,
+    1376.0
+   ],
+   "est_distance_m": 54.47487158227514,
+   "visual_score": 0.8324019908905029,
+   "accept": false,
+   "true_dist_m": 51.08908251024836
+  },
+  {
+   "step": 7,
+   "x": 2085.7762754480814,
+   "y": 1415.5311591283962,
+   "yaw": -2.132595,
+   "action": 1,
+   "estimate": [
+    2056.0,
+    1376.0
+   ],
+   "est_distance_m": 49.490798352770554,
+   "visual_score": 0.9081356525421143,
+   "accept": false,
+   "true_dist_m": 46.43254764335168
+  },
+  {
+   "step": 8,
+   "x": 2083.1127290835216,
+   "y": 1411.29966757531,
+   "yaw": -2.132595,
+   "action": 1,
+   "estimate": [
+    2049.4412134983586,
+    1385.3232958807334
+   ],
+   "est_distance_m": 42.52696612993537,
+   "visual_score": 0.9257940053939819,
+   "accept": true,
+   "true_dist_m": 41.85532952403174
+  },
+  {
+   "step": 9,
+   "x": 2080.4491827189618,
+   "y": 1407.0681760222237,
+   "yaw": -2.132595,
+   "action": 1,
+   "estimate": [
+    2049.425728652719,
+    1385.8696033269182
+   ],
+   "est_distance_m": 37.57438205105208,
+   "visual_score": 0.9577162265777588,
+   "accept": true,
+   "true_dist_m": 37.38657163312039
+  },
+  {
+   "step": 10,
+   "x": 2077.785636354402,
+   "y": 1402.8366844691375,
+   "yaw": -2.132595,
+   "action": 1,
+   "estimate": [
+    2049.4563269709997,
+    1386.061627575033
+   ],
+   "est_distance_m": 32.923430926028374,
+   "visual_score": 0.9421071410179138,
+   "accept": true,
+   "true_dist_m": 33.070271655848266
+  },
+  {
+   "step": 11,
+   "x": 2075.122089989842,
+   "y": 1398.6051929160512,
+   "yaw": -2.132595,
+   "action": 1,
+   "estimate": [
+    2049.3126775560263,
+    1385.9181113956809
+   ],
+   "est_distance_m": 28.75913433473497,
+   "visual_score": 0.9285025000572205,
+   "accept": true,
+   "true_dist_m": 28.974644023779838
+  },
+  {
+   "step": 12,
+   "x": 2072.4585436252823,
+   "y": 1394.373701362965,
+   "yaw": -2.132595,
+   "action": 1,
+   "estimate": [
+    2049.2058360648666,
+    1385.8947219730162
+   ],
+   "est_distance_m": 24.750383843193042,
+   "visual_score": 0.9379085898399353,
+   "accept": true,
+   "true_dist_m": 25.20748153263074
+  },
+  {
+   "step": 13,
+   "x": 2069.7949972607225,
+   "y": 1390.1422098098788,
+   "yaw": -2.132595,
+   "action": 1,
+   "estimate": [
+    2049.2004960491645,
+    1385.972306391495
+   ],
+   "est_distance_m": 21.012414774878067,
+   "visual_score": 0.9188135266304016,
+   "accept": true,
+   "true_dist_m": 21.93864750004154
+  },
+  {
+   "step": 14,
+   "x": 2067.1314508961627,
+   "y": 1385.9107182567925,
+   "yaw": -2.132595,
+   "action": 0,
+   "estimate": [
+    2049.26801690324,
+    1386.0016928218258
+   ],
+   "est_distance_m": 17.86366564820857,
+   "visual_score": 0.9113609790802002,
+   "accept": true,
+   "true_dist_m": 19.421415577764613
+  }
+ ],
+ "execution_status": "ok",
+ "exception": "",
+ "seconds": 488.235,
+ "failure": "success"
+}

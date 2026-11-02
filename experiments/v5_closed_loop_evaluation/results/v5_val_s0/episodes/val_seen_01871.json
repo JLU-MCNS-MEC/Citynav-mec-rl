@@ -1,0 +1,194 @@
+{
+ "episode_id": "val_seen:01871",
+ "split": "val_seen",
+ "instruction_id": "",
+ "block_id": "cambridge_block_20",
+ "index": 1871,
+ "map": "cambridge_block_20",
+ "length_group": "short",
+ "cohort": "A",
+ "controller": "v5_teacher_only_landmarks",
+ "start": [
+  1351.3857,
+  960.439,
+  0.683082
+ ],
+ "target": [
+  1400.0,
+  988.2109
+ ],
+ "step_cap": 200,
+ "manifest_sha": "2da3781677e1376c7ff37ee029956c3a8d54aa0a85f81feca5858fe611123446",
+ "ckpt_sha": "11ad6692bfcbfd793de1ecab296f7dff8cc5f3c56f7d3579fea07b5948e45416",
+ "candidate_count": 255,
+ "candidate_status": "ok",
+ "steps": 9,
+ "stopped": true,
+ "stop_step": 8,
+ "stop_reason": "model_stop",
+ "stop_dist": 17.76929096776015,
+ "final_pos": [
+  1382.4109435499006,
+  985.6864605192164,
+  0.683082
+ ],
+ "final_dist": 17.76929096776015,
+ "min_dist": 17.76929096776015,
+ "min_dist_step": 8,
+ "osr": true,
+ "success": true,
+ "collision": false,
+ "out_of_bounds": false,
+ "path_len_m": 40.0,
+ "l_star_m": 55.98775396548784,
+ "spl": 1.0,
+ "ne_m": 17.76929096776015,
+ "oracle_success": true,
+ "action_counts": {
+  "Stop": 1,
+  "Forward": 8,
+  "TurnLeft": 0,
+  "TurnRight": 0
+ },
+ "trajectory": [
+  {
+   "step": 0,
+   "x": 1351.3857,
+   "y": 960.439,
+   "yaw": 0.683082,
+   "action": 1,
+   "estimate": [
+    1400.0,
+    976.0
+   ],
+   "est_distance_m": 51.0440484825606,
+   "visual_score": 0.8227841854095459,
+   "accept": false,
+   "true_dist_m": 55.98775396548784
+  },
+  {
+   "step": 1,
+   "x": 1355.2638554437376,
+   "y": 963.594932564902,
+   "yaw": 0.683082,
+   "action": 1,
+   "estimate": [
+    1400.0,
+    976.0
+   ],
+   "est_distance_m": 46.42422134864658,
+   "visual_score": 0.8539455533027649,
+   "accept": false,
+   "true_dist_m": 51.061418728082856
+  },
+  {
+   "step": 2,
+   "x": 1359.1420108874752,
+   "y": 966.7508651298041,
+   "yaw": 0.683082,
+   "action": 1,
+   "estimate": [
+    1400.0,
+    976.0
+   ],
+   "est_distance_m": 41.89178642844288,
+   "visual_score": 0.9319136738777161,
+   "accept": false,
+   "true_dist_m": 46.150930336768106
+  },
+  {
+   "step": 3,
+   "x": 1363.0201663312127,
+   "y": 969.9067976947061,
+   "yaw": 0.683082,
+   "action": 1,
+   "estimate": [
+    1402.05758803709,
+    985.7054508568912
+   ],
+   "est_distance_m": 42.113153944836704,
+   "visual_score": 0.9466741681098938,
+   "accept": true,
+   "true_dist_m": 41.261946868438436
+  },
+  {
+   "step": 4,
+   "x": 1366.8983217749503,
+   "y": 973.0627302596082,
+   "yaw": 0.683082,
+   "action": 1,
+   "estimate": [
+    1401.8967040235864,
+    986.1158262255185
+   ],
+   "est_distance_m": 37.35331410085198,
+   "visual_score": 0.932012677192688,
+   "accept": true,
+   "true_dist_m": 36.403133763433765
+  },
+  {
+   "step": 5,
+   "x": 1370.776477218688,
+   "y": 976.2186628245103,
+   "yaw": 0.683082,
+   "action": 1,
+   "estimate": [
+    1401.7557438129493,
+    986.46510316872
+   ],
+   "est_distance_m": 32.62980996643666,
+   "visual_score": 0.9229092597961426,
+   "accept": true,
+   "true_dist_m": 31.58841617148709
+  },
+  {
+   "step": 6,
+   "x": 1374.6546326624255,
+   "y": 979.3745953894123,
+   "yaw": 0.683082,
+   "action": 1,
+   "estimate": [
+    1401.762152028306,
+    986.5517839022917
+   ],
+   "est_distance_m": 28.04156987618554,
+   "visual_score": 0.9335578083992004,
+   "accept": true,
+   "true_dist_m": 26.84153357481059
+  },
+  {
+   "step": 7,
+   "x": 1378.532788106163,
+   "y": 982.5305279543144,
+   "yaw": 0.683082,
+   "action": 1,
+   "estimate": [
+    1401.8062723135165,
+    986.5745608422017
+   ],
+   "est_distance_m": 23.62221981838806,
+   "visual_score": 0.9396177530288696,
+   "accept": true,
+   "true_dist_m": 22.2060310067401
+  },
+  {
+   "step": 8,
+   "x": 1382.4109435499006,
+   "y": 985.6864605192164,
+   "yaw": 0.683082,
+   "action": 0,
+   "estimate": [
+    1401.875997584546,
+    986.5255792254901
+   ],
+   "est_distance_m": 19.48313241691087,
+   "visual_score": 0.9438875913619995,
+   "accept": true,
+   "true_dist_m": 17.76929096776015
+  }
+ ],
+ "execution_status": "ok",
+ "exception": "",
+ "seconds": 276.437,
+ "failure": "success"
+}

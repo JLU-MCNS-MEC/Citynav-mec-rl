@@ -1,0 +1,104 @@
+{
+ "episode_id": "val_unseen:02782",
+ "split": "val_unseen",
+ "instruction_id": "",
+ "block_id": "cambridge_block_3",
+ "index": 2782,
+ "map": "cambridge_block_3",
+ "length_group": "short",
+ "cohort": "A",
+ "controller": "v4_teacher_only",
+ "start": [
+  313.6422,
+  1525.7143,
+  -2.281195
+ ],
+ "target": [
+  288.875,
+  1511.4297
+ ],
+ "step_cap": 200,
+ "manifest_sha": "2da3781677e1376c7ff37ee029956c3a8d54aa0a85f81feca5858fe611123446",
+ "ckpt_sha": "c90fd9d60d27d65a2947e01ff8f0e76f1925863367d30f8d9f14cab222e08e05",
+ "candidate_count": 210,
+ "candidate_status": "ok",
+ "steps": 3,
+ "stopped": true,
+ "stop_step": 2,
+ "stop_reason": "model_stop",
+ "stop_dist": 19.438329355586635,
+ "final_pos": [
+  307.1208394222808,
+  1518.1332805292845,
+  -2.281195
+ ],
+ "final_dist": 19.438329355586635,
+ "min_dist": 19.438329355586635,
+ "min_dist_step": 2,
+ "osr": true,
+ "success": true,
+ "collision": false,
+ "out_of_bounds": false,
+ "path_len_m": 10.0,
+ "l_star_m": 28.591327233970887,
+ "spl": 1.0,
+ "ne_m": 19.438329355586635,
+ "oracle_success": true,
+ "action_counts": {
+  "Stop": 1,
+  "Forward": 2,
+  "TurnLeft": 0,
+  "TurnRight": 0
+ },
+ "trajectory": [
+  {
+   "step": 0,
+   "x": 313.6422,
+   "y": 1525.7143,
+   "yaw": -2.281195,
+   "action": 1,
+   "estimate": [
+    283.0,
+    1496.0
+   ],
+   "est_distance_m": 42.68353365561485,
+   "visual_score": 0.9345765113830566,
+   "accept": false,
+   "true_dist_m": 28.591327233970887
+  },
+  {
+   "step": 1,
+   "x": 310.3815197111404,
+   "y": 1521.9237902646423,
+   "yaw": -2.281195,
+   "action": 1,
+   "estimate": [
+    289.63139717794644,
+    1510.1673715577333
+   ],
+   "est_distance_m": 23.84912924940289,
+   "visual_score": 0.9404208064079285,
+   "accept": true,
+   "true_dist_m": 23.93023862330114
+  },
+  {
+   "step": 2,
+   "x": 307.1208394222808,
+   "y": 1518.1332805292845,
+   "yaw": -2.281195,
+   "action": 0,
+   "estimate": [
+    289.82542564840764,
+    1510.0479899303039
+   ],
+   "est_distance_m": 19.09196851242552,
+   "visual_score": 0.9353265166282654,
+   "accept": true,
+   "true_dist_m": 19.438329355586635
+  }
+ ],
+ "execution_status": "ok",
+ "exception": "",
+ "seconds": 3522.397,
+ "failure": "success"
+}

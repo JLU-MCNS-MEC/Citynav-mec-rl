@@ -1,0 +1,74 @@
+{
+ "episode_id": "test_unseen:05174",
+ "split": "test_unseen",
+ "instruction_id": "",
+ "block_id": "cambridge_block_8",
+ "index": 5174,
+ "map": "cambridge_block_8",
+ "length_group": null,
+ "cohort": "B",
+ "controller": "v4_teacher_only",
+ "start": [
+  681.2186275296,
+  870.9756136238,
+  2.132612711118826
+ ],
+ "target": [
+  675.875,
+  893.9921875
+ ],
+ "step_cap": 200,
+ "manifest_sha": "0efcee1d8a38ea4957934209f4eeb68345b5c02906dff428b0cdd02d4adc9b4c",
+ "ckpt_sha": "c90fd9d60d27d65a2947e01ff8f0e76f1925863367d30f8d9f14cab222e08e05",
+ "candidate_count": 268,
+ "candidate_status": "ok",
+ "steps": 1,
+ "stopped": true,
+ "stop_step": 0,
+ "stop_reason": "model_stop",
+ "stop_dist": 23.628733105557572,
+ "final_pos": [
+  681.2186275296,
+  870.9756136238,
+  2.132612711118826
+ ],
+ "final_dist": 23.628733105557572,
+ "min_dist": 23.628733105557572,
+ "min_dist_step": 0,
+ "osr": false,
+ "success": false,
+ "collision": false,
+ "out_of_bounds": false,
+ "path_len_m": 0.0,
+ "l_star_m": 23.628733105557572,
+ "spl": 0.0,
+ "ne_m": 23.628733105557572,
+ "oracle_success": false,
+ "action_counts": {
+  "Stop": 1,
+  "Forward": 0,
+  "TurnLeft": 0,
+  "TurnRight": 0
+ },
+ "trajectory": [
+  {
+   "step": 0,
+   "x": 681.2186275296,
+   "y": 870.9756136238,
+   "yaw": 2.132612711118826,
+   "action": 0,
+   "estimate": [
+    672.0,
+    880.0
+   ],
+   "est_distance_m": 12.90049002931452,
+   "visual_score": 0.9080917239189148,
+   "accept": false,
+   "true_dist_m": 23.628733105557572
+  }
+ ],
+ "execution_status": "ok",
+ "exception": "",
+ "seconds": 7112.48,
+ "failure": "premature_stop"
+}

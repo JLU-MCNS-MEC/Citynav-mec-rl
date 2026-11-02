@@ -1,0 +1,284 @@
+{
+ "episode_id": "val_seen:00516",
+ "split": "val_seen",
+ "instruction_id": "",
+ "block_id": "birmingham_block_4",
+ "index": 516,
+ "map": "birmingham_block_4",
+ "length_group": "short",
+ "cohort": "A",
+ "controller": "v4_teacher_only",
+ "start": [
+  437.7002,
+  693.0662,
+  -0.524299
+ ],
+ "target": [
+  496.625,
+  739.125
+ ],
+ "step_cap": 200,
+ "manifest_sha": "2da3781677e1376c7ff37ee029956c3a8d54aa0a85f81feca5858fe611123446",
+ "ckpt_sha": "c90fd9d60d27d65a2947e01ff8f0e76f1925863367d30f8d9f14cab222e08e05",
+ "candidate_count": 280,
+ "candidate_status": "ok",
+ "steps": 15,
+ "stopped": true,
+ "stop_step": 14,
+ "stop_reason": "model_stop",
+ "stop_dist": 17.528561960121948,
+ "final_pos": [
+  489.6827182186644,
+  723.0298079210477,
+  0.5228985511965978
+ ],
+ "final_dist": 17.528561960121948,
+ "min_dist": 17.528561960121948,
+ "min_dist_step": 14,
+ "osr": true,
+ "success": true,
+ "collision": false,
+ "out_of_bounds": false,
+ "path_len_m": 60.0,
+ "l_star_m": 74.79000676881907,
+ "spl": 1.0,
+ "ne_m": 17.528561960121948,
+ "oracle_success": true,
+ "action_counts": {
+  "Stop": 1,
+  "Forward": 12,
+  "TurnLeft": 2,
+  "TurnRight": 0
+ },
+ "trajectory": [
+  {
+   "step": 0,
+   "x": 437.7002,
+   "y": 693.0662,
+   "yaw": -0.524299,
+   "action": 2,
+   "estimate": [
+    504.0,
+    744.0
+   ],
+   "est_distance_m": 83.60571429322282,
+   "visual_score": 0.7939081788063049,
+   "accept": false,
+   "true_dist_m": 74.79000676881907
+  },
+  {
+   "step": 1,
+   "x": 437.7002,
+   "y": 693.0662,
+   "yaw": -0.0007002244017009218,
+   "action": 2,
+   "estimate": [
+    504.0,
+    744.0
+   ],
+   "est_distance_m": 83.60571429322282,
+   "visual_score": 0.8006946444511414,
+   "accept": false,
+   "true_dist_m": 74.79000676881907
+  },
+  {
+   "step": 2,
+   "x": 437.7002,
+   "y": 693.0662,
+   "yaw": 0.5228985511965978,
+   "action": 1,
+   "estimate": [
+    504.0,
+    744.0
+   ],
+   "est_distance_m": 83.60571429322282,
+   "visual_score": 0.7969685196876526,
+   "accept": false,
+   "true_dist_m": 74.79000676881907
+  },
+  {
+   "step": 3,
+   "x": 442.032076518222,
+   "y": 695.563167326754,
+   "yaw": 0.5228985511965978,
+   "action": 1,
+   "estimate": [
+    504.0,
+    744.0
+   ],
+   "est_distance_m": 78.65208388885526,
+   "visual_score": 0.7771523594856262,
+   "accept": false,
+   "true_dist_m": 69.84282754971444
+  },
+  {
+   "step": 4,
+   "x": 446.36395303644406,
+   "y": 698.0601346535079,
+   "yaw": 0.5228985511965978,
+   "action": 1,
+   "estimate": [
+    504.0,
+    744.0
+   ],
+   "est_distance_m": 73.70471584396108,
+   "visual_score": 0.801058828830719,
+   "accept": false,
+   "true_dist_m": 64.9037441739558
+  },
+  {
+   "step": 5,
+   "x": 450.6958295546661,
+   "y": 700.5571019802619,
+   "yaw": 0.5228985511965978,
+   "action": 1,
+   "estimate": [
+    504.0,
+    744.0
+   ],
+   "est_distance_m": 68.76496182808926,
+   "visual_score": 0.7779352068901062,
+   "accept": false,
+   "true_dist_m": 59.974756818660396
+  },
+  {
+   "step": 6,
+   "x": 455.0277060728881,
+   "y": 703.0540693070159,
+   "yaw": 0.5228985511965978,
+   "action": 1,
+   "estimate": [
+    504.0,
+    744.0
+   ],
+   "est_distance_m": 63.834589469958196,
+   "visual_score": 0.8150442242622375,
+   "accept": false,
+   "true_dist_m": 55.05857701681549
+  },
+  {
+   "step": 7,
+   "x": 459.35958259111015,
+   "y": 705.5510366337699,
+   "yaw": 0.5228985511965978,
+   "action": 1,
+   "estimate": [
+    504.0,
+    744.0
+   ],
+   "est_distance_m": 58.9159541243085,
+   "visual_score": 0.8506192564964294,
+   "accept": false,
+   "true_dist_m": 50.15897079063479
+  },
+  {
+   "step": 8,
+   "x": 463.6914591093322,
+   "y": 708.0480039605238,
+   "yaw": 0.5228985511965978,
+   "action": 1,
+   "estimate": [
+    504.0,
+    744.0
+   ],
+   "est_distance_m": 54.01226238510242,
+   "visual_score": 0.9225828647613525,
+   "accept": false,
+   "true_dist_m": 45.2813184264207
+  },
+  {
+   "step": 9,
+   "x": 468.0233356275542,
+   "y": 710.5449712872778,
+   "yaw": 0.5228985511965978,
+   "action": 1,
+   "estimate": [
+    498.8937007610526,
+    737.3040467428881
+   ],
+   "est_distance_m": 40.85373376711802,
+   "visual_score": 0.9470085501670837,
+   "accept": true,
+   "true_dist_m": 40.43356583451501
+  },
+  {
+   "step": 10,
+   "x": 472.35521214577625,
+   "y": 713.0419386140318,
+   "yaw": 0.5228985511965978,
+   "action": 1,
+   "estimate": [
+    499.14148570959634,
+    737.1148401135033
+   ],
+   "est_distance_m": 36.01401169043884,
+   "visual_score": 0.9202901721000671,
+   "accept": true,
+   "true_dist_m": 35.62792014352246
+  },
+  {
+   "step": 11,
+   "x": 476.6870886639983,
+   "y": 715.5389059407858,
+   "yaw": 0.5228985511965978,
+   "action": 1,
+   "estimate": [
+    499.2404426764833,
+    737.0263499406119
+   ],
+   "est_distance_m": 31.15066655559942,
+   "visual_score": 0.8858790397644043,
+   "accept": true,
+   "true_dist_m": 30.88404347575569
+  },
+  {
+   "step": 12,
+   "x": 481.0189651822203,
+   "y": 718.0358732675397,
+   "yaw": 0.5228985511965978,
+   "action": 1,
+   "estimate": [
+    499.16316767117365,
+    737.1218013422194
+   ],
+   "est_distance_m": 26.334098321985277,
+   "visual_score": 0.9142327904701233,
+   "accept": true,
+   "true_dist_m": 26.235464338782386
+  },
+  {
+   "step": 13,
+   "x": 485.35084170044234,
+   "y": 720.5328405942937,
+   "yaw": 0.5228985511965978,
+   "action": 1,
+   "estimate": [
+    499.16334679034526,
+    737.0776567503713
+   ],
+   "est_distance_m": 21.55263878268735,
+   "visual_score": 0.93059903383255,
+   "accept": true,
+   "true_dist_m": 21.743390644760947
+  },
+  {
+   "step": 14,
+   "x": 489.6827182186644,
+   "y": 723.0298079210477,
+   "yaw": 0.5228985511965978,
+   "action": 0,
+   "estimate": [
+    499.1937398726315,
+    737.0152049548892
+   ],
+   "est_distance_m": 16.913038257404118,
+   "visual_score": 0.9157602787017822,
+   "accept": true,
+   "true_dist_m": 17.528561960121948
+  }
+ ],
+ "execution_status": "ok",
+ "exception": "",
+ "seconds": 225.113,
+ "failure": "success"
+}
