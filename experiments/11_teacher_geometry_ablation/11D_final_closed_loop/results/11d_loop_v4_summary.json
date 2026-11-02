@@ -1,0 +1,365 @@
+{
+  "model": "v4",
+  "prefix": "11d_loop_v4",
+  "val": {
+    "label": "val_seen+val_unseen",
+    "n": 5324,
+    "n_evalable": 5324,
+    "n_no_candidates": 0,
+    "sr": 0.7353493613824192,
+    "by_split": {
+      "val_seen": {
+        "n": 2498,
+        "sr": 0.6152922337870296,
+        "osr": 0.6393114491593275
+      },
+      "val_unseen": {
+        "n": 2826,
+        "sr": 0.8414720452937013,
+        "osr": 0.8446567586694975
+      }
+    },
+    "by_map": {
+      "birmingham_block_1": {
+        "n": 326,
+        "sr": 0.8159509202453987
+      },
+      "birmingham_block_10": {
+        "n": 37,
+        "sr": 0.5945945945945946
+      },
+      "birmingham_block_11": {
+        "n": 5,
+        "sr": 0.8
+      },
+      "birmingham_block_12": {
+        "n": 88,
+        "sr": 0.7159090909090909
+      },
+      "birmingham_block_13": {
+        "n": 6,
+        "sr": 0.6666666666666666
+      },
+      "birmingham_block_3": {
+        "n": 161,
+        "sr": 0.2732919254658385
+      },
+      "birmingham_block_4": {
+        "n": 101,
+        "sr": 0.693069306930693
+      },
+      "birmingham_block_5": {
+        "n": 973,
+        "sr": 0.8890030832476875
+      },
+      "birmingham_block_7": {
+        "n": 40,
+        "sr": 0.525
+      },
+      "birmingham_block_9": {
+        "n": 105,
+        "sr": 0.8
+      },
+      "cambridge_block_10": {
+        "n": 942,
+        "sr": 0.8152866242038217
+      },
+      "cambridge_block_12": {
+        "n": 157,
+        "sr": 0.3057324840764331
+      },
+      "cambridge_block_13": {
+        "n": 190,
+        "sr": 0.4789473684210526
+      },
+      "cambridge_block_17": {
+        "n": 45,
+        "sr": 0.9555555555555556
+      },
+      "cambridge_block_18": {
+        "n": 60,
+        "sr": 0.4666666666666667
+      },
+      "cambridge_block_19": {
+        "n": 47,
+        "sr": 0.3829787234042553
+      },
+      "cambridge_block_2": {
+        "n": 316,
+        "sr": 0.7848101265822784
+      },
+      "cambridge_block_20": {
+        "n": 208,
+        "sr": 0.34615384615384615
+      },
+      "cambridge_block_21": {
+        "n": 190,
+        "sr": 0.7
+      },
+      "cambridge_block_23": {
+        "n": 33,
+        "sr": 0.7878787878787878
+      },
+      "cambridge_block_25": {
+        "n": 24,
+        "sr": 0.4583333333333333
+      },
+      "cambridge_block_28": {
+        "n": 170,
+        "sr": 0.7294117647058823
+      },
+      "cambridge_block_3": {
+        "n": 595,
+        "sr": 0.8352941176470589
+      },
+      "cambridge_block_33": {
+        "n": 99,
+        "sr": 0.6868686868686869
+      },
+      "cambridge_block_4": {
+        "n": 31,
+        "sr": 0.6451612903225806
+      },
+      "cambridge_block_6": {
+        "n": 33,
+        "sr": 0.2727272727272727
+      },
+      "cambridge_block_7": {
+        "n": 162,
+        "sr": 0.6666666666666666
+      },
+      "cambridge_block_9": {
+        "n": 180,
+        "sr": 0.8888888888888888
+      }
+    },
+    "failures": {
+      "out_of_bounds": 886,
+      "reached_but_not_stopped": 69,
+      "premature_stop": 397,
+      "never_stop": 56,
+      "collision": 1
+    },
+    "mean_steps": 56.127911344853494,
+    "stop_rate": 0.8110443275732532,
+    "stop_dist_mean": 22.396496970685114
+  },
+  "test": {
+    "label": "test_unseen",
+    "n": 5292,
+    "n_evalable": 5072,
+    "n_no_candidates": 220,
+    "sr": 0.6214511041009464,
+    "by_split": {
+      "test_unseen": {
+        "n": 5072,
+        "sr": 0.6214511041009464,
+        "osr": 0.6413643533123028
+      }
+    },
+    "by_map": {
+      "birmingham_block_0": {
+        "n": 573,
+        "sr": 0.6631762652705061
+      },
+      "birmingham_block_6": {
+        "n": 176,
+        "sr": 0.6988636363636364
+      },
+      "cambridge_block_14": {
+        "n": 832,
+        "sr": 0.6129807692307693
+      },
+      "cambridge_block_26": {
+        "n": 2135,
+        "sr": 0.46276346604215457
+      },
+      "cambridge_block_8": {
+        "n": 1356,
+        "sr": 0.8488200589970502
+      }
+    },
+    "failures": {
+      "out_of_bounds": 1560,
+      "premature_stop": 201,
+      "reached_but_not_stopped": 101,
+      "never_stop": 53,
+      "collision": 5
+    },
+    "mean_steps": 60.793572555205046,
+    "stop_rate": 0.6636435331230284,
+    "stop_dist_mean": 21.80094911933457
+  },
+  "all": {
+    "label": "all",
+    "n": 10616,
+    "n_evalable": 10396,
+    "n_no_candidates": 220,
+    "sr": 0.6797806848787995,
+    "by_split": {
+      "val_seen": {
+        "n": 2498,
+        "sr": 0.6152922337870296,
+        "osr": 0.6393114491593275
+      },
+      "val_unseen": {
+        "n": 2826,
+        "sr": 0.8414720452937013,
+        "osr": 0.8446567586694975
+      },
+      "test_unseen": {
+        "n": 5072,
+        "sr": 0.6214511041009464,
+        "osr": 0.6413643533123028
+      }
+    },
+    "by_map": {
+      "birmingham_block_0": {
+        "n": 573,
+        "sr": 0.6631762652705061
+      },
+      "birmingham_block_1": {
+        "n": 326,
+        "sr": 0.8159509202453987
+      },
+      "birmingham_block_10": {
+        "n": 37,
+        "sr": 0.5945945945945946
+      },
+      "birmingham_block_11": {
+        "n": 5,
+        "sr": 0.8
+      },
+      "birmingham_block_12": {
+        "n": 88,
+        "sr": 0.7159090909090909
+      },
+      "birmingham_block_13": {
+        "n": 6,
+        "sr": 0.6666666666666666
+      },
+      "birmingham_block_3": {
+        "n": 161,
+        "sr": 0.2732919254658385
+      },
+      "birmingham_block_4": {
+        "n": 101,
+        "sr": 0.693069306930693
+      },
+      "birmingham_block_5": {
+        "n": 973,
+        "sr": 0.8890030832476875
+      },
+      "birmingham_block_6": {
+        "n": 176,
+        "sr": 0.6988636363636364
+      },
+      "birmingham_block_7": {
+        "n": 40,
+        "sr": 0.525
+      },
+      "birmingham_block_9": {
+        "n": 105,
+        "sr": 0.8
+      },
+      "cambridge_block_10": {
+        "n": 942,
+        "sr": 0.8152866242038217
+      },
+      "cambridge_block_12": {
+        "n": 157,
+        "sr": 0.3057324840764331
+      },
+      "cambridge_block_13": {
+        "n": 190,
+        "sr": 0.4789473684210526
+      },
+      "cambridge_block_14": {
+        "n": 832,
+        "sr": 0.6129807692307693
+      },
+      "cambridge_block_17": {
+        "n": 45,
+        "sr": 0.9555555555555556
+      },
+      "cambridge_block_18": {
+        "n": 60,
+        "sr": 0.4666666666666667
+      },
+      "cambridge_block_19": {
+        "n": 47,
+        "sr": 0.3829787234042553
+      },
+      "cambridge_block_2": {
+        "n": 316,
+        "sr": 0.7848101265822784
+      },
+      "cambridge_block_20": {
+        "n": 208,
+        "sr": 0.34615384615384615
+      },
+      "cambridge_block_21": {
+        "n": 190,
+        "sr": 0.7
+      },
+      "cambridge_block_23": {
+        "n": 33,
+        "sr": 0.7878787878787878
+      },
+      "cambridge_block_25": {
+        "n": 24,
+        "sr": 0.4583333333333333
+      },
+      "cambridge_block_26": {
+        "n": 2135,
+        "sr": 0.46276346604215457
+      },
+      "cambridge_block_28": {
+        "n": 170,
+        "sr": 0.7294117647058823
+      },
+      "cambridge_block_3": {
+        "n": 595,
+        "sr": 0.8352941176470589
+      },
+      "cambridge_block_33": {
+        "n": 99,
+        "sr": 0.6868686868686869
+      },
+      "cambridge_block_4": {
+        "n": 31,
+        "sr": 0.6451612903225806
+      },
+      "cambridge_block_6": {
+        "n": 33,
+        "sr": 0.2727272727272727
+      },
+      "cambridge_block_7": {
+        "n": 162,
+        "sr": 0.6666666666666666
+      },
+      "cambridge_block_8": {
+        "n": 1356,
+        "sr": 0.8488200589970502
+      },
+      "cambridge_block_9": {
+        "n": 180,
+        "sr": 0.8888888888888888
+      }
+    },
+    "failures": {
+      "out_of_bounds": 2446,
+      "reached_but_not_stopped": 170,
+      "premature_stop": 598,
+      "never_stop": 109,
+      "collision": 6
+    },
+    "mean_steps": 58.40419392073875,
+    "stop_rate": 0.7391304347826086,
+    "stop_dist_mean": 22.1356153897838
+  },
+  "baselines": {
+    "C1 (09C-1)": 0.647,
+    "M-v3 (10E)": 0.554
+  }
+}
