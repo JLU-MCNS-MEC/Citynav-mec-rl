@@ -44,11 +44,11 @@ sys.path.insert(0, str(REPO / "experiments/04_visual_goal_global_map_pipeline/sc
 
 from dataset_v2 import FrozenEncoder  # noqa: E402
 from model11b import TransformerM11  # noqa: E402
+from model11c import TransformerM12  # noqa: E402
 from dataset11b import ChunkedMemmapDataset, ValMemmapDataset  # noqa: E402
 from train_10d import (gpu_snapshot, metrics,  # noqa: E402
                        restore_rng, rng_state, save_checkpoint, set_seed)
 
-RUNS = HERE.parent / "results" / "runs_11b"
 CLASSES = ["Stop", "Forward", "TurnLeft", "TurnRight"]
 
 
@@ -96,6 +96,8 @@ def evaluate11(model, encoder, dataset, device, batch_size=128) -> dict:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--model", choices=["v4", "v5"], default="v4",
+                        help="v4: TransformerM11 (runs_11b); v5: TransformerM12 (runs_11c)")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--epochs", type=int, default=30)
     parser.add_argument("--batch", type=int, default=128)
@@ -112,11 +114,11 @@ def main() -> int:
 
     set_seed(args.seed)
     device = args.device
-    run_dir = RUNS / f"seed{args.seed}"
+    run_dir = (HERE.parent / "results" / f"runs_11{'c' if args.model == 'v5' else 'b'}") / f"seed{args.seed}"
     run_dir.mkdir(parents=True, exist_ok=True)
     config = vars(args).copy()
     config["classes"] = CLASSES
-    config["model"] = "TransformerM11"
+    config["model"] = "TransformerM12" if args.model == "v5" else "TransformerM11"
     config["data"] = "11B pure four-action teacher pool (11A final set, uncapped)"
     config["scheduler"] = "OneCycleLR per-batch, total_steps=epochs*steps_per_epoch"
 
@@ -134,7 +136,7 @@ def main() -> int:
     print(f"train states {n_train} (memmap) | val states {n_val} | "
           f"steps/epoch {steps_per_epoch}", flush=True)
 
-    model = TransformerM11().to(device)
+    model = (TransformerM12() if args.model == "v5" else TransformerM11()).to(device)
     encoder = FrozenEncoder(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr,
                                   weight_decay=args.weight_decay)
