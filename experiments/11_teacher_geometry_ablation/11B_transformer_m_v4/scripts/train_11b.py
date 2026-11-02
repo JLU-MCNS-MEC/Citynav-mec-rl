@@ -159,8 +159,21 @@ def main() -> int:
         else:
             start_epoch, start_step = ckpt["epoch"], ckpt["step"]
         restore_rng(ckpt["rng"])
-        print(f"resumed at epoch {start_epoch} step {start_step} (best={best:.4f})",
-              flush=True)
+        # n_best_epochs is NOT stored in the checkpoint; recompute it exactly
+        # from history.jsonl so early-stop patience survives resume
+        hpath = run_dir / "history.jsonl"
+        if hpath.exists():
+            f1s = []
+            for line in hpath.read_text(encoding="utf-8").splitlines():
+                try:
+                    f1s.append(float(json.loads(line)["val_seen"]["macro_f1"]))
+                except (json.JSONDecodeError, KeyError):
+                    continue
+            if f1s:
+                best_i = int(np.argmax(f1s))
+                n_best_epochs = len(f1s) - 1 - best_i
+        print(f"resumed at epoch {start_epoch} step {start_step} (best={best:.4f} "
+              f"n_best_epochs={n_best_epochs})", flush=True)
     (run_dir / "config.json").write_text(json.dumps(config, indent=2) + "\n",
                                          encoding="utf-8")
     print(f"params={model.n_params()} run={run_dir}", flush=True)

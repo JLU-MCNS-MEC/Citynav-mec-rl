@@ -1,0 +1,21 @@
+{
+  "seed": 42,
+  "epochs": 30,
+  "batch": 128,
+  "lr": 0.0003,
+  "weight_decay": 0.01,
+  "warmup": 0.03,
+  "patience": 10,
+  "workers": 8,
+  "resume": true,
+  "device": "cuda",
+  "classes": [
+    "Stop",
+    "Forward",
+    "TurnLeft",
+    "TurnRight"
+  ],
+  "model": "TransformerM11",
+  "data": "11B pure four-action teacher pool (11A final set, uncapped)",
+  "scheduler": "OneCycleLR per-batch, total_steps=epochs*steps_per_epoch"
+}
