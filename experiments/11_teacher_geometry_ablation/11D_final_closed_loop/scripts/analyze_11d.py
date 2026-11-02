@@ -37,29 +37,34 @@ def sr_stats(recs: dict[str, dict], label: str) -> dict:
     n = len(recs)
     if not n:
         return {"label": label, "n": 0}
-    succ = [r for r in recs.values() if r["success"]]
+    no_cand = [r for r in recs.values() if r.get("failure") == "c1_no_candidates"]
+    evalable = {k: r for k, r in recs.items()
+                if r.get("failure") != "c1_no_candidates"}
+    n_ev = len(evalable)
+    succ = [r for r in evalable.values() if r["success"]]
     by_split = {}
     for split in ("val_seen", "val_unseen", "test_unseen"):
-        s = [r for r in recs.values() if r["split"] == split]
+        s = [r for r in evalable.values() if r["split"] == split]
         if s:
             by_split[split] = {"n": len(s),
                                "sr": sum(r["success"] for r in s) / len(s),
                                "osr": sum(r["osr"] for r in s) / len(s)}
     by_map = {}
-    for name in sorted({r["map"] for r in recs.values()}):
-        s = [r for r in recs.values() if r["map"] == name]
+    for name in sorted({r["map"] for r in evalable.values()}):
+        s = [r for r in evalable.values() if r["map"] == name]
         by_map[name] = {"n": len(s),
                         "sr": sum(r["success"] for r in s) / len(s)}
-    failures = Counter(r["failure"] for r in recs.values() if not r["success"])
-    return {"label": label, "n": n,
-            "sr": sum(r["success"] for r in recs.values()) / n,
+    failures = Counter(r["failure"] for r in evalable.values() if not r["success"])
+    return {"label": label, "n": n, "n_evalable": n_ev,
+            "n_no_candidates": len(no_cand),
+            "sr": sum(r["success"] for r in evalable.values()) / n_ev if n_ev else 0.0,
             "by_split": by_split, "by_map": by_map,
             "failures": dict(failures),
-            "mean_steps": sum(r["steps"] for r in recs.values()) / n,
-            "stop_rate": sum(r["stopped"] for r in recs.values()) / n,
-            "stop_dist_mean": (sum(r["stop_dist"] for r in recs.values()
+            "mean_steps": sum(r["steps"] for r in evalable.values()) / n_ev if n_ev else 0.0,
+            "stop_rate": sum(r["stopped"] for r in evalable.values()) / n_ev if n_ev else 0.0,
+            "stop_dist_mean": (sum(r["stop_dist"] for r in evalable.values()
                                    if r["stop_dist"] is not None)
-                               / max(1, sum(1 for r in recs.values()
+                               / max(1, sum(1 for r in evalable.values()
                                             if r["stop_dist"] is not None)))}
 
 
@@ -72,15 +77,11 @@ def main() -> int:
     prefix = args.prefix or f"11d_loop_{args.model}"
 
     val = {}
-    for d in (RESULTS / f"{prefix}_val", RESULTS / f"{prefix}_val_s2",
-              RESULTS / f"{prefix}_val_s3"):
-        if d.exists():
-            val.update(load_recs(d))
+    for d in sorted(RESULTS.glob(f"{prefix}_val*")):
+        val.update(load_recs(d))
     test = {}
-    for d in (RESULTS / f"{prefix}_test", RESULTS / f"{prefix}_test_s2",
-              RESULTS / f"{prefix}_test_s3"):
-        if d.exists():
-            test.update(load_recs(d))
+    for d in sorted(RESULTS.glob(f"{prefix}_test*")):
+        test.update(load_recs(d))
     all_recs = {**val, **test}
     out = {"model": args.model, "prefix": prefix,
            "val": sr_stats(val, "val_seen+val_unseen"),

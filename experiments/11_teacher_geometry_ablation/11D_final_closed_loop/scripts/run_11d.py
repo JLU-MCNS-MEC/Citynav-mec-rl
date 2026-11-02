@@ -167,6 +167,23 @@ def main() -> int:
             name = task["map"]
             raster = rasters.get(name)
             lib = cands.get(name)
+            if len(lib.positions) == 0:
+                # frozen C1 module has no candidate library for this map
+                # (e.g. cambridge_block_32): unevaluable, recorded as such
+                rec = {"episode_id": task["episode_id"], "split": task["split"],
+                       "index": int(task["index"]), "map": name,
+                       "length_group": task["length_group"],
+                       "cohort": task["cohort"], "controller": controller,
+                       "success": False, "failure": "c1_no_candidates",
+                       "steps": 0, "stopped": False, "stop_dist": None,
+                       "min_dist": None, "final_dist": None,
+                       "manifest_sha": manifest_sha, "ckpt_sha": ckpt_sha,
+                       "seconds": round(time.time() - started, 3)}
+                atomic_json(episodes / f"{rec['episode_id'].replace(':', '_')}.json", rec)
+                jf.write(json.dumps(rec) + "\n")
+                jf.flush()
+                n += 1
+                continue
             info = obstacle_for(name)
             pos = np.asarray([float(task["start_x"]), float(task["start_y"])],
                              np.float64)
