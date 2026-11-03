@@ -43,7 +43,7 @@ MEM = (REPO / "experiments/11_teacher_geometry_ablation/11B_transformer_m_v4"
        / "results" / "data" / "train_seen_memmap")
 OLD_V5_BEST = (REPO / "experiments/11_teacher_geometry_ablation"
                "/11B_transformer_m_v4/results/runs_11c/seed42/best.pt")
-SIGMA_PRIOR = 12.0
+SIGMA_PRIOR = 12.0  # noqa: F841 — 与 replay_episode 的重建初值一致，保留说明
 TESTS: list[tuple[str, callable]] = []
 
 
@@ -87,19 +87,24 @@ def test_old_v5_weights_loadable():
         out = old(batch)
     assert out.shape == (1, 4)
     # 结构保护：rel_proj 输入 56→3，v5fix 类必须拒载旧权重（形状不匹配必抛）
+    fix = TransformerM12Fix()
+    assert fix.rel_proj[0].in_features == 3, "v5fix rel_proj 输入维度必须为 3"
     try:
-        TransformerM12Fix().load_state_dict(ckpt["model"], strict=False)
+        fix.load_state_dict(ckpt["model"], strict=False)
         raise AssertionError("v5fix 类不应能加载旧 v5 权重（rel_proj 56→3）")
-    except RuntimeError:
-        pass
+    except RuntimeError as e:
+        assert "rel_proj.0.weight" in str(e), f"异常应指明 rel_proj.0.weight: {e}"
 
 
 @test
 def test_landmark_slot_order_contract():
     ep_ranges = load_ep_ranges()
-    lm_mem = np.lib.format.open_memmap(MEM / "landmarks.npy", mode="r")
+    lm_mem = open_memmap(MEM, ("landmarks",))["landmarks"]
     for ep in pick_episodes(3):
         s, e = ep_ranges[ep]
+        z = np.load(CACHE / f"{ep}.npz")
+        assert e - s == len(z["states"]), \
+            f"ep {ep} memmap 区间 {e - s} != cache 长度 {len(z['states'])}"
         for t, belief, *_ in replay_episode(ep):
             if t >= e - s:
                 break
@@ -120,6 +125,7 @@ def test_landmark_slot_order_contract():
 @test
 def test_blanked_sample_model_equiv():
     torch.manual_seed(7)
+    np.random.seed(7)
     base = {"image": np.zeros((7, 7, 3), np.uint8),
             "target_emb": np.random.randn(512).astype(np.float32),
             "history_vis": np.random.randn(16, 2048).astype(np.float32),
@@ -166,6 +172,7 @@ def test_full_batch_equivalence_memmap_vs_harness():
     t = T // 2
     ep_ranges = load_ep_ranges()
     s, e = ep_ranges[ep]
+    assert e - s == T, f"ep {ep} memmap 区间 {e - s} != cache 长度 {T}"
     k = s + t
 
     # ── 训练侧：直接读 memmap 数组（不经 RasterStore，CPU 可跑）──
@@ -213,8 +220,13 @@ def test_full_batch_equivalence_memmap_vs_harness():
         ent = 0.0
     vis, pose_h, act_h, hmask = rcl.history_inputs(
         hist_vis, hist_pose, hist_act, states[t, :2], yaw)
+    # 目标描述子独立重建（与 materialize_11b.py 同公式：每 episode 一个
+    # goal_l2 中心 2×2 均值 + L2 归一），不得复制训练侧值——否则该字段的漂移永远测不出来
+    g = np.asarray(z["target_emb"], np.float32)
+    gdesc = g[:, 13:15, 13:15].mean(axis=(1, 2))
+    gdesc = gdesc / np.maximum(np.linalg.norm(gdesc, keepdims=True), 1e-8)
     harness_sample = {"image": np.zeros((7, 7, 3), np.uint8),
-                      "target_emb": train_sample["target_emb"].copy(),
+                      "target_emb": gdesc.astype(np.float32),
                       "belief": rcl.belief_features(est, np.asarray([x, y]),
                                                     yaw, score, unc, ent,
                                                     since, dx, dy),
@@ -238,6 +250,8 @@ def test_full_batch_equivalence_memmap_vs_harness():
                 "history_mask", "belief", "match", "states", "landmarks"):
         assert mb_train[key].dtype == mb_harness[key].dtype, \
             f"{key} dtype 不一致: {mb_train[key].dtype} vs {mb_harness[key].dtype}"
+        assert mb_train[key].dtype == torch.float32, \
+            f"{key} 模型批 dtype 必须为 float32，实际 {mb_train[key].dtype}"
         # match/states 为 npz 逐字拷贝（float32→float64→float32 精确往返），
         # 其余字段经 float64 回放重建，有 ~1e-6 精度漂移（与既有契约测试同 atol）
         if key in ("match", "states", "history_mask"):
