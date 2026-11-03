@@ -94,7 +94,6 @@ def resolve_run_dir(model: str, seed: int, resume: bool,
 
 def collate11(samples: list[dict]) -> dict:
     out = {
-        "image": np.stack([s["image"] for s in samples]),
         "target_emb": np.stack([s["target_emb"] for s in samples]),
         "history_vis": np.stack([s["history_vis"] for s in samples]),
         "history_pose": np.stack([s["history_pose"] for s in samples]),
@@ -106,11 +105,19 @@ def collate11(samples: list[dict]) -> dict:
         "landmarks": np.stack([s["landmarks"] for s in samples]),
         "label": np.asarray([s["label"] for s in samples], np.int64),
     }
+    # 效率优化：current 特征物化后走快路径；否则栈原始裁剪、编码器在训练循环编码
+    if "current" in samples[0]:
+        out["current"] = np.stack([s["current"] for s in samples])
+    else:
+        out["image"] = np.stack([s["image"] for s in samples])
     return out
 
 
 def to_model_batch11(batch: dict, encoder: FrozenEncoder, device: str) -> dict:
-    out = {"current": encoder(batch["image"])}
+    if "current" in batch:
+        out = {"current": torch.from_numpy(batch["current"]).to(device)}
+    else:
+        out = {"current": encoder(batch["image"])}
     for key in ("target_emb", "history_vis", "history_pose", "history_action",
                 "belief", "match", "states", "landmarks"):
         out[key] = torch.from_numpy(batch[key]).to(device)

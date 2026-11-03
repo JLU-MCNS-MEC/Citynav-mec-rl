@@ -44,14 +44,23 @@ def open_memmap(dir_path: Path, names: tuple[str, ...]) -> dict[str, np.memmap]:
 
 
 class ChunkedMemmapDataset(Dataset):
-    """One sample = one decision state, read from memmap (OS page cache)."""
+    """One sample = one decision state, read from memmap (OS page cache).
+
+    效率优化（简报第 5 节）：若 memmap 目录存在 materialize_current_11b.py
+    物化的 current.npy（冻结 ResNet 输出 f16），则 __getitem__ 直接读特征，
+    不再逐 state 生成裁剪 + 每 Epoch 重复视觉编码；否则回退到
+    RasterStore crop + 训练循环内编码的旧路径。
+    """
 
     def __init__(self, split: str, idx: np.ndarray,
                  blank_mask: np.ndarray | None = None):
         root = DATA / f"{split}_memmap"
-        self.z = open_memmap(root, ("hist_vis", "hist_pose", "hist_act",
-                                    "hist_mask", "belief", "match", "target_emb",
-                                    "states", "labels", "maps", "landmarks"))
+        names = ["hist_vis", "hist_pose", "hist_act", "hist_mask", "belief",
+                 "match", "target_emb", "states", "labels", "maps", "landmarks"]
+        self.has_current = (root / "current.npy").exists()
+        if self.has_current:
+            names.append("current")
+        self.z = open_memmap(root, tuple(names))
         meta = json.loads((root / "meta.json").read_text(encoding="utf-8"))
         self.map_names = {v: k for k, v in meta["map_codes"].items()}
         self.idx = idx
@@ -64,23 +73,28 @@ class ChunkedMemmapDataset(Dataset):
         return len(self.idx)
 
     def __getitem__(self, i: int) -> dict:
+        k = self.idx[i]
+        sample = {"target_emb": np.asarray(self.z["target_emb"][k], np.float32),
+                  "belief": np.asarray(self.z["belief"][k], np.float32),
+                  "match": np.asarray(self.z["match"][k], np.float32),
+                  "history_vis": self.z["hist_vis"][k].astype(np.float32),
+                  "history_pose": np.asarray(self.z["hist_pose"][k], np.float32),
+                  "history_action": np.eye(4, dtype=np.float32)[self.z["hist_act"][k]],
+                  "history_mask": np.asarray(self.z["hist_mask"][k], np.float32),
+                  "states": np.asarray(self.z["states"][k], np.float32),
+                  "landmarks": np.asarray(self.z["landmarks"][k], np.float32),
+                  "label": int(self.z["labels"][k])}
+        if self.has_current:
+            sample["current"] = np.asarray(self.z["current"][k], np.float32)
+            return apply_blank(sample,
+                               self.blank_mask is not None
+                               and bool(self.blank_mask[i]))
         if self.rasters is None:      # one raster cache per worker process
             self.rasters = RasterStore()
-        k = self.idx[i]
         x, y, yaw = (float(v) for v in self.z["states"][k])
-        image = self.rasters.get(self.map_names[int(self.z["maps"][k])]) \
+        sample["image"] = self.rasters.get(self.map_names[int(self.z["maps"][k])]) \
             .heading_crop(x, y, yaw)
-        return apply_blank({"image": image,
-                            "target_emb": np.asarray(self.z["target_emb"][k], np.float32),
-                            "belief": np.asarray(self.z["belief"][k], np.float32),
-                            "match": np.asarray(self.z["match"][k], np.float32),
-                            "history_vis": self.z["hist_vis"][k].astype(np.float32),
-                            "history_pose": np.asarray(self.z["hist_pose"][k], np.float32),
-                            "history_action": np.eye(4, dtype=np.float32)[self.z["hist_act"][k]],
-                            "history_mask": np.asarray(self.z["hist_mask"][k], np.float32),
-                            "states": np.asarray(self.z["states"][k], np.float32),
-                            "landmarks": np.asarray(self.z["landmarks"][k], np.float32),
-                            "label": int(self.z["labels"][k])},
+        return apply_blank(sample,
                            self.blank_mask is not None and bool(self.blank_mask[i]))
 
 
@@ -89,11 +103,14 @@ class ValMemmapDataset(ChunkedMemmapDataset):
 
     def __init__(self, split: str):
         root = DATA / f"{split}_memmap"
-        self.z = {name: np.load(root / f"{name}.npy")
-                  for name in ("hist_vis", "hist_pose", "hist_act", "hist_mask",
-                               "belief", "match", "target_emb", "states",
-                               "labels", "maps", "landmarks")}
+        names = ["hist_vis", "hist_pose", "hist_act", "hist_mask", "belief",
+                 "match", "target_emb", "states", "labels", "maps", "landmarks"]
+        self.has_current = (root / "current.npy").exists()
+        if self.has_current:
+            names.append("current")
+        self.z = {name: np.load(root / f"{name}.npy") for name in names}
         meta = json.loads((root / "meta.json").read_text(encoding="utf-8"))
         self.map_names = {v: k for k, v in meta["map_codes"].items()}
         self.idx = np.arange(len(self.z["labels"]))
+        self.blank_mask = None
         self.rasters = None

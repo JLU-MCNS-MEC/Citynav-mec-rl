@@ -12,13 +12,15 @@ import traceback
 from pathlib import Path
 
 import numpy as np
+import torch
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
 from v5fix_contract import BLANK_FRAC, EMPTY_BELIEF, EMPTY_LANDMARKS, EMPTY_MATCH  # noqa: E402
-from dataset11b import apply_blank  # noqa: E402
-from train_11b import build_blank_mask, resolve_run_dir  # noqa: E402
+from dataset11b import ChunkedMemmapDataset, apply_blank  # noqa: E402
+from train_11b import (build_blank_mask, collate11, resolve_run_dir,  # noqa: E402
+                       to_model_batch11)
 
 TESTS: list[tuple[str, callable]] = []
 
@@ -103,6 +105,125 @@ def test_run_dir_protection():
             pass
         # --resume 允许
         assert resolve_run_dir("v5fix", 42, True, results_root=base) == d
+
+
+class _FakeMem:
+    """模拟 memmap 数组集（current 物化快路径测试用）。"""
+
+    def __init__(self, with_current: bool):
+        self.a = {
+            "target_emb": np.zeros((4, 512), np.float32),
+            "belief": np.ones((4, 10), np.float32),
+            "match": np.ones((4, 5), np.float32),
+            "hist_vis": np.ones((4, 16, 2048), np.float16),
+            "hist_pose": np.ones((4, 16, 3), np.float32),
+            "hist_act": np.zeros((4, 16), np.uint8),
+            "hist_mask": np.ones((4, 16), np.float32),
+            "states": np.ones((4, 3), np.float32),
+            "landmarks": np.ones((4, 8, 3), np.float32),
+            "labels": np.ones(4, np.uint8),
+            "maps": np.zeros(4, np.uint8),
+        }
+        if with_current:
+            self.a["current"] = np.full((4, 49, 2048), 0.5, np.float16)
+
+    def __getitem__(self, k):
+        return self.a[k]
+
+
+class _RecordingEncoder:
+    def __init__(self):
+        self.calls = 0
+        self.seen = None
+
+    def __call__(self, images):
+        self.calls += 1
+        self.seen = images
+        return torch.zeros(len(images), 49, 2048)
+
+
+@test
+def test_collate_current_passthrough():
+    samples = [{"current": np.full((49, 2048), float(i + 1), np.float32),
+                "target_emb": np.zeros(512, np.float32),
+                "history_vis": np.zeros((16, 2048), np.float32),
+                "history_pose": np.zeros((16, 3), np.float32),
+                "history_action": np.zeros((16, 4), np.float32),
+                "history_mask": np.zeros(16, np.float32),
+                "belief": np.zeros(10, np.float32),
+                "match": np.zeros(5, np.float32),
+                "states": np.zeros(3, np.float32),
+                "landmarks": np.zeros((8, 3), np.float32),
+                "label": i} for i in range(3)]
+    batch = collate11(samples)
+    assert "current" in batch and "image" not in batch
+    assert batch["current"].shape == (3, 49, 2048)
+
+
+@test
+def test_to_model_batch11_current_fastpath():
+    enc = _RecordingEncoder()
+    batch_cur = {"current": np.zeros((2, 49, 2048), np.float32),
+                 "target_emb": np.zeros((2, 512), np.float32),
+                 "history_vis": np.zeros((2, 16, 2048), np.float32),
+                 "history_pose": np.zeros((2, 16, 3), np.float32),
+                 "history_action": np.zeros((2, 16, 4), np.float32),
+                 "history_mask": np.zeros((2, 16), np.float32),
+                 "belief": np.zeros((2, 10), np.float32),
+                 "match": np.zeros((2, 5), np.float32),
+                 "states": np.zeros((2, 3), np.float32),
+                 "landmarks": np.zeros((2, 8, 3), np.float32)}
+    out = to_model_batch11(batch_cur, enc, "cpu")
+    assert enc.calls == 0, "current 快路径不得调用编码器"
+    assert out["current"].shape == (2, 49, 2048)
+    batch_img = {k: v for k, v in batch_cur.items() if k != "current"}
+    batch_img["image"] = np.zeros((2, 7, 7, 3), np.uint8)
+    out2 = to_model_batch11(batch_img, enc, "cpu")
+    assert enc.calls == 1 and enc.seen.shape == (2, 7, 7, 3), \
+        "无 current 时必须走编码器路径"
+
+
+@test
+def test_dataset_current_fallback():
+    # 有 current.npy：直接读 memmap，不触 RasterStore（rasters 保持 None）
+    ds = ChunkedMemmapDataset.__new__(ChunkedMemmapDataset)
+    ds.z = _FakeMem(with_current=True)
+    ds.map_names = {}
+    ds.idx = np.array([0, 2])
+    ds.blank_mask = None
+    ds.rasters = None
+    ds.has_current = True
+    s = ds.__getitem__(0)
+    assert "current" in s and "image" not in s
+    assert s["current"].shape == (49, 2048) and s["current"].dtype == np.float32
+    assert ds.rasters is None, "current 快路径不得创建 RasterStore"
+    # 无 current.npy：回退到 image crop 路径
+    ds2 = ChunkedMemmapDataset.__new__(ChunkedMemmapDataset)
+    ds2.z = _FakeMem(with_current=False)
+    ds2.map_names = {0: "m"}
+    ds2.idx = np.array([0])
+    ds2.blank_mask = None
+    ds2.rasters = None
+    ds2.has_current = False
+
+    class _Raster:
+        def get(self, name):
+            return self
+
+        def heading_crop(self, x, y, yaw):
+            return np.zeros((7, 7, 3), np.uint8)
+
+    import dataset11b as d11b
+    s2 = None
+    try:
+        s2 = ds2.__getitem__(0)
+    except Exception:  # RasterStore 依赖数据，用猴子补丁代替验证
+        pass
+    if s2 is None:
+        ds2.rasters = _Raster()
+        s2 = ds2.__getitem__(0)
+    assert "image" in s2 and "current" not in s2
+    assert s2["image"].shape == (7, 7, 3)
 
 
 def main() -> int:
