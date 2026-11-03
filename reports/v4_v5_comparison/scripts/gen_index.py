@@ -20,6 +20,9 @@ CATEGORY_TITLES = {
     "v4_success_v3_failure": "B: V4 success / V3 failure",
     "v4_success_v5_failure": "C: V4 success / V5 failure",
 }
+CATEGORY_DIRS = {"A": "v5_success_v4_failure",
+                 "B": "v4_success_v3_failure",
+                 "C": "v4_success_v5_failure"}
 
 
 def load_metas(meta_dir: Path) -> list[dict]:
@@ -28,9 +31,10 @@ def load_metas(meta_dir: Path) -> list[dict]:
         if p.name.startswith("."):
             continue
         metas.append(json.loads(p.read_text(encoding="utf-8")))
-    metas.sort(key=lambda m: (CATEGORY_ORDER.index(m["category"])
-                              if m["category"] in CATEGORY_ORDER else 99,
-                              m["episode_id"]))
+    metas.sort(key=lambda m: (CATEGORY_ORDER.index(
+        CATEGORY_DIRS.get(m["category"], m["category"]))
+        if CATEGORY_DIRS.get(m["category"], m["category"]) in CATEGORY_ORDER
+        else 99, m["episode_id"]))
     return metas
 
 
@@ -55,7 +59,8 @@ def build_index(meta_dir: Path, ctx: dict) -> str:
         winner, loser = m["winner_model"], m["loser_model"]
         failure = m["models"][loser]["failure"]
         name = f"{eid.replace(':', '_')}_{winner}_vs_{loser}"
-        rel_video = f"{m['category']}/{name}.mp4"
+        cat_dir = CATEGORY_DIRS.get(m["category"], m["category"])
+        rel_video = f"{cat_dir}/{name}.mp4"
         rel_meta = f"metadata/{name}.json"
         lines.append(
             f"| {CATEGORY_TITLES.get(m['category'], m['category'])} | {eid} | "

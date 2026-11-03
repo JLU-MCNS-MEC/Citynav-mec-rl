@@ -1,0 +1,113 @@
+{
+  "episode_id": "test_unseen:02618",
+  "category": "A",
+  "split": "test_unseen",
+  "map": "cambridge_block_26",
+  "difficulty": "n/a",
+  "winner_model": "v5",
+  "loser_model": "v4",
+  "models": {
+    "v5": {
+      "ckpt": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/11_teacher_geometry_ablation/11B_transformer_m_v4/results/runs_11c/seed42/best.pt",
+      "ckpt_sha256": "11ad6692bfcbfd793de1ecab296f7dff8cc5f3c56f7d3579fea07b5948e45416",
+      "success": true,
+      "failure": "success",
+      "stop_dist": 17.93775333188309,
+      "final_dist": 17.93775333188309,
+      "min_dist": 17.93775333188309,
+      "steps": 67,
+      "spl": 0.6637867917493585,
+      "osr": true,
+      "trajectory_ref": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/v5_closed_loop_evaluation/results/v5_test_s2/episodes/test_unseen_02618.json",
+      "trajectory_sha256": "ba5ed568a7345246ec8a011153c33d11668b58114255fb41894f7e9a8f6f4d6d",
+      "replay_ref": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/reports/v4_v5_comparison/case_studies/metadata/replay/v5_test_unseen_02618.json",
+      "replay_sha256": "bfd5d440b90ccd2daeb6c7df5aebe3919c8352d54a3f263f7ce2845fbc47918d",
+      "replay_argmax_consistent": true
+    },
+    "v4": {
+      "ckpt": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/11_teacher_geometry_ablation/11B_transformer_m_v4/results/runs_11b/seed42/best.pt",
+      "ckpt_sha256": "c90fd9d60d27d65a2947e01ff8f0e76f1925863367d30f8d9f14cab222e08e05",
+      "success": false,
+      "failure": "out_of_bounds",
+      "stop_dist": null,
+      "final_dist": 58.67158024645153,
+      "min_dist": 58.67158024645153,
+      "steps": 59,
+      "spl": 0.0,
+      "osr": false,
+      "trajectory_ref": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/v4_closed_loop_revalidation/results/full_test_s2/episodes/test_unseen_02618.json",
+      "trajectory_sha256": "b8eec1bfa5fb8a45782363e4768f42c810a12c3ab15829949bcb9a0f31b5246f",
+      "replay_ref": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/reports/v4_v5_comparison/case_studies/metadata/replay/v4_test_unseen_02618.json",
+      "replay_sha256": "a3769f87f9d6d59ecec8fde50f8c5e9123e6ea160a109ad365069d1e14b6fa4b",
+      "replay_argmax_consistent": true
+    }
+  },
+  "context": {
+    "v4_v5": {
+      "v4": {
+        "sr": 0.4236953455571227,
+        "by_split": {
+          "val_seen": 0.4711769415532426,
+          "val_unseen": 0.4143665958952583,
+          "test_unseen": 0.406326492186029
+        }
+      },
+      "v5": {
+        "sr": 0.5453690644099671,
+        "by_split": {
+          "val_seen": 0.6024819855884708,
+          "val_unseen": 0.5311394196744516,
+          "test_unseen": 0.5260779514215779
+        }
+      }
+    }
+  },
+  "conclusion": "v5 succeeds (stop 17.9 m in 67 steps) while v4 fails with out_of_bounds after 59 steps. Belief estimate error at end: v5 7.3 m vs v4 max 192.5 m.",
+  "video": {
+    "path": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/reports/v4_v5_comparison/case_studies/v5_success_v4_failure/test_unseen_02618_v5_vs_v4.mp4",
+    "sha256": "08335051361ca7ed2011b316efcf1944d1b498a7397c4642e0fb11b7a0727189",
+    "bytes": 1401317,
+    "duration_s": 21.9,
+    "frames": 219,
+    "fps": 10,
+    "hold": 3,
+    "tail": 6
+  },
+  "generation": {
+    "scripts": {
+      "select_cases.py": "4977e2ae3e1a270b9ab53df1a397c8764598edb7122cd2818514d06e1d723b1f",
+      "replay_corrected.py": "9e39ded58bc7451ea7e8ee7f296d9174782f7f5c268770549e9e792a06692d0a",
+      "make_comparison_videos.py": "39610cd2418db2363e3559aba18f347c8f552b53087ab9b91e88e68be9ade5d5"
+    },
+    "git_commit": "9d512057cb121d13fb2c1ba8518f9ddd56f0948c",
+    "params": {
+      "W": 1280,
+      "H": 720,
+      "layout_version": 1,
+      "color_space": "BGR (cv2); plan RGB -> v4 (200,90,30), v5 (60,120,255), v3 (60,200,60)",
+      "model_colors": {
+        "v4": [
+          30,
+          90,
+          200
+        ],
+        "v5": [
+          255,
+          120,
+          60
+        ],
+        "v3": [
+          60,
+          200,
+          60
+        ]
+      },
+      "crf": 26,
+      "preset": "veryfast",
+      "pix_fmt": "yuv420p"
+    }
+  },
+  "target_marker_note": "visualization only — not policy input",
+  "render_seconds": 4.17,
+  "created": "2026-11-03T13:21:19+0800"
+}

@@ -1,0 +1,532 @@
+{
+ "episode_id": "test_unseen:01242",
+ "model": "v5",
+ "split": "test_unseen",
+ "map": "cambridge_block_14",
+ "length_group": null,
+ "success": true,
+ "failure": "success",
+ "stop_dist": 5.8758242214307215,
+ "min_dist": 5.8758242214307215,
+ "steps": 23,
+ "empty_candidates": false,
+ "checkpoint": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/11_teacher_geometry_ablation/11B_transformer_m_v4/results/runs_11c/seed42/best.pt",
+ "checkpoint_sha256": "11ad6692bfcbfd793de1ecab296f7dff8cc5f3c56f7d3579fea07b5948e45416",
+ "source_episode": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/v5_closed_loop_evaluation/results/v5_test_s0/episodes/test_unseen_01242.json",
+ "source_sha256": "5e39299209b4cdd85bd76f495554e793fd97c08dc28d77c3c984845aa29c93d6",
+ "argmax_mismatches": 0,
+ "argmax_fully_consistent": true,
+ "estimate_mismatches": 0,
+ "estimates_all_match_stored": true,
+ "prob_sums_all_one": true,
+ "batch_contract_checked": "assert_batch_contract at call time",
+ "discrete_action_replay": true,
+ "trajectory": [
+  {
+   "step": 0,
+   "action": 2,
+   "probs": [
+    0.00027460785349830985,
+    0.02067880891263485,
+    0.9087547659873962,
+    0.07029175013303757
+   ],
+   "prob_sum": 0.999999932886567,
+   "argmax_matches_saved_action": true,
+   "recomputed_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "stored_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "estimate_matches_stored": true,
+   "true_dist_m": 89.62608311296923
+  },
+  {
+   "step": 1,
+   "action": 2,
+   "probs": [
+    0.00015358635573647916,
+    0.034059323370456696,
+    0.965298593044281,
+    0.0004884340451098979
+   ],
+   "prob_sum": 0.9999999368155841,
+   "argmax_matches_saved_action": true,
+   "recomputed_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "stored_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "estimate_matches_stored": true,
+   "true_dist_m": 89.62608311296923
+  },
+  {
+   "step": 2,
+   "action": 2,
+   "probs": [
+    5.75565718463622e-05,
+    0.1078525260090828,
+    0.8918431401252747,
+    0.00024681614013388753
+   ],
+   "prob_sum": 1.0000000388463377,
+   "argmax_matches_saved_action": true,
+   "recomputed_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "stored_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "estimate_matches_stored": true,
+   "true_dist_m": 89.62608311296923
+  },
+  {
+   "step": 3,
+   "action": 2,
+   "probs": [
+    6.51110167382285e-05,
+    0.4883357882499695,
+    0.5113908648490906,
+    0.0002082513237837702
+   ],
+   "prob_sum": 1.000000015439582,
+   "argmax_matches_saved_action": true,
+   "recomputed_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "stored_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "estimate_matches_stored": true,
+   "true_dist_m": 89.62608311296923
+  },
+  {
+   "step": 4,
+   "action": 1,
+   "probs": [
+    2.886777110688854e-05,
+    0.6932307481765747,
+    0.30656173825263977,
+    0.00017864670371636748
+   ],
+   "prob_sum": 1.0000000009040377,
+   "argmax_matches_saved_action": true,
+   "recomputed_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "stored_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "estimate_matches_stored": true,
+   "true_dist_m": 89.62608311296923
+  },
+  {
+   "step": 5,
+   "action": 1,
+   "probs": [
+    2.98376617138274e-05,
+    0.8103203177452087,
+    0.17928840219974518,
+    0.010361417196691036
+   ],
+   "prob_sum": 0.9999999748033588,
+   "argmax_matches_saved_action": true,
+   "recomputed_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "stored_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "estimate_matches_stored": true,
+   "true_dist_m": 84.63736910136757
+  },
+  {
+   "step": 6,
+   "action": 1,
+   "probs": [
+    0.0001516547636128962,
+    0.8624916672706604,
+    0.12444020062685013,
+    0.012916491366922855
+   ],
+   "prob_sum": 1.0000000140280463,
+   "argmax_matches_saved_action": true,
+   "recomputed_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "stored_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "estimate_matches_stored": true,
+   "true_dist_m": 79.65007044961972
+  },
+  {
+   "step": 7,
+   "action": 1,
+   "probs": [
+    3.297571311122738e-05,
+    0.8639782667160034,
+    0.12107962369918823,
+    0.014909110963344574
+   ],
+   "prob_sum": 0.9999999770916475,
+   "argmax_matches_saved_action": true,
+   "recomputed_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "stored_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "estimate_matches_stored": true,
+   "true_dist_m": 74.66447078000111
+  },
+  {
+   "step": 8,
+   "action": 1,
+   "probs": [
+    5.6178490922320634e-05,
+    0.8455578088760376,
+    0.13046187162399292,
+    0.023924190551042557
+   ],
+   "prob_sum": 1.0000000495419954,
+   "argmax_matches_saved_action": true,
+   "recomputed_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "stored_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "estimate_matches_stored": true,
+   "true_dist_m": 69.68093477477102
+  },
+  {
+   "step": 9,
+   "action": 1,
+   "probs": [
+    6.716498319292441e-05,
+    0.8549684286117554,
+    0.1123446598649025,
+    0.03261975571513176
+   ],
+   "prob_sum": 1.0000000091749826,
+   "argmax_matches_saved_action": true,
+   "recomputed_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "stored_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "estimate_matches_stored": true,
+   "true_dist_m": 64.69993929915346
+  },
+  {
+   "step": 10,
+   "action": 1,
+   "probs": [
+    9.8396536486689e-05,
+    0.8690805435180664,
+    0.09197656065225601,
+    0.038844455033540726
+   ],
+   "prob_sum": 0.9999999557403498,
+   "argmax_matches_saved_action": true,
+   "recomputed_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "stored_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "estimate_matches_stored": true,
+   "true_dist_m": 59.72212001882041
+  },
+  {
+   "step": 11,
+   "action": 1,
+   "probs": [
+    0.00011759998596971855,
+    0.8738081455230713,
+    0.07742143422365189,
+    0.04865281656384468
+   ],
+   "prob_sum": 0.9999999962965376,
+   "argmax_matches_saved_action": true,
+   "recomputed_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "stored_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "estimate_matches_stored": true,
+   "true_dist_m": 54.74834329704081
+  },
+  {
+   "step": 12,
+   "action": 1,
+   "probs": [
+    0.0003548257809597999,
+    0.8720851540565491,
+    0.06433413177728653,
+    0.06322581321001053
+   ],
+   "prob_sum": 0.9999999248248059,
+   "argmax_matches_saved_action": true,
+   "recomputed_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "stored_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "estimate_matches_stored": true,
+   "true_dist_m": 49.779820891590965
+  },
+  {
+   "step": 13,
+   "action": 1,
+   "probs": [
+    0.0018155575962737203,
+    0.8783742785453796,
+    0.049000147730112076,
+    0.0708099827170372
+   ],
+   "prob_sum": 0.9999999665888026,
+   "argmax_matches_saved_action": true,
+   "recomputed_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "stored_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "estimate_matches_stored": true,
+   "true_dist_m": 44.81830030497716
+  },
+  {
+   "step": 14,
+   "action": 1,
+   "probs": [
+    0.00024408304307144135,
+    0.8769401907920837,
+    0.05058933049440384,
+    0.07222640514373779
+   ],
+   "prob_sum": 1.0000000094732968,
+   "argmax_matches_saved_action": true,
+   "recomputed_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "stored_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "estimate_matches_stored": true,
+   "true_dist_m": 39.86639582976309
+  },
+  {
+   "step": 15,
+   "action": 1,
+   "probs": [
+    0.0008160521974787116,
+    0.8681079745292664,
+    0.04468924552202225,
+    0.08638673275709152
+   ],
+   "prob_sum": 1.0000000050058588,
+   "argmax_matches_saved_action": true,
+   "recomputed_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "stored_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "estimate_matches_stored": true,
+   "true_dist_m": 34.92819764436158
+  },
+  {
+   "step": 16,
+   "action": 1,
+   "probs": [
+    0.0024145140778273344,
+    0.8443032503128052,
+    0.05378325656056404,
+    0.09949900209903717
+   ],
+   "prob_sum": 1.0000000230502337,
+   "argmax_matches_saved_action": true,
+   "recomputed_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "stored_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "estimate_matches_stored": true,
+   "true_dist_m": 30.010472587278887
+  },
+  {
+   "step": 17,
+   "action": 1,
+   "probs": [
+    0.01133724395185709,
+    0.8224315643310547,
+    0.051667217165231705,
+    0.11456389725208282
+   ],
+   "prob_sum": 0.9999999227002263,
+   "argmax_matches_saved_action": true,
+   "recomputed_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "stored_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "estimate_matches_stored": true,
+   "true_dist_m": 25.125245056318285
+  },
+  {
+   "step": 18,
+   "action": 1,
+   "probs": [
+    0.05025686323642731,
+    0.789902925491333,
+    0.05005548149347305,
+    0.10978469997644424
+   ],
+   "prob_sum": 0.9999999701976776,
+   "argmax_matches_saved_action": true,
+   "recomputed_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "stored_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "estimate_matches_stored": true,
+   "true_dist_m": 20.29599500808651
+  },
+  {
+   "step": 19,
+   "action": 1,
+   "probs": [
+    0.14193345606327057,
+    0.6602617502212524,
+    0.04006345942616463,
+    0.15774127840995789
+   ],
+   "prob_sum": 0.9999999441206455,
+   "argmax_matches_saved_action": true,
+   "recomputed_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "stored_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "estimate_matches_stored": true,
+   "true_dist_m": 15.574880018687026
+  },
+  {
+   "step": 20,
+   "action": 1,
+   "probs": [
+    0.3199291229248047,
+    0.5079050660133362,
+    0.025380287319421768,
+    0.14678555727005005
+   ],
+   "prob_sum": 1.0000000335276127,
+   "argmax_matches_saved_action": true,
+   "recomputed_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "stored_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "estimate_matches_stored": true,
+   "true_dist_m": 11.1007369946647
+  },
+  {
+   "step": 21,
+   "action": 1,
+   "probs": [
+    0.4186188578605652,
+    0.4502418041229248,
+    0.02767306938767433,
+    0.10346633195877075
+   ],
+   "prob_sum": 1.000000063329935,
+   "argmax_matches_saved_action": true,
+   "recomputed_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "stored_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "estimate_matches_stored": true,
+   "true_dist_m": 7.340016079882659
+  },
+  {
+   "step": 22,
+   "action": 0,
+   "probs": [
+    0.43259403109550476,
+    0.41757139563560486,
+    0.028573743999004364,
+    0.12126084417104721
+   ],
+   "prob_sum": 1.0000000149011612,
+   "argmax_matches_saved_action": true,
+   "recomputed_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "stored_estimate": [
+    1120.0,
+    1192.0
+   ],
+   "estimate_matches_stored": true,
+   "true_dist_m": 5.8758242214307215
+  }
+ ]
+}

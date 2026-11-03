@@ -180,11 +180,12 @@ def replay(model_name: str, eid: str, device: str = "cuda") -> dict:
 
     steps_out = []
     mismatches = 0
+    est_mismatches = 0
     for s in traj:
         pos = np.asarray([s["x"], s["y"]], np.float64)
         yaw = float(s["yaw"])
         if empty_cands:
-            belief_feat, match_feat, _est, _de, _sc, _ac = empty_state(pos)
+            belief_feat, match_feat, est, _de, _sc, _ac = empty_state(pos)
         else:
             obs = matching.prepare_observation(raster, pos[0], pos[1], yaw)
             of = matcher_enc.features(obs[None], ("layer2",))["layer2"][0]
@@ -254,10 +255,24 @@ def replay(model_name: str, eid: str, device: str = "cuda") -> dict:
         hist_vis.append(pooled[0].astype(np.float32))
         hist_pose.append((float(pos[0]), float(pos[1]), float(yaw)))
         hist_act.append(int(s["action"]))
+        # decisive reconstruction check: the recomputed belief estimate must
+        # equal the estimate stored at eval time (tolerance 1e-3 m) -- if it
+        # does, the model inputs are exact and any argmax flip is GPU
+        # floating-point noise at a near-tie, not a reconstruction error
+        stored_est = s.get("estimate")
+        rec_est = [float(est[0]), float(est[1])]
+        est_ok = (stored_est is not None
+                  and all(abs(a - b) <= 1e-3 for a, b
+                          in zip(rec_est, stored_est)))
+        if not est_ok:
+            est_mismatches += 1
         steps_out.append({"step": int(s["step"]), "action": int(s["action"]),
                           "probs": [float(p) for p in probs],
                           "prob_sum": float(probs.sum()),
                           "argmax_matches_saved_action": ok,
+                          "recomputed_estimate": rec_est,
+                          "stored_estimate": stored_est,
+                          "estimate_matches_stored": est_ok,
                           "true_dist_m": float(s["true_dist_m"])})
     return {"episode_id": eid, "model": model_name,
             "split": rec["split"], "map": rec["map"],
@@ -271,6 +286,8 @@ def replay(model_name: str, eid: str, device: str = "cuda") -> dict:
             "source_sha256": sha256(src),
             "argmax_mismatches": mismatches,
             "argmax_fully_consistent": bool(mismatches == 0),
+            "estimate_mismatches": est_mismatches,
+            "estimates_all_match_stored": bool(est_mismatches == 0),
             "prob_sums_all_one": bool(all(abs(x["prob_sum"] - 1.0) < 1e-6
                                           for x in steps_out)),
             "batch_contract_checked": "assert_batch_contract at call time",

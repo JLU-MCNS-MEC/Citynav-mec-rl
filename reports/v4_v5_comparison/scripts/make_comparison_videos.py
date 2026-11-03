@@ -65,7 +65,13 @@ BAR_LABEL_W = 78
 FPS, HOLD, TAIL = 10, 3, 6
 CLASSES = ["Stop", "Forward", "TurnLeft", "TurnRight"]
 ACTION_COLORS = [(60, 60, 220), (200, 120, 40), (60, 170, 60), (180, 120, 200)]
-MODEL_COLORS = {"v4": (200, 90, 30), "v5": (60, 120, 255), "v3": (60, 200, 60)}
+# cv2 draws in BGR. Plan colours (RGB): V4 orange (200,90,30), V5 blue
+# (60,120,255), V3 green (60,200,60) -> BGR tuples below.
+MODEL_COLORS = {"v4": (30, 90, 200), "v5": (255, 120, 60), "v3": (60, 200, 60)}
+POSE_COLOR = (0, 165, 255)      # BGR orange-ish pose circle + heading arrow
+CATEGORY_DIRS = {"A": "v5_success_v4_failure",
+                 "B": "v4_success_v3_failure",
+                 "C": "v4_success_v5_failure"}
 STOP_RADIUS = 20.0
 
 
@@ -283,9 +289,9 @@ def render_case(case: dict, recs: dict[str, dict],
             cx, cy = panel.xy(st["x"], st["y"])
             hx = int(cx + 22 * np.cos(st["yaw"]))
             hy = int(cy - 22 * np.sin(st["yaw"]))
-            cv2.arrowedLine(frame, (cx, cy), (hx, hy), (0, 165, 255), 2,
+            cv2.arrowedLine(frame, (cx, cy), (hx, hy), POSE_COLOR, 2,
                             cv2.LINE_AA, tipLength=0.35)
-            cv2.circle(frame, (cx, cy), 4, (0, 165, 255), -1, cv2.LINE_AA)
+            cv2.circle(frame, (cx, cy), 4, POSE_COLOR, -1, cv2.LINE_AA)
             if st.get("estimate") is not None:
                 ex, ey = panel.xy(st["estimate"][0], st["estimate"][1])
                 cv2.drawMarker(frame, (ex, ey), color, cv2.MARKER_TILTED_CROSS,
@@ -348,7 +354,7 @@ def render_case(case: dict, recs: dict[str, dict],
     tmp.mkdir(parents=True, exist_ok=True)
     for fi, f in enumerate(frames):
         cv2.imwrite(str(tmp / f"{fi:05d}.png"), f)
-    cat_dir = out_dir / case["category"]
+    cat_dir = out_dir / CATEGORY_DIRS.get(case["category"], case["category"])
     cat_dir.mkdir(parents=True, exist_ok=True)
     mp4 = cat_dir / f"{name}.mp4"
     tmp_mp4 = mp4.with_name(f".{mp4.name}.tmp.mp4")
@@ -398,6 +404,8 @@ def render_case(case: dict, recs: dict[str, dict],
                 ["git", "-C", str(REPO), "rev-parse", "HEAD"],
                 capture_output=True, text=True).stdout.strip(),
             "params": {"W": W, "H": H, "layout_version": 1,
+                       "color_space": "BGR (cv2); plan RGB -> v4 (200,90,30), "
+                                      "v5 (60,120,255), v3 (60,200,60)",
                        "model_colors": {m: list(c) for m, c
                                         in MODEL_COLORS.items()},
                        "crf": 26, "preset": "veryfast", "pix_fmt": "yuv420p"}},
@@ -467,7 +475,8 @@ def main() -> int:
         eid = case["episode_id"]
         winner, loser = case["winner_model"], case["loser_model"]
         name = f"{eid.replace(':', '_')}_{winner}_vs_{loser}"
-        mp4 = CASE_ROOT / case["category"] / f"{name}.mp4"
+        cat_dir = CATEGORY_DIRS.get(case["category"], case["category"])
+        mp4 = CASE_ROOT / cat_dir / f"{name}.mp4"
         meta_path = META_DIR / f"{name}.json"
         if not args.force and mp4.exists() and meta_path.exists():
             print(f"skip {eid} (rendered)", flush=True)

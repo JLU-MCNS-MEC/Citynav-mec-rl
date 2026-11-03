@@ -157,22 +157,51 @@ def test_select_end_to_end_with_override(tmp_path):
     align = _alignment(tmp_path, rows, V4V5_COLS)
     out = tmp_path / "selection.json"
     result = select(["A"], per_category=4, count_c=2, overrides=[],
-                    episode_roots=roots,
+                    excludes=[], episode_roots=roots,
                     alignment_paths={"A": align}, out=out, seed=0)
     assert result["categories"]["A"]["pool"] == 6
     assert len(result["categories"]["A"]["selected"]) == 4
     # override forces an id even if it would not be picked by ranking
     result2 = select(["A"], per_category=2, count_c=2,
-                     overrides=["test_unseen:00005"], episode_roots=roots,
+                     overrides=["test_unseen:00005"], excludes=[],
+                     episode_roots=roots,
                      alignment_paths={"A": align}, out=out, seed=0)
     picked = [p["episode_id"] for p in result2["categories"]["A"]["selected"]]
     assert "test_unseen:00005" in picked
     # determinism
     result3 = select(["A"], per_category=4, count_c=2, overrides=[],
-                     episode_roots=roots, alignment_paths={"A": align},
+                     excludes=[], episode_roots=roots, alignment_paths={"A": align},
                      out=out, seed=0)
     assert [p["episode_id"] for p in result3["categories"]["A"]["selected"]] == \
            [p["episode_id"] for p in result["categories"]["A"]["selected"]]
+
+
+def test_select_exclude_removes_episodes_from_pool(tmp_path):
+    roots = _episode_dir(tmp_path, "v4")
+    rows = []
+    for i in range(4):
+        eid = f"test_unseen:0000{i}"
+        map_name = f"birmingham_block_{i}"
+        _write_episode(roots, "v5", _fake_episode(
+            eid, "test_unseen", map_name, True, "success", 20, "model_stop",
+            5.0, 8.0, 20.0))
+        _write_episode(roots, "v4", _fake_episode(
+            eid, "test_unseen", map_name, False, "out_of_bounds", 30,
+            "out_of_bounds", 40.0, 55.0, 70.0))
+        rows.append({"episode_id": eid, "split": "test_unseen",
+                     "map": map_name, "v4_success": False, "v5_success": True,
+                     "v4_final_dist": 60.0, "v5_final_dist": 10.0,
+                     "v4_steps": 30, "v5_steps": 20, "v4_spl": 0.0,
+                     "v5_spl": 1.0})
+    align = _alignment(tmp_path, rows, V4V5_COLS)
+    out = tmp_path / "selection.json"
+    result = select(["A"], per_category=4, count_c=2, overrides=[],
+                    excludes=["test_unseen:00001"], episode_roots=roots,
+                    alignment_paths={"A": align}, out=out, seed=0)
+    picked = {p["episode_id"] for p in result["categories"]["A"]["selected"]}
+    assert "test_unseen:00001" not in picked
+    assert len(picked) == 3          # pool shrunk from 4 to 3
+    assert result["excluded"] == ["test_unseen:00001"]
 
 
 def test_load_episode_json_roundtrip(tmp_path):

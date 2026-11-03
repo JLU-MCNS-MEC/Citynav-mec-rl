@@ -1,0 +1,177 @@
+{
+  "created": "2026-11-03T13:16:20+0800",
+  "seed": 0,
+  "excluded": [
+    "test_unseen:03477"
+  ],
+  "categories": {
+    "A": {
+      "pool": 2163,
+      "requested": 4,
+      "selected": [
+        {
+          "category": "A",
+          "episode_id": "test_unseen:02618",
+          "split": "test_unseen",
+          "map": "cambridge_block_26",
+          "winner_model": "v5",
+          "loser_model": "v4",
+          "winner_ref": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/v5_closed_loop_evaluation/results/v5_test_s2/episodes/test_unseen_02618.json",
+          "loser_ref": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/v4_closed_loop_revalidation/results/full_test_s2/episodes/test_unseen_02618.json",
+          "winner_steps": 67,
+          "loser_steps": 59,
+          "loser_failure": "out_of_bounds",
+          "winner_final_est_m": 7.305141410750757,
+          "winner_est_to_target_m": 11.5409179864061,
+          "loser_max_est_m": 192.50572986564487,
+          "rationale": [
+            "v5 succeeds: stop 17.9 m in 67 steps (test_unseen, cambridge_block_26)",
+            "v4 fails: out_of_bounds after 59 steps",
+            "v5 final belief estimate error 7.3 m (to target 11.5 m) -- converged",
+            "v4 max belief estimate error 192.5 m -- drifted"
+          ]
+        },
+        {
+          "category": "A",
+          "episode_id": "test_unseen:01242",
+          "split": "test_unseen",
+          "map": "cambridge_block_14",
+          "winner_model": "v5",
+          "loser_model": "v4",
+          "winner_ref": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/v5_closed_loop_evaluation/results/v5_test_s0/episodes/test_unseen_01242.json",
+          "loser_ref": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/v4_closed_loop_revalidation/results/full_test_s0/episodes/test_unseen_01242.json",
+          "winner_steps": 23,
+          "loser_steps": 63,
+          "loser_failure": "reached_but_not_stopped",
+          "winner_final_est_m": 5.552930348524758,
+          "winner_est_to_target_m": 2.1387565979223186,
+          "loser_max_est_m": 95.30321036515423,
+          "rationale": [
+            "v5 succeeds: stop 5.9 m in 23 steps (test_unseen, cambridge_block_14)",
+            "v4 fails: reached_but_not_stopped after 63 steps",
+            "v5 final belief estimate error 5.6 m (to target 2.1 m) -- converged",
+            "v4 max belief estimate error 95.3 m -- drifted"
+          ]
+        },
+        {
+          "category": "A",
+          "episode_id": "test_unseen:00047",
+          "split": "test_unseen",
+          "map": "birmingham_block_0",
+          "winner_model": "v5",
+          "loser_model": "v4",
+          "winner_ref": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/v5_closed_loop_evaluation/results/v5_test_s2/episodes/test_unseen_00047.json",
+          "loser_ref": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/v4_closed_loop_revalidation/results/full_test_s2/episodes/test_unseen_00047.json",
+          "winner_steps": 38,
+          "loser_steps": 24,
+          "loser_failure": "premature_stop",
+          "winner_final_est_m": 4.295767518380938,
+          "winner_est_to_target_m": 10.771421132759821,
+          "loser_max_est_m": 74.615612726697,
+          "rationale": [
+            "v5 succeeds: stop 14.4 m in 38 steps (test_unseen, birmingham_block_0)",
+            "v4 fails: premature_stop after 24 steps",
+            "v5 final belief estimate error 4.3 m (to target 10.8 m) -- converged",
+            "v4 max belief estimate error 74.6 m -- drifted"
+          ]
+        },
+        {
+          "category": "A",
+          "episode_id": "test_unseen:03480",
+          "split": "test_unseen",
+          "map": "cambridge_block_8",
+          "winner_model": "v5",
+          "loser_model": "v4",
+          "winner_ref": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/v5_closed_loop_evaluation/results/v5_test_s0/episodes/test_unseen_03480.json",
+          "loser_ref": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/v4_closed_loop_revalidation/results/full_test_s0/episodes/test_unseen_03480.json",
+          "winner_steps": 7,
+          "loser_steps": 200,
+          "loser_failure": "never_stop",
+          "winner_final_est_m": 17.609449255519433,
+          "winner_est_to_target_m": 2.9507049771178337,
+          "loser_max_est_m": 319.32067109056334,
+          "rationale": [
+            "v5 succeeds: stop 19.7 m in 7 steps (test_unseen, cambridge_block_8)",
+            "v4 fails: never_stop after 200 steps",
+            "v5 final belief estimate error 17.6 m (to target 3.0 m)",
+            "v4 max belief estimate error 319.3 m -- drifted"
+          ]
+        }
+      ],
+      "notes": [
+        "test_unseen:02490: excluded (failure collision)",
+        "test_unseen:02504: excluded (failure collision)",
+        "test_unseen:03230: excluded (empty-candidate map cambridge_block_32)",
+        "test_unseen:03232: excluded (empty-candidate map cambridge_block_32)",
+        "test_unseen:03252: excluded (empty-candidate map cambridge_block_32)",
+        "test_unseen:03307: excluded (empty-candidate map cambridge_block_32)",
+        "test_unseen:03342: excluded (empty-candidate map cambridge_block_32)",
+        "test_unseen:03343: excluded (empty-candidate map cambridge_block_32)",
+        "test_unseen:03354: excluded (empty-candidate map cambridge_block_32)",
+        "test_unseen:03367: excluded (empty-candidate map cambridge_block_32)",
+        "test_unseen:03378: excluded (empty-candidate map cambridge_block_32)",
+        "test_unseen:03385: excluded (empty-candidate map cambridge_block_32)",
+        "test_unseen:03387: excluded (empty-candidate map cambridge_block_32)",
+        "test_unseen:03394: excluded (empty-candidate map cambridge_block_32)",
+        "test_unseen:03404: excluded (empty-candidate map cambridge_block_32)",
+        "test_unseen:03407: excluded (empty-candidate map cambridge_block_32)",
+        "test_unseen:03420: excluded (empty-candidate map cambridge_block_32)",
+        "test_unseen:03421: excluded (empty-candidate map cambridge_block_32)",
+        "test_unseen:05084: excluded (empty-candidate map cambridge_block_32)",
+        "test_unseen:05091: excluded (empty-candidate map cambridge_block_32)",
+        "val_seen:00546: excluded (failure collision)"
+      ]
+    },
+    "C": {
+      "pool": 870,
+      "requested": 2,
+      "selected": [
+        {
+          "category": "C",
+          "episode_id": "test_unseen:01919",
+          "split": "test_unseen",
+          "map": "cambridge_block_26",
+          "winner_model": "v4",
+          "loser_model": "v5",
+          "winner_ref": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/v4_closed_loop_revalidation/results/full_test_s2/episodes/test_unseen_01919.json",
+          "loser_ref": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/v5_closed_loop_evaluation/results/v5_test_s2/episodes/test_unseen_01919.json",
+          "winner_steps": 35,
+          "loser_steps": 65,
+          "loser_failure": "out_of_bounds",
+          "winner_final_est_m": 7.511359537443282,
+          "winner_est_to_target_m": 11.22657716091804,
+          "loser_max_est_m": 178.74331684454665,
+          "rationale": [
+            "v4 succeeds: stop 17.0 m in 35 steps (test_unseen, cambridge_block_26)",
+            "v5 fails: out_of_bounds after 65 steps",
+            "v4 final belief estimate error 7.5 m (to target 11.2 m) -- converged",
+            "v5 max belief estimate error 178.7 m -- drifted"
+          ]
+        },
+        {
+          "category": "C",
+          "episode_id": "val_seen:00292",
+          "split": "val_seen",
+          "map": "birmingham_block_1",
+          "winner_model": "v4",
+          "loser_model": "v5",
+          "winner_ref": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/v4_closed_loop_revalidation/results/full_val_s0/episodes/val_seen_00292.json",
+          "loser_ref": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/v5_closed_loop_evaluation/results/v5_val_s0/episodes/val_seen_00292.json",
+          "winner_steps": 98,
+          "loser_steps": 72,
+          "loser_failure": "premature_stop",
+          "winner_final_est_m": 5.985865149651051,
+          "winner_est_to_target_m": 14.386636538333576,
+          "loser_max_est_m": 363.7967426355684,
+          "rationale": [
+            "v4 succeeds: stop 18.1 m in 98 steps (val_seen, birmingham_block_1)",
+            "v5 fails: premature_stop after 72 steps",
+            "v4 final belief estimate error 6.0 m (to target 14.4 m) -- converged",
+            "v5 max belief estimate error 363.8 m -- drifted"
+          ]
+        }
+      ],
+      "notes": []
+    }
+  }
+}

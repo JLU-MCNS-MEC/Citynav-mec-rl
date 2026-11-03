@@ -159,11 +159,19 @@ def audit_contracts(source: str) -> list[str]:
 
 
 def check_frames(mp4: Path, meta: dict, hold: int = mcv.HOLD,
-                 tail: int = mcv.TAIL) -> list[str]:
-    """Rebuild the deterministic map panel and verify sampled frames."""
+                 tail: int = mcv.TAIL) -> tuple[list[str], list[str]]:
+    """Rebuild the deterministic map panel and verify sampled frames.
+
+    Returns (errors, notes). A pose pixel is confirmed when any pixel in
+    the radius-6 disc around the expected pose position carries the pose
+    colour (tolerance 20/channel) -- robust to anti-aliasing and to the
+    two models' markers overlapping at the shared start pose. A pose that
+    the window clamp pushes off-panel (plan risk: raster-edge clipping) is
+    skipped and reported as a note, never an error."""
+    errs: list[str] = []
+    notes: list[str] = []
     if not os.environ.get("CITYNAV_DATA"):
-        return []  # frame check requires map rasters; skip w/o data
-    errs = []
+        return errs, ["CITYNAV_DATA unset -- frame gate skipped"]
     recs = {}
     for m, minfo in meta["models"].items():
         recs[m] = json.loads(Path(minfo["trajectory_ref"]).read_text(
@@ -203,16 +211,22 @@ def check_frames(mp4: Path, meta: dict, hold: int = mcv.HOLD,
             idx, ended = mcv.step_for(k, len(traj))
             st = traj[idx]
             cx, cy = panel.xy(st["x"], st["y"])
-            px = frame[cy, cx]
-            # pose circle colour, or the model colour if the belief cross
-            # (estimate == position) overlaps the pose pixel
-            expected = {mcv.POSE_COLOR, mcv.MODEL_COLORS[m]}
-            if not any(all(abs(int(a) - int(b)) <= 10 for a, b
-                           in zip(px, e)) for e in expected):
-                errs.append(f"frame {fi} {m}: pixel {tuple(px)} at "
-                            f"({cx},{cy}) != pose colour (ended={ended})")
+            if not (0 <= cx < mcv.MAP_X1 and 0 <= cy < mcv.MAP_Y1):
+                notes.append(f"frame {fi} {m}: pose off-panel "
+                             f"({cx},{cy}) -- edge-clipped by window clamp")
+                continue
+            patch = frame[max(0, cy - 6):cy + 7, max(0, cx - 6):cx + 7]
+            pose_ok = np.any(np.all(
+                np.abs(patch.astype(int) - np.asarray(mcv.POSE_COLOR)) <= 20,
+                axis=-1))
+            model_ok = np.any(np.all(
+                np.abs(patch.astype(int)
+                       - np.asarray(mcv.MODEL_COLORS[m])) <= 20, axis=-1))
+            if not (pose_ok or model_ok):
+                errs.append(f"frame {fi} {m}: no pose/marker colour within "
+                            f"6 px of ({cx},{cy}) (ended={ended})")
     cap.release()
-    return errs
+    return errs, notes
 
 
 # ---------------------------------------------------------------------- main
@@ -236,7 +250,10 @@ def main() -> int:
             errs += check_video_props(ffprobe_info(vpath), 1280, 720,
                                       meta["video"]["frames"])
         if not args.skip_frames and vpath.exists():
-            errs += check_frames(vpath, meta)
+            ferrs, fnotes = check_frames(vpath, meta)
+            errs += ferrs
+            for note in fnotes:
+                print(f"[note] {key}: {note}")
         all_errs[key] = errs
     for rp in sorted(REPLAY_DIR.glob("*.json")):
         rep = json.loads(rp.read_text(encoding="utf-8"))

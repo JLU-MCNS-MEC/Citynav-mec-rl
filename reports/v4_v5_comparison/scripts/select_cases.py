@@ -278,12 +278,13 @@ def _rationale(cat: str, w: dict, l: dict, wb: dict, lb: dict) -> list[str]:
 
 
 def select(categories: list[str], per_category: int, count_c: int,
-           overrides: list[str],
+           overrides: list[str], excludes: list[str],
            episode_roots: dict[str, list[Path]] | None,
            alignment_paths: dict[str, Path],
            out: Path, seed: int = 0) -> dict:
     result: dict = {"created": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
-                    "seed": seed, "categories": {}}
+                    "seed": seed, "excluded": sorted(excludes),
+                    "categories": {}}
     all_picks: list[dict] = []
     for cat in categories:
         n = count_c if cat == "C" else per_category
@@ -294,7 +295,8 @@ def select(categories: list[str], per_category: int, count_c: int,
                 "requested": n, "selected": []}
             continue
         alignment = load_alignment_csv(align_path)
-        pool = pool_for(cat, alignment, episode_roots)
+        pool = [e for e in pool_for(cat, alignment, episode_roots)
+                if e not in excludes]
         override_picks: list[dict] = []
         notes: list[str] = []
         for eid in overrides:
@@ -339,13 +341,17 @@ def main() -> int:
     parser.add_argument("--per-category", type=int, default=4)
     parser.add_argument("--count-c", type=int, default=2)
     parser.add_argument("--override", action="append", default=[])
+    parser.add_argument("--exclude", action="append", default=[],
+                        help="episode id to remove from every pool "
+                             "(repeatable; recorded in selection.json)")
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--out", default=str(OUT / "selection.json"))
     args = parser.parse_args()
     cats = [c for c in args.categories.split(",") if c]
     alignment_paths = {"A": ALIGN_V4V5, "C": ALIGN_V4V5, "B": ALIGN_V4V3}
     result = select(cats, args.per_category, args.count_c, args.override,
-                    None, alignment_paths, Path(args.out), args.seed)
+                    args.exclude, None, alignment_paths, Path(args.out),
+                    args.seed)
     for cat in cats:
         r = result["categories"][cat]
         print(f"[{cat}] pool={r['pool']} requested={r['requested']} "
