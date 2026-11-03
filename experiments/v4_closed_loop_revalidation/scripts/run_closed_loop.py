@@ -148,6 +148,32 @@ def pool_history_from_current(cur: torch.Tensor) -> np.ndarray:
                                1e-9)
 
 
+def belief_features(est: np.ndarray, pos: np.ndarray, yaw: float, score: float,
+                    unc: float, ent: float, since: float, dx: float,
+                    dy: float) -> np.ndarray:
+    """按训练公式（build_features_11b.causal_episode）构造 belief 10 维特征。
+
+    与训练缓存逐值一致（契约测试 test_train_inference_contract.py 对拍 11B cache）。
+    """
+    vec = est - pos
+    fwd = float(vec[0] * math.cos(yaw) + vec[1] * math.sin(yaw))
+    lat = float(-vec[0] * math.sin(yaw) + vec[1] * math.cos(yaw))
+    dist_est = float(np.linalg.norm(vec))
+    bearing = math.atan2(lat, fwd)
+    return np.asarray([fwd, lat, dist_est, bearing, score, unc, ent, since,
+                       dx, dy], np.float32)
+
+
+def landmark_inputs(belief: ContinuousBelief | None, empty: bool) -> np.ndarray:
+    """构造 landmarks (1,8,3)=[mean_x, mean_y, weight]（与训练缓存同源构造）。"""
+    lm = np.zeros((1, 8, 3), np.float32)
+    if not empty:
+        n_k = int(belief.means.shape[0])
+        lm[0, :n_k, :2] = belief.means.astype(np.float32)
+        lm[0, :n_k, 2] = belief.weights.astype(np.float32)
+    return lm
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--ckpt", required=True)
@@ -297,21 +323,14 @@ def main() -> int:
                             belief.update(z, CAL["sigma_vis_m"], BEL["best"]["eta"],
                                           BEL["best"]["rho"], step)
                         est = belief.estimate()
-                        vec = est - pos
-                        fwd = float(vec[0] * math.cos(yaw) + vec[1] * math.sin(yaw))
-                        lat = float(-vec[0] * math.sin(yaw) + vec[1] * math.cos(yaw))
-                        dist_est = float(np.linalg.norm(vec))
-                        bearing = math.atan2(
-                            -vec[0] * math.sin(yaw) + vec[1] * math.cos(yaw),
-                            vec[0] * math.cos(yaw) + vec[1] * math.sin(yaw))
                         unc = float(math.sqrt(np.mean(belief.vars)))
                         since = float(step - belief.last_update)
                         ent = float(belief.entropy())
                         if not math.isfinite(ent):
                             ent = 0.0
-                        belief_feat = np.asarray(
-                            [fwd, lat, dist_est, bearing, score, unc, ent,
-                             since, dx, dy], np.float32)
+                        belief_feat = belief_features(est, pos, yaw, score, unc,
+                                                      ent, since, dx, dy)
+                        dist_est = float(np.linalg.norm(est - pos))
                         match_feat = np.asarray([dx, dy, score, margin,
                                                  m["sharpness"]], np.float32)
                     # corrected history: slot 0 = most recent, relative pose
@@ -333,12 +352,8 @@ def main() -> int:
                             match_feat[None].copy()).to(device),
                     }
                     if args.model in ("v5", "v5fix"):
-                        lm = np.zeros((1, N_LM, 3), np.float32)
-                        if not empty_cands:
-                            n_k = int(belief.means.shape[0])
-                            lm[0, :n_k, :2] = belief.means.astype(np.float32)
-                            lm[0, :n_k, 2] = belief.weights.astype(np.float32)
-                        batch["landmarks"] = torch.from_numpy(lm).to(device)
+                        batch["landmarks"] = torch.from_numpy(
+                            landmark_inputs(belief, empty_cands)).to(device)
                         batch["states"] = torch.from_numpy(
                             np.asarray([[pos[0], pos[1], yaw]],
                                        np.float32)).to(device)
