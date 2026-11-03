@@ -45,11 +45,46 @@ sys.path.insert(0, str(REPO / "experiments/04_visual_goal_global_map_pipeline/sc
 from dataset_v2 import FrozenEncoder  # noqa: E402
 from model11b import TransformerM11  # noqa: E402
 from model11c import TransformerM12  # noqa: E402
+from model11c_fix import TransformerM12Fix  # noqa: E402
 from dataset11b import ChunkedMemmapDataset, ValMemmapDataset  # noqa: E402
+from v5fix_contract import BLANK_FRAC  # noqa: E402
 from train_10d import (gpu_snapshot, metrics,  # noqa: E402
                        restore_rng, rng_state, save_checkpoint, set_seed)
 
 CLASSES = ["Stop", "Forward", "TurnLeft", "TurnRight"]
+
+MODEL_CLASSES = {"v4": TransformerM11, "v5": TransformerM12,
+                 "v5fix": TransformerM12Fix}
+MODEL_NAMES = {"v4": "TransformerM11", "v5": "TransformerM12",
+               "v5fix": "TransformerM12Fix"}
+RUN_DIRS = {"v4": "runs_11b", "v5": "runs_11c", "v5fix": "runs_11c_v5fix"}
+
+
+def build_blank_mask(seed: int, epoch: int, ep_order: np.ndarray,
+                     ep_ranges: dict[int, tuple[int, int]],
+                     blank_frac: float) -> np.ndarray:
+    """V5 修正 5a：每 epoch 确定性选择 blank_frac 比例 episode 全程 blank。
+
+    独立于 shuffle rng（seed*10000+epoch），(seed, epoch) 相同则完全复现；
+    返回与 idx 拼接顺序同长的 bool 数组（True=该状态用空候选常量替换）。
+    """
+    rng = np.random.default_rng(seed * 10000 + epoch)
+    blank_ep = rng.random(len(ep_order)) < blank_frac
+    parts = [np.full(e - s, bool(blank_ep[i]), dtype=bool)
+             for i, k in enumerate(ep_order) for s, e in [ep_ranges[k]]]
+    return np.concatenate(parts) if parts else np.zeros(0, dtype=bool)
+
+
+def resolve_run_dir(model: str, seed: int, resume: bool,
+                    results_root: Path | None = None) -> Path:
+    """run 目录解析 + 旧权重保护：目标目录已有 best.pt 且非 --resume 时拒绝启动。"""
+    base = results_root if results_root is not None else (HERE.parent / "results")
+    run_dir = base / RUN_DIRS[model] / f"seed{seed}"
+    if not resume and (run_dir / "best.pt").exists():
+        raise SystemExit(
+            f"run_dir {run_dir} 已存在 best.pt，拒绝覆盖旧权重"
+            f"（用 --resume 续训或换目录）")
+    return run_dir
 
 
 def collate11(samples: list[dict]) -> dict:
@@ -96,8 +131,9 @@ def evaluate11(model, encoder, dataset, device, batch_size=128) -> dict:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--model", choices=["v4", "v5"], default="v4",
-                        help="v4: TransformerM11 (runs_11b); v5: TransformerM12 (runs_11c)")
+    parser.add_argument("--model", choices=["v4", "v5", "v5fix"], default="v4",
+                        help="v4: TransformerM11 (runs_11b); v5: TransformerM12 "
+                             "(runs_11c); v5fix: TransformerM12Fix (runs_11c_v5fix)")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--epochs", type=int, default=30)
     parser.add_argument("--batch", type=int, default=128)
@@ -105,6 +141,8 @@ def main() -> int:
     parser.add_argument("--weight-decay", type=float, default=0.01)
     parser.add_argument("--warmup", type=float, default=0.03)
     parser.add_argument("--patience", type=int, default=10)
+    parser.add_argument("--blank-frac", type=float, default=BLANK_FRAC,
+                        help="空候选合成比例（每 epoch 轮换；0=关闭）")
     parser.add_argument("--workers", type=int, default=8)
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--device", default="cuda")
@@ -114,11 +152,11 @@ def main() -> int:
 
     set_seed(args.seed)
     device = args.device
-    run_dir = (HERE.parent / "results" / f"runs_11{'c' if args.model == 'v5' else 'b'}") / f"seed{args.seed}"
+    run_dir = resolve_run_dir(args.model, args.seed, args.resume)
     run_dir.mkdir(parents=True, exist_ok=True)
     config = vars(args).copy()
     config["classes"] = CLASSES
-    config["model"] = "TransformerM12" if args.model == "v5" else "TransformerM11"
+    config["model"] = MODEL_NAMES[args.model]
     config["data"] = "11B pure four-action teacher pool (11A final set, uncapped)"
     config["scheduler"] = "OneCycleLR per-batch, total_steps=epochs*steps_per_epoch"
 
@@ -136,7 +174,7 @@ def main() -> int:
     print(f"train states {n_train} (memmap) | val states {n_val} | "
           f"steps/epoch {steps_per_epoch}", flush=True)
 
-    model = (TransformerM12() if args.model == "v5" else TransformerM11()).to(device)
+    model = MODEL_CLASSES[args.model]().to(device)
     encoder = FrozenEncoder(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr,
                                   weight_decay=args.weight_decay)
@@ -187,9 +225,13 @@ def main() -> int:
         ep_order = rng.permutation(ep_list)
         idx = np.concatenate([np.arange(s, e, dtype=np.int64)
                               for k in ep_order for s, e in [ep_ranges[k]]])
+        blank = build_blank_mask(args.seed, epoch, ep_order, ep_ranges,
+                                 args.blank_frac)
         first_batch = start_step if epoch == start_epoch else 0
         idx = idx[first_batch * args.batch:]
-        loader = DataLoader(ChunkedMemmapDataset("train_seen", idx),
+        blank = blank[first_batch * args.batch:]
+        loader = DataLoader(ChunkedMemmapDataset("train_seen", idx,
+                                                 blank_mask=blank),
                             batch_size=args.batch, shuffle=False,
                             num_workers=args.workers, collate_fn=collate11,
                             persistent_workers=args.workers > 0,

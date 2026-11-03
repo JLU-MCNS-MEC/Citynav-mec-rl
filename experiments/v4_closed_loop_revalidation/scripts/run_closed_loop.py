@@ -23,8 +23,9 @@ Fixes vs the Stage-10E harness (which Stage 11D had copied verbatim):
    protocol); STOP is always the model's own prediction.
 
 Usage:
-  python run_closed_loop.py --model v4 --ckpt <best.pt> --manifest <m.json> \
-      --out-dir <dir> [--task-file ids.txt] [--limit N] [--step-cap 200]
+  python run_closed_loop.py --model v4|v5|v5fix|v3 --ckpt <best.pt> \
+      --manifest <m.json> --out-dir <dir> [--task-file ids.txt] \
+      [--limit N] [--step-cap 200]
 """
 from __future__ import annotations
 
@@ -64,9 +65,12 @@ from closed_loop import (CLASSES, FORWARD_M, STOP_RADIUS, TURN_RAD, classify,  #
 from continuous_belief import ContinuousBelief, subpixel_match  # noqa: E402
 from dataset_v2 import CandidateStore, FrozenEncoder, RasterStore  # noqa: E402
 from pipeline import TARGET_HALF_M  # noqa: E402
-from model11b import TransformerM11  # noqa: E402
+from model11b import SPATIAL_CH, SPATIAL_HW, TransformerM11  # noqa: E402
 from model11c import TransformerM12  # noqa: E402
+from model11c_fix import TransformerM12Fix  # noqa: E402
 from model10c import TransformerM  # noqa: E402
+from v5fix_contract import (EMPTY_BELIEF, EMPTY_LANDMARKS,  # noqa: E402
+                            EMPTY_MATCH)
 
 CAL = json.loads((REPO / "experiments/09_online_visual_goal_matching"
                   "/09C_continuous_localization/results/09c_calibration.json")
@@ -78,7 +82,6 @@ TAU = 0.875
 AGREE_M = 10.0
 HISTORY_LEN = 16
 N_LM = 8
-EMPTY_UNC, EMPTY_SINCE = 50.0, 99.0
 
 
 def sha256(path: Path) -> str:
@@ -131,10 +134,25 @@ def history_inputs(hist_vis, hist_pose, hist_act, pos, yaw) -> tuple[np.ndarray,
     return vis, pose, act, hmask
 
 
+def pool_history_from_current(cur: torch.Tensor) -> np.ndarray:
+    """V5 修正 5b：单次前向的当前帧 token → history 池化特征。
+
+    cur: (B, 49, 2048)（FrozenEncoder.__call__ 输出）；返回 (B, 2048)：
+    与旧 `enc4.spatial_maps(...).transpose(0,2,3,1)` + mean + L2 归一路径
+    数值一致（同一前向输出，同一池化公式，fp32 numpy 计算）。
+    """
+    maps = cur.cpu().numpy().reshape(cur.shape[0], SPATIAL_HW, SPATIAL_HW,
+                                     SPATIAL_CH)
+    pooled = maps.mean(axis=(1, 2))
+    return pooled / np.maximum(np.linalg.norm(pooled, axis=1, keepdims=True),
+                               1e-9)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--ckpt", required=True)
-    parser.add_argument("--model", required=True, choices=["v4", "v5", "v3"])
+    parser.add_argument("--model", required=True,
+                        choices=["v4", "v5", "v5fix", "v3"])
     parser.add_argument("--manifest", required=True)
     parser.add_argument("--out-dir", required=True)
     parser.add_argument("--task-file", default="")
@@ -180,6 +198,9 @@ def main() -> int:
     elif args.model == "v5":
         model = TransformerM12().to(device).eval()
         controller = "v5_teacher_only_landmarks"
+    elif args.model == "v5fix":
+        model = TransformerM12Fix().to(device).eval()
+        controller = "v5fix_teacher_only_landmarks"
     else:
         model = TransformerM().to(device).eval()
         controller = "v3_teacher_only"
@@ -252,10 +273,8 @@ def main() -> int:
                     if dist < min_dist:
                         min_dist, min_step = dist, step
                     if empty_cands:
-                        belief_feat = np.asarray(
-                            [0, 0, 0, 0, 0, EMPTY_UNC, 0, EMPTY_SINCE, 0, 0],
-                            np.float32)
-                        match_feat = np.zeros(5, np.float32)
+                        belief_feat = EMPTY_BELIEF.copy()
+                        match_feat = EMPTY_MATCH.copy()
                         est = np.asarray([pos[0], pos[1]], np.float64)
                         dist_est = 0.0
                         score = 0.0
@@ -313,7 +332,7 @@ def main() -> int:
                         "match": torch.from_numpy(
                             match_feat[None].copy()).to(device),
                     }
-                    if args.model == "v5":
+                    if args.model in ("v5", "v5fix"):
                         lm = np.zeros((1, N_LM, 3), np.float32)
                         if not empty_cands:
                             n_k = int(belief.means.shape[0])
@@ -323,18 +342,15 @@ def main() -> int:
                         batch["states"] = torch.from_numpy(
                             np.asarray([[pos[0], pos[1], yaw]],
                                        np.float32)).to(device)
+                    # V5 修正 5b：当前帧单次前向编码（旧实现每步编码两次）
+                    cur_img_np = np.asarray(cur_img, np.uint8)
                     with torch.no_grad():
-                        cur = enc4(np.asarray([cur_img], np.uint8))
+                        cur = enc4(np.asarray([cur_img_np]))
                         batch["current"] = cur
                         logits = model(batch)
                     action = int(logits.argmax(-1).item())
-                    cur_img_np = np.asarray(cur_img, np.uint8)
-                    with torch.no_grad():
-                        maps = enc4.spatial_maps([cur_img_np]).transpose(0, 2, 3, 1)
-                        pooled = maps.mean(axis=(1, 2))
-                        pooled = pooled / np.maximum(
-                            np.linalg.norm(pooled, axis=1, keepdims=True), 1e-9)
-                    hist_vis.append(pooled[0].astype(np.float32))
+                    hist_vis.append(
+                        pool_history_from_current(cur)[0].astype(np.float32))
                     hist_pose.append((float(pos[0]), float(pos[1]), float(yaw)))
                     hist_act.append(action)
                     steps.append({"step": step, "x": float(pos[0]),
