@@ -43,11 +43,11 @@ def closed_loop_metrics(recs: list[dict]) -> dict:
     n = len(recs)
     succ = [r for r in recs if bool(r.get("success"))]
     osr = [r for r in recs if bool(r.get("oracle_success"))]
-    ne = [float(r.get("final_distance", float("nan"))) for r in recs]
+    ne = [float(r.get("final_dist", float("nan"))) for r in recs]
     ne = [v for v in ne if v == v]
     spl = [float(r.get("spl", float("nan"))) for r in recs]
     spl = [v for v in spl if v == v]
-    steps = [int(r.get("step_count", 0)) for r in recs]
+    steps = [int(r.get("steps", 0)) for r in recs]
     stop_reasons: dict[str, int] = {}
     for r in recs:
         sr = str(r.get("stop_reason", "?"))
