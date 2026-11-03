@@ -50,6 +50,30 @@ def test_empty_mode_constants_wired():
     assert not rcl.EMPTY_LANDMARKS.any() and rcl.EMPTY_LANDMARKS.shape == (8, 3)
 
 
+@test
+def test_model_selection_all():
+    """build_model 覆盖全部模型名（v4/v5/v5fix/v3/small/medium），未知名拒绝。"""
+    from model11b import TransformerM11
+    from model11c import TransformerM12
+    from model11c_fix import TransformerM12Fix
+    from model10c import TransformerM
+    from model11_small import SmallMEC4
+    from model11_medium import MediumMEC4
+    expect = {"v4": TransformerM11, "v5": TransformerM12,
+              "v5fix": TransformerM12Fix, "v3": TransformerM,
+              "small": SmallMEC4, "medium": MediumMEC4}
+    for name, cls in expect.items():
+        m = rcl.build_model(name, "cpu")
+        assert isinstance(m, cls), f"{name} 应构造 {cls.__name__}"
+        assert not any(p.requires_grad for p in m.parameters()), \
+            f"{name} 必须是 eval 模式"
+    try:
+        rcl.build_model("nope", "cpu")
+        raise AssertionError("未知模型名必须拒绝")
+    except SystemExit:
+        pass
+
+
 def main() -> int:
     failures = []
     for name, fn in TESTS:

@@ -69,6 +69,8 @@ from model11b import SPATIAL_CH, SPATIAL_HW, TransformerM11  # noqa: E402
 from model11c import TransformerM12  # noqa: E402
 from model11c_fix import TransformerM12Fix  # noqa: E402
 from model10c import TransformerM  # noqa: E402
+from model11_small import SmallMEC4  # noqa: E402
+from model11_medium import MediumMEC4  # noqa: E402
 from v5fix_contract import (EMPTY_BELIEF, EMPTY_LANDMARKS,  # noqa: E402
                             EMPTY_MATCH)
 
@@ -82,6 +84,30 @@ TAU = 0.875
 AGREE_M = 10.0
 HISTORY_LEN = 16
 N_LM = 8
+
+
+MODEL_FACTORY = {
+    "v4": (TransformerM11, "v4_teacher_only"),
+    "v5": (TransformerM12, "v5_teacher_only_landmarks"),
+    "v5fix": (TransformerM12Fix, "v5fix_teacher_only_landmarks"),
+    "v3": (TransformerM, "v3_teacher_only"),
+    "small": (SmallMEC4, "small_meanpool_mlp"),
+    "medium": (MediumMEC4, "medium_goal_cross_attention"),
+}
+# 需要 landmarks/states 几何输入（belief 混合地标）的模型
+GEOM_MODELS = ("v5", "v5fix", "small", "medium")
+
+
+def build_model(name: str, device: str):
+    """按模型名构造 eval 模式模型；未知名拒绝。"""
+    if name not in MODEL_FACTORY:
+        raise SystemExit(f"unknown --model {name} (choices: "
+                         f"{sorted(MODEL_FACTORY)})")
+    cls, _ = MODEL_FACTORY[name]
+    model = cls().to(device).eval()
+    for p in model.parameters():
+        p.requires_grad_(False)
+    return model
 
 
 def sha256(path: Path) -> str:
@@ -178,7 +204,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--ckpt", required=True)
     parser.add_argument("--model", required=True,
-                        choices=["v4", "v5", "v5fix", "v3"])
+                        choices=["v4", "v5", "v5fix", "v3", "small", "medium"])
     parser.add_argument("--manifest", required=True)
     parser.add_argument("--out-dir", required=True)
     parser.add_argument("--task-file", default="")
@@ -218,18 +244,8 @@ def main() -> int:
         "started": time.strftime("%Y-%m-%dT%H:%M:%S%z")})
 
     device = args.device
-    if args.model == "v4":
-        model = TransformerM11().to(device).eval()
-        controller = "v4_teacher_only"
-    elif args.model == "v5":
-        model = TransformerM12().to(device).eval()
-        controller = "v5_teacher_only_landmarks"
-    elif args.model == "v5fix":
-        model = TransformerM12Fix().to(device).eval()
-        controller = "v5fix_teacher_only_landmarks"
-    else:
-        model = TransformerM().to(device).eval()
-        controller = "v3_teacher_only"
+    model = build_model(args.model, device)
+    controller = MODEL_FACTORY[args.model][1]
     st = torch.load(args.ckpt, map_location=device, weights_only=False)
     model.load_state_dict(st["model"])
     for p in model.parameters():
@@ -351,7 +367,7 @@ def main() -> int:
                         "match": torch.from_numpy(
                             match_feat[None].copy()).to(device),
                     }
-                    if args.model in ("v5", "v5fix"):
+                    if args.model in GEOM_MODELS:
                         batch["landmarks"] = torch.from_numpy(
                             landmark_inputs(belief, empty_cands)).to(device)
                         batch["states"] = torch.from_numpy(
