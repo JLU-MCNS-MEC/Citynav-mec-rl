@@ -49,6 +49,8 @@ sys.path.insert(0, str(REPO / "experiments/11_teacher_geometry_ablation"
                        "/11B_transformer_m_v4/scripts"))
 sys.path.insert(0, str(REPO / "experiments/10_goal_query_mec_training"
                        "/10E_final_closed_loop/scripts"))
+sys.path.insert(0, str(REPO / "experiments/10_goal_query_mec_training"
+                       "/10D_transformer_m_training/scripts"))
 sys.path.insert(0, str(REPO / "experiments/05_transformer_m_training/scripts"))
 sys.path.insert(0, str(REPO / "experiments/04_visual_goal_global_map_pipeline/scripts"))
 sys.path.insert(0, str(REPO / "experiments/06_closed_loop_success_rate/scripts"))
@@ -64,6 +66,7 @@ from dataset_v2 import CandidateStore, FrozenEncoder, RasterStore  # noqa: E402
 from pipeline import TARGET_HALF_M  # noqa: E402
 from model11b import TransformerM11  # noqa: E402
 from model11c import TransformerM12  # noqa: E402
+from model10c import TransformerM  # noqa: E402
 
 CAL = json.loads((REPO / "experiments/09_online_visual_goal_matching"
                   "/09C_continuous_localization/results/09c_calibration.json")
@@ -131,7 +134,7 @@ def history_inputs(hist_vis, hist_pose, hist_act, pos, yaw) -> tuple[np.ndarray,
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--ckpt", required=True)
-    parser.add_argument("--model", required=True, choices=["v4", "v5"])
+    parser.add_argument("--model", required=True, choices=["v4", "v5", "v3"])
     parser.add_argument("--manifest", required=True)
     parser.add_argument("--out-dir", required=True)
     parser.add_argument("--task-file", default="")
@@ -174,9 +177,12 @@ def main() -> int:
     if args.model == "v4":
         model = TransformerM11().to(device).eval()
         controller = "v4_teacher_only"
-    else:
+    elif args.model == "v5":
         model = TransformerM12().to(device).eval()
         controller = "v5_teacher_only_landmarks"
+    else:
+        model = TransformerM().to(device).eval()
+        controller = "v3_teacher_only"
     st = torch.load(args.ckpt, map_location=device, weights_only=False)
     model.load_state_dict(st["model"])
     for p in model.parameters():
