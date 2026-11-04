@@ -48,6 +48,7 @@ from model11c import TransformerM12  # noqa: E402
 from model11c_fix import TransformerM12Fix  # noqa: E402
 from model11_small import SmallMEC4  # noqa: E402
 from model11_medium import MediumMEC4  # noqa: E402
+from model11_explicit import TransformerS4, TransformerL4  # noqa: E402
 from dataset11b import ChunkedMemmapDataset, ValMemmapDataset  # noqa: E402
 from v5fix_contract import BLANK_FRAC  # noqa: E402
 from train_10d import (gpu_snapshot, metrics,  # noqa: E402
@@ -57,12 +58,15 @@ CLASSES = ["Stop", "Forward", "TurnLeft", "TurnRight"]
 
 MODEL_CLASSES = {"v4": TransformerM11, "v5": TransformerM12,
                  "v5fix": TransformerM12Fix,
-                 "small": SmallMEC4, "medium": MediumMEC4}
+                 "small": SmallMEC4, "medium": MediumMEC4,
+                 "ts": TransformerS4, "large": TransformerL4}
 MODEL_NAMES = {"v4": "TransformerM11", "v5": "TransformerM12",
                "v5fix": "TransformerM12Fix",
-               "small": "SmallMEC4", "medium": "MediumMEC4"}
+               "small": "SmallMEC4", "medium": "MediumMEC4",
+               "ts": "TransformerS4", "large": "TransformerL4"}
 RUN_DIRS = {"v4": "runs_11b", "v5": "runs_11c", "v5fix": "runs_11c_v5fix",
-            "small": "runs_small", "medium": "runs_medium"}
+            "small": "runs_small", "medium": "runs_medium",
+            "ts": "runs_transformer_s", "large": "runs_large"}
 
 
 def build_blank_mask(seed: int, epoch: int, ep_order: np.ndarray,
@@ -143,12 +147,15 @@ def evaluate11(model, encoder, dataset, device, batch_size=128) -> dict:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--model", choices=["v4", "v5", "v5fix", "small", "medium"],
+    parser.add_argument("--model", choices=["v4", "v5", "v5fix", "small", "medium",
+                                            "ts", "large"],
                         default="v4",
                         help="v4: TransformerM11 (runs_11b); v5: TransformerM12 "
                              "(runs_11c); v5fix: TransformerM12Fix (runs_11c_v5fix); "
                              "small: SmallMEC4 MeanPoolMLP (runs_small); "
-                             "medium: MediumMEC4 GoalCrossAttention (runs_medium)")
+                             "medium: MediumMEC4 GoalCrossAttention (runs_medium); "
+                             "ts: TransformerS4 explicit 192/1/4/3 (runs_transformer_s); "
+                             "large: TransformerL4 explicit 352/2/8/4 (runs_large)")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--epochs", type=int, default=30)
     parser.add_argument("--batch", type=int, default=128)

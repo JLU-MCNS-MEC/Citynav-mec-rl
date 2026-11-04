@@ -71,6 +71,7 @@ from model11c_fix import TransformerM12Fix  # noqa: E402
 from model10c import TransformerM  # noqa: E402
 from model11_small import SmallMEC4  # noqa: E402
 from model11_medium import MediumMEC4  # noqa: E402
+from model11_explicit import TransformerS4, TransformerL4  # noqa: E402
 from v5fix_contract import (EMPTY_BELIEF, EMPTY_LANDMARKS,  # noqa: E402
                             EMPTY_MATCH)
 
@@ -93,9 +94,11 @@ MODEL_FACTORY = {
     "v3": (TransformerM, "v3_teacher_only"),
     "small": (SmallMEC4, "small_meanpool_mlp"),
     "medium": (MediumMEC4, "medium_goal_cross_attention"),
+    "ts": (TransformerS4, "ts_explicit_transformer_s"),
+    "large": (TransformerL4, "large_explicit_transformer_l"),
 }
 # 需要 landmarks/states 几何输入（belief 混合地标）的模型
-GEOM_MODELS = ("v5", "v5fix", "small", "medium")
+GEOM_MODELS = ("v5", "v5fix", "small", "medium", "ts", "large")
 
 
 def build_model(name: str, device: str):
@@ -204,7 +207,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--ckpt", required=True)
     parser.add_argument("--model", required=True,
-                        choices=["v4", "v5", "v5fix", "v3", "small", "medium"])
+                        choices=["v4", "v5", "v5fix", "v3", "small", "medium",
+                                 "ts", "large"])
     parser.add_argument("--manifest", required=True)
     parser.add_argument("--out-dir", required=True)
     parser.add_argument("--task-file", default="")

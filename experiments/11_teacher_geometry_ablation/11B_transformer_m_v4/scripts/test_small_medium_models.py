@@ -133,13 +133,19 @@ def test_medium_inactive_landmark_invariance():
 
 @test
 def test_run_dir_and_names():
+    import tempfile
     assert MODEL_NAMES["small"] == "SmallMEC4"
     assert MODEL_NAMES["medium"] == "MediumMEC4"
-    assert resolve_run_dir("small", 42, False).name == "seed42"
-    assert "runs_small" in str(resolve_run_dir("small", 42, False))
-    assert "runs_medium" in str(resolve_run_dir("medium", 42, False))
     assert RUN_DIRS["small"] == "runs_small"
     assert RUN_DIRS["medium"] == "runs_medium"
+    # 训练完成后真实 runs_* 目录已含 best.pt（保护会拒绝）→ 用临时根目录测命名
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp)
+        assert resolve_run_dir("small", 42, False, results_root=root).name == "seed42"
+        assert "runs_small" in str(resolve_run_dir("small", 42, False,
+                                                   results_root=root))
+        assert "runs_medium" in str(resolve_run_dir("medium", 42, False,
+                                                    results_root=root))
 
 
 def main() -> int:
