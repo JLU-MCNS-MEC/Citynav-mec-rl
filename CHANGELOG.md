@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## [0.13] - 2026-11-04
+### Features
+- Transformer-S（`TransformerS4`，192/1 层/4 头/ff×3）与 Large（`TransformerL4`，352/2 层/8 头/ff×4）四动作实现：mec-v8.2 `ExplicitReasoningTransformer` 原样骨架（视觉投影/type+pos 编码/cls_token/goal→current 交叉注意力块/fusion TransformerEncoder norm_first+gelu+ff_mult/final_norm），只适配输入投影与融合（89 token 序列、几何 mask 并入 encoder padding）；注册 `train_11b.py --model ts|large` 与 `run_closed_loop build_model`。
+- 五模型 Val-Seen 闭环全量完成：统一对比报告 `COMPARISON_five_models.md` + 各模型 REPORT.md + 权重 SHA256 清单（6 个权重）。
+### Design Rationale
+- 保留 v8.2 原尺寸原骨架（GBS_MODEL_CONFIGS 原值）；六动作协议的 heatmap/network 模态移除，代之以固定协议模态；几何特征复用 `TransformerM12Fix.landmark_geometry`（与 V5fix 同款修正）。
+- TDD：test_explicit_models.py 12/12（RED=ModuleNotFoundError 已目睹）；旧权重保护新增显式测试。
+### Notes & Caveats
+- 闭环 SR：Small 34.67% / Medium 23.98% / Transformer-S 37.47% / Large 43.55% / V5fix 53.60%（基线：旧 v4 46.76%、旧 v5 60.09%）。
+- SPL 的 L* 为欧氏直线距离（历史口径，局限已在审计报告标注，未修改）。
+- TS/Large 的 step_cap 与早停类失败偏高（338/266），终点附近停止决策不足，见五模型对比分析。
+
+
 ## [0.12] - 2026-11-03
 ### Features
 - V5 六项修正（`TransformerM12Fix`，`model11c_fix.py`）：无效几何 token 注意力 mask + 特征置零；关系角改为 heading 帧 bearing 差（wrap、旋转不变）并归一化（dist/50、角/π）；relation 由单 56 维 token 改为 28 个 per-pair token（`[d/50, Δ/π, valid]`，无效对 mask）；Top-8 槽位按权重降序稳定重排（无需重建特征）；空候选 blank 合成（5% episode/epoch 确定性轮换）消除训练/推理 OOD；推理侧当前帧单次编码（bit-identical）。
