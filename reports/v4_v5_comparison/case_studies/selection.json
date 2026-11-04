@@ -1,5 +1,5 @@
 {
-  "created": "2026-11-03T13:16:20+0800",
+  "created": "2026-11-03T13:38:36+0800",
   "seed": 0,
   "excluded": [
     "test_unseen:03477"
@@ -120,6 +120,103 @@
         "test_unseen:05084: excluded (empty-candidate map cambridge_block_32)",
         "test_unseen:05091: excluded (empty-candidate map cambridge_block_32)",
         "val_seen:00546: excluded (failure collision)"
+      ]
+    },
+    "B": {
+      "pool": 907,
+      "requested": 4,
+      "selected": [
+        {
+          "category": "B",
+          "episode_id": "val_unseen:02759",
+          "split": "val_unseen",
+          "map": "cambridge_block_3",
+          "winner_model": "v4",
+          "loser_model": "v3",
+          "winner_ref": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/v4_closed_loop_revalidation/results/full_val_s1/episodes/val_unseen_02759.json",
+          "loser_ref": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/v3_closed_loop_revalidation/results/v3_val_s1/episodes/val_unseen_02759.json",
+          "winner_steps": 87,
+          "loser_steps": 71,
+          "loser_failure": "premature_stop",
+          "winner_final_est_m": 6.864409041917981,
+          "winner_est_to_target_m": 18.5503260579271,
+          "loser_max_est_m": 322.6645137481499,
+          "rationale": [
+            "v4 succeeds: stop 15.7 m in 87 steps (val_unseen, cambridge_block_3)",
+            "v3 fails: premature_stop after 71 steps",
+            "v4 final belief estimate error 6.9 m (to target 18.6 m) -- converged",
+            "v3 max belief estimate error 322.7 m -- drifted"
+          ]
+        },
+        {
+          "category": "B",
+          "episode_id": "val_unseen:01467",
+          "split": "val_unseen",
+          "map": "cambridge_block_10",
+          "winner_model": "v4",
+          "loser_model": "v3",
+          "winner_ref": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/v4_closed_loop_revalidation/results/full_val_s0/episodes/val_unseen_01467.json",
+          "loser_ref": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/v3_closed_loop_revalidation/results/v3_val_s0/episodes/val_unseen_01467.json",
+          "winner_steps": 165,
+          "loser_steps": 87,
+          "loser_failure": "out_of_bounds",
+          "winner_final_est_m": 4.8587473638649845,
+          "winner_est_to_target_m": 12.560086171938694,
+          "loser_max_est_m": 298.18748346197464,
+          "rationale": [
+            "v4 succeeds: stop 17.1 m in 165 steps (val_unseen, cambridge_block_10)",
+            "v3 fails: out_of_bounds after 87 steps",
+            "v4 final belief estimate error 4.9 m (to target 12.6 m) -- converged",
+            "v3 max belief estimate error 298.2 m -- drifted"
+          ]
+        },
+        {
+          "category": "B",
+          "episode_id": "val_seen:01680",
+          "split": "val_seen",
+          "map": "cambridge_block_18",
+          "winner_model": "v4",
+          "loser_model": "v3",
+          "winner_ref": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/v4_closed_loop_revalidation/results/full_val_s2/episodes/val_seen_01680.json",
+          "loser_ref": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/v3_closed_loop_revalidation/results/v3_val_s2/episodes/val_seen_01680.json",
+          "winner_steps": 10,
+          "loser_steps": 46,
+          "loser_failure": "reached_but_not_stopped",
+          "winner_final_est_m": 3.0346907673675108,
+          "winner_est_to_target_m": 12.378189238875729,
+          "loser_max_est_m": 223.1657217163054,
+          "rationale": [
+            "v4 succeeds: stop 10.5 m in 10 steps (val_seen, cambridge_block_18)",
+            "v3 fails: reached_but_not_stopped after 46 steps",
+            "v4 final belief estimate error 3.0 m (to target 12.4 m) -- converged",
+            "v3 max belief estimate error 223.2 m -- drifted"
+          ]
+        },
+        {
+          "category": "B",
+          "episode_id": "val_seen:00217",
+          "split": "val_seen",
+          "map": "birmingham_block_1",
+          "winner_model": "v4",
+          "loser_model": "v3",
+          "winner_ref": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/v4_closed_loop_revalidation/results/full_val_s0/episodes/val_seen_00217.json",
+          "loser_ref": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/v3_closed_loop_revalidation/results/v3_val_s0/episodes/val_seen_00217.json",
+          "winner_steps": 38,
+          "loser_steps": 34,
+          "loser_failure": "premature_stop",
+          "winner_final_est_m": 4.617793389329864,
+          "winner_est_to_target_m": 11.737371426398575,
+          "loser_max_est_m": 172.7652770163322,
+          "rationale": [
+            "v4 succeeds: stop 15.0 m in 38 steps (val_seen, birmingham_block_1)",
+            "v3 fails: premature_stop after 34 steps",
+            "v4 final belief estimate error 4.6 m (to target 11.7 m) -- converged",
+            "v3 max belief estimate error 172.8 m -- drifted"
+          ]
+        }
+      ],
+      "notes": [
+        "B: pool too small for full diversity, relaxing failure-reason diversity"
       ]
     },
     "C": {

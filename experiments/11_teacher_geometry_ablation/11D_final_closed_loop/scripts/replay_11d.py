@@ -33,12 +33,14 @@ sys.path.insert(0, str(REPO / "experiments/09_online_visual_goal_matching"
                        "/09C_continuous_localization/scripts"))
 sys.path.insert(0, str(REPO / "experiments/11_teacher_geometry_ablation"
                        "/11B_transformer_m_v4/scripts"))
+sys.path.insert(0, str(REPO / "experiments/v4_closed_loop_revalidation/scripts"))
 
 import matching  # noqa: E402
 from continuous_belief import ContinuousBelief, subpixel_match  # noqa: E402
 from dataset_v2 import CandidateStore, FrozenEncoder, RasterStore  # noqa: E402
 from pipeline import TARGET_HALF_M  # noqa: E402
 from model11b import TransformerM11  # noqa: E402
+from run_closed_loop import history_inputs  # noqa: E402
 
 RES = HERE.parent / "results"
 CKPT = (REPO / "experiments/11_teacher_geometry_ablation/11B_transformer_m_v4"
@@ -142,15 +144,9 @@ def replay(eid: str, device: str = "cuda") -> dict:
         belief_feat = np.asarray([fwd, lat, dist_est, bearing, score, unc, ent,
                                   since, dx, dy], np.float32)
         match_feat = np.asarray([dx, dy, score, margin, m["sharpness"]], np.float32)
-        vis = np.zeros((1, HISTORY_LEN, 2048), np.float32)
-        pose = np.zeros((1, HISTORY_LEN, 3), np.float32)
-        act = np.zeros((1, HISTORY_LEN, 4), np.float32)
-        hmask = np.zeros((1, HISTORY_LEN), np.float32)
-        for k in range(len(hist_vis)):
-            vis[0, k] = hist_vis[k]
-            pose[0, k] = hist_pose[k]
-            act[0, k, hist_act[k]] = 1.0
-            hmask[0, k] = 1.0
+        # corrected: slot 0 = most recent, relative pose (matches training)
+        vis, pose, act, hmask = history_inputs(hist_vis, hist_pose, hist_act,
+                                               pos, yaw)
         cur_img = raster.heading_crop(float(pos[0]), float(pos[1]), float(yaw))
         with torch.no_grad():
             cur = enc4(np.asarray([cur_img], np.uint8))
