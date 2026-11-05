@@ -45,7 +45,11 @@ LOS_A, LOS_B = 9.61, 0.16
 EXCESS_LOS_DB, EXCESS_NLOS_DB = 1.0, 20.0
 COVERAGE_RADIUS_M = 500.0
 MIN_SPACING_M = 120.0
-VISUAL_TOKEN_BITS = 49 * 384 * 16  # 真实 CityNav：49 token × 384 维 × 16 bit
+# 统一时延口径（2026-11-05 审计修正）：真实 CityNav 视觉 token =
+# FrozenEncoder(ResNet50-layer4 池化) 49 token × 2048 维 × 16 bit。
+# 旧值 49×384×16 是 mec-v8.2 ViT 配置的 token 维度，与本项目输入不符，
+# 会使通信时延低估 5.33 倍；本脚本与 analyze_e2e.py 现统一为 2048 维。
+VISUAL_TOKEN_BITS = 49 * 2048 * 16
 
 K_LIST = [5, 8, 10, 12, 15, 20]
 SPEED_OF_LIGHT = 299_792_458.0
