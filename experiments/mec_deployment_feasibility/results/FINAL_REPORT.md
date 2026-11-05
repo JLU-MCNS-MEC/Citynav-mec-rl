@@ -65,8 +65,9 @@ Transformer-M **556.0M**（123× / 10.1×）。
 | 1.0 TFLOPS | 0.00 ms | 0.06 ms | 0.56 ms | 0.55 | 0.50 | 0.00/0.02/0.17 |
 
 - 图：`fig_theoretical_latency.png`、`fig_share.png`
-- **算力档位是人为实验建模假设，非硬件测量值**；历史 0.2 TFLOPS 出处不可追溯
-  （GitHub mec-v8.2 仅单提交、无 Stage-2k/2l 报告），故做全档位扫描。
+- **算力档位是人为实验建模假设，非硬件测量值**。审计修正：历史 10-MEC
+  （Stage-2r）使用 **2.0 TFLOPS / 30MHz**（见注意事项 1）；本分析的
+  0.2 TFLOPS / 5MHz 是更保守的自设档位，故做全档位扫描以覆盖历史值。
 - 结论：任何档位下 Small→TM 与 Medium→TM 的差都相近（FLOPs 比值固定）；
   要复现"推理主导 E2E"的设定需算力 <0.05 TFLOPS 或更小 payload。
 
@@ -162,11 +163,20 @@ done
 $PY experiments/mec_deployment_feasibility/scripts/summarize_association.py
 ```
 
-**注意事项（数据缺失/协议不一致）**
-1. `mec-v8.2` GitHub 仓库仅 1 个提交（`d988a9a`，MAIN v8.2 input-redesign），
-   **无 Stage-2k/2l 报告、无 DQN/PPO 代码、无历史 10-MEC 配置**；0.2 TFLOPS
-   与历史拓扑不可追溯 → 按用户指示改为**均匀部署**，算力做全档位扫描并标注
-   为建模假设。历史 10-MEC 版本/位置/拓扑**无法核实**。
+**注意事项（数据缺失/协议不一致）——2026-11-05 审计修正**
+1. **历史记录已恢复（原表述有误，已更正）**：`mec-v8.2` 的
+   `experiment/v83-spatial-foundation` 分支有 202 个提交、Stage-2a…2s 完整实验：
+   - **历史 10-MEC 实验 = Stage-2r（2026-10-25）**：10 节点（A_fixed 的 maximin
+     子集 G2/G3/G5/G7/G8/G9/G12/G13/G19/G20）、**2.0 TFLOPS/节点、30MHz**、
+     Pure-MEC v2 194-D 状态、**方案 D 奖励（纯 E2E：1 − mean_E2E/100）**、
+     DQN/PPO 各 3 种子 × 4000 Episodes、Dev-60 最低 E2E 60.542±0.771ms。
+   - DQN/PPO 代码存在（`stage2k_dqn.py`、`stage2k_ppo_agent.py`、
+     `stage2n_train.py`、`stage2r_10node_small_vs_tm/train.py`）。
+   - **0.2 TFLOPS 不是历史设定**：历史为 2.0 TFLOPS；本分析的 0.2 TFLOPS/5MHz
+     是我们自己的建模假设（更保守），与历史不可直接比较，需并列解读。
+   - 本报告的部署位置仍按用户指示使用**均匀部署**（历史 A10_fixed 位置属于
+     合成 1500m 城市，不适用于真实 CityNav 地图）。
+   详见 `AUDIT_2026-11-05.md` 审计项 5。
 2. 清理任务删除 `official/extract` 时连带删除了 `sbfnav-data/original_citynav`
    软链的目标（删除前核对对象正是软链自身，未解析到真实目录）→ 已从保留的
    `data.tar.gz` 完整恢复（754M，Train 22,002 集可用）。

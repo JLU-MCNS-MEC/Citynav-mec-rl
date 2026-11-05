@@ -44,11 +44,12 @@ Transformer-M（TransformerM12Fix = V5fix，runs_11c_v5fix best，当前闭环�
 | 1.0 TFLOPS | 0.00 ms | 0.06 ms | 0.56 ms | 0.55 ms | 0.50 ms | 0.00 / 0.02 / 0.17 |
 
 **分析**：
-1. 任何档位下 Small→TM 的时延差都接近 Medium→TM 的差（FLOPs 决定比值固定，
-   只随 1/算力 缩放）——历史实验若有"Small/TM 显著区分度"必然来自更低的算力
-   或更大的 FLOPs 差；**当前真实输入规模下 0.2 TFLOPS 给出 TM≈2.8ms 的推理
-   时延与 ~2.5-2.8ms 的模型间差**，作为建模档位合理，但历史出处不可追溯
-   （GitHub 仓库单提交、无 Stage-2k/2l 报告），明确标注为建模假设。
+1. 任何档位下 Small→TM 的时延差都接近 Medium→TM 的差（FLOPs 比值固定，
+   只随 1/算力 缩放）；**0.2 TFLOPS 给出 TM≈2.8ms 推理与 ~2.5-2.8ms 模型
+   间差**，作为建模档位合理。审计修正：历史 10-MEC（Stage-2r）实际使用
+   **2.0 TFLOPS / 30MHz**，此时三模型推理解析值均 <0.3ms、差异可忽略——
+   Stage-2r 中两部署的 E2E 差（70.9 vs 68.2ms）主要来自**不同动作导致的
+   轨迹差异（到最近的 MEC 距离不同）**，而非推理算力。
 2. 0.2 TFLOPS 下 TM 理论值 2.78ms 与 RTX 5090 实测 3.36ms 的比值为 0.83，
    说明 0.2 TFLOPS 建模算力略高于真实 GPU 对小模型的等效吞吐（batch=1
    launch-bound），可用于保守侧建模。
