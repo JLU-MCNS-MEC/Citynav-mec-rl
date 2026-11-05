@@ -64,7 +64,12 @@ FLOP = {"small": 4.5e6, "medium": 55.1e6, "transformer_m": 556.0e6}
 CAP = 0.2e12                      # 人为建模假设
 ENCODE_MS = 1.680
 PAYLOAD_BITS = 49 * 2048 * 16
-QUALITY = {"small": 0.3467, "transformer_m": 0.5360, "medium": 0.2398}
+# 模型质量先验（审计项 3 修正）：必须**不来自 Val-Seen 评测集**。
+# 官方口径 = 训练侧验证集（11B ValMemmapDataset，1,574 states，来自 Train 池）
+# 的最优 epoch Val Macro-F1：small 0.7243 / medium 0.7103 / tm 0.7475。
+# 旧值（small 0.3467 / tm 0.5360 / medium 0.2398）是 Val-Seen 闭环 SR，
+# 属评测集统计量复用，保留于此处仅作对照记录，不再使用。
+QUALITY = {"small": 0.7243, "transformer_m": 0.7475, "medium": 0.7103}
 
 # 通信模型常量（mec-v8.2 config.py）
 GBS_H, UAV_H, CARRIER, BW, TXP = 10.0, 80.0, 2.0e9, 5.0e6, 0.1

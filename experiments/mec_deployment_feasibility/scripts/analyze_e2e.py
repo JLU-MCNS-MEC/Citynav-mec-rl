@@ -69,21 +69,15 @@ def uplink_rate_bps(horizontal_m: float) -> float:
     return max(BANDWIDTH_HZ * math.log2(1.0 + snr), 1e-15)
 
 
-def load_tasks() -> list[dict]:
-    mani = json.loads((REPO / "experiments/06_closed_loop_success_rate/results"
-                       "/seed42/manifest.json").read_text())
-    tasks = [{"split": t["split"], "map": t["map"],
-              "start": [float(t["start_x"]), float(t["start_y"])]}
-             for t in mani["tasks"] if t["split"] in ("val_seen", "val_unseen")]
-    train = json.loads(Path("/mnt/hdd2t/Citynav-MEC/DATA/sbfnav-data"
-                            "/original_citynav/citynav_train_seen.json").read_text())
-    for e in train:
-        traj = e["trajectory"]
-        traj = json.loads(traj) if isinstance(traj, str) else traj
-        tasks.append({"split": "train",
-                      "map": f"{e['area']}_block_{e['block']}",
-                      "start": [traj[0][0], traj[0][1]]})
-    return tasks
+def load_tasks(task_set: str = "official") -> list[dict]:
+    """与 analyze_deployment.py 同一任务集定义（审计项 4）。
+
+    official = 11A Train 18,521 + Val-Seen 2,498 = 21,019；
+    all      = 原始 Train 22,002 + Val-Seen + Val-Unseen = 27,326（参考）。
+    """
+    sys.path.insert(0, str(HERE))
+    from analyze_deployment import load_tasks as _load
+    return _load(task_set)
 
 
 def build_configs(positions: dict[str, list[list[float]]]) -> dict:
@@ -139,13 +133,19 @@ def summarize_ms(arr_ms: np.ndarray) -> dict:
 
 
 def main() -> int:
-    positions = json.loads((RES / "mec_positions_k10.json").read_text())
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--task-set", choices=["official", "all"], default="official")
+    a = ap.parse_args()
+    pos_name = ("mec_positions_k10.json" if a.task_set == "official"
+                else "mec_positions_k10_all_tasks.json")
+    positions = json.loads((RES / pos_name).read_text())
     configs = build_configs(positions)
     (RES / "deployment_configs.json").write_text(
         json.dumps(configs, indent=1, ensure_ascii=False))
 
-    tasks = load_tasks()
-    print(f"tasks={len(tasks)}")
+    tasks = load_tasks(a.task_set)
+    print(f"task_set={a.task_set} tasks={len(tasks)}")
 
     # 每任务最近 MEC 距离（同位置，三配置相同）
     per_map_pos = {m: np.asarray(p, np.float64) for m, p in positions.items()}
@@ -224,8 +224,9 @@ def main() -> int:
                          "inference_share_mean": float((inf / e2e).mean())}
         out["capacity_sensitivity"][f"{cap/1e12:.1f} TFLOPS"] = row
 
-    (RES / "e2e_latency.json").write_text(
-        json.dumps(out, indent=2, ensure_ascii=False))
+    out_name = ("e2e_latency.json" if a.task_set == "official"
+                else "e2e_latency_all_tasks.json")
+    (RES / out_name).write_text(json.dumps(out, indent=2, ensure_ascii=False))
 
     # ---- 图：E2E 分段（A/B/C）----
     fig, ax = plt.subplots(figsize=(8, 4.5))

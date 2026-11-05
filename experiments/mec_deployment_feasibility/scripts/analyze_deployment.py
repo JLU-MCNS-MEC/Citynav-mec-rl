@@ -73,16 +73,33 @@ def a2g_rate_bps(horizontal_m: float) -> float:
     return max(BANDWIDTH_HZ * math.log2(1.0 + snr), 1e-15)
 
 
-def load_tasks() -> list[dict]:
+def load_tasks(task_set: str = "official") -> list[dict]:
+    """任务集（审计项 4 修正）。
+
+    official = Train 18,521（11A 质量审计后的训练池，RL 唯一训练数据）
+             + Val-Seen 2,498（独立验证） = 21,019
+    all      = 原始 Train 22,002（含 3,481 条低质量/教师失败，仅作部署规划参考）
+             + Val-Seen 2,498 + Val-Unseen 2,826 = 27,326
+    """
     mani = json.loads((REPO / "experiments/06_closed_loop_success_rate/results"
                        "/seed42/manifest.json").read_text())
+    splits = ("val_seen",) if task_set == "official" else ("val_seen", "val_unseen")
     tasks = [{"split": t["split"], "map": t["map"],
               "start": [float(t["start_x"]), float(t["start_y"])],
               "target": [float(t["target_x"]), float(t["target_y"])]}
-             for t in mani["tasks"] if t["split"] in ("val_seen", "val_unseen")]
-    train = json.loads(Path("/mnt/hdd2t/Citynav-MEC/DATA/sbfnav-data"
-                            "/original_citynav/citynav_train_seen.json").read_text())
-    for e in train:
+             for t in mani["tasks"] if t["split"] in splits]
+    raw = json.loads(Path("/mnt/hdd2t/Citynav-MEC/DATA/sbfnav-data"
+                          "/original_citynav/citynav_train_seen.json").read_text())
+    if task_set == "official":
+        # 11A 教师池索引已实证：manifest index 对应 raw[index]（18,521/18,521 匹配）
+        rows = list(csv.DictReader(open(
+            REPO / "experiments/11_teacher_geometry_ablation"
+            "/11A_teacher_dataset_audit/results/teacher_episode_manifest.csv")))
+        chosen = [raw[int(r["index"])] for r in rows]
+        assert len(chosen) == 18521
+    else:
+        chosen = raw
+    for e in chosen:
         traj = e["trajectory"]
         traj = json.loads(traj) if isinstance(traj, str) else traj
         tgt = e["target_positions"]
@@ -134,8 +151,12 @@ def uniform_deploy(mask: np.ndarray, left: float, bottom: float, res: float,
 
 
 def main() -> int:
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--task-set", choices=["official", "all"], default="official")
+    args = ap.parse_args()
     maps = sorted(p.stem for p in Path(RGBD).glob("*.png"))
-    tasks = load_tasks()
+    tasks = load_tasks(args.task_set)
     per_map_tasks: dict[str, list[np.ndarray]] = {}
     for t in tasks:
         per_map_tasks.setdefault(t["map"], []).append(
@@ -143,7 +164,11 @@ def main() -> int:
     used_maps = sorted(set(per_map_tasks) & set(maps))
     print(f"maps={len(maps)} | 任务总数={len(tasks)} | 覆盖地图={len(used_maps)}")
 
-    results = {"tasks_total": len(tasks), "maps": len(maps)}
+    results = {"task_set": args.task_set, "tasks_total": len(tasks),
+               "maps": len(maps),
+               "note": ("official = 11A Train 18,521 + Val-Seen 2,498"
+                        if args.task_set == "official" else
+                        "all = raw Train 22,002 + Val-Seen 2,498 + Val-Unseen 2,826")}
     for k in K_LIST:
         cov_fracs, reach_s, reach_t, dists, n_avail, loads, lat_ms = [], [], [], [], [], [], []
         spacing_relaxed: list[bool] = []
@@ -192,11 +217,13 @@ def main() -> int:
               f"P95 {np.percentile(dists, 95):.0f}m | 可用数均值 {np.mean(n_avail):.1f} "
               f"最小 {np.min(n_avail)} | 负载σ {load_std:.1f} | 通信 P95 {np.percentile(lat, 95):.1f}ms")
         if k == 10:
-            (RES / "mec_positions_k10.json").write_text(
-                json.dumps(deployments, indent=2))
-    (RES / "deployment_analysis.json").write_text(
-        json.dumps(results, indent=2, ensure_ascii=False))
-    print("saved results/deployment_analysis.json + mec_positions_k10.json")
+            pos_name = ("mec_positions_k10.json" if args.task_set == "official"
+                        else "mec_positions_k10_all_tasks.json")
+            (RES / pos_name).write_text(json.dumps(deployments, indent=2))
+    out_name = ("deployment_analysis.json" if args.task_set == "official"
+                else "deployment_analysis_all_tasks.json")
+    (RES / out_name).write_text(json.dumps(results, indent=2, ensure_ascii=False))
+    print(f"saved results/{out_name} + positions")
     return 0
 
 
