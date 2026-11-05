@@ -171,6 +171,8 @@ $PY experiments/mec_deployment_feasibility/scripts/summarize_association.py
    `data.tar.gz` 完整恢复（754M，Train 22,002 集可用）。
 3. 本轮未跑 oracle 策略（需真实最优动作，属特权上界、不可部署）。
 4. 阶段 7 的 C 配置逐 step 记录（选择的 MEC / 模型类型 / 推理时延 / 通信时延 /
-   E2E）已完整保存于 `results/assoc_C_*/episodes/`（2,499 任务 × 5 策略，
+   E2E）已完整保存于 `results/assoc_C_*/episodes/`（**2,498 任务 × 5 策略**，
+   合计 12,490 个 episode 文件 + 5 个 journal；此前"2,499"为笔误，已按
+   task-file 与 manifest 双向核对修正），
    约 285MB，已提交仓库；仓库 pack 因此增大至约 460MB）。
 5. Val-Seen 仅用于独立验证与 Baseline 闭环，未参与任何训练或调参。
