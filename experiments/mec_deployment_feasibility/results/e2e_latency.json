@@ -1,0 +1,165 @@
+{
+  "n_tasks": 27326,
+  "encode_measured_ms": 1.68,
+  "distance": {
+    "mean_ms": 65232.37881624664,
+    "p50_ms": 57341.04968060305,
+    "p95_ms": 142197.5826834234,
+    "p99_ms": 186616.72930321711
+  },
+  "comm": {
+    "mean_ms": 26.40306381258915,
+    "p50_ms": 24.686638534438124,
+    "p95_ms": 35.94379995822385,
+    "p99_ms": 46.66814534996458
+  },
+  "configs": {
+    "A_10xSmall": {
+      "model_mix": "small",
+      "inference": {
+        "mean_ms": 0.022500000000000003,
+        "p50_ms": 0.022500000000000003,
+        "p95_ms": 0.022500000000000003,
+        "p99_ms": 0.022500000000000003
+      },
+      "e2e": {
+        "mean_ms": 28.105563812589153,
+        "p50_ms": 26.38913853443812,
+        "p95_ms": 37.64629995822385,
+        "p99_ms": 48.370645349964576
+      },
+      "inference_share_mean": 0.0008165573653309049,
+      "communication_share_mean": 0.9382138260232948,
+      "encode_share_mean": 0.060969616611374226
+    },
+    "B_10xTransformerM": {
+      "model_mix": "transformer_m",
+      "inference": {
+        "mean_ms": 2.7800000000000007,
+        "p50_ms": 2.78,
+        "p95_ms": 2.78,
+        "p99_ms": 2.78
+      },
+      "e2e": {
+        "mean_ms": 30.86306381258915,
+        "p50_ms": 29.14663853443812,
+        "p95_ms": 40.40379995822385,
+        "p99_ms": 51.12814534996458
+      },
+      "inference_share_mean": 0.09160154565398311,
+      "communication_share_mean": 0.8530421245982859,
+      "encode_share_mean": 0.05535632974773081
+    },
+    "C_5Small_5TM": {
+      "model_mix": "mixed",
+      "inference": {
+        "mean_ms": 1.5370765022323067,
+        "p50_ms": 2.78,
+        "p95_ms": 2.78,
+        "p99_ms": 2.78
+      },
+      "e2e": {
+        "mean_ms": 29.620140314821455,
+        "p50_ms": 28.361155382634802,
+        "p95_ms": 39.59078443020236,
+        "p99_ms": 51.017990030212864
+      },
+      "inference_share_mean": 0.05013784266610968,
+      "communication_share_mean": 0.8919185257404706,
+      "encode_share_mean": 0.0579436315934197
+    }
+  },
+  "deltas": {
+    "small_to_tm_inf_ms": 2.7575,
+    "medium_to_tm_inf_ms": 2.5044999999999997,
+    "small_to_tm_e2e_share": 0.09086016623771888,
+    "medium_to_tm_e2e_share": 0.08252376657928083
+  },
+  "capacity_sensitivity": {
+    "0.1 TFLOPS": {
+      "small": {
+        "inference_mean_ms": 0.045000000000000005,
+        "e2e_mean_ms": 28.128063812589154,
+        "inference_share_mean": 0.0016317632833979434
+      },
+      "medium": {
+        "inference_mean_ms": 0.5509999999999999,
+        "e2e_mean_ms": 28.634063812589147,
+        "inference_share_mean": 0.019615068398370235
+      },
+      "transformer_m": {
+        "inference_mean_ms": 5.56,
+        "e2e_mean_ms": 33.64306381258915,
+        "inference_share_mean": 0.16766718601028743
+      }
+    },
+    "0.2 TFLOPS": {
+      "small": {
+        "inference_mean_ms": 0.022500000000000003,
+        "e2e_mean_ms": 28.105563812589153,
+        "inference_share_mean": 0.0008165573653309049
+      },
+      "medium": {
+        "inference_mean_ms": 0.27549999999999997,
+        "e2e_mean_ms": 28.358563812589153,
+        "inference_share_mean": 0.009906046482524378
+      },
+      "transformer_m": {
+        "inference_mean_ms": 2.78,
+        "e2e_mean_ms": 30.86306381258915,
+        "inference_share_mean": 0.09160154565398311
+      }
+    },
+    "0.3 TFLOPS": {
+      "small": {
+        "inference_mean_ms": 0.015000000000000001,
+        "e2e_mean_ms": 28.098063812589153,
+        "inference_share_mean": 0.000544521905301649
+      },
+      "medium": {
+        "inference_mean_ms": 0.18366666666666667,
+        "e2e_mean_ms": 28.26673047925582,
+        "inference_share_mean": 0.006626219855163505
+      },
+      "transformer_m": {
+        "inference_mean_ms": 1.8533333333333333,
+        "e2e_mean_ms": 29.93639714592248,
+        "inference_share_mean": 0.06301616404259096
+      }
+    },
+    "0.5 TFLOPS": {
+      "small": {
+        "inference_mean_ms": 0.009000000000000001,
+        "e2e_mean_ms": 28.092063812589153,
+        "inference_share_mean": 0.0003267853370719517
+      },
+      "medium": {
+        "inference_mean_ms": 0.11019999999999999,
+        "e2e_mean_ms": 28.193263812589148,
+        "inference_share_mean": 0.003986447832135791
+      },
+      "transformer_m": {
+        "inference_mean_ms": 1.1119999999999999,
+        "e2e_mean_ms": 29.19506381258914,
+        "inference_share_mean": 0.03880064355299485
+      }
+    },
+    "1.0 TFLOPS": {
+      "small": {
+        "inference_mean_ms": 0.0045000000000000005,
+        "e2e_mean_ms": 28.087563812589153,
+        "inference_share_mean": 0.00016341975182574447
+      },
+      "medium": {
+        "inference_mean_ms": 0.055099999999999996,
+        "e2e_mean_ms": 28.138163812589152,
+        "inference_share_mean": 0.0019972615778141253
+      },
+      "transformer_m": {
+        "inference_mean_ms": 0.5559999999999999,
+        "e2e_mean_ms": 28.63906381258915,
+        "inference_share_mean": 0.01978949226274748
+      }
+    }
+  }
+}
