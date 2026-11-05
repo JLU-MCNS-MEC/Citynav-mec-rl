@@ -1,0 +1,101 @@
+{
+  "flops": {
+    "small": 4473344,
+    "medium": 55117312,
+    "transformer_m": 555964416
+  },
+  "measured_mean_ms": {
+    "small": 2.760575143426346,
+    "medium": 2.9367024309855574,
+    "transformer_m": 3.3549645708020157
+  },
+  "capacities_flops_per_s": [
+    100000000000.0,
+    200000000000.0,
+    300000000000.0,
+    500000000000.0,
+    1000000000000.0
+  ],
+  "per_capacity": {
+    "0.1 TFLOPS": {
+      "small": {
+        "t_inf_ms": 0.04473344,
+        "ratio_to_measured": 0.016204391358997077
+      },
+      "medium": {
+        "t_inf_ms": 0.5511731200000001,
+        "ratio_to_measured": 0.18768436127014285
+      },
+      "transformer_m": {
+        "t_inf_ms": 5.55964416,
+        "ratio_to_measured": 1.6571394548798315
+      },
+      "delta_small_tm_ms": 5.5149107200000005,
+      "delta_medium_tm_ms": 5.00847104
+    },
+    "0.2 TFLOPS": {
+      "small": {
+        "t_inf_ms": 0.02236672,
+        "ratio_to_measured": 0.008102195679498539
+      },
+      "medium": {
+        "t_inf_ms": 0.27558656000000004,
+        "ratio_to_measured": 0.09384218063507142
+      },
+      "transformer_m": {
+        "t_inf_ms": 2.77982208,
+        "ratio_to_measured": 0.8285697274399157
+      },
+      "delta_small_tm_ms": 2.7574553600000002,
+      "delta_medium_tm_ms": 2.50423552
+    },
+    "0.3 TFLOPS": {
+      "small": {
+        "t_inf_ms": 0.014911146666666668,
+        "ratio_to_measured": 0.00540146378633236
+      },
+      "medium": {
+        "t_inf_ms": 0.18372437333333333,
+        "ratio_to_measured": 0.06256145375671426
+      },
+      "transformer_m": {
+        "t_inf_ms": 1.8532147200000002,
+        "ratio_to_measured": 0.5523798182932772
+      },
+      "delta_small_tm_ms": 1.8383035733333335,
+      "delta_medium_tm_ms": 1.6694903466666668
+    },
+    "0.5 TFLOPS": {
+      "small": {
+        "t_inf_ms": 0.008946688000000001,
+        "ratio_to_measured": 0.003240878271799416
+      },
+      "medium": {
+        "t_inf_ms": 0.110234624,
+        "ratio_to_measured": 0.03753687225402856
+      },
+      "transformer_m": {
+        "t_inf_ms": 1.111928832,
+        "ratio_to_measured": 0.3314278909759663
+      },
+      "delta_small_tm_ms": 1.102982144,
+      "delta_medium_tm_ms": 1.001694208
+    },
+    "1.0 TFLOPS": {
+      "small": {
+        "t_inf_ms": 0.004473344000000001,
+        "ratio_to_measured": 0.001620439135899708
+      },
+      "medium": {
+        "t_inf_ms": 0.055117312,
+        "ratio_to_measured": 0.01876843612701428
+      },
+      "transformer_m": {
+        "t_inf_ms": 0.555964416,
+        "ratio_to_measured": 0.16571394548798316
+      },
+      "delta_small_tm_ms": 0.551491072,
+      "delta_medium_tm_ms": 0.500847104
+    }
+  }
+}
