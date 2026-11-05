@@ -1,0 +1,25 @@
+{
+  "purpose": "审计项 3 实证：质量先验改为训练侧 Val Macro-F1 后结果等价",
+  "old_prior": "Val-Seen closed-loop SR (0.3467/0.5360/0.2398)",
+  "new_prior": "training-side Val Macro-F1 (0.7243/0.7475/0.7103)",
+  "old": {
+    "n": 2498,
+    "success": 1338,
+    "sr": 0.5356285028022418,
+    "e2e_mean_ms": 32.71312461376148,
+    "e2e_p95_ms": 43.32267988939913,
+    "inf_mean_ms": 2.7800000000000007,
+    "inf_share_mean": 0.08690972155984646
+  },
+  "new": {
+    "n": 2498,
+    "success": 1338,
+    "sr": 0.5356285028022418,
+    "e2e_mean_ms": 32.71312461376148,
+    "e2e_p95_ms": 43.32267988939913,
+    "inf_mean_ms": 2.7800000000000007,
+    "inf_share_mean": 0.08690972155984646
+  },
+  "same_success_set": true,
+  "identical": true
+}
