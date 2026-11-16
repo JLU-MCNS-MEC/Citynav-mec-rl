@@ -1,0 +1,39 @@
+{
+  "group": "two_homo",
+  "strategy": "max_quality",
+  "seed": 42,
+  "n_tasks": 2498,
+  "n_ok": 2498,
+  "n_exception": 0,
+  "sr": 0.5356285028022418,
+  "osr": 0.5412329863891113,
+  "ne_mean_m": 55.37911523699695,
+  "spl_mean": 0.4681750003349136,
+  "steps_mean": 70.93875100080064,
+  "e2e_mean_ms": 43.461957774747894,
+  "e2e_p50_ms": 42.71959183982406,
+  "e2e_p95_ms": 50.76705762991097,
+  "e2e_p99_ms": 59.540314868872336,
+  "inf_mean_ms": 10.0,
+  "comm_mean_ms": 28.0124427667479,
+  "encode_mean_ms": 5.449515008,
+  "inf_share_mean": 0.2317043466903221,
+  "model_step_share": {
+    "transformer_m": 1.0
+  },
+  "node_step_share": {
+    "G10": 0.2730396997827375,
+    "G4": 0.15331395840975143,
+    "G2": 0.11241782116757428,
+    "G8": 0.2421376371998533,
+    "G6": 0.2190908834400835
+  },
+  "failure_counts": {
+    "never_stop": 221,
+    "out_of_bounds": 361,
+    "premature_stop": 564,
+    "reached_but_not_stopped": 14,
+    "success": 1338
+  },
+  "oracle_agree_rate": null
+}

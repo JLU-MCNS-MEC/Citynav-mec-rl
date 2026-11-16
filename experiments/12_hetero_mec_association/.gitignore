@@ -1,0 +1,14 @@
+# Stage 12 raw closed-loop artifacts are large; keep them local.
+results/baselines/**/episodes/
+results/baselines/**/journal*.jsonl
+results/eval/**/journal.jsonl
+results/eval/**/episodes/
+results/scheduler/*.log
+results/scheduler/*.out
+results/scheduler/seen.json
+results/results_smoke/
+results/smoke_rl/
+results/rl/**/checkpoint.pt
+results/rl/**/best.pt
+
+# summary tables, figures, protocol JSON and reports are committed
