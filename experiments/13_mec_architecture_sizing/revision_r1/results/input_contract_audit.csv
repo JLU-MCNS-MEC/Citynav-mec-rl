@@ -1,0 +1,6 @@
+model,is_transformer,original_tokens,revised_tokens,history_before,history_after,current,target,state,landmark,relation,v5fix_geometry,mask_semantics,satisfies_unified_info
+Small,False,MLP (no token sequence),MLP (no token sequence),16-step masked mean-pool -> 1 vector,16-step masked mean-pool -> 1 vector (allowed),49x2048,512,12,8x3,28x3,yes (TransformerM12Fix.landmark_geometry),history_mask < 0.5 (True=pad),yes
+Medium,False,1 goal query + 49 current KV (no encoder),1 goal query + 49 current KV (no encoder),16-step masked mean-pool -> 1 vector,16-step masked mean-pool -> 1 vector (allowed),49x2048,512,12,8x3,28x3,yes (TransformerM12Fix.landmark_geometry),history_mask < 0.5 (True=pad),yes
+Transformer-S,True,89,104,16-step mean-pool -> 1 token,16 independent history tokens + hist_time,49x2048,512,12,8x3,28x3,yes (TransformerM12Fix.landmark_geometry),history_mask < 0.5 (True=pad); prefix 68,yes after revision
+Transformer-M,True,104,104,16 independent history tokens,16 independent history tokens,49x2048,512,12,8x3,28x3,yes (TransformerM12Fix.landmark_geometry),history_mask < 0.5 (True=pad); prefix 68,yes (canonical)
+Large,True,89,104,16-step mean-pool -> 1 token,16 independent history tokens + hist_time,49x2048,512,12,8x3,28x3,yes (TransformerM12Fix.landmark_geometry),history_mask < 0.5 (True=pad); prefix 68,yes after revision
