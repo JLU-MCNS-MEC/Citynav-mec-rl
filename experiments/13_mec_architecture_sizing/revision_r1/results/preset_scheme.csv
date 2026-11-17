@@ -1,0 +1,6 @@
+model,architecture,hidden,layers,heads,ffn,extra_mlp,predicted_gflops,target_gflops,deviation_pct,params_m
+Small,MLP + per-token MLP,512,n/a,n/a,2048,12288,4.954039296,5.0,-0.91921408,61.121028
+Medium,goal cross-attn + per-token MLP,512,n/a,8,4096,36864,14.98062336,15.0,-0.1291776,166.010884
+Transformer-S,104-token Transformer,1408,8,8,5376,n/a,39.671126528,40.0,-0.82218368,211.100804
+Transformer-M,104-token Transformer,2048,10,16,7424,n/a,100.025417728,100.0,0.025417728,498.567684
+Large,104-token Transformer,2560,12,16,10240,n/a,199.7239808,200.0,-0.1380096,1034.731524
