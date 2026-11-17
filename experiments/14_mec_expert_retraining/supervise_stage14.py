@@ -38,6 +38,12 @@ TASKS = "/home/jlu-mcns/Workspace/zhangty/task_status/val_seen_ids.txt"
 LOG = HERE / "logs"
 N_TASKS = 2498
 
+# The supervisor must export the data root itself: subprocesses inherit it.
+os.environ.setdefault("CITYNAV_DATA", "/home/20261024_1/Workspace/DATA")
+if not Path(os.environ["CITYNAV_DATA"]).is_dir():
+    raise SystemExit(f"CITYNAV_DATA is not a directory: "
+                     f"{os.environ['CITYNAV_DATA']}")
+
 LOG.mkdir(parents=True, exist_ok=True)
 
 
@@ -81,12 +87,28 @@ def wait_training(key: str) -> int:
     return 0
 
 
-def start_train(key: str) -> subprocess.Popen:
+class WaitingProc:
+    """Attach to a training process started by a previous supervisor."""
+
+    def __init__(self, pattern: str):
+        self.pattern = pattern
+
+    def wait(self) -> int:
+        while pgrep(self.pattern):
+            time.sleep(30)
+        return 0
+
+
+def start_train(key: str):
     ckpt_dir, _, _ = paths(key)
     last = ckpt_dir / "last.pt"
     if (ckpt_dir / "best.pt").exists():
         log(f"{key}: best.pt exists, training skipped")
         return None
+    pat = f"train_expert.py --model {key}"
+    if pgrep(pat):
+        log(f"{key}: training already running; attaching (no duplicate launch)")
+        return WaitingProc(pat)
     cmd = [PY_TRAIN, str(HERE / "train_expert.py"), "--model", key,
            "--seed", "42", "--epochs", "20", "--patience", "10",
            "--device", "cuda"]
