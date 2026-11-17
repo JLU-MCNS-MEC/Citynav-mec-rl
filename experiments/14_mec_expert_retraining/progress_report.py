@@ -9,6 +9,10 @@ Never fabricates numbers: unfinished models stay Pending.
 from __future__ import annotations
 
 import json
+import os
+import re
+import subprocess
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -98,7 +102,9 @@ def figures(states: list[dict]) -> None:
             plt.plot(ep, [h["dev"]["loss"] for h in s["hist"]], linestyle="--",
                      lw=1, label=f"{s['name']} dev")
     plt.xlabel("epoch"); plt.ylabel("cross-entropy"); plt.grid(alpha=.3)
-    plt.legend(fontsize=7, ncol=2); plt.title("Training / Dev loss")
+    if any(s["hist"] for s in states):
+        plt.legend(fontsize=7, ncol=2)
+    plt.title("Training / Dev loss")
     plt.tight_layout(); plt.savefig(figdir / "loss_curves.png", dpi=130); plt.close()
     # Dev Macro-F1
     plt.figure(figsize=(8, 4.5))
@@ -108,7 +114,9 @@ def figures(states: list[dict]) -> None:
             plt.plot(ep, [h["dev"]["macro_f1"] for h in s["hist"]], marker="o",
                      ms=3, label=s["name"])
     plt.xlabel("epoch"); plt.ylabel("Dev Macro-F1"); plt.grid(alpha=.3)
-    plt.legend(fontsize=8); plt.title("Independent Dev Macro-F1 (2% hold-out)")
+    if any(s["hist"] for s in states):
+        plt.legend(fontsize=8)
+    plt.title("Independent Dev Macro-F1 (2% hold-out)")
     plt.tight_layout(); plt.savefig(figdir / "dev_macro_f1.png", dpi=130); plt.close()
     # Compute vs params
     plt.figure(figsize=(6, 4.5))
@@ -148,15 +156,88 @@ def estimates(states: list[dict]) -> tuple[float | None, str]:
     return remaining, "; ".join(lines)
 
 
+def live_gpu() -> dict:
+    try:
+        out = subprocess.run(
+            ["nvidia-smi", "--query-gpu=memory.used,utilization.gpu,"
+             "temperature.gpu", "--format=csv,noheader"],
+            capture_output=True, text=True, timeout=10).stdout.strip()
+        mem, util, temp = out.split(",")
+        return {"mem_mib": int(mem.strip().split()[0]),
+                "gpu_util_pct": int(util.strip().split()[0]),
+                "temp_c": int(temp.strip().split()[0])}
+    except Exception:  # noqa: BLE001
+        return {}
+
+
+def training_running(key: str) -> bool:
+    try:
+        return subprocess.run(
+            ["pgrep", "-f", f"train_expert.py --model {key}"],
+            capture_output=True).returncode == 0
+    except Exception:  # noqa: BLE001
+        return False
+
+
+def latest_update_line(key: str) -> dict | None:
+    p = HERE / "logs" / f"train_{key}.log"
+    if not p.exists():
+        return None
+    last = None
+    for line in p.read_text(encoding="utf-8", errors="ignore").splitlines():
+        m = re.search(r"epoch (\d+) update (\d+)/(\d+) loss=([0-9.]+) "
+                      r"acc=([0-9.]+) (\d+)s", line)
+        if m:
+            last = {"epoch": int(m.group(1)), "update": int(m.group(2)),
+                    "updates": int(m.group(3)), "loss": float(m.group(4)),
+                    "acc": float(m.group(5)), "elapsed": int(m.group(6))}
+    return last
+
+
 def main() -> int:
+    # The eval venv has no matplotlib; re-exec under the training env.
+    try:
+        import matplotlib  # noqa: F401
+    except ImportError:
+        alt = "/home/jlu-mcns/miniconda3/envs/citynav-mec/bin/python"
+        if os.path.exists(alt) and os.path.realpath(sys.executable) != \
+                os.path.realpath(alt):
+            os.execv(alt, [alt, __file__] + sys.argv[1:])
     states = [model_state(k) for k in KEYS]
     figures(states)
-    remain_h, estimate_text = estimates(states)
     cur = None
-    for s in states:
-        if s["progress"] and not s["progress"].get("done"):
+    for s in states:                     # live process takes precedence
+        if training_running(s["key"]):
             cur = s
             break
+    if cur is None:
+        for s in states:
+            if s["progress"] and not s["progress"].get("done"):
+                cur = s
+                break
+    live = latest_update_line(cur["key"]) if cur else None
+    other = [s for s in states if cur is None or s["key"] != cur["key"]]
+    other_h, other_text = estimates(other)
+    eta_cur = None
+    epoch_est_s = None
+    if cur:
+        p = cur["progress"] or {}
+        if live and live["update"] > 0:
+            per_upd = live["elapsed"] / live["update"]
+            epoch_est_s = per_upd * live["updates"]
+            left_in_epoch = max(0.0, epoch_est_s - live["elapsed"])
+            left_epochs = max(0, EXPECTED_EPOCHS - (live["epoch"] + 1))
+            eta_cur = (left_in_epoch + left_epochs * epoch_est_s) / 3600
+        elif cur["epoch_sec"]:
+            epoch_est_s = cur["epoch_sec"]
+            left = max(0, EXPECTED_EPOCHS - (p.get("epoch", 0) + 1))
+            eta_cur = left * epoch_est_s / 3600
+    if eta_cur is not None:
+        remain_h = eta_cur + other_h
+        estimate_text = (f"{cur['name']}（进行中）{eta_cur:.1f} h; "
+                         + (other_text or ""))
+    else:
+        remain_h, estimate_text = estimates(states)
     lines = ["# Stage 14-R1：五种 MEC 导航专家训练进度", "",
              f"更新时间：{__import__('time').strftime('%Y-%m-%d %H:%M:%S')}", "",
              "Dev = 训练池 2% episode 独立留出（与 Val-Seen 2498 任务无重叠）；"
@@ -177,27 +258,47 @@ def main() -> int:
             f"{fmt(sm['ndtw'] if sm else None)} |")
     lines += ["", "## 实时状态", ""]
     if cur:
-        p = cur["progress"]
-        eta = None
-        if cur["epoch_sec"]:
-            left = max(0, EXPECTED_EPOCHS - (p.get("epoch", 0) + 1))
-            eta = left * cur["epoch_sec"] / 3600
+        p = cur["progress"] or {}
+        accum = int((cur.get("config") or {}).get("accum", 1))
+        ep = p.get("epoch")
+        upd = p.get("optimizer_step")
+        micro = p.get("micro_step")
+        in_epoch = False
+        if live and (ep is None or live["epoch"] > ep):
+            prev = ep
+            ep = live["epoch"]
+            base = p.get("optimizer_step") or 0
+            upd = (base if prev == live["epoch"] - 1 else 0) + live["update"]
+            micro = live["update"] * accum
+            in_epoch = True
+        loss = p.get("train_loss")
+        if loss is None and live:
+            loss = live["loss"]
+        gpu = p.get("gpu") or live_gpu()
+        ep_time = p.get("epoch_seconds")
+        if in_epoch and live:
+            ep_time = live["elapsed"]
+        elif ep_time is None:
+            ep_time = epoch_est_s
         lines += [
             "```text",
             f"当前模型：{cur['name']}",
-            f"当前Epoch / 20：{p.get('epoch', 0) + 1} / {p.get('epochs', 20)}",
-            f"当前optimizer step：{p.get('optimizer_step')}",
-            f"当前micro-step：{p.get('micro_step')}",
-            f"Train Loss：{num(p.get('train_loss'))}",
+            f"当前Epoch / 20：{'—' if ep is None else ep + 1} / 20",
+            f"当前optimizer step：{num(upd, 0)}"
+            + (f"（Epoch 内 {live['update']}/{live['updates']}）"
+               if live and in_epoch else ""),
+            f"当前micro-step：{num(micro, 0)}",
+            f"Train Loss：{num(loss)}",
             f"Dev Macro-F1：{num(p.get('dev_macro_f1'))}",
             f"Learning Rate：{num(p.get('lr'), 7)}",
             f"Gradient Norm：{num(p.get('grad_norm'))}",
-            f"GPU显存：{p.get('gpu', {}).get('mem_mib', '?')} MiB "
+            f"GPU显存：{gpu.get('mem_mib', '?')} MiB "
             f"(峰值 {num(p.get('peak_mem_gb'), 2)} GB)",
-            f"GPU利用率：{p.get('gpu', {}).get('gpu_util_pct', '?')} %",
-            f"当前Epoch耗时：{num((p.get('epoch_seconds') or 0)/60, 1)} min",
+            f"GPU利用率：{gpu.get('gpu_util_pct', '?')} %",
+            f"当前Epoch耗时：{num((ep_time or 0)/60, 1)} min"
+            + ("（进行中）" if in_epoch or p.get("epoch_seconds") is None else ""),
             f"当前模型预计剩余时间："
-            f"{'—' if eta is None else f'{eta:.1f} h'}"
+            f"{'—' if eta_cur is None else f'{eta_cur:.1f} h'}"
             f"（按 {EXPECTED_EPOCHS} epochs 早停口径）",
             f"剩余模型预计训练时间：{remain_h:.1f} h",
             f"预计Val-Seen评测时间：{EVAL_H:.1f} h/模型",
