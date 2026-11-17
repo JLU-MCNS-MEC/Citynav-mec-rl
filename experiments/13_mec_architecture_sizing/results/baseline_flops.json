@@ -1,0 +1,344 @@
+{
+  "Small": {
+    "params": 2239236,
+    "flops": 4473344,
+    "flops_giga": 0.004473344,
+    "target_gflops": 5.0,
+    "ratio_target_over_current": 1117.7320590591737,
+    "output_shape": [
+      1,
+      4
+    ],
+    "top_modules": [
+      [
+        "head.0",
+        2097152
+      ],
+      [
+        "cur_proj.0",
+        1048576
+      ],
+      [
+        "hist_vis_proj.0",
+        1048576
+      ],
+      [
+        "target_proj.0",
+        262144
+      ],
+      [
+        "state_proj.0",
+        6144
+      ],
+      [
+        "head.3",
+        4096
+      ],
+      [
+        "hist_act_proj.0",
+        2048
+      ],
+      [
+        "hist_pose_proj.0",
+        1536
+      ],
+      [
+        "lm_proj.0",
+        1536
+      ],
+      [
+        "rel_proj.0",
+        1536
+      ]
+    ],
+    "counter": "forward hooks on Linear/MultiheadAttention, 2x MACs; LayerNorm/GELU/Softmax not counted"
+  },
+  "Medium": {
+    "params": 2635268,
+    "flops": 68224512,
+    "flops_giga": 0.068224512,
+    "target_gflops": 15.0,
+    "ratio_target_over_current": 219.86232748722335,
+    "output_shape": [
+      1,
+      4
+    ],
+    "top_modules": [
+      [
+        "cur_proj",
+        51380224
+      ],
+      [
+        "goal_current_attn",
+        13157376
+      ],
+      [
+        "head.0",
+        1835008
+      ],
+      [
+        "hist_vis_proj.0",
+        1048576
+      ],
+      [
+        "goal_proj",
+        262144
+      ],
+      [
+        "gc_ffn.0",
+        262144
+      ],
+      [
+        "gc_ffn.2",
+        262144
+      ],
+      [
+        "state_proj.0",
+        6144
+      ],
+      [
+        "head.3",
+        4096
+      ],
+      [
+        "hist_act_proj.0",
+        2048
+      ],
+      [
+        "hist_pose_proj.0",
+        1536
+      ],
+      [
+        "lm_proj.0",
+        1536
+      ],
+      [
+        "rel_proj.0",
+        1536
+      ]
+    ],
+    "counter": "forward hooks on Linear/MultiheadAttention, 2x MACs; LayerNorm/GELU/Softmax not counted"
+  },
+  "Transformer-S": {
+    "params": 1644292,
+    "flops": 119122560,
+    "flops_giga": 0.11912256,
+    "target_gflops": 40.0,
+    "ratio_target_over_current": 335.78861972073133,
+    "output_shape": [
+      1,
+      4
+    ],
+    "top_modules": [
+      [
+        "visual_proj",
+        38535168
+      ],
+      [
+        "fusion_encoder.layers.0.self_attn",
+        32330496
+      ],
+      [
+        "fusion_encoder.layers.0.linear1",
+        19685376
+      ],
+      [
+        "fusion_encoder.layers.0.linear2",
+        19685376
+      ],
+      [
+        "goal_current_attn",
+        7410432
+      ],
+      [
+        "hist_vis_proj.0",
+        786432
+      ],
+      [
+        "gc_ffn.0",
+        221184
+      ],
+      [
+        "gc_ffn.3",
+        221184
+      ],
+      [
+        "goal_proj",
+        196608
+      ],
+      [
+        "rel_proj.0",
+        32256
+      ],
+      [
+        "lm_proj.0",
+        9216
+      ],
+      [
+        "state_proj.0",
+        4608
+      ],
+      [
+        "hist_act_proj.0",
+        1536
+      ],
+      [
+        "head",
+        1536
+      ],
+      [
+        "hist_pose_proj.0",
+        1152
+      ]
+    ],
+    "counter": "forward hooks on Linear/MultiheadAttention, 2x MACs; LayerNorm/GELU/Softmax not counted"
+  },
+  "Transformer-M": {
+    "params": 4630276,
+    "flops": 774068224,
+    "flops_giga": 0.774068224,
+    "target_gflops": 100.0,
+    "ratio_target_over_current": 129.18757920748857,
+    "output_shape": [
+      1,
+      4
+    ],
+    "top_modules": [
+      [
+        "encoder.layers.0.self_attn",
+        65601536
+      ],
+      [
+        "encoder.layers.1.self_attn",
+        65601536
+      ],
+      [
+        "encoder.layers.2.self_attn",
+        65601536
+      ],
+      [
+        "encoder.layers.3.self_attn",
+        65601536
+      ],
+      [
+        "encoder.layers.0.linear1",
+        54525952
+      ],
+      [
+        "encoder.layers.0.linear2",
+        54525952
+      ],
+      [
+        "encoder.layers.1.linear1",
+        54525952
+      ],
+      [
+        "encoder.layers.1.linear2",
+        54525952
+      ],
+      [
+        "encoder.layers.2.linear1",
+        54525952
+      ],
+      [
+        "encoder.layers.2.linear2",
+        54525952
+      ],
+      [
+        "encoder.layers.3.linear1",
+        54525952
+      ],
+      [
+        "encoder.layers.3.linear2",
+        54525952
+      ],
+      [
+        "vis_proj",
+        51380224
+      ],
+      [
+        "hist_vis",
+        16777216
+      ],
+      [
+        "rel_proj.2",
+        3670016
+      ]
+    ],
+    "counter": "forward hooks on Linear/MultiheadAttention, 2x MACs; LayerNorm/GELU/Softmax not counted"
+  },
+  "Large": {
+    "params": 6128676,
+    "flops": 650997952,
+    "flops_giga": 0.650997952,
+    "target_gflops": 200.0,
+    "ratio_target_over_current": 307.2206285527608,
+    "output_shape": [
+      1,
+      4
+    ],
+    "top_modules": [
+      [
+        "fusion_encoder.layers.0.self_attn",
+        99372416
+      ],
+      [
+        "fusion_encoder.layers.1.self_attn",
+        99372416
+      ],
+      [
+        "fusion_encoder.layers.0.linear1",
+        88219648
+      ],
+      [
+        "fusion_encoder.layers.0.linear2",
+        88219648
+      ],
+      [
+        "fusion_encoder.layers.1.linear1",
+        88219648
+      ],
+      [
+        "fusion_encoder.layers.1.linear2",
+        88219648
+      ],
+      [
+        "visual_proj",
+        70647808
+      ],
+      [
+        "goal_current_attn",
+        24849792
+      ],
+      [
+        "hist_vis_proj.0",
+        1441792
+      ],
+      [
+        "gc_ffn.0",
+        991232
+      ],
+      [
+        "gc_ffn.3",
+        991232
+      ],
+      [
+        "goal_proj",
+        360448
+      ],
+      [
+        "rel_proj.0",
+        59136
+      ],
+      [
+        "lm_proj.0",
+        16896
+      ],
+      [
+        "state_proj.0",
+        8448
+      ]
+    ],
+    "counter": "forward hooks on Linear/MultiheadAttention, 2x MACs; LayerNorm/GELU/Softmax not counted"
+  }
+}

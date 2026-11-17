@@ -1,0 +1,26 @@
+model,plan,changed,current_value,new_value,current_flops,predicted_flops,target_flops,deviation_pct,feasible_5pct,required_multiplier,notes
+Small,A1_fusion_width,fusion MLP width,512,1217745.5906432748,4473344.0,5000000000.0,5000000000.0,0.0,False,2378.409356725146,single late-fusion MLP width
+Small,A2_layers,encoder layers,0,0,4473344.0,4473344.0,5000000000.0,-99.91053312,False,,Small has no Transformer encoder to deepen
+Small,A3_hidden_dim,hidden dim,256,12355.810084225332,4473344.0,5000000000.0,5000000000.0,0.0,False,48.2648831415052,hidden width only; large parameter growth
+Small,B_two_param_cap,D x head,"D=256,H=512","D=512,H=2048",4473344.0,21537792.0,5000000000.0,-99.56924416,False,,"best under D<=2x,H<=4x; reaches 0.4% of target"
+Small,C_target_multi,D (H=2D),256,12355.810084225332,4473344.0,5000000000.0,5000000000.0,0.0,False,48.2648831415052,target needs D~12356 (48.3x); params ~2500M
+Medium,A1_gc_ffn_width,gc_ffn width,512,14581812.0,68748800.0,15000000000.0,15000000000.0,0.0,False,28480.1015625,single cross-attention FFN width
+Medium,A2_layers,encoder layers,0,0,68748800.0,68748800.0,15000000000.0,-99.54167466666667,False,,Medium has no Transformer encoder to deepen
+Medium,A3_hidden_dim,hidden dim,256,7547.710390279065,68748800.0,15455652884.559532,15000000000.0,3.0376858970635476,False,29.483243712027598,hidden width only; large parameter growth
+Medium,B_two_param_cap,D x head/FFN,"D=256,H=512","D=512,H=2048",68748800.0,178924544.0,15000000000.0,-98.80716970666667,False,,"best under D<=2x,H<=4x; reaches 1.2% of target"
+Medium,C_target_multi,"D (Fgc=2D,H=2D)",256,7547.710390279065,68748800.0,15455652884.559532,15000000000.0,3.0376858970635476,False,29.483243712027598,target needs D~7548 (29.5x); params ~1288M
+Transformer-S,A1_ffn_width,FFN width,576,584039.2116104868,119122560.0,40000000000.0,40000000000.0,0.0,False,1013.9569646015397,single FFN width; no ±5% under 4x cap
+Transformer-S,A2_layers,encoder layers,1,557.208971983305,119122560.0,40000000000.0,40000000000.0,0.0,False,557.208971983305,single encoder-layer count; no ±5% under 4x
+Transformer-S,A3_hidden_dim,hidden dim,192,4434.97501701711,119122560.0,40236028040.8188,40000000000.0,0.5900701020470047,False,23.09882821363078,hidden width only; large parameter growth
+Transformer-S,B_two_param_cap,FFN x layers,"F=576,L=1","F=2304,L=4",119122560.0,806675328.0,40000000000.0,-97.98331168,False,,"best under F<=4x,L<=4x; reaches 2.0% of target"
+Transformer-S,C_target_multi,D (with F=ff_mult*D),192,4434.97501701711,119122560.0,40236028040.8188,40000000000.0,0.5900701020470047,False,23.09882821363078,target needs D~4435 (23.1x); params ~414M
+Transformer-M,A1_ffn_width,FFN width,1024,233957.47115384616,774068224.0,100000000000.0,100000000000.0,0.0,False,228.4740929236779,single FFN width; no ±5% under 4x cap
+Transformer-M,A2_layers,encoder layers,4,572.1304174484053,774068224.0,100000000000.0,100000000000.0,0.0,False,143.03260436210132,single encoder-layer count; no ±5% under 4x
+Transformer-M,A3_hidden_dim,hidden dim,256,3126.3818127879044,774068224.0,100000000000.0,100000000000.0,0.0,False,12.212428956202752,hidden width only; large parameter growth
+Transformer-M,B_two_param_cap,FFN x layers,"F=1024,L=4","F=4096,L=16",774068224.0,8104400896.0,100000000000.0,-91.895599104,False,,"best under F<=4x,L<=4x; reaches 8.1% of target"
+Transformer-M,C_target_multi,D (with F=ff_mult*D),256,3126.3818127879044,774068224.0,100000000000.0,100000000000.0,0.0,False,12.212428956202752,target needs D~3126 (12.2x); params ~523M
+Large,A1_ffn_width,FFN width,1408,796818.663176711,650997952.0,200000000000.0,200000000000.0,0.0,False,565.9223460061868,single FFN width; no ±5% under 4x cap
+Large,A2_layers,encoder layers,2,724.7720701287695,650997952.0,200000000000.0,200000000000.0,0.0,False,362.38603506438477,single encoder-layer count; no ±5% under 4x
+Large,A3_hidden_dim,hidden dim,352,6657.423957171142,650997952.0,200709140699.92822,200000000000.0,0.35457034996411135,False,18.91313624196347,hidden width only; large parameter growth
+Large,B_two_param_cap,FFN x layers,"F=1408,L=2","F=5632,L=8",650997952.0,6540411328.0,200000000000.0,-96.729794336,False,,"best under F<=4x,L<=4x; reaches 3.3% of target"
+Large,C_target_multi,D (with F=ff_mult*D),352,6657.423957171142,650997952.0,200709140699.92822,200000000000.0,0.35457034996411135,False,18.91313624196347,target needs D~6657 (18.9x); params ~1627M
