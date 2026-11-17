@@ -1,0 +1,52 @@
+{
+  "group": "two_hetero",
+  "strategy": "oracle_action_agreement_v2",
+  "seed": 42,
+  "n_tasks": 2498,
+  "n_ok": 2498,
+  "n_exception": 0,
+  "sr": 0.6032826261008807,
+  "osr": 0.6084867894315452,
+  "ne_mean_m": 51.941842980763795,
+  "ne_p50_m": 19.391101872381682,
+  "ne_p95_m": 218.93592076435476,
+  "spl_mean": 0.5282025906010794,
+  "steps_mean": 71.38350680544436,
+  "e2e_mean_ms": 72.87256738735908,
+  "e2e_p50_ms": 72.27106388976306,
+  "e2e_p95_ms": 106.5202277751432,
+  "e2e_p99_ms": 116.32465346668673,
+  "inf_mean_ms": 4.5271798650156025,
+  "inf_p50_ms": 4.6,
+  "inf_p95_ms": 7.428571428571429,
+  "comm_mean_ms": 62.895872514343495,
+  "comm_p50_ms": 62.51120979593361,
+  "comm_p95_ms": 96.71930809985545,
+  "encode_mean_ms": 5.449515008,
+  "inf_share_mean": 0.06833384723296096,
+  "model_step_share": {
+    "transformer_m": 0.4170349267592364,
+    "small": 0.5829650732407636
+  },
+  "node_step_share": {
+    "G2": 0.4164180443706678,
+    "G1": 0.5756466049036542,
+    "G3": 0.007318468337109401,
+    "G4": 0.0006168823885686085
+  },
+  "failure_counts": {
+    "collision": 1,
+    "never_stop": 230,
+    "out_of_bounds": 367,
+    "premature_stop": 380,
+    "reached_but_not_stopped": 13,
+    "success": 1507
+  },
+  "oracle_version": "v2_action_agreement",
+  "oracle_agree_rate": 0.4712757127795599,
+  "exact_agreement_rate": 0.4712757127795599,
+  "fallback_rate": 0.5287242872204401,
+  "tie_break_rate": 1.0,
+  "mean_exact_agreement_candidates": 4.584754032167613,
+  "mean_available_candidates": 9.976552861212678
+}

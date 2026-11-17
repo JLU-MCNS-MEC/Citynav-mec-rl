@@ -54,6 +54,12 @@ from run_closed_loop import (AGREE_M, BEL, CAL, HISTORY_LEN, TARGET_HALF_M,  # n
                              pool_history_from_current)
 from v5fix_contract import EMPTY_BELIEF, EMPTY_MATCH  # noqa: E402
 from oracle_teacher import TeacherOracle  # noqa: E402
+from oracle_selection import (Candidate,  # noqa: E402
+                              select_oracle_action_agreement)
+
+ORACLE_V1 = "oracle"                       # historical E2E tie-break version
+ORACLE_V2 = "oracle_action_agreement_v2"   # action-agreement-only version
+ORACLE_STRATEGIES = (ORACLE_V1, ORACLE_V2)
 
 
 def load_models(group: str, device: str) -> dict[str, torch.nn.Module]:
@@ -93,14 +99,46 @@ def choose_node(nodes, pos, strategy, rng, enc_ms, oracle, info, yaw, target,
     avail = P.available_nodes(nodes, pos)
     metrics = {id(n): P.node_metrics(n, pos, enc_ms) for n in avail}
 
-    if strategy != "oracle":
+    if strategy not in ORACLE_STRATEGIES:
         node = P.select_node(nodes, pos, strategy, rng, enc_ms=enc_ms)
         m = P.node_metrics(node, pos, enc_ms)
         with torch.no_grad():
             logits = models[node["model_type"]](batch)[0]
         return node, m, int(logits.argmax().item()), {}
 
-    # ---- privileged Candidate Oracle (v8.2 Stage-2k semantics) ----
+    if strategy == ORACLE_V2:
+        # ---- Oracle v2: action agreement only, no latency/distance/quality ----
+        a_star = oracle.action(info, pos, yaw, target)
+        probs_by_type = {}
+        for mt in {n["model_type"] for n in avail}:
+            with torch.no_grad():
+                logits = models[mt](batch)[0].float()
+            probs_by_type[mt] = torch.softmax(logits, dim=-1).cpu().numpy()
+        cands = [Candidate(n, probs_by_type[n["model_type"]])
+                 for n in avail]
+        sel = select_oracle_action_agreement(cands, a_star)
+        node = sel["node"]
+        m = metrics[id(node)]
+        extra = {
+            "teacher_action": a_star,
+            "selected_node": node["gbs_id"],
+            "selected_model": node["model_type"],
+            "selected_action": sel["selected_action"],
+            "selected_teacher_action_probability":
+                sel["selected_teacher_action_probability"],
+            "selected_agreement": sel["selected_agreement"],
+            "available_candidate_count": sel["available_candidate_count"],
+            "exact_agreement_candidate_count":
+                sel["exact_agreement_candidate_count"],
+            "selected_node_compute_tflops": node["compute_tflops"],
+            "selected_node_comm_ms": m["comm_ms"],
+            "selected_node_inf_ms": m["inf_ms"],
+            "selected_node_e2e_ms": m["e2e_ms"],
+            "tie_break_used": sel["tie_break_used"],
+        }
+        return node, m, sel["selected_action"], extra
+
+    # ---- privileged Candidate Oracle v1 (E2E tie-break; historical) ----
     a_star = oracle.action(info, pos, yaw, target)
     logits_by_type = {}
     for mt in {n["model_type"] for n in avail}:
@@ -274,9 +312,15 @@ def episode(task, nodes, group, strategy, models, enc4, matcher_enc, rasters,
         "spl": spl, "steps_forward": n_forward,
         "collision": collision, "out_of_bounds": out_of_bounds,
         "e2e_mean_ms": float(e2e.mean()) if len(e2e) else None,
+        "e2e_p50_ms": float(np.percentile(e2e, 50)) if len(e2e) else None,
         "e2e_p95_ms": float(np.percentile(e2e, 95)) if len(e2e) else None,
+        "e2e_p99_ms": float(np.percentile(e2e, 99)) if len(e2e) else None,
         "inf_mean_ms": float(inf.mean()) if len(inf) else None,
+        "inf_p50_ms": float(np.percentile(inf, 50)) if len(inf) else None,
+        "inf_p95_ms": float(np.percentile(inf, 95)) if len(inf) else None,
         "comm_mean_ms": float(comm.mean()) if len(comm) else None,
+        "comm_p50_ms": float(np.percentile(comm, 50)) if len(comm) else None,
+        "comm_p95_ms": float(np.percentile(comm, 95)) if len(comm) else None,
         "encode_mean_ms": float(enc.mean()) if len(enc) else None,
         "inf_share": float((inf / e2e).mean()) if len(e2e) else None,
         "model_step_share": {k: v / len(steps) for k, v in model_share.items()}
@@ -288,7 +332,25 @@ def episode(task, nodes, group, strategy, models, enc4, matcher_enc, rasters,
                           for a in range(4)},
         "oracle_agree_rate": (float(np.mean([bool(s.get("oracle_agree"))
                                              for s in steps]))
-                              if strategy == "oracle" and steps else None),
+                              if strategy == ORACLE_V1 and steps else
+                              (float(np.mean([bool(s.get("selected_agreement"))
+                                              for s in steps]))
+                               if strategy == ORACLE_V2 and steps else None)),
+        "exact_agreement_rate": (float(np.mean(
+            [bool(s.get("selected_agreement")) for s in steps]))
+            if strategy == ORACLE_V2 and steps else None),
+        "fallback_rate": (float(np.mean(
+            [s.get("exact_agreement_candidate_count", 0) == 0
+             for s in steps])) if strategy == ORACLE_V2 and steps else None),
+        "tie_break_rate": (float(np.mean(
+            [bool(s.get("tie_break_used")) for s in steps]))
+            if strategy == ORACLE_V2 and steps else None),
+        "mean_exact_agreement_candidates": (float(np.mean(
+            [s.get("exact_agreement_candidate_count", 0) for s in steps]))
+            if strategy == ORACLE_V2 and steps else None),
+        "mean_available_candidates": (float(np.mean(
+            [s.get("available_candidate_count", 0) for s in steps]))
+            if strategy == ORACLE_V2 and steps else None),
         "trajectory": steps,
         "execution_status": "ok", "exception": "",
     }
@@ -313,6 +375,7 @@ def summarize(out: Path, group: str, strategy: str, seed: int, n_tasks: int):
     inf = np.asarray([r["inf_mean_ms"] for r in ok], np.float64)
     comm = np.asarray([r["comm_mean_ms"] for r in ok], np.float64)
     enc = np.asarray([r["encode_mean_ms"] for r in ok], np.float64)
+    ne = np.asarray([r["final_dist"] for r in ok], np.float64)
     model_steps = Counter()
     node_steps = Counter()
     total_steps = 0
@@ -327,7 +390,9 @@ def summarize(out: Path, group: str, strategy: str, seed: int, n_tasks: int):
         "n_tasks": n_tasks, "n_ok": len(ok), "n_exception": len(exc),
         "sr": float(np.mean([r["success"] for r in ok])),
         "osr": float(np.mean([r["osr"] for r in ok])),
-        "ne_mean_m": float(np.mean([r["final_dist"] for r in ok])),
+        "ne_mean_m": float(np.mean(ne)),
+        "ne_p50_m": float(np.percentile(ne, 50)),
+        "ne_p95_m": float(np.percentile(ne, 95)),
         "spl_mean": float(np.mean([r.get("spl", 0.0) for r in ok])),
         "steps_mean": float(np.mean([r["steps"] for r in ok])),
         "e2e_mean_ms": float(e2e.mean()),
@@ -335,7 +400,11 @@ def summarize(out: Path, group: str, strategy: str, seed: int, n_tasks: int):
         "e2e_p95_ms": float(np.percentile(e2e, 95)),
         "e2e_p99_ms": float(np.percentile(e2e, 99)),
         "inf_mean_ms": float(inf.mean()),
+        "inf_p50_ms": float(np.percentile(inf, 50)),
+        "inf_p95_ms": float(np.percentile(inf, 95)),
         "comm_mean_ms": float(comm.mean()),
+        "comm_p50_ms": float(np.percentile(comm, 50)),
+        "comm_p95_ms": float(np.percentile(comm, 95)),
         "encode_mean_ms": float(enc.mean()),
         "inf_share_mean": float((inf / e2e).mean()),
         "model_step_share": {k: v / max(total_steps, 1)
@@ -344,12 +413,29 @@ def summarize(out: Path, group: str, strategy: str, seed: int, n_tasks: int):
                             for k, v in node_steps.items()},
         "failure_counts": {k: sum(1 for r in ok if r["failure"] == k)
                            for k in sorted({r["failure"] for r in ok})},
+        "oracle_version": ("v2_action_agreement" if strategy == ORACLE_V2
+                           else "v1_e2e_tiebreak"
+                           if strategy == ORACLE_V1 else None),
         "oracle_agree_rate": (float(
             sum((r["oracle_agree_rate"] or 0.0) * r["steps"] for r in ok)
             / max(sum(r["steps"] for r in ok
                       if r.get("oracle_agree_rate") is not None), 1))
-            if strategy == "oracle" else None),
+            if strategy in ORACLE_STRATEGIES else None),
     }
+    if strategy == ORACLE_V2:
+        def wmean(key):
+            num = sum((r.get(key) or 0.0) * r["steps"] for r in ok)
+            den = max(sum(r["steps"] for r in ok
+                          if r.get(key) is not None), 1)
+            return float(num / den)
+        summary.update({
+            "exact_agreement_rate": wmean("exact_agreement_rate"),
+            "fallback_rate": wmean("fallback_rate"),
+            "tie_break_rate": wmean("tie_break_rate"),
+            "mean_exact_agreement_candidates":
+                wmean("mean_exact_agreement_candidates"),
+            "mean_available_candidates": wmean("mean_available_candidates"),
+        })
     (out / "summary.json").write_text(json.dumps(summary, indent=2,
                                                  ensure_ascii=False))
     return summary
@@ -358,7 +444,9 @@ def summarize(out: Path, group: str, strategy: str, seed: int, n_tasks: int):
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--group", choices=P.GROUPS, required=True)
-    ap.add_argument("--strategy", choices=P.STRATEGIES, required=True)
+    ap.add_argument("--strategy",
+                    choices=tuple(P.STRATEGIES) + (ORACLE_V2,),
+                    required=True)
     ap.add_argument("--seed", type=int, default=P.EVAL_SEED)
     ap.add_argument("--out-dir", required=True)
     ap.add_argument("--step-cap", type=int, default=P.MAX_STEPS)
@@ -373,6 +461,8 @@ def main() -> int:
     (out / "episodes").mkdir(parents=True, exist_ok=True)
     shard_i, shard_n = (int(v) for v in a.shard.split("/"))
     part = out / f"journal.part{shard_i:02d}.jsonl"
+    steps_part = out / f"steps.part{shard_i:02d}.jsonl"
+    write_steps = a.strategy == ORACLE_V2
 
     tasks = P.eval_tasks(a.limit)
     tasks = [t for i, t in enumerate(tasks) if i % shard_n == shard_i]
@@ -396,9 +486,10 @@ def main() -> int:
     matcher_enc = matching.Encoder(device)
     rasters, cands = RasterStore(), CandidateStore()
     dep = P.deployment(a.group)
-    oracle = TeacherOracle() if a.strategy == "oracle" else None
+    oracle = TeacherOracle() if a.strategy in ORACLE_STRATEGIES else None
     started = time.time()
 
+    step_fh = steps_part.open("a", encoding="utf-8") if write_steps else None
     with part.open("a", encoding="utf-8") as jf:
         for i, task in enumerate(pending, 1):
             # per-episode RNG: sharding / resume cannot change random choices
@@ -422,11 +513,18 @@ def main() -> int:
             jf.write(json.dumps({k: v for k, v in rec.items()
                                  if k != "trajectory"}) + "\n")
             jf.flush()
+            if step_fh is not None:
+                for s in rec.get("trajectory", []):
+                    step_fh.write(json.dumps(
+                        {"episode_id": rec["episode_id"], **s}) + "\n")
+                step_fh.flush()
             if i % 25 == 0 or i == len(pending):
                 rate = i / max(time.time() - started, 1e-9)
                 print(f"  {i}/{len(pending)} | {rate:.2f} ep/s | "
                       f"eta {(len(pending)-i)/rate:.0f}s", flush=True)
 
+    if step_fh is not None:
+        step_fh.close()
     summary = summarize(out, a.group, a.strategy, a.seed, len(tasks))
     print("[done] " + json.dumps(summary, ensure_ascii=False), flush=True)
     return 0

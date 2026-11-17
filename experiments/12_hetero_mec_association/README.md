@@ -29,6 +29,10 @@ $PY experiments/12_hetero_mec_association/scripts/scheduler.py \
 # 5. tables, bar charts, MA100 curves, Pareto
 $PY experiments/12_hetero_mec_association/scripts/summarize.py
 
+# 6. Oracle v2 (action agreement only) re-evaluation, four groups
+bash experiments/12_hetero_mec_association/scripts/run_oracle_v2_all.sh
+$PY experiments/12_hetero_mec_association/scripts/analyze_oracle_v2.py
+
 # tests
 $PY -m pytest -q experiments/12_hetero_mec_association/tests
 ```

@@ -76,13 +76,40 @@ and therefore the trajectory.
 
 **Oracle upper bound.** At each step the teacher action `a*` is computed from
 the true state (Stage-03B direct teacher, with its acquisition/cruise deadband).
-Oracle picks the available node whose expert outputs exactly `a*` with the
-lowest instantaneous E2E; if none agrees, it picks the highest `P(a*)` (E2E
-tie-break). It bounds the action correctness achievable by *association* given
-the frozen expert pool and the teacher preference. It is not a strict SR upper
-bound (a non-agreeing action can still succeed) and not an E2E lower bound.
-It is non-deployable and lives in `oracle_teacher.py`, imported only under
-`--strategy oracle`.
+The original Stage-12 rule (`oracle_e2e_tiebreak_v1`, kept for history) picks an
+exact-agreement node with the lowest instantaneous E2E; if none agrees, it picks
+the highest `P(a*)` (E2E tie-break). It bounds the action correctness achievable
+by *association* given the frozen expert pool and the teacher preference. It is
+not a strict SR upper bound (a non-agreeing action can still succeed) and not an
+E2E lower bound. It is non-deployable and lives in `oracle_teacher.py`, imported
+only under `--strategy oracle`.
+
+### 6.1 Oracle v2 — action agreement only (2026-11-17 correction)
+
+The corrected rule (`oracle_action_agreement_v2`) removes every latency,
+distance and quality term from association:
+
+```
+agreement_i = int(argmax(P_i) == a*)
+score_i     = (agreement_i, P_i(a*))
+select argmax score_i; final ties by fixed node order G1 < G2 < ... < G10
+```
+
+No E2E, communication latency, inference latency, distance, Macro-F1/SR or RL
+signal is used for node selection. `selected_teacher_action_probability` and
+`selected_agreement` are only audit fields; the latency columns in the step
+journal are computed after selection and are never fed back.
+
+Per-step audit fields: `teacher_action`, `selected_node`, `selected_model`,
+`selected_action`, `selected_teacher_action_probability`, `selected_agreement`,
+`available_candidate_count`, `exact_agreement_candidate_count`,
+`selected_node_compute_tflops`, `selected_node_comm_ms`,
+`selected_node_inf_ms`, `selected_node_e2e_ms`, `tie_break_used`.
+
+v2 results are isolated under
+`results/oracle_action_agreement_v2/<group>/`; the v1 results remain under
+`results/baselines/<group>/oracle/seed42/`. The two versions must not be
+mixed as repeated measurements of the same rule.
 
 ## 7. RL
 

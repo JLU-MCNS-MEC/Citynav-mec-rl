@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## [0.15] - 2026-11-17
+### Features
+- Oracle v2 关联规则修正（`oracle_action_agreement_v2`）：新增纯函数 `scripts/oracle_selection.py`，只按 `(agreement, P_i(a*))` 选择，最终平局按固定节点编号 G1<G2<…；删除旧版两处 E2E tie-break（多专家一致时、无专家一致时）。
+- 四组 Val-Seen 2,498 完整重评（two_homo / two_hetero / five_homo / five_hetero），新结果独立保存于 `results/oracle_action_agreement_v2/`；旧版结果保留为 `oracle_e2e_tiebreak_v1`。
+- 新增逐步审计字段、`steps.part00.jsonl`、单元测试（9 项）、对比 CSV、4 张图与 `ORACLE_V2_REPORT.md`。
+### Design Rationale
+- 研究定义要求 Oracle 仅依据专家导航动作与教师参考动作的一致性；通信/计算/E2E/距离/质量先验/RL 均不得参与关联。两处 E2E tie-break 已全部移除。
+- 教师仍使用 Stage-03B Direct Teacher（真实位置/航向/目标/障碍图），未修改教师算法；实际动作仍来自所选 MEC 专家。
+- v1 与 v2 不可混为同一算法的重复实验，报告与 CSV 均显式区分版本。
+### Notes & Caveats
+- 去掉 E2E tie-break 后 SR/OSR/SPL/NE/成功数/failure taxonomy **逐任务完全不变**（two 组 1,507 成功、five 组 1,899 成功）；v1 的 tie-break 只改变选中的同动作节点，从未改变导航动作。
+- E2E 上升 +35.93 / +36.84 / +27.84 / +27.51 ms；通信上升 +34.91 / +34.87 / +24.45 / +24.40 ms；推理上升 +1.02 / +1.99 / +3.39 / +3.11 ms。
+- v2 SR 60.33%（two）/ 76.02%（five），质量上界不变；v2 是质量上界而非时延上界。逐 episode 与逐步原始文件保留在本地（约 1.1GB），未推送。
+
 ## [0.14] - 2026-11-17
 ### Features
 - Stage 12 异构算力 MEC 关联实验（`experiments/12_hetero_mec_association/`）：四组 10 节点部署（2 模型/5 模型 × 同构 10 TFLOPS / 异构 5-10-20-30 TFLOPS），16 个真实闭环 Baseline（random / max_rate / max_quality / oracle），PPO 与 DQN 各 4 组 × 2 种子，全部在 Val-Seen 2,498 任务上评测。

@@ -219,3 +219,28 @@ oracle 60.33%/76.02%（two/five）。节点位置与模型放置相同，算力�
 - 图：`results/analysis/bars_<group>.png`、`m100_<group>.png`、`pareto_sr_e2e.png`
 
 复现命令见 `README.md`；逐 episode 原始 journal 因体积较大不随仓库推送。
+
+## 10. Oracle 关联规则修正（v2，2026-11-17）
+
+原始 Oracle 在两处使用 E2E 作平局裁决，不符合“只依据专家动作与教师动作一致性”
+的研究定义。修正后的 `oracle_action_agreement_v2` 仅按
+`(agreement, P(a*))` 选择，并在最终平局时使用固定节点编号 G1 < G2 < ...；
+不再使用 E2E、通信时延、推理时延、距离、质量先验或 RL。
+
+四组重评（Val-Seen 2,498，seed 42）结果：
+
+| Group | v1 SR | v2 SR | v1 E2E | v2 E2E | ΔE2E |
+|---|---:|---:|---:|---:|---:|
+| two_homo | 60.33% | 60.33% | 36.65 | 72.58 | +35.93 |
+| two_hetero | 60.33% | 60.33% | 36.03 | 72.87 | +36.84 |
+| five_homo | 76.02% | 76.02% | 41.84 | 69.68 | +27.84 |
+| five_hetero | 76.02% | 76.02% | 41.03 | 68.54 | +27.51 |
+
+关键结论：**去掉 E2E tie-break 后 SR、OSR、SPL、NE、成功数与 failure
+taxonomy 逐任务完全不变**（1,507 / 1,899 成功）；v1 的 tie-break 只在
+“动作已与教师一致”的节点中挑更近者，从未改变导航动作，仅降低了通信时延。
+v2 的 E2E 上升 27.5–36.8 ms，通信上升 24.4–34.9 ms；它才是纯关联定义下的
+质量上界，v1 应视为“带时延 tie-break 的特权参照”。
+
+完整定义、审计字段、八项分析、图与逐任务结果见
+`results/oracle_action_agreement_v2/ORACLE_V2_REPORT.md`。

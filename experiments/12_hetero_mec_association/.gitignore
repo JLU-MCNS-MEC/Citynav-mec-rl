@@ -8,7 +8,13 @@ results/scheduler/*.out
 results/scheduler/seen.json
 results/results_smoke/
 results/smoke_rl/
+results/oracle_v2_smoke/
 results/rl/**/checkpoint.pt
 results/rl/**/best.pt
+
+# Oracle v2 per-step and per-episode raw files (large); journals and summaries
+# are committed, episodes/steps stay local.
+results/oracle_action_agreement_v2/*/episodes/
+results/oracle_action_agreement_v2/*/steps.part*.jsonl
 
 # summary tables, figures, protocol JSON and reports are committed
