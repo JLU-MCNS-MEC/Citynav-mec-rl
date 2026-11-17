@@ -1,0 +1,18 @@
+# Checkpoints are server-only (never pushed).
+checkpoints/
+_dryrun/
+_dryrun2/
+_evalsmoke*/
+_dryrun*/
+runs/
+logs/
+status.json
+smoke_test/checkpoints/
+smoke_test_maskfix/checkpoints/
+
+# Raw closed-loop artifacts (large); CSV/summary/figures are kept.
+results/*/closed_loop/episodes/
+results/*/closed_loop/journal*.jsonl
+
+__pycache__/
+*.pyc

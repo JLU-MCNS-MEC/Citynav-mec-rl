@@ -1,0 +1,78 @@
+{
+  "model": "Transformer-S",
+  "key": "ts",
+  "params": 211181060,
+  "batch": 128,
+  "accum": 1,
+  "micro_steps": 100,
+  "updates": 100,
+  "requested_steps": 100,
+  "loss_first": 1.40411376953125,
+  "loss_last10_mean": 0.8365554809570312,
+  "loss_min": 0.48989105224609375,
+  "loss_max": 4.515909671783447,
+  "macro_f1": 0.1591598094413166,
+  "val_loss": 1.7255245878857004,
+  "grad_norm_mean": 5.225932324826718,
+  "grad_norm_max": 41.62070846557617,
+  "grad_norm_min": 0.47544577717781067,
+  "step_ms_mean": 147.34196563251317,
+  "step_ms_median": 146.18966856505722,
+  "peak_mem_gb": 10.082923008,
+  "nan_inf": 0,
+  "checkpoint": "experiments/14_mec_expert_retraining/smoke_test/checkpoints/ts.pt",
+  "checkpoint_mb": 2534.294129,
+  "resume_ok": true,
+  "input_shapes": {
+    "target_emb": [
+      128,
+      512
+    ],
+    "history_vis": [
+      128,
+      16,
+      2048
+    ],
+    "history_pose": [
+      128,
+      16,
+      3
+    ],
+    "history_action": [
+      128,
+      16,
+      4
+    ],
+    "history_mask": [
+      128,
+      16
+    ],
+    "belief": [
+      128,
+      10
+    ],
+    "match": [
+      128,
+      5
+    ],
+    "states": [
+      128,
+      3
+    ],
+    "landmarks": [
+      128,
+      8,
+      3
+    ],
+    "label": [
+      128
+    ],
+    "current": [
+      128,
+      49,
+      2048
+    ]
+  },
+  "tokens": 104,
+  "elapsed_s": 32.03
+}

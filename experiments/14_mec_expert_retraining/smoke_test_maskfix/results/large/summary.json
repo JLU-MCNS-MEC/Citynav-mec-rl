@@ -1,0 +1,78 @@
+{
+  "model": "Large",
+  "key": "large",
+  "params": 1034877444,
+  "batch": 64,
+  "accum": 2,
+  "micro_steps": 100,
+  "updates": 50,
+  "requested_steps": 100,
+  "loss_first": 1.05194091796875,
+  "loss_last10_mean": 0.687408447265625,
+  "loss_min": 0.4449920654296875,
+  "loss_max": 7.92654275894165,
+  "macro_f1": 0.1591598094413166,
+  "val_loss": 1.725167822959008,
+  "grad_norm_mean": 14.694807087183,
+  "grad_norm_max": 60.05542755126953,
+  "grad_norm_min": 0.5206007361412048,
+  "step_ms_mean": 271.5689739398658,
+  "step_ms_median": 254.99392847996205,
+  "peak_mem_gb": 28.288650752,
+  "nan_inf": 0,
+  "checkpoint": "smoke_test_maskfix/checkpoints/large.pt",
+  "checkpoint_mb": 12418.724831,
+  "resume_ok": true,
+  "input_shapes": {
+    "target_emb": [
+      64,
+      512
+    ],
+    "history_vis": [
+      64,
+      16,
+      2048
+    ],
+    "history_pose": [
+      64,
+      16,
+      3
+    ],
+    "history_action": [
+      64,
+      16,
+      4
+    ],
+    "history_mask": [
+      64,
+      16
+    ],
+    "belief": [
+      64,
+      10
+    ],
+    "match": [
+      64,
+      5
+    ],
+    "states": [
+      64,
+      3
+    ],
+    "landmarks": [
+      64,
+      8,
+      3
+    ],
+    "label": [
+      64
+    ],
+    "current": [
+      64,
+      49,
+      2048
+    ]
+  },
+  "tokens": 104,
+  "elapsed_s": 150.1
+}
