@@ -13,6 +13,7 @@ import os
 import re
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 import numpy as np
@@ -194,6 +195,108 @@ def latest_update_line(key: str) -> dict | None:
     return last
 
 
+def _bold_best(vals, higher: bool) -> list[str]:
+    present = [v for v in vals if v is not None]
+    if len(present) < 2:
+        return ["—" if v is None else f"{v:.4f}" for v in vals]
+    best = max(present) if higher else min(present)
+    return ["—" if v is None else
+            (f"**{v:.4f}**" if v == best else f"{v:.4f}") for v in vals]
+
+
+def comparison_report(states: list[dict]) -> None:
+    """Cross-model comparison: closed loop, training summary, per-epoch curves."""
+    md = ["# Stage 14 五模型对比", "",
+          f"更新时间：{time.strftime('%Y-%m-%d %H:%M:%S')}", "",
+          "五种模型使用相同 seed、相同训练 episode 顺序、相同 2% 独立 Dev 集，",
+          "因此**相同 epoch 编号可直接横向对比**。未完成项显示 Pending / —。", ""]
+
+    # 1) closed-loop navigation comparison
+    md += ["## 1. Val-Seen 2498 闭环导航指标", "",
+           "| 模型 | SR | OSR | SPL | NE (m) | nDTW | 平均步数 | Stop成功率 | 主要失败模式 |",
+           "|---|---:|---:|---:|---:|---:|---:|---:|---|"]
+    for s in states:
+        sm = s["summary"]
+        if sm:
+            fails = sorted(((k, v) for k, v in
+                            (sm.get("failure_taxonomy") or {}).items()
+                            if k != "success"), key=lambda x: -x[1])[:2]
+            ftxt = "；".join(f"{k} {v}" for k, v in fails) or "—"
+            md.append(
+                f"| {s['name']} | {sm['sr']:.4f} | {sm['osr']:.4f} | "
+                f"{sm['spl']:.4f} | {sm['ne_m']:.2f} | "
+                f"{sm['ndtw']:.4f} | {sm['mean_steps']:.1f} | "
+                f"{sm['stop_success_rate']:.4f} | {ftxt} |")
+        else:
+            md.append(f"| {s['name']} | Pending | Pending | Pending | Pending | "
+                      f"Pending | Pending | Pending | — |")
+    md += ["", "SR 与 OSR 以 20 m 半径为成功；NE 越小越好；SPL/nDTW 越大越好。", ""]
+
+    # 2) capacity + training summary
+    md += ["## 2. 容量与训练结果", "",
+           "| 模型 | 目标FLOPs | 参数量 | Best Epoch | Best Dev F1 | Epochs | "
+           "Train Time | 峰值显存 |", "|---|---:|---:|---:|---:|---:|---:|---:|"]
+    for s in states:
+        bx = "Pending" if s["best_epoch"] is None else str(s["best_epoch"] + 1)
+        md.append(
+            f"| {s['name']} | {s['target']} G | {s['params']/1e6:.1f} M | {bx} | "
+            f"{fmt(s['best_f1'])} | {len(s['hist'])} | "
+            f"{fmt(s['train_h'], 2, ' h')} | {fmt(s['peak_gb'], 2, ' GB')} |")
+    md += [""]
+
+    max_ep = max((len(s["hist"]) for s in states), default=0)
+    if max_ep:
+        # 3) per-epoch Dev Macro-F1
+        md += ["## 3. 每个 Epoch 的 Dev Macro-F1（跨模型同 epoch 对比）", "",
+               "| Epoch | " + " | ".join(s["name"] for s in states) + " |",
+               "|---:|" + "---:|" * len(states)]
+        for i in range(max_ep):
+            vals = [s["hist"][i]["dev"]["macro_f1"] if i < len(s["hist"]) else None
+                    for s in states]
+            md.append(f"| {i+1} | " + " | ".join(_bold_best(vals, True)) + " |")
+        md += [""]
+        # 4) per-epoch Train Loss
+        md += ["## 4. 每个 Epoch 的 Train Loss（跨模型同 epoch 对比）", "",
+               "| Epoch | " + " | ".join(s["name"] for s in states) + " |",
+               "|---:|" + "---:|" * len(states)]
+        for i in range(max_ep):
+            vals = [s["hist"][i]["train_loss"] if i < len(s["hist"]) else None
+                    for s in states]
+            md.append(f"| {i+1} | " + " | ".join(_bold_best(vals, False)) + " |")
+        md += [""]
+        # 5) per-epoch Dev Loss
+        md += ["## 5. 每个 Epoch 的 Dev Loss（跨模型同 epoch 对比）", "",
+               "| Epoch | " + " | ".join(s["name"] for s in states) + " |",
+               "|---:|" + "---:|" * len(states)]
+        for i in range(max_ep):
+            vals = [s["hist"][i]["dev"]["loss"] if i < len(s["hist"]) else None
+                    for s in states]
+            md.append(f"| {i+1} | " + " | ".join(_bold_best(vals, False)) + " |")
+        md += [""]
+
+    md += ["## 说明", "",
+           "- 同 epoch 编号对比是公平的：所有模型共享同一数据顺序与同一 Dev 集。",
+           "- 训练 loss 只反映拟合能力，最终效果以闭环 SR/OSR/SPL/NE/nDTW 为准。",
+           "- 新模型闭环完成后，第 1 节会自动加入该模型，便于直接横向比较。", ""]
+    text = "\n".join(md)
+    (HERE / "MODEL_COMPARISON.md").write_text(text, encoding="utf-8")
+    (HERE / "results").mkdir(parents=True, exist_ok=True)
+    (HERE / "results/MODEL_COMPARISON.md").write_text(text, encoding="utf-8")
+
+    # long-format CSV for analysis
+    rows = ["model,epoch,train_loss,train_acc,dev_loss,dev_acc,dev_macro_f1,"
+            "seconds,peak_mem_gb"]
+    for s in states:
+        for h in s["hist"]:
+            d = h["dev"]
+            rows.append(f"{s['name']},{h['epoch']+1},{h['train_loss']:.6f},"
+                        f"{h['train_acc']:.6f},{d['loss']:.6f},{d['accuracy']:.6f},"
+                        f"{d['macro_f1']:.6f},{h.get('seconds', 0)},"
+                        f"{h.get('peak_mem_gb', 0):.4f}")
+    (HERE / "results/epoch_comparison.csv").write_text("\n".join(rows) + "\n",
+                                                       encoding="utf-8")
+
+
 def main() -> int:
     # The eval venv has no matplotlib; re-exec under the training env.
     try:
@@ -205,6 +308,7 @@ def main() -> int:
             os.execv(alt, [alt, __file__] + sys.argv[1:])
     states = [model_state(k) for k in KEYS]
     figures(states)
+    comparison_report(states)
     cur = None
     for s in states:                     # live process takes precedence
         if training_running(s["key"]):
@@ -249,7 +353,7 @@ def main() -> int:
         sm = s["summary"]
         lines.append(
             f"| {s['name']} | {s['target']} G | {s['params']/1e6:.1f} M | "
-            f"{'Pending' if s['best_epoch'] is None else s['best_epoch']} | "
+            f"{'Pending' if s['best_epoch'] is None else s['best_epoch'] + 1} | "
             f"{fmt(s['train_h'], 2, ' h')} | {fmt(s['best_f1'])} | "
             f"{fmt(sm['sr'] if sm else None)} | "
             f"{fmt(sm['osr'] if sm else None)} | "
@@ -312,7 +416,8 @@ def main() -> int:
               "- `figures/sr_by_model.png`（已完成的 Val-Seen SR）",
               "- `figures/loss_curves.png`（Train/Dev Loss）",
               "- `figures/dev_macro_f1.png`（Dev Macro-F1）",
-              "- `figures/compute_vs_params.png`（计算量 vs 参数量）", "",
+              "- `figures/compute_vs_params.png`（计算量 vs 参数量）",
+              "- `MODEL_COMPARISON.md`（跨模型同 epoch 对比、闭环指标对比）", "",
               "未完成模型保持 Pending，未填入任何估计 SR。", ""]
     text = "\n".join(lines)
     (HERE / "PROGRESS_REPORT.md").write_text(text, encoding="utf-8")
