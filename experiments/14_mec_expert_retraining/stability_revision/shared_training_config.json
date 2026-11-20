@@ -1,0 +1,71 @@
+{
+  "stage": "14-R2",
+  "purpose": "Unified stability revision for the three Stage-13-R2 Transformers (Transformer-S, Transformer-M, Large). Small and Medium are frozen and are NOT retrained.",
+  "applies_to": ["ts", "tm", "large"],
+  "frozen_models": ["small", "medium"],
+  "architecture_unchanged": {
+    "ts":    {"hidden": 1408, "layers": 8,  "heads": 8,  "ffn": 5376,  "tokens": 104},
+    "tm":    {"hidden": 2048, "layers": 10, "heads": 16, "ffn": 7424,  "tokens": 104},
+    "large": {"hidden": 2560, "layers": 12, "heads": 16, "ffn": 10240, "tokens": 104}
+  },
+  "optimizer": "AdamW",
+  "max_lr": 5e-05,
+  "lr_policy": "identical max_lr for all three models; no per-model LR tuning",
+  "weight_decay": 0.01,
+  "scheduler": "OneCycleLR",
+  "warmup_ratio": 0.10,
+  "anneal": "cosine",
+  "grad_clip": 1.0,
+  "precision": "bf16-autocast",
+  "max_epochs": 20,
+  "early_stopping": {"metric": "dev_macro_f1", "patience": 10},
+  "best_checkpoint_selection": "independent Dev Macro-F1 (2% train-pool episode hold-out)",
+  "loss": "cross_entropy, 4-class, no class weight, no label smoothing",
+  "class_handling": "unchanged: no class weight, no weighted sampling",
+  "batch": {
+    "ts":    {"batch": 128, "accum": 1, "effective": 128},
+    "tm":    {"batch": 128, "accum": 1, "effective": 128},
+    "large": {"batch": 64,  "accum": 2, "effective": 128}
+  },
+  "shared_data": {
+    "source": "11B pure four-action teacher pool (train_seen_memmap)",
+    "seed": 42,
+    "dev_frac": 0.02,
+    "blank_frac": 0.05,
+    "episode_order": "seed*1000 + epoch",
+    "blank_mask": "seed*10000 + epoch"
+  },
+  "shared_normalization": {
+    "file": "normalization_statistics.json",
+    "fit_split": "train only (dev holdout excluded)",
+    "standardized": ["belief", "match", "history_pose"],
+    "untouched": ["current", "history_vis", "target_emb", "landmarks", "relation", "states"],
+    "note": "landmarks/relation keep V5FIX dist/50 + bearing/pi; states stay in world coordinates"
+  },
+  "shared_initialization": {
+    "token_position_type_params": "Normal(0, 0.02)",
+    "linear": "PyTorch default xavier_uniform",
+    "layernorm": "PyTorch default weight=1, bias=0",
+    "embedding": "Normal(0, 0.02)",
+    "pre_ln": true,
+    "not_added": ["QK-Norm", "LayerScale", "DeepNorm"]
+  },
+  "stability_protection": {
+    "skip_if_nonfinite_or_gn_above": 1e4,
+    "abort_after_consecutive_skips": 10,
+    "trace_file": "grad_trace.jsonl",
+    "attention_diagnostics_every_updates": 500,
+    "weight_norm_every_updates": 1
+  },
+  "stability_phase": {
+    "max_epochs_per_model": 2,
+    "order": ["ts", "tm", "large"],
+    "one_model_at_a_time": true,
+    "full_training_allowed": false,
+    "val_seen_allowed": false
+  },
+  "notes": [
+    "Original Transformer-S checkpoints (best.pt = epoch 0, last.pt = epoch 3) are kept untouched for historical comparison and are NOT used to initialize the new runs.",
+    "All new artifacts live under stability_revision/; checkpoints/ is never written."
+  ]
+}
