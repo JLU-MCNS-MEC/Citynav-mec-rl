@@ -278,14 +278,41 @@ state token 降低约 **827 倍**；所有 token 的绝对值都在 ~1–80 范�
 - 若后续完整训练中 `score_absmax` 进入 1e4 以上或 `entropy < 0.2` 且 grad norm
   同步上升，应视为新的失稳信号并暂停。
 
-### 7.4 后续行动（按用户指令）
+### 7.4 后续行动与最终结果
 
-- Transformer-S 已从 epoch 1 的 `last.pt` 续训到完整 20 epoch：
-  - 恢复 model / optimizer / RNG / best（0.6249）/ history；
-  - 2 epoch 的原始 checkpoint 已备份到 `runs/ts/seed42/checkpoints_stability_2ep/`；
-  - 剩余 18 epoch 使用新的 OneCycleLR（warmup 10%），逐 epoch 记录并与 TM/Large 对比。
-- Transformer-M 与 Large 的完整训练**尚未启动**，等待进一步确认。
-- Val-Seen 闭环评测**尚未运行**。
+三种 Transformer 均已完成 2-epoch 稳定性验证，并按用户指令从各自的 2-epoch
+checkpoint 续训（恢复 model / optimizer / RNG / best / history，2-epoch checkpoint
+备份在 `runs/<model>/seed42/checkpoints_stability_2ep/`）：
+
+| 模型 | 续训结果 | best Dev Macro-F1 | 结束方式 |
+|---|---|---:|---|
+| **Transformer-S** | 20 epoch 完成 | **0.6500**（epoch 16） | 跑满 |
+| **Transformer-M** | 12 epoch | 0.6177（epoch 1） | epoch 11 早停 |
+| **Large** | 12 epoch | 0.6105（epoch 1） | epoch 11 早停 |
+
+- TS 在续训后期（epoch 13–16）恢复并显著超过 2-epoch best（0.6249 → 0.6500）；
+- TM 与 Large 的续训轨迹高度一致：LR 重新 warmup 后注意力持续集中
+  （entropy 0.04–0.10），Dev F1 在 0.56–0.60 波动，10 轮无改善后早停；
+- 三模型全程 `skipped_updates=0`、`nan_losses=0`；
+- Large 曾因驱动层 Xid 8（GPU 看门狗复位）中断一次，GPU 恢复后从 2-epoch
+  checkpoint 重试成功；该事件与模型/数据无关。
+
+### 7.5 Val-Seen 闭环评测结果（2498 任务，step-cap 200，归一化与训练一致）
+
+| 模型 | SR | OSR | SPL | NE (m) | stop_rate | stop_precision |
+|---|---:|---:|---:|---:|---:|---:|
+| Small | 0.5392 | 0.5460 | 0.4773 | 75.87 | 0.6701 | 0.8047 |
+| Medium | 0.3195 | 0.3259 | 0.3184 | 91.20 | 0.3823 | 0.8356 |
+| **Transformer-S** | **0.6301** | **0.6397** | **0.5450** | **64.23** | **0.7182** | **0.8774** |
+| Transformer-M | 0.4251 | 0.4616 | 0.3894 | 90.04 | 0.4984 | 0.8530 |
+| Large | 0.3351 | 0.3651 | 0.3254 | 94.93 | 0.3923 | 0.8541 |
+
+SR 排名：TS 63.0% > Small 53.9% > TM 42.5% > Large 33.5% > Medium 32.0%。
+Large 的主要失败模式为 out_of_bounds（1437 条，57.5%），与其训练后期注意力
+高度集中一致。
+
+所有产物已推送 GitHub；权重本体（30 GB+）超出 GitHub 限制，见
+`CHECKPOINTS_SHA256.txt`。
 
 ---
 
