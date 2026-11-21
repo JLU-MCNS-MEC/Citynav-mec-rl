@@ -177,6 +177,7 @@ class EpisodeEnv16:
             np.linalg.norm(self.gdesc, keepdims=True), 1e-8)
         self.hist = [deque(maxlen=HISTORY_LEN) for _ in range(3)]
         self.step_idx = 0
+        self.n_forward = 0
         self.episode_e2e = []
         self.min_dist = float(np.linalg.norm(self.pos - self.target))
         self.done = False
@@ -282,6 +283,7 @@ class EpisodeEnv16:
                 self.done, self.failure, self.oob = True, "out_of_bounds", True
             else:
                 self.pos = nxt
+                self.n_forward += 1
         elif a == 2:
             self.yaw = (self.yaw + TURN_RAD + math.pi) % (2 * math.pi) - math.pi
         elif a == 3:
