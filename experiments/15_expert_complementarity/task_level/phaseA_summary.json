@@ -1,0 +1,59 @@
+{
+  "n_tasks": 2498,
+  "independent_sr": {
+    "Small": 0.5392313851080864,
+    "Medium": 0.31945556445156126,
+    "TS": 0.6301040832666133,
+    "TM": 0.42514011208967173,
+    "Large": 0.33506805444355486
+  },
+  "ts_failures": 924,
+  "rescue_on_ts_failures": {
+    "Small": 391,
+    "Medium": 66,
+    "TM": 110,
+    "Large": 72
+  },
+  "all_success": 386,
+  "all_fail": 438,
+  "oracle_union_sr": 0.8246597277822257,
+  "best_subset_by_size": [
+    {
+      "subset_size": 1,
+      "combo": "TS",
+      "coverage": 0.6301040832666133,
+      "success_tasks": 1574
+    },
+    {
+      "subset_size": 2,
+      "combo": "Small+TS",
+      "coverage": 0.7866293034427542,
+      "success_tasks": 1965
+    },
+    {
+      "subset_size": 3,
+      "combo": "Small+TS+TM",
+      "coverage": 0.8098478783026422,
+      "success_tasks": 2023
+    },
+    {
+      "subset_size": 4,
+      "combo": "Small+Medium+TS+TM",
+      "coverage": 0.8198558847077662,
+      "success_tasks": 2048
+    },
+    {
+      "subset_size": 5,
+      "combo": "Small+Medium+TS+TM+Large",
+      "coverage": 0.8246597277822257,
+      "success_tasks": 2060
+    }
+  ],
+  "unique_success": {
+    "Small": 307,
+    "Medium": 21,
+    "TS": 245,
+    "TM": 34,
+    "Large": 12
+  }
+}
