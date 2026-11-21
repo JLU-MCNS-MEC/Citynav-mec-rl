@@ -1,0 +1,337 @@
+{
+  "small": {
+    "model": "Small",
+    "checkpoint": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/14_mec_expert_retraining/checkpoints/Small/best.pt",
+    "checkpoint_sha256": "16036e27f8dff4b21a51e76dd0151ed2c3bfff0bc09a56e7be1b0052a4c030c3",
+    "params": 61121028,
+    "flops": 4954039296,
+    "gflops": 4.954039296,
+    "stage13_r2_target_gflops": 4.954039296,
+    "relative_error_vs_target": 0.0,
+    "mec_tflops": 10.0,
+    "theoretical_infer_ms": 0.4954039296,
+    "output_shape": [
+      1,
+      4
+    ],
+    "counter": "forward hooks on Linear/MultiheadAttention, 2x MACs; LayerNorm/GELU/Softmax not counted",
+    "top_modules": [
+      [
+        "token_mlp.0",
+        2466250752
+      ],
+      [
+        "token_mlp.2",
+        2466250752
+      ],
+      [
+        "head.0",
+        16777216
+      ],
+      [
+        "cur_proj.0",
+        2097152
+      ],
+      [
+        "hist_vis_proj.0",
+        2097152
+      ],
+      [
+        "target_proj.0",
+        524288
+      ],
+      [
+        "head.3",
+        16384
+      ],
+      [
+        "state_proj.0",
+        12288
+      ],
+      [
+        "hist_act_proj.0",
+        4096
+      ],
+      [
+        "hist_pose_proj.0",
+        3072
+      ],
+      [
+        "lm_proj.0",
+        3072
+      ],
+      [
+        "rel_proj.0",
+        3072
+      ]
+    ]
+  },
+  "medium": {
+    "model": "Medium",
+    "checkpoint": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/14_mec_expert_retraining/checkpoints/Medium/best.pt",
+    "checkpoint_sha256": "68f9250f795f7d8f7fda97ab61a97532e41a10abbef291340dc45957703bc2e6",
+    "params": 166011908,
+    "flops": 14978526208,
+    "gflops": 14.978526208,
+    "stage13_r2_target_gflops": 14.98062336,
+    "relative_error_vs_target": -0.00013999097030894644,
+    "mec_tflops": 10.0,
+    "theoretical_infer_ms": 1.4978526208,
+    "output_shape": [
+      1,
+      4
+    ],
+    "counter": "forward hooks on Linear/MultiheadAttention, 2x MACs; LayerNorm/GELU/Softmax not counted",
+    "top_modules": [
+      [
+        "token_mlp.0",
+        7398752256
+      ],
+      [
+        "token_mlp.2",
+        7398752256
+      ],
+      [
+        "cur_proj",
+        102760448
+      ],
+      [
+        "goal_current_attn",
+        52529152
+      ],
+      [
+        "head.0",
+        14680064
+      ],
+      [
+        "gc_ffn.0",
+        4194304
+      ],
+      [
+        "gc_ffn.2",
+        4194304
+      ],
+      [
+        "hist_vis_proj.0",
+        2097152
+      ],
+      [
+        "goal_proj",
+        524288
+      ],
+      [
+        "head.3",
+        16384
+      ],
+      [
+        "state_proj.0",
+        12288
+      ],
+      [
+        "hist_act_proj.0",
+        4096
+      ]
+    ]
+  },
+  "ts": {
+    "model": "Transformer-S",
+    "checkpoint": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/14_mec_expert_retraining/stability_revision/runs/ts/seed42/checkpoints/best.pt",
+    "checkpoint_sha256": "9f9596164cbd8dc9e5128ac65846604d27e2c501af43b084c51ddf86ef22306b",
+    "params": 211181060,
+    "flops": 39671126528,
+    "gflops": 39.671126528,
+    "stage13_r2_target_gflops": 39.671126528,
+    "relative_error_vs_target": 0.0,
+    "mec_tflops": 10.0,
+    "theoretical_infer_ms": 3.9671126528,
+    "output_shape": [
+      1,
+      4
+    ],
+    "counter": "forward hooks on Linear/MultiheadAttention, 2x MACs; LayerNorm/GELU/Softmax not counted",
+    "top_modules": [
+      [
+        "fusion_encoder.layers.0.self_attn",
+        1710325760
+      ],
+      [
+        "fusion_encoder.layers.1.self_attn",
+        1710325760
+      ],
+      [
+        "fusion_encoder.layers.2.self_attn",
+        1710325760
+      ],
+      [
+        "fusion_encoder.layers.3.self_attn",
+        1710325760
+      ],
+      [
+        "fusion_encoder.layers.4.self_attn",
+        1710325760
+      ],
+      [
+        "fusion_encoder.layers.5.self_attn",
+        1710325760
+      ],
+      [
+        "fusion_encoder.layers.6.self_attn",
+        1710325760
+      ],
+      [
+        "fusion_encoder.layers.7.self_attn",
+        1710325760
+      ],
+      [
+        "fusion_encoder.layers.0.linear1",
+        1574436864
+      ],
+      [
+        "fusion_encoder.layers.0.linear2",
+        1574436864
+      ],
+      [
+        "fusion_encoder.layers.1.linear1",
+        1574436864
+      ],
+      [
+        "fusion_encoder.layers.1.linear2",
+        1574436864
+      ]
+    ]
+  },
+  "tm": {
+    "model": "Transformer-M",
+    "checkpoint": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/14_mec_expert_retraining/stability_revision/runs/tm/seed42/checkpoints/best.pt",
+    "checkpoint_sha256": "2135bd090dee7aff356bd5dfea743548e8daec26c877772c9d64003290d48aad",
+    "params": 498567684,
+    "flops": 100025417728,
+    "gflops": 100.025417728,
+    "stage13_r2_target_gflops": 100.025417728,
+    "relative_error_vs_target": 0.0,
+    "mec_tflops": 10.0,
+    "theoretical_infer_ms": 10.002541772799999,
+    "output_shape": [
+      1,
+      4
+    ],
+    "counter": "forward hooks on Linear/MultiheadAttention, 2x MACs; LayerNorm/GELU/Softmax not counted",
+    "top_modules": [
+      [
+        "encoder.layers.0.self_attn",
+        3578265600
+      ],
+      [
+        "encoder.layers.1.self_attn",
+        3578265600
+      ],
+      [
+        "encoder.layers.2.self_attn",
+        3578265600
+      ],
+      [
+        "encoder.layers.3.self_attn",
+        3578265600
+      ],
+      [
+        "encoder.layers.4.self_attn",
+        3578265600
+      ],
+      [
+        "encoder.layers.5.self_attn",
+        3578265600
+      ],
+      [
+        "encoder.layers.6.self_attn",
+        3578265600
+      ],
+      [
+        "encoder.layers.7.self_attn",
+        3578265600
+      ],
+      [
+        "encoder.layers.8.self_attn",
+        3578265600
+      ],
+      [
+        "encoder.layers.9.self_attn",
+        3578265600
+      ],
+      [
+        "encoder.layers.0.linear1",
+        3162505216
+      ],
+      [
+        "encoder.layers.0.linear2",
+        3162505216
+      ]
+    ]
+  },
+  "large": {
+    "model": "Large",
+    "checkpoint": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/14_mec_expert_retraining/stability_revision/runs/large/seed42/checkpoints/best.pt",
+    "checkpoint_sha256": "025ede7a2bba02cd8988bb6bb0f816290c2a745f3e331680a23d92749f7742ea",
+    "params": 1034877444,
+    "flops": 199723980800,
+    "gflops": 199.7239808,
+    "stage13_r2_target_gflops": 199.7239808,
+    "relative_error_vs_target": 0.0,
+    "mec_tflops": 10.0,
+    "theoretical_infer_ms": 19.972398079999998,
+    "output_shape": [
+      1,
+      4
+    ],
+    "counter": "forward hooks on Linear/MultiheadAttention, 2x MACs; LayerNorm/GELU/Softmax not counted",
+    "top_modules": [
+      [
+        "fusion_encoder.layers.0.self_attn",
+        5563351040
+      ],
+      [
+        "fusion_encoder.layers.1.self_attn",
+        5563351040
+      ],
+      [
+        "fusion_encoder.layers.2.self_attn",
+        5563351040
+      ],
+      [
+        "fusion_encoder.layers.3.self_attn",
+        5563351040
+      ],
+      [
+        "fusion_encoder.layers.4.self_attn",
+        5563351040
+      ],
+      [
+        "fusion_encoder.layers.5.self_attn",
+        5563351040
+      ],
+      [
+        "fusion_encoder.layers.6.self_attn",
+        5563351040
+      ],
+      [
+        "fusion_encoder.layers.7.self_attn",
+        5563351040
+      ],
+      [
+        "fusion_encoder.layers.8.self_attn",
+        5563351040
+      ],
+      [
+        "fusion_encoder.layers.9.self_attn",
+        5563351040
+      ],
+      [
+        "fusion_encoder.layers.10.self_attn",
+        5563351040
+      ],
+      [
+        "fusion_encoder.layers.11.self_attn",
+        5563351040
+      ]
+    ]
+  }
+}
