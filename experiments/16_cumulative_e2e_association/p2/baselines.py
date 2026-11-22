@@ -60,7 +60,7 @@ def metrics_from_episode(env, task):
     e2e = np.asarray(env.episode_e2e, np.float64)
     final_dist = float(np.linalg.norm(env.pos - env.target))
     osr = bool(env.min_dist <= 20.0)
-    path_len = 50.0 * getattr(env, "n_forward", 0)
+    path_len = 5.0 * getattr(env, "n_forward", 0)
     l_star = float(np.linalg.norm(
         np.asarray([task["start_x"], task["start_y"]]) - env.target))
     spl = float(env.success * min(1.0, l_star / path_len)) if path_len > 0 else float(env.success)

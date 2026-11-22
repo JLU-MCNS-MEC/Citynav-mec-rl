@@ -142,11 +142,11 @@ def train(args):
         qt.load_state_dict(q.state_dict())
         opt = torch.optim.Adam(q.parameters(), lr=1e-4)
         replay = Replay(seed=args.seed)
-        gamma = 0.99
+        gamma = args.gamma
     elif args.algorithm in ("ppo",):
         ac = ActorCritic().to(device)
         opt = torch.optim.Adam(ac.parameters(), lr=3e-4)
-        gamma = 0.99
+        gamma = args.gamma
     elif args.algorithm == "td3":
         q1 = QNet().to(device); q2 = QNet().to(device)
         q1t = QNet().to(device); q2t = QNet().to(device)
@@ -156,9 +156,19 @@ def train(args):
         opt_q = torch.optim.Adam(list(q1.parameters()) + list(q2.parameters()), lr=3e-4)
         opt_pi = torch.optim.Adam(pi.parameters(), lr=3e-4)
         replay = Replay(seed=args.seed)
-        gamma = 0.99
+        gamma = args.gamma
         tau = 0.005
         policy_delay = 2
+    elif args.algorithm == "ddpg":
+        q = QNet().to(device); qt = QNet().to(device)
+        qt.load_state_dict(q.state_dict())
+        pi = ActorCritic().to(device); pit = ActorCritic().to(device)
+        pit.load_state_dict(pi.state_dict())
+        opt_q = torch.optim.Adam(q.parameters(), lr=3e-4)
+        opt_pi = torch.optim.Adam(pi.parameters(), lr=3e-4)
+        replay = Replay(seed=args.seed)
+        gamma = args.gamma
+        tau = 0.005
     elif args.algorithm == "sac":
         q1 = QNet().to(device); q2 = QNet().to(device)
         q1t = QNet().to(device); q2t = QNet().to(device)
@@ -170,7 +180,7 @@ def train(args):
         opt_alpha = torch.optim.Adam([log_alpha], lr=3e-4)
         target_entropy = -0.5 * math.log(N_ACT)
         replay = Replay(seed=args.seed)
-        gamma = 0.99
+        gamma = args.gamma
         tau = 0.005
     else:
         raise ValueError(args.algorithm)
@@ -198,7 +208,7 @@ def train(args):
             elif args.algorithm == "ppo":
                 logits, _ = ac(torch.as_tensor(s[None], device=device))
                 qv = logits[0].cpu().numpy()
-            elif args.algorithm == "td3":
+            elif args.algorithm in ("td3", "ddpg"):
                 logits, _ = pi(torch.as_tensor(s[None], device=device))
                 qv = logits[0].cpu().numpy()
             else:
@@ -234,6 +244,8 @@ def train(args):
         if args.algorithm == "td3":
             return {"q1": q1.state_dict(), "q2": q2.state_dict(),
                     "pi": pi.state_dict()}
+        if args.algorithm == "ddpg":
+            return {"q": q.state_dict(), "pi": pi.state_dict()}
         return {"q1": q1.state_dict(), "q2": q2.state_dict(),
                 "ac": ac.state_dict(),
                 "log_alpha": log_alpha.detach().cpu()}
@@ -322,6 +334,37 @@ def train(args):
                             t_.data.mul_(1 - tau).add_(tau * o_.data)
                         for t_, o_ in zip(q2t.parameters(), q2.parameters()):
                             t_.data.mul_(1 - tau).add_(tau * o_.data)
+                s, mask = s2, m2
+            elif args.algorithm == "ddpg":
+                if random.random() < max(0.05, 1.0 - total_steps / 60000):
+                    a = int(np.random.choice(np.flatnonzero(mask > 0.5)))
+                else:
+                    a = greedy(s, mask)
+                r, done, info = env.step(a)
+                s2, m2 = state_features(env)
+                replay.add(s, mask, a, r, s2, m2, float(done))
+                if replay.size >= 2000:
+                    bs, bm, ba, br, bs2, bm2, bd = replay.sample(128, device)
+                    with torch.no_grad():
+                        lg2, _ = pit(bs2)
+                        p2 = masked_softmax(lg2, bm2)
+                        a2 = p2.argmax(1)
+                        qn = qt(bs2).gather(1, a2[:, None]).squeeze(1)
+                        tgt = br + gamma * (1 - bd) * qn
+                    qv = q(bs).gather(1, ba[:, None]).squeeze(1)
+                    loss_q = F.smooth_l1_loss(qv, tgt)
+                    opt_q.zero_grad(); loss_q.backward()
+                    nn.utils.clip_grad_norm_(q.parameters(), 1.0); opt_q.step()
+                    lg, _ = pi(bs)
+                    p = masked_softmax(lg, bm)
+                    q_all = q(bs)
+                    loss_pi = -(p * q_all).sum(1).mean()
+                    opt_pi.zero_grad(); loss_pi.backward()
+                    nn.utils.clip_grad_norm_(pi.parameters(), 1.0); opt_pi.step()
+                    for t_, o_ in zip(qt.parameters(), q.parameters()):
+                        t_.data.mul_(1 - tau).add_(tau * o_.data)
+                    for t_, o_ in zip(pit.parameters(), pi.parameters()):
+                        t_.data.mul_(1 - tau).add_(tau * o_.data)
                 s, mask = s2, m2
             else:  # sac
                 st = torch.as_tensor(s[None], device=device)
@@ -427,11 +470,12 @@ def train(args):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--algorithm", choices=["dqn", "ppo", "td3", "sac"], required=True)
+    ap.add_argument("--algorithm", choices=["dqn", "ppo", "td3", "sac", "ddpg"], required=True)
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--episodes", type=int, default=4000)
     ap.add_argument("--max-steps", type=int, default=0)
     ap.add_argument("--out-dir", required=True)
+    ap.add_argument("--gamma", type=float, default=0.99)
     ap.add_argument("--device", default="cuda")
     args = ap.parse_args()
     return train(args)

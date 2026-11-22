@@ -33,7 +33,7 @@ def load_policy(ckpt, algorithm, device):
     if algorithm == "ppo":
         ac = ActorCritic().to(device); ac.load_state_dict(st["ac"]); ac.eval()
         return {"ac": ac}
-    if algorithm == "td3":
+    if algorithm in ("td3", "ddpg"):
         pi = ActorCritic().to(device); pi.load_state_dict(st["pi"]); pi.eval()
         return {"pi": pi}
     ac = ActorCritic().to(device); ac.load_state_dict(st["ac"]); ac.eval()
@@ -47,7 +47,7 @@ def act(policy, algorithm, s, mask, device):
             qv = policy["q"](x)[0].cpu().numpy()
         elif algorithm == "ppo":
             logits, _ = policy["ac"](x); qv = logits[0].cpu().numpy()
-        elif algorithm == "td3":
+        elif algorithm in ("td3", "ddpg"):
             logits, _ = policy["pi"](x); qv = logits[0].cpu().numpy()
         else:
             logits, _ = policy["ac"](x); qv = logits[0].cpu().numpy()
@@ -59,7 +59,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--ckpt", required=True)
     ap.add_argument("--algorithm", required=True,
-                    choices=["dqn", "ppo", "td3", "sac"])
+                    choices=["dqn", "ppo", "td3", "sac", "ddpg"])
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--out", default="")
     args = ap.parse_args()

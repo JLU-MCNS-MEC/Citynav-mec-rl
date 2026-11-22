@@ -16,9 +16,9 @@ EXP16 = HERE.parent
 RUNS = EXP16 / "p4" / "runs"
 FIG = EXP16 / "figures"
 FIG.mkdir(exist_ok=True)
-ALGOS = ["ppo", "dqn", "td3", "sac"]
-COLORS = {"ppo": "#4c78a8", "dqn": "#f58518", "td3": "#54a24b", "sac": "#b279a2"}
-LABEL = {"ppo": "PPO", "dqn": "DQN", "td3": "TD3 (discrete)", "sac": "Discrete SAC"}
+ALGOS = ["ppo", "dqn", "td3", "sac", "ddpg"]
+COLORS = {"ppo": "#4c78a8", "dqn": "#f58518", "td3": "#54a24b", "sac": "#b279a2", "ddpg": "#e45756"}
+LABEL = {"ppo": "PPO", "dqn": "DQN", "td3": "TD3 (discrete)", "sac": "Discrete SAC", "ddpg": "DDPG (discrete)"}
 
 
 def load(algo):
