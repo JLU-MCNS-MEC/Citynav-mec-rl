@@ -115,6 +115,21 @@ class Replay:
                      (self.s, self.m, self.a, self.r, self.s2, self.m2, self.d))
 
 
+def step_env(env, action, reward_mode):
+    """Step the environment and optionally replace the reward with Stage-12
+    scheme D: u_t = 1 - e2e/100; r_t = u_t/400; terminal correction
+    (1 - T/400) * J with J = 1 - mean(episode e2e)/100."""
+    r, done, info = env.step(action)
+    if reward_mode == "stage12":
+        u = 1.0 - float(info["e2e_ms"]) / 100.0
+        r = u / 400.0
+        if done:
+            T = env.step_idx
+            J = 1.0 - float(np.mean(env.episode_e2e)) / 100.0
+            r += (1.0 - T / 400.0) * J
+    return r, done, info
+
+
 def masked_softmax(logits, mask):
     logits = logits.masked_fill(mask < 0.5, -1e18)
     logits = torch.nan_to_num(logits, nan=-1e18, posinf=1e4, neginf=-1e18)
@@ -266,7 +281,7 @@ def train(args):
                     a = int(np.random.choice(np.flatnonzero(mask > 0.5)))
                 else:
                     a = greedy(s, mask)
-                r, done, info = env.step(a)
+                r, done, info = step_env(env, a, args.reward)
                 s2, m2 = state_features(env)
                 replay.add(s, mask, a, r, s2, m2, float(done))
                 if replay.size >= 2000:
@@ -289,7 +304,7 @@ def train(args):
                     probs = masked_softmax(logits, torch.as_tensor(mask[None], device=device))
                 a = int(torch.multinomial(probs[0], 1).item())
                 lp = float(torch.log(probs[0, a] + 1e-12))
-                r, done, info = env.step(a)
+                r, done, info = step_env(env, a, args.reward)
                 s2, m2 = state_features(env)
                 ppo_buf["s"].append(s); ppo_buf["m"].append(mask)
                 ppo_buf["a"].append(a); ppo_buf["r"].append(r)
@@ -301,7 +316,7 @@ def train(args):
                     a = int(np.random.choice(np.flatnonzero(mask > 0.5)))
                 else:
                     a = greedy(s, mask)
-                r, done, info = env.step(a)
+                r, done, info = step_env(env, a, args.reward)
                 s2, m2 = state_features(env)
                 replay.add(s, mask, a, r, s2, m2, float(done))
                 if replay.size >= 2000:
@@ -340,7 +355,7 @@ def train(args):
                     a = int(np.random.choice(np.flatnonzero(mask > 0.5)))
                 else:
                     a = greedy(s, mask)
-                r, done, info = env.step(a)
+                r, done, info = step_env(env, a, args.reward)
                 s2, m2 = state_features(env)
                 replay.add(s, mask, a, r, s2, m2, float(done))
                 if replay.size >= 2000:
@@ -372,7 +387,7 @@ def train(args):
                     logits, _ = ac(st)
                     probs = masked_softmax(logits, torch.as_tensor(mask[None], device=device))
                 a = int(torch.multinomial(probs[0], 1).item())
-                r, done, info = env.step(a)
+                r, done, info = step_env(env, a, args.reward)
                 s2, m2 = state_features(env)
                 replay.add(s, mask, a, r, s2, m2, float(done))
                 if replay.size >= 2000:
@@ -476,6 +491,7 @@ def main():
     ap.add_argument("--max-steps", type=int, default=0)
     ap.add_argument("--out-dir", required=True)
     ap.add_argument("--gamma", type=float, default=0.99)
+    ap.add_argument("--reward", choices=["A", "stage12"], default="A")
     ap.add_argument("--device", default="cuda")
     args = ap.parse_args()
     return train(args)
