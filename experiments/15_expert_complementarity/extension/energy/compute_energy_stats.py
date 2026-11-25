@@ -22,7 +22,7 @@ from env16 import (EpisodeEnv16, build_deployment_by_map, load_models,  # noqa: 
                    load_norm)
 from train_association_rl import load_tasks_and_split  # noqa: E402
 from baselines import choose  # noqa: E402
-from energy_model import step_energy, BATTERY_J  # noqa: E402
+from energy_model import BATTERY_J, configure, step_energy  # noqa: E402
 
 
 def main():
@@ -33,8 +33,12 @@ def main():
     ap.add_argument("--policy", default="min_latency")
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--out", default=str(HERE / "energy_stats_100.csv"))
+    ap.add_argument("--v-forward", type=float, default=0.0)
+    ap.add_argument("--omega-turn-deg", type=float, default=0.0)
     args = ap.parse_args()
     torch.set_num_threads(4)
+    if args.v_forward or args.omega_turn_deg:
+        configure(args.v_forward, args.omega_turn_deg)
     train_tasks, dev_tasks = load_tasks_and_split()
     tasks = train_tasks[: args.n]
     by_map = build_deployment_by_map()
@@ -50,9 +54,12 @@ def main():
         steps_energy = []
         while not done:
             metrics = env.metrics()
-            a = choose(args.policy, metrics, rng)
-            _, done, info = env.step(a)
-            e = step_energy(a, env.enc_ms / 1e3, info["comm_ms"] / 1e3,
+            node = choose(args.policy, metrics, rng)
+            _, done, info = env.step(node)
+            # BUG FIX: `node` is a MEC index (0-9); the energy model needs the
+            # navigation action actually executed (0 stop / 1 forward / 2-3 turn).
+            act = int(env.steps[-1]["action"])
+            e = step_energy(act, env.enc_ms / 1e3, info["comm_ms"] / 1e3,
                             info["inf_ms"] / 1e3)
             steps_energy.append(e)
         agg = {k: float(sum(s[k] for s in steps_energy))
@@ -92,9 +99,11 @@ def main():
         "corr_energy_steps": float(df.e_total_j.corr(df.steps)),
         "corr_energy_e2e": float(df.e_total_j.corr(df.cum_e2e_ms)),
         "battery_capacity_assumed_wh": 100.0,
+        "v_forward_mps": float(__import__("energy_model").V_FORWARD),
+        "omega_turn_deg_s": float(__import__("math").degrees(__import__("energy_model").OMEGA_TURN)),
     }
-    (HERE / "energy_stats_100_summary.json").write_text(
-        json.dumps(summary, indent=2))
+    smry = Path(args.out).with_name(Path(args.out).stem + "_summary.json")
+    smry.write_text(json.dumps(summary, indent=2))
     print(json.dumps(summary, indent=2))
 
 

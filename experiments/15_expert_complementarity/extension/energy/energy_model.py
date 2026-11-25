@@ -38,6 +38,21 @@ BATTERY_WH = 100.0  # Wh, assumed pack for budget tests
 BATTERY_J = BATTERY_WH * 3600.0
 
 
+def configure(v_forward: float | None = None,
+              omega_turn_deg: float | None = None) -> None:
+    """Override the simulation kinematics assumptions (sensitivity analysis).
+
+    The CityNav protocol defines discrete 5 m / 30 deg actions and no speeds;
+    v and omega are therefore free parameters that must be calibrated against
+    a real platform before any energy claim is reported.
+    """
+    global V_FORWARD, OMEGA_TURN
+    if v_forward:
+        V_FORWARD = float(v_forward)
+    if omega_turn_deg:
+        OMEGA_TURN = math.radians(float(omega_turn_deg))
+
+
 def propulsion_power(v: float) -> float:
     """Rotor-wing UAV propulsion power at speed v (m/s)."""
     if v <= 1e-9:
