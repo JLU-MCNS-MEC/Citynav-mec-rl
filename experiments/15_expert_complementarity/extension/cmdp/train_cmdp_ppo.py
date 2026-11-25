@@ -59,6 +59,8 @@ def main():
     ap.add_argument("--fixed-lambdas", nargs=2, type=float, default=None,
                     metavar=("LAM_E", "LAM_SR"))
     ap.add_argument("--eval-every", type=int, default=50)
+    ap.add_argument("--n-train-pool", type=int, default=0,
+                    help="cap on budgeted Train tasks (0 = all)")
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
 
@@ -71,7 +73,8 @@ def main():
     budgets = load_budgets(args.budget_file)
     train_tasks, dev_tasks = load_tasks_and_split()
     tr = [t for t in train_tasks if int(t["index"]) in budgets]
-    tr = tr[:250]
+    if args.n_train_pool:
+        tr = tr[: args.n_train_pool]
     dv = [t for t in dev_tasks if int(t["index"]) in budgets]
     print(f"train tasks with budget: {len(tr)}  dev: {len(dv)}", flush=True)
 
