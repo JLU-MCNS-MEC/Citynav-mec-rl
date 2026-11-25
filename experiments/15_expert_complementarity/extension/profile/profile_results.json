@@ -1,0 +1,49 @@
+{
+  "data": {
+    "samples": 500,
+    "states": 100,
+    "episodes": 11,
+    "sensitive_states": 2,
+    "sensitive_pct": 0.02,
+    "train_states": 85,
+    "dev_states": 15
+  },
+  "metrics": {
+    "static_prior": {
+      "auc": NaN,
+      "pr_auc": 1.0,
+      "brier": 0.48835432525951555,
+      "ece": 0.6988235294117646
+    },
+    "confidence": {
+      "auc": NaN,
+      "pr_auc": 1.0,
+      "brier": 0.04538385570049286,
+      "ece": 0.1753126573562622
+    },
+    "state_only": {
+      "auc": NaN,
+      "pr_auc": 1.0,
+      "brier": 0.36899179220199585,
+      "ece": 0.4215708974593629
+    },
+    "state_expert": {
+      "auc": NaN,
+      "pr_auc": 1.0,
+      "brier": 0.7378204464912415,
+      "ece": 0.8156725977392245
+    },
+    "state_expert_conf": {
+      "auc": NaN,
+      "pr_auc": 1.0,
+      "brier": 0.7307061553001404,
+      "ece": 0.8222695765644312
+    },
+    "sensitive_detection": {
+      "n_dev_states": 15,
+      "n_sensitive": 0,
+      "auc": null,
+      "pr_auc": null
+    }
+  }
+}
