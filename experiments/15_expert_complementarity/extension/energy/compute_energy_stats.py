@@ -62,8 +62,8 @@ def main():
             e = step_energy(act, env.enc_ms / 1e3, info["comm_ms"] / 1e3,
                             info["inf_ms"] / 1e3)
             steps_energy.append(e)
-        agg = {k: float(sum(s[k] for s in steps_energy))
-               for k in ("e_move_j", "e_wait_j", "e_aux_j", "e_total_j")}
+        keys = sorted({k for s in steps_energy for k in s if k.endswith("_j")})
+        agg = {k: float(sum(s.get(k, 0.0) for s in steps_energy)) for k in keys}
         agg.update({
             "episode_id": t.get("episode_id", ""), "map": t["map"],
             "success": bool(env.success), "failure": env.failure,
@@ -89,9 +89,10 @@ def main():
         "success_energy_j_mean": float(succ.e_total_j.mean()) if len(succ) else None,
         "failure_energy_j_mean": float(fail.e_total_j.mean()) if len(fail) else None,
         "component_share": {
-            "move": float(df.e_move_j.sum() / df.e_total_j.sum()),
-            "wait": float(df.e_wait_j.sum() / df.e_total_j.sum()),
-            "aux": float(df.e_aux_j.sum() / df.e_total_j.sum()),
+            k.replace("e_", "").replace("_j", ""):
+                float(df[k].sum() / max(df.e_total_j.sum(), 1e-12))
+            for k in df.columns if k.startswith("e_") and k.endswith("_j")
+            and k != "e_total_j"
         },
         "battery_wh": float(BATTERY_J / 3600.0),
         "battery_frac_mean": float(df.battery_frac.mean()),
@@ -99,6 +100,7 @@ def main():
         "corr_energy_steps": float(df.e_total_j.corr(df.steps)),
         "corr_energy_e2e": float(df.e_total_j.corr(df.cum_e2e_ms)),
         "battery_capacity_assumed_wh": 100.0,
+        "model_mode": __import__("energy_model").MODEL_MODE,
         "v_forward_mps": float(__import__("energy_model").V_FORWARD),
         "omega_turn_deg_s": float(__import__("math").degrees(__import__("energy_model").OMEGA_TURN)),
     }

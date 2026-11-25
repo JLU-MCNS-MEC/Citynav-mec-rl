@@ -207,7 +207,7 @@ def main():
             with devp.open("a", encoding="utf-8") as f:
                 f.write(json.dumps(d) + "\n")
             print(f"  [dev] SR={d['sr']:.3f} viol={d['viol_rate']:.2f} "
-                  f"E/B={d['mean_ratio']:.2f} E={d['mean_energy_j']/1e3:.1f}kJ "
+                  f"E/B={d['mean_ratio']:.2f} E={d['mean_energy_j']:.1f}J "
                   f"cumE2E={d['mean_cum_e2e_ms']:.0f}ms prem={d['premature']} "
                   f"oob={d['oob']}", flush=True)
             torch.save({"ep": ep, "state_dim": STATE_DIM, "n_act": N_ACT,

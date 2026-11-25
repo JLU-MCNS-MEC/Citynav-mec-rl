@@ -38,19 +38,32 @@ BATTERY_WH = 100.0  # Wh, assumed pack for budget tests
 BATTERY_J = BATTERY_WH * 3600.0
 
 
+#: Model mode (Stage 15-Extension, 2026-11-25)
+#:   "compute"    E = E_enc + E_comm + E_hover(t_infer)      <- default
+#:   "propulsion" full Zeng model including flight (legacy reference)
+#: The compute mode is the one the association action can actually change:
+#: encoding time is fixed, communication and inference depend on the node.
+MODEL_MODE = "compute"
+INCLUDE_PROPULSION = False
+
+
 def configure(v_forward: float | None = None,
-              omega_turn_deg: float | None = None) -> None:
+              omega_turn_deg: float | None = None,
+              include_propulsion: bool | None = None) -> None:
     """Override the simulation kinematics assumptions (sensitivity analysis).
 
     The CityNav protocol defines discrete 5 m / 30 deg actions and no speeds;
     v and omega are therefore free parameters that must be calibrated against
     a real platform before any energy claim is reported.
     """
-    global V_FORWARD, OMEGA_TURN
+    global V_FORWARD, OMEGA_TURN, MODEL_MODE, INCLUDE_PROPULSION
     if v_forward:
         V_FORWARD = float(v_forward)
     if omega_turn_deg:
         OMEGA_TURN = math.radians(float(omega_turn_deg))
+    if include_propulsion is not None:
+        INCLUDE_PROPULSION = bool(include_propulsion)
+        MODEL_MODE = "propulsion" if INCLUDE_PROPULSION else "compute"
 
 
 def propulsion_power(v: float) -> float:
@@ -86,9 +99,29 @@ def step_energy(action: int, t_enc_s: float, t_comm_s: float,
     Encoder and RF loads are added on top of hover power during that window;
     auxiliary avionics are always on.
     """
+    t_enc_s = max(0.0, float(t_enc_s))
+    t_comm_s = max(0.0, float(t_comm_s))
+    t_infer_s = max(0.0, float(t_infer_s))
+
+    if not INCLUDE_PROPULSION:
+        # --- compute / communication / hover-while-waiting only -------------
+        # The UAV is airborne but flight energy is explicitly out of scope for
+        # this experiment (user decision, 2026-11-25).
+        e_enc = P_ENC * t_enc_s
+        e_comm = P_TX * t_comm_s
+        e_hover = hover_power() * t_infer_s
+        return {
+            "t_enc_s": t_enc_s, "t_comm_s": t_comm_s, "t_infer_s": t_infer_s,
+            "e_enc_j": e_enc, "e_comm_j": e_comm, "e_hover_j": e_hover,
+            "e_move_j": 0.0, "e_aux_j": 0.0,
+            "e_wait_j": e_enc + e_comm + e_hover,
+            "e_total_j": e_enc + e_comm + e_hover,
+        }
+
+    # --- legacy Zeng propulsion model (reference only) ----------------------
     t = step_timing(action)
     t_move = t["t_move"]
-    t_wait = max(0.0, t_enc_s + t_comm_s + t_infer_s)
+    t_wait = t_enc_s + t_comm_s + t_infer_s
     if action == 1:
         E_move = propulsion_power(V_FORWARD) * t_move
     else:
