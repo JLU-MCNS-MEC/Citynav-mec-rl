@@ -53,3 +53,52 @@ TD3/SAC 从 softmax 采样，DDPG/DQN 取 argmax，基线直接选节点。因�
 
 - 当前专家置信度、专家动作：Stage 16 状态也没有，保持可比性。
 - 已选择的专家历史：会引入与动作空间重复的信息，本阶段不加入。
+
+
+## 5. 执行顺序（R3 最终）
+
+```
+候选表（覆盖 / 截止时间 / 服务能耗可行性）   ← 决策前可算，不含动作信息
+  ↓ feasible_mec_mask
+若为空 → no_feasible_mec（service_attempt 记录，无推理）
+  ↓
+关联策略选节点
+  ↓
+UAV 视觉处理（layer4 + layer2 + matching，一次）
+  ↓
+MEC 冻结专家前向（一次）
+  ↓
+运动能量检查（remaining − E_coll − E_motion ≥ 0）？
+  ├─ 否 → 拒绝动作：只计服务能量/时延，终止 energy_budget_exhausted
+  └─ 是 → 执行动作（含碰撞/越界判定）、更新历史与状态、计费
+```
+
+候选时延/能耗只用**决策前已知**的量（距离、模型 FLOPs、上传负载），
+不使用尚未产生的导航动作。
+
+## 6. 事件计数
+
+| 计数 | 含义 | 递增时机 |
+|---|---|---|
+| `service_attempt_count` | 尝试发起一次协同服务（含非法/不可行） | 每次 `step()` 调用 |
+| `completed_inference_count` | 完成本地计算 + 上行 + MEC 推理并得到动作 | 专家前向返回后 |
+| `executed_navigation_action_count` | 真正执行了 Forward/Turn/Stop | transition 返回 executed=True |
+
+关系：`attempts ≥ inferences ≥ executed`。碰撞/越界的中止 Forward 计入 inferences，
+但**不计入** executed；该动作的运动能耗**仍然计费**。
+
+## 7. 奖励接口（R3）
+
+`env.step()` 返回标量 **0.0**，所有信号在 `info` 中：
+
+| 信号 | 含义 |
+|---|---|
+| `terminal_success_reward` | 终止且成功为 1 |
+| `navigation_quality_reward` | 0.0（Stage 17-C 定义） |
+| `collaborative_service_latency_cost` | $D_{coll}/D_{max}$ |
+| `energy_consumption_cost` | $E_{step}/E_{budget}$ |
+| `energy_budget_violation` | 动作被预算拒绝 |
+| `deadline_violation` | 请求了超截止节点 |
+| `legacy_stage16_reward` | $-D_{legacy}/100$，仅作对照 |
+
+Stage 16 的奖励不再作为 Stage 17 的默认目标。

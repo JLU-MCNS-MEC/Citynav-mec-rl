@@ -72,6 +72,10 @@ class EpisodeEnv17(EpisodeEnv16):
         self.constraint_failure = ""
         self.step_records = []
         self.model_selection = np.zeros(len(self.nodes), dtype=np.int64)
+        # R3 event counters (see docs/05 §5)
+        self.service_attempt_count = 0
+        self.completed_inference_count = 0
+        self.executed_navigation_action_count = 0
 
     # ------------------------------------------------------------------
     def candidate_table(self) -> list[dict]:
@@ -225,6 +229,26 @@ class EpisodeEnv17(EpisodeEnv16):
         return {"executed": executed, "aborted": aborted}
 
     # ------------------------------------------------------------------
+    def _record_attempt_only(self, node, n_feasible, reason):
+        """Service attempt that never produced an inference (R3 counter rules)."""
+        self.step_records.append({
+            "step": self.step_idx, "selected_mec": int(node) if node is not None else -1,
+            "selected_model": "", "navigation_action": -1,
+            "d_visual_layer4_ms": 0.0, "d_visual_layer2_ms": 0.0,
+            "d_matching_ms": 0.0, "d_matching_verified": True,
+            "d_uav_total_ms": 0.0, "d_up_ms": 0.0, "d_inf_ms": 0.0,
+            "d_down_ms": 0.0, "d_coll_ms": 0.0,
+            "uplink_payload_bits": 0, "uplink_payload_bytes": 0,
+            "uplink_rate_bps": 0.0,
+            "e_hover_j": 0.0, "e_enc_j": 0.0, "e_tx_j": 0.0, "e_rx_j": 0.0,
+            "e_forward_j": 0.0, "e_turn_j": 0.0, "e_total_step_j": 0.0,
+            "battery_remaining_j": float(self.remaining_energy_j),
+            "deadline_valid": False, "energy_valid": False, "coverage_valid": False,
+            "feasible_mec_count": int(n_feasible),
+            "motion_executed": False, "motion_aborted": False,
+            "terminated_reason": reason,
+        })
+
     def _terminate(self, reason: str, failure: str | None = None):
         self.done = True
         self.success = False
@@ -266,6 +290,8 @@ class EpisodeEnv17(EpisodeEnv16):
             raise RuntimeError("step() on a terminated episode; call start(task)")
         table = self.candidate_table()
         n_feasible = sum(r["feasible"] for r in table)
+        # every call is a service attempt, including illegal / infeasible ones
+        self.service_attempt_count += 1
 
         if node is None:
             if n_feasible == 0:
@@ -274,6 +300,7 @@ class EpisodeEnv17(EpisodeEnv16):
                 self.invalid_mec_action_count += 1
                 self.constraint_failure = "invalid_action_index"
                 self._terminate("invalid_mec_action")
+            self._record_attempt_only(None, n_feasible, self.terminated_reason)
             return 0.0, True, {"terminated_reason": self.terminated_reason,
                                "feasible_mec_count": n_feasible}
 
@@ -282,6 +309,7 @@ class EpisodeEnv17(EpisodeEnv16):
             self.invalid_mec_action_count += 1
             self.constraint_failure = "invalid_action_index"
             self._terminate("invalid_mec_action")
+            self._record_attempt_only(node, n_feasible, self.terminated_reason)
             return 0.0, True, {"terminated_reason": self.terminated_reason,
                                "feasible_mec_count": n_feasible}
 
@@ -300,6 +328,7 @@ class EpisodeEnv17(EpisodeEnv16):
                     self.energy_budget_violation_count += 1
                 self.invalid_mec_action_count += 1
                 self._terminate("invalid_mec_action")
+            self._record_attempt_only(node, n_feasible, self.terminated_reason)
             return 0.0, True, {"terminated_reason": self.terminated_reason,
                                "feasible_mec_count": n_feasible,
                                "constraint_failure": self.constraint_failure}
@@ -307,6 +336,7 @@ class EpisodeEnv17(EpisodeEnv16):
         percept = self.perceive()
         dec = self.decide(node, percept)
         nav_action = dec["nav_action"]
+        self.completed_inference_count += 1
 
         latency = rec["latency"]
         coll = e_coll_j(latency, self.cfg)
@@ -329,8 +359,11 @@ class EpisodeEnv17(EpisodeEnv16):
                                "e_total_step_j": energy["e_total_step_j"]}
 
         trans = self.transition(nav_action, percept)
-        energy = step_energy_j(nav_action, latency, self.cfg,
-                               motion_executed=trans["executed"])
+        # R3: the commanded action is charged in full, even when it ends in a
+        # collision / out-of-bounds termination (fixed-action-cost abstraction).
+        energy = step_energy_j(nav_action, latency, self.cfg)
+        if trans["executed"]:
+            self.executed_navigation_action_count += 1
         self.cumulative_energy_j += energy["e_total_step_j"]
         self.remaining_energy_j -= energy["e_total_step_j"]
         self.cumulative_coll_latency_ms += latency["d_coll_ms"]
@@ -343,7 +376,11 @@ class EpisodeEnv17(EpisodeEnv16):
         self._record(node, rec, nav_action, energy, latency,
                      trans["executed"], n_feasible, trans["aborted"])
 
-        reward = -legacy / 100.0
+        # R3: Stage 17 no longer returns the Stage-16 reward.  The scalar is 0
+        # until Stage 17-C defines the dual-objective scalarisation; every
+        # component is exported separately so no learner can silently optimise
+        # the legacy objective.
+        reward = 0.0
         info = {
             "selected_mec": node, "selected_model": rec["model_type"],
             "nav_action": nav_action,
@@ -355,5 +392,19 @@ class EpisodeEnv17(EpisodeEnv16):
             "legacy_cumulative_e2e_ms": float(np.sum(self.episode_e2e)),
             "feasible_mec_count": int(n_feasible),
             "terminated_reason": self.terminated_reason,
+            # ---- Stage-17 reward interface (docs/05 §6) ----
+            "terminal_success_reward": 1.0 if (self.done and self.success) else 0.0,
+            "navigation_quality_reward": 0.0,   # not defined until Stage 17-C
+            "collaborative_service_latency_cost": (
+                latency["d_coll_ms"] / max(self.cfg.d_max_ms, 1e-9)),
+            "energy_consumption_cost": (
+                energy["e_total_step_j"] / max(self.cfg.task_energy_budget_j, 1e-9)),
+            "energy_budget_violation": int(
+                self.terminated_reason == "energy_budget_exhausted"),
+            "deadline_violation": int(self.constraint_failure == "deadline"),
+            "legacy_stage16_reward": -legacy / 100.0,
+            "service_attempt_count": self.service_attempt_count,
+            "completed_inference_count": self.completed_inference_count,
+            "executed_navigation_action_count": self.executed_navigation_action_count,
         }
         return reward, self.done, info

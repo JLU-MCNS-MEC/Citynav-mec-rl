@@ -49,6 +49,26 @@
 | R-E4 | 越界计费 | 同 R-E3 |
 | R-E5 | 无可行节点 | `step(None)` 不得抛 `int(None)`，必须记 `no_feasible_mec` |
 
+## 2c. R3 断言（`stage17b/env_consistency.py`，未执行）
+
+| 编号 | 断言 | 通过标准 |
+|---|---|---|
+| E1 | Stage 16 轨迹一致性 | 关闭约束时动作/位置/朝向/终止原因/SR/步数完全一致（不比较累计时延） |
+| E2 | 单次前向 | `expert_forwards == completed_inference_count`，不得为 `None` |
+| E3 | 覆盖参数 | `coverage_m=500` 生效；隔离配置下改半径可观察到生效 |
+| E4 | 截止时间 | 超 `d_max_ms` 的节点被屏蔽 |
+| E5 | 服务已付、运动被拒 | 推理完成、服务能耗计入、运动未执行、预算未突破 |
+| E6 | 无可行 MEC | `step(None)` 不抛异常 |
+| E7 | 能耗对账 | 正常/Stop/碰撞/越界/耗尽五类终止下 ΣE == cumulative |
+| E8 | 终止后不计费 | 终止后再次 step 抛错且能量不变 |
+| E9 | 旧指标独立核对 | Stage 16 与 Stage 17 各自独立计算的逐 step legacy E2E 相等 |
+| E10 | 上行负载 | 4,281,664 bit；Relation 不在上传清单 |
+| E11 | IEEE 前进功率 | 3 m/s = 157.555 W / 262.593 J，5 m/s = 143.614 W / 143.613 J |
+| E12 | Matching | FLOPs 与 <1% 判据 |
+| E13 | 计数一致性 | attempts ≥ inferences ≥ executed，且与 records 对账 |
+| E14 | 新时延目标 | 累计时延 = $D_{UAV}+D_{up}+D_{inf}$，与 legacy 明显不同 |
+| E15 | 碰撞/越界计费 | 中止的 Forward 仍按 262.593 J 计费 |
+
 ## 3. 阈值可行性扫描（只做统计，不做训练）
 
 对 Train/Dev 池各 100 个任务，用 Min-Latency 与 Max-Quality 两个静态策略：

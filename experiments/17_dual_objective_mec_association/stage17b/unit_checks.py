@@ -57,9 +57,15 @@ def main():
                                  and abs(comp["d_visual_layer2_ms"] - 2.212560896) < 1e-6)}
 
     res["U3_uav_total"] = {"d_uav_ms": comp["d_uav_total_ms"],
-                           "expected_ms": 7.662075904,
+                           "expected_ms": 7.664742571,
+                           "d_matching_ms": comp["d_matching_ms"],
                            "matching_verified": comp["d_matching_verified"],
-                           "pass": abs(comp["d_uav_total_ms"] - 7.662075904) < 1e-6}
+                           "matching_negligible": comp["matching_negligible"],
+                           "matching_ratio": comp["matching_ratio_of_visual"],
+                           "pass": abs(comp["d_uav_total_ms"] - 7.664742571) < 1e-6
+                                   and comp["d_matching_verified"]
+                                   and comp["matching_negligible"]
+                                   and comp["matching_ratio_of_visual"] < 0.01}
 
     exp_d_inf = {"small": 0.4954039, "medium": 1.4978528, "ts": 3.9671126,
                  "tm": 10.0025418, "large": 19.9723981}
@@ -125,7 +131,13 @@ def main():
                         + s["d_down_ms"])) < 1e-9
                  and s["d_down_ms"] == 0.0)}
 
-    out = ROOT / "smoke/unit_checks_r2.json"
+    res["U11_deadline_400ms_covers_500m"] = {
+        "d_coll_small_at_500": service_latency_ms(500.0, "small", cfg, payload)["d_coll_ms"],
+        "d_coll_large_at_500": service_latency_ms(500.0, "large", cfg, payload)["d_coll_ms"],
+        "d_max_ms": cfg.d_max_ms,
+        "pass": service_latency_ms(500.0, "large", cfg, payload)["d_coll_ms"] <= cfg.d_max_ms}
+
+    out = ROOT / "smoke/unit_checks_r3.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(res, indent=2))
     print(json.dumps(res, indent=2))

@@ -32,7 +32,7 @@ class Stage17Config:
     uav_tflops: float = 1.5e12
     mec_tflops: float = 10.0
     layer4_flops: float = 8174272512.0     # measured, encoder_flops.json
-    matching_flops: float | None = None    # NOT verified -> None (see compute17)
+    matching_flops: float = 4.0e6          # analytic upper bound (compute17)
 
     # ---- deployment (INHERITED) ------------------------------------------
     coverage_m: float = 500.0
@@ -66,7 +66,7 @@ class Stage17Config:
     battery_safety_margin_j: float = 0.0
 
     # ---- per-service deadline --------------------------------------------
-    d_max_ms: float = 150.0                # PROVISIONAL (re-check in R2)
+    d_max_ms: float = 400.0                # R3: covers 500 m at full FP32 payload
 
     # ---- downlink (review 2026-11-26: neglected) --------------------------
     include_downlink: bool = False

@@ -79,10 +79,14 @@ $E_{motion}=0$，但生成 Stop 之前的完整 $E_{coll}$ 仍计费。
 
 ## 6. 碰撞 / 越界动作的计费口径（R2 明确）
 
-- Forward 若被判为 `collision` 或 `out_of_bounds`，UAV **未完成 5 m 位移**，
-  因此 **不计前进能耗**，`motion_executed=False`、`motion_aborted=True` 写入 step record。
-- 碰撞前实际飞过的距离未建模（缺少几何接触点信息），列为待审核项。
-- 转向与 Stop 不受此规则影响。
+**R3 规则（最终）**：只要 MEC 输出了 Forward / TurnLeft / TurnRight，就按完整离散动作计费，
+**包括**该动作触发 `collision` 或 `out_of_bounds` 终止的情况。
+这是"固定离散动作成本"的仿真抽象：失败的 Forward 仍按一次完整 5 m 前进计 262.593 J，
+不模拟碰撞前实际飞过的距离。
+
+- 与"剩余能量不足、动作被拒绝"是两种不同情况：后者**不执行**动作、也不计运动能耗，
+  只计已经发生的服务能耗。
+- Step record 用 `motion_aborted` 标注该动作以碰撞/越界结束。
 
 ## 7. 能量预算约束
 

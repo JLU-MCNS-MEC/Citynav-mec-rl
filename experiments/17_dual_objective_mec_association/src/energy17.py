@@ -65,16 +65,20 @@ def e_coll_j(latency: dict, cfg: Stage17Config) -> dict:
             "e_coll_j": e_hover + e_enc + e_tx + e_rx + e_aux}
 
 
-def e_motion_j(nav_action: int, cfg: Stage17Config,
-               executed: bool = True) -> dict:
-    """Motion energy of the executed action.
+def e_motion_j(nav_action: int, cfg: Stage17Config) -> dict:
+    """Motion energy of the commanded action.
 
-    `executed=False` covers a Forward/Turn that was refused (energy budget) or
-    aborted by collision / out-of-bounds detection: the manoeuvre is not
-    flown, so no motion energy is charged.  The distance actually travelled
-    before such an abort is not modelled (see docs/03, open item).
+    R3 decision: whenever the expert emits Forward / TurnLeft / TurnRight the
+    full discrete action cost is charged, including when the move triggers a
+    collision or an out-of-bounds termination.  This is a fixed-action-cost
+    simulation abstraction; the distance flown before the abort is NOT
+    modelled (documented in docs/03 and docs/13).
+
+    The only case where motion is not charged is when the remaining budget
+    cannot cover it: then the action is refused before execution and only the
+    already-issued service is charged (handled by env17.step).
     """
-    if not executed or nav_action == 0:
+    if nav_action == 0:
         return {"e_forward_j": 0.0, "e_turn_j": 0.0, "e_motion_j": 0.0}
     if nav_action == 1:
         e = e_forward_j(cfg)
@@ -85,9 +89,8 @@ def e_motion_j(nav_action: int, cfg: Stage17Config,
     return {"e_forward_j": 0.0, "e_turn_j": 0.0, "e_motion_j": 0.0}
 
 
-def step_energy_j(nav_action: int, latency: dict, cfg: Stage17Config,
-                  motion_executed: bool = True) -> dict:
+def step_energy_j(nav_action: int, latency: dict, cfg: Stage17Config) -> dict:
     coll = e_coll_j(latency, cfg)
-    motion = e_motion_j(nav_action, cfg, executed=motion_executed)
+    motion = e_motion_j(nav_action, cfg)
     return {**coll, **motion,
             "e_total_step_j": coll["e_coll_j"] + motion["e_motion_j"]}

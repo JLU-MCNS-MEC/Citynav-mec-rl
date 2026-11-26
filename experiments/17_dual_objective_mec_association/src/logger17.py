@@ -66,6 +66,9 @@ class EpisodeRecord:
     deadline_violation_count: int
     invalid_mec_action_count: int
     model_selection_frequency: list
+    service_attempt_count: int
+    completed_inference_count: int
+    executed_navigation_action_count: int
     service_latency_components: dict = field(default_factory=dict)
 
 
@@ -102,6 +105,9 @@ def episode_record(env, episode: int, task: dict, cfg: Stage17Config) -> Episode
         deadline_violation_count=int(env.deadline_violation_count),
         invalid_mec_action_count=int(env.invalid_mec_action_count),
         model_selection_frequency=env.model_selection.astype(int).tolist(),
+        service_attempt_count=int(env.service_attempt_count),
+        completed_inference_count=int(env.completed_inference_count),
+        executed_navigation_action_count=int(env.executed_navigation_action_count),
         service_latency_components=comps,
     )
 

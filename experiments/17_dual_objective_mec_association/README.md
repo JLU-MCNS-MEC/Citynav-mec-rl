@@ -56,7 +56,7 @@ cfg = load_config("configs/default.json")
 |---|---|
 | $D_{sum}$ | $\sum_t (D_{UAV}+D_{up}+D_{inf})$；$D_{UAV}$ 含 layer4+layer2+matching |
 | 能量 | $E_{coll}=P_{hover}D_{coll}+P_{enc}D_{UAV}+P_{tx}D_{up}$；$E_{forward}=P(v)\cdot5/v$（Zeng 2019，157.56 W @3 m/s） |
-| 硬约束 | $\sum E \le E_{battery}$（100 Wh）；$D_{coll}\le D_{max}$ |
+| 硬约束 | $\sum E \le E_{battery}$（100 Wh）；$D_{coll}\le D_{max}=400$ ms |
 | 目标 | SR（↑）与 $D_{sum}$（↓）；**SR 不是约束** |
 | 报告指标 | SR / OSR（20 m）/ SPL / NE；不使用 nDTW |
 
