@@ -61,7 +61,14 @@ class EpisodeEnv17(EpisodeEnv16):
     def start(self, task):
         super().start(task)
         c = self.cfg
-        self.remaining_energy_j = c.initial_energy_j - c.battery_safety_margin_j
+        # Episode budget = min(usable pack energy, task budget).  With the
+        # review decision of 2026-11-26 the only energy constraint is
+        # "episode energy does not exceed the battery capacity", so both
+        # quantities default to 360,000 J (100 Wh) and the min() keeps the
+        # two knobs from silently disagreeing.
+        self.energy_budget_j = min(c.initial_energy_j - c.battery_safety_margin_j,
+                                   c.task_energy_budget_j)
+        self.remaining_energy_j = self.energy_budget_j
         self.cumulative_energy_j = 0.0
         self.cumulative_coll_latency_ms = 0.0
         self.energy_budget_violation_count = 0
@@ -292,6 +299,7 @@ class EpisodeEnv17(EpisodeEnv16):
             "selected_mec": node, "nav_action": nav_action,
             "feasible_mec_count": int(n_feasible),
             "remaining_energy_j": float(self.remaining_energy_j),
+            "energy_budget_j": float(self.energy_budget_j),
             "cumulative_energy_j": float(self.cumulative_energy_j),
             "cumulative_collab_latency_ms": float(self.cumulative_coll_latency_ms),
             "legacy_cumulative_e2e_ms": float(np.sum(self.episode_e2e)),

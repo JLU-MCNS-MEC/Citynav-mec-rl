@@ -62,9 +62,16 @@ $$
 
 来源：`env16.py:66-69`（preflight 实测），10 TFLOPS 同构。
 
-### 2.4 $D_{down}$ — MEC → UAV 下行（**Stage 17 新增**）
+### 2.4 $D_{down}$ — MEC → UAV 下行（**默认忽略**）
 
-Stage 16 完全没有下行（审计 H.1）。Stage 17 定义：
+> **2026-11-26 审核决定**：MEC 推理动作返回时延及其对应的 UAV 悬停能耗**可忽略**，
+> 该结论有参考文献支撑（引用待补）。默认 `include_downlink=False`，因此
+> $D_{down}=0$，$D_{coll}=D_{enc}+D_{up}+D_{inf}$。
+>
+> 模型实现保留在 `latency17.d_down_ms()` 中，仅在 `include_downlink=True` 时启用，
+> 用于敏感性分析；**不是**把下行"偷偷设为 0"，而是显式配置项。
+
+启用时的定义如下（Stage 16 没有下行，审计 H.1）：
 
 $$
 D_{down}=\frac{8\times\text{payload\_bytes}}{\text{rate}_{down}(d)}\times10^3\ \text{ms}

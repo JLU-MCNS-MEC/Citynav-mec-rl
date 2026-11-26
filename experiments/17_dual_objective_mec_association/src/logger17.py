@@ -6,8 +6,8 @@ Rules encoded here (spec section X):
   * only the *executed* node's service cost is counted in D_sum and E_sum;
   * rejected actions (infeasible node) add nothing except the violation flag;
   * once the episode is terminated no further step is charged;
-  * `nDTW` is emitted as None because Stage 16's environment exposes no
-    reference trajectory -- it must be defined before any evaluation run.
+  * nDTW is NOT reported: review decided (2026-11-26) that it is not needed;
+    OSR is reported instead, with the 20 m success radius.
 """
 from __future__ import annotations
 
@@ -58,7 +58,6 @@ class EpisodeRecord:
     spl: float
     ne_m: float
     osr: int
-    ndtw: float | None
     cumulative_collaborative_service_latency_ms: float
     legacy_cumulative_e2e_ms: float
     cumulative_energy_j: float
@@ -94,7 +93,6 @@ def episode_record(env, episode: int, task: dict, cfg: Stage17Config) -> Episode
         spl=spl,
         ne_m=ne,
         osr=int(env.success or env.min_dist <= cfg.stop_radius_m),
-        ndtw=None,
         cumulative_collaborative_service_latency_ms=float(env.cumulative_coll_latency_ms),
         legacy_cumulative_e2e_ms=float(np.sum(env.episode_e2e)),
         cumulative_energy_j=float(env.cumulative_energy_j),

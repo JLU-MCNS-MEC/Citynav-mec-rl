@@ -7,7 +7,8 @@
 
 | 检查 | 方法 | 结果 |
 |---|---|---|
-| 语法 | `python -m py_compile src/*.py` | 通过 |
+| 语法 | `python -m py_compile src/*.py stage17b/*.py` | 通过 |
+| 公式算术 | `stage17b/unit_checks.py` U1–U8（纯算术，不加载模型、不建环境、不跑 episode） | 8/8 通过 |
 | 状态维度算术 | 74 + 3 + 10×5 = 127 | 与 `STATE17_DIM` 一致 |
 | 时延常量 | 读取 `encoder_flops.json`、`env16.MODEL_GFLOPS_MEASURED` | 见表 2 |
 | 单位 | 逐函数人工核对（见 `02_LATENCY_MODEL.md` §3、`03_ENERGY_MODEL.md` §8） | 一致 |
@@ -28,7 +29,7 @@
 | $P_{fly}(3)$ | 型阻 80.010 + 诱导 91.970 + 寄生 0.250 | **≈172.23 W** |
 | $E_{forward}(v=3)$ | 172.23 × (5/3) | **≈287.05 J** |
 | $E_{turn}$ | 168.49 × (30/30) | **168.49 J** |
-| $E_{coll}$ 范围 | 168.49 × D_coll，D_coll ∈ [30,152] ms | ≈5.1–25.6 J |
+| $E_{coll}$ 范围 | 168.49 × D_coll，D_coll ∈ [30,151.5] ms（下行忽略） | ≈5.1–25.5 J |
 
 推导细节：
 
@@ -77,5 +78,8 @@
 - 未跑任何 episode；
 - 未训练任何算法；
 - 未做任何评测或阈值扫描。
+
+（唯一执行过的脚本是 `stage17b/unit_checks.py`：只对公式做算术核对，
+不 import 环境、不加载权重、不产生任何轨迹数据。）
 
 以上全部属于 Stage 17-B，需先完成人工审核。

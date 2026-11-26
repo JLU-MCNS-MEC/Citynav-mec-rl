@@ -56,6 +56,8 @@ cfg = load_config("configs/default.json")
 |---|---|
 | $D_{sum}$ | $\sum_t (D_{enc}+D_{up}+D_{inf}+D_{down})$ |
 | 能量 | $E_{coll}=P_{hover}D_{coll}+P_{enc}D_{enc}+P_{tx}D_{up}+P_{rx}D_{down}$；$E_{motion}\in\{E_{forward},E_{turn},0\}$ |
-| 硬约束 | $\sum E \le E_{budget}$；$D_{coll}\le D_{max}$ |
+| 硬约束 | $\sum E \le E_{battery}$（100 Wh）；$D_{coll}\le D_{max}$ |
+| 目标 | SR（↑）与 $D_{sum}$（↓）；**SR 不是约束** |
+| 报告指标 | SR / OSR（20 m）/ SPL / NE；不使用 nDTW |
 
 所有 PROVISIONAL 参数见 `docs/08_REVIEW_QUESTIONS.md`，**审核通过前不得进入下一阶段。**

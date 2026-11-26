@@ -42,16 +42,23 @@ def d_inf_ms(model_type: str, cfg: Stage17Config) -> float:
 
 
 def d_down_ms(distance_m: float, cfg: Stage17Config) -> float:
-    """MEC -> UAV downlink of the navigation action (NEW in Stage 17).
+    """MEC -> UAV action return.
 
-    Reuses the Stage-12 path-loss/SNR model unchanged; only the transmit
-    power differs (MEC instead of UAV).  Because SNR is linear in transmit
-    power at fixed geometry and bandwidth,
+    REVIEW 2026-11-26: neglected by default (action-return delay and the
+    hover energy it would imply are ignored, with literature support).  The
+    model below stays available for sensitivity studies when
+    `include_downlink=True`.
+
+    When enabled it reuses the Stage-12 path-loss/SNR model unchanged; only
+    the transmit power differs (MEC instead of UAV).  Because SNR is linear in
+    transmit power at fixed geometry and bandwidth,
 
         SNR_down = SNR_up * (P_mec / P_uav)
 
     so the Stage-12 rate function is reused rather than re-implemented.
     """
+    if not cfg.include_downlink:
+        return 0.0
     _, snr_up = P12.uplink_rate_bps(distance_m)
     snr_down = snr_up * (cfg.mec_tx_power_w / P12.TX_POWER_W)
     rate_bps = max(cfg.bandwidth_hz * math.log2(1.0 + snr_down), 1e-15)

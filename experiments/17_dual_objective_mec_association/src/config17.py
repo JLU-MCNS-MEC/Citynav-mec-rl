@@ -45,24 +45,30 @@ class Stage17Config:
     rotor_s: float = 0.05             # LITERATURE
     rotor_a_m2: float = 0.503         # LITERATURE
 
-    # ---- onboard power (PROVISIONAL unless noted) ------------------------
-    p_enc_w: float = 15.0             # PROVISIONAL
+    # ---- onboard power ---------------------------------------------------
+    p_enc_w: float = 15.0             # LITERATURE (citation to be inserted)
     p_tx_w: float = 0.1               # INHERITED protocol.TX_POWER_W
-    p_rx_w: float = 0.0               # PROVISIONAL simplification: see docs/03
-    p_aux_w: float = 0.0              # PROVISIONAL: 0 = no extra auxiliary term
+    p_rx_w: float = 0.0               # irrelevant while include_downlink=False
+    p_aux_w: float = 0.0              # no separate board-level term
 
     # ---- energy budget ---------------------------------------------------
     battery_capacity_wh: float = 100.0     # PROVISIONAL reference pack
-    initial_energy_j: float = 360000.0     # = 100 Wh, separate from budget
-    task_energy_budget_j: float = 20000.0  # PROVISIONAL: see docs/04
-    battery_safety_margin_j: float = 0.0   # PROVISIONAL
+    initial_energy_j: float = 360000.0     # = 100 Wh
+    # REVIEW 2026-11-26: the only energy constraint is "episode energy does
+    # not exceed the battery capacity"; there is no separate task budget.
+    task_energy_budget_j: float = 360000.0
+    battery_safety_margin_j: float = 0.0
 
     # ---- per-service deadline -------------------------------------------
     d_max_ms: float = 150.0           # PROVISIONAL: see docs/04
 
-    # ---- downlink (absent in Stage 16; see audit H.1) --------------------
-    downlink_payload_bytes: int = 8   # PROVISIONAL: see docs/02
-    mec_tx_power_w: float = 0.1       # PROVISIONAL (symmetric assumption)
+    # ---- downlink --------------------------------------------------------
+    # REVIEW 2026-11-26: the MEC->UAV action-return delay (and the hover energy
+    # during it) is neglected, per the reviewer's literature support.  The
+    # implementation stays available behind the flag for sensitivity studies.
+    include_downlink: bool = False
+    downlink_payload_bytes: int = 8   # only used when include_downlink=True
+    mec_tx_power_w: float = 0.1       # only used when include_downlink=True
     bandwidth_hz: float = 5.0e6       # INHERITED protocol.BANDWIDTH_HZ
 
     # ---- misc ------------------------------------------------------------
