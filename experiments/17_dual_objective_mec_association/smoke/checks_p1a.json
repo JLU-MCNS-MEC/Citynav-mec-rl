@@ -1,0 +1,99 @@
+{
+  "T1_td3_delay": {
+    "critic": 10,
+    "actor": 5,
+    "target": 5,
+    "pass": true
+  },
+  "T2_td3_actor_grad": {
+    "grad_sum": 15.648964442312717,
+    "pass": true
+  },
+  "T3_ddpg_diag": {
+    "keys": {
+      "actor_logits_std": 0.12441851198673248,
+      "actor_max_prob": 0.13299889862537384,
+      "actor_entropy": 2.1892271041870117,
+      "q_action_std": 0.1082654595375061,
+      "q_action_range": 0.34369558095932007,
+      "actor_param_delta": 0.07170530215097996,
+      "grad_pi": 0.05438063701654519
+    },
+    "pass": true
+  },
+  "T4_sac_target": {
+    "code": 1.5559306144714355,
+    "manual": 1.5559306028129147,
+    "pass": true
+  },
+  "T5_sac_diag": {
+    "keys": {
+      "mean_env_reward": 0.4897182583808899,
+      "mean_entropy_bonus": 2.1894233226776123,
+      "mean_bellman_target": 2.5873334407806396,
+      "mean_q1": 0.008241387084126472,
+      "mean_q2": 0.009721332229673862,
+      "mean_q_min": -0.06435641646385193,
+      "critic_td_error": 2.579092025756836,
+      "alpha": 0.9990004897117615,
+      "entropy": 2.1894233226776123,
+      "sac_target_entropy": 1.0986123085021973
+    },
+    "pass": true
+  },
+  "T6_ppo_diag": {
+    "keys": {
+      "loss_pi": -0.03796190023422241,
+      "loss_v": 0.05521726980805397,
+      "grad_pi": 0.7086017242022905,
+      "approx_kl": 0.06266534328460693,
+      "clip_frac": 0.0,
+      "policy_entropy": 2.297483205795288
+    },
+    "pass": true
+  },
+  "T7_task_order": {
+    "seed42_a": [
+      1144,
+      1690,
+      1586,
+      2056,
+      2708
+    ],
+    "seed42_b": [
+      1144,
+      1690,
+      1586,
+      2056,
+      2708
+    ],
+    "seed43": [
+      2467,
+      1288,
+      1697,
+      1001,
+      3173
+    ],
+    "pass": true
+  },
+  "T8_reward_shared": {
+    "lambda_quality": 1.0,
+    "lambda_latency": 0.5,
+    "gamma": 1.0,
+    "pass": true
+  },
+  "T9_env_frozen": {
+    "values": {
+      "d_max_ms": 400.0,
+      "initial_energy_j": 360000.0,
+      "task_energy_budget_j": 360000.0,
+      "coverage_m": 500.0,
+      "max_steps": 200,
+      "feature_bits": 32,
+      "v_forward_mps": 3.0,
+      "uav_height_m": 50.0,
+      "mec_antenna_height_m": 10.0
+    },
+    "pass": true
+  }
+}

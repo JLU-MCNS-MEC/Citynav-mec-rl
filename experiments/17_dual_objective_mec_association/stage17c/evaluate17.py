@@ -83,7 +83,8 @@ def run_episode(env, task, chooser):
     while not done:
         a = chooser(env)
         _, done, _ = env.step(a)          # env.step(None) terminates cleanly
-    return {"success": bool(env.success), "failure": env.failure,
+    return {"task_index": int(task.get("index", -1)),
+            "success": bool(env.success), "failure": env.failure,
             "d_sum_ms": float(env.cumulative_coll_latency_ms),
             "legacy_e2e_ms": float(np.sum(env.episode_e2e)),
             "energy_j": float(env.cumulative_energy_j),
@@ -134,14 +135,14 @@ def main():
             s, meta = build_state17(e, cfg)
             return greedy(net, kind, s, meta["feasible_mec_mask"], args.device)
         rows = [run_episode(env, t, chooser) for t in tasks]
-        res[args.algorithm] = summarize(rows)
+        res[args.algorithm] = {**summarize(rows), "per_task": rows}
 
     for name in [b for b in args.baselines.split(",") if b]:
         rng = np.random.default_rng(42)
         rows = [run_episode(env, t,
                             lambda e, n=name: baseline_choice(n, e.candidate_table(), rng))
                 for t in tasks]
-        res[name] = summarize(rows)
+        res[name] = {**summarize(rows), "per_task": rows}
 
     print(json.dumps(res, indent=2))
     if args.out:

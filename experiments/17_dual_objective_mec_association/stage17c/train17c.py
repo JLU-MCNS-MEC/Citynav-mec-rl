@@ -67,6 +67,8 @@ DEFAULTS = {
     "gae_lambda": 0.95,
     "eval_every": 100,
     "sac_eta": 0.5,
+    "policy_delay": 2,
+    "sac_critic_clip": 1.0,
     "lambda_quality": 1.0,
     "lambda_latency": 0.5,
 }
@@ -303,8 +305,10 @@ def update_offpolicy(algo, ag, replay, device, gamma, total_steps, cfg):
         gn_q = grad_norm(list(ag["q1"].parameters()) + list(ag["q2"].parameters()))
         nn.utils.clip_grad_norm_(list(ag["q1"].parameters()) + list(ag["q2"].parameters()), 1.0)
         ag["opt_q"].step()
-        if total_steps % sync == 0:
-            # R1 FIX: differentiable expectation over feasible actions.
+        ag["critic_updates"] = ag.get("critic_updates", 0) + 1
+        if ag["critic_updates"] % int(cfg.get("policy_delay", 2)) == 0:
+            # P1: one actor update per `policy_delay` CRITIC updates
+            # (was tied to total_steps % 200, i.e. almost never).
             lg, _ = ag["pi"](bs)
             p = masked_softmax(lg, bm)
             q = torch.min(ag["q1"](bs), ag["q2"](bs))
@@ -314,9 +318,17 @@ def update_offpolicy(algo, ag, replay, device, gamma, total_steps, cfg):
             nn.utils.clip_grad_norm_(ag["pi"].parameters(), 1.0); ag["opt_pi"].step()
             soft_update(ag["pit"], ag["pi"], tau)
             soft_update(ag["q1t"], ag["q1"], tau); soft_update(ag["q2t"], ag["q2"], tau)
+            ag["actor_updates"] = ag.get("actor_updates", 0) + 1
+            ag["target_updates"] = ag.get("target_updates", 0) + 1
             return {"loss_q": float(loss_q.detach()), "grad_q": gn_q,
-                    "loss_pi": float(loss_pi.detach()), "grad_pi": gn_pi}
-        return {"loss_q": float(loss_q.detach()), "grad_q": gn_q}
+                    "loss_pi": float(loss_pi.detach()), "grad_pi": gn_pi,
+                    "critic_updates": ag["critic_updates"],
+                    "actor_updates": ag["actor_updates"],
+                    "target_updates": ag["target_updates"]}
+        return {"loss_q": float(loss_q.detach()), "grad_q": gn_q,
+                "critic_updates": ag["critic_updates"],
+                "actor_updates": ag.get("actor_updates", 0),
+                "target_updates": ag.get("target_updates", 0)}
 
     if algo == "ddpg":
         with torch.no_grad():
@@ -332,13 +344,26 @@ def update_offpolicy(algo, ag, replay, device, gamma, total_steps, cfg):
         nn.utils.clip_grad_norm_(ag["q"].parameters(), 1.0); ag["opt_q"].step()
         lg, _ = ag["pi"](bs)
         p = masked_softmax(lg, bm)
-        loss_pi = -masked_expectation(ag["q"](bs), p).mean()   # differentiable
+        q_all = ag["q"](bs)
+        loss_pi = -masked_expectation(q_all, p).mean()   # differentiable
         ag["opt_pi"].zero_grad(); loss_pi.backward()
         gn_pi = grad_norm(ag["pi"].parameters())
+        before = [prm.detach().clone() for prm in ag["pi"].parameters()]
         nn.utils.clip_grad_norm_(ag["pi"].parameters(), 1.0); ag["opt_pi"].step()
+        delta = math.sqrt(sum(float((a - b).pow(2).sum())
+                              for a, b in zip(before, ag["pi"].parameters())))
         soft_update(ag["qt"], ag["q"], tau); soft_update(ag["pit"], ag["pi"], tau)
+        # DDPG diagnostics (logits saturation vs flat critic)
+        p_d = p.detach(); lg_d = lg.detach()
         return {"loss_q": float(loss_q.detach()), "grad_q": gn_q,
-                "loss_pi": float(loss_pi.detach()), "grad_pi": gn_pi}
+                "loss_pi": float(loss_pi.detach()), "grad_pi": gn_pi,
+                "actor_logits_std": float(lg_d.std()),
+                "actor_max_prob": float(p_d.max(1).values.mean()),
+                "actor_entropy": float(-(p_d * torch.log(p_d + 1e-12)).sum(1).mean()),
+                "q_action_std": float(q_all.detach().std(1).mean()),
+                "q_action_range": float((q_all.detach().max(1).values
+                                         - q_all.detach().min(1).values).mean()),
+                "actor_param_delta": delta}
 
     # sac
     with torch.no_grad():
@@ -355,6 +380,10 @@ def update_offpolicy(algo, ag, replay, device, gamma, total_steps, cfg):
     loss_q = F.mse_loss(qv1, tgt) + F.mse_loss(qv2, tgt)
     ag["opt_q"].zero_grad(); loss_q.backward()
     gn_q = grad_norm(list(ag["q1"].parameters()) + list(ag["q2"].parameters()))
+    # P1 stability fix (recorded separately): clip the critic gradient so the
+    # large TD errors seen in P0 cannot blow up the shared trunk.
+    nn.utils.clip_grad_norm_(list(ag["q1"].parameters()) + list(ag["q2"].parameters()),
+                             float(cfg.get("sac_critic_clip", 1.0)))
     ag["opt_q"].step()
     lg, _ = ag["ac"](bs)
     p = masked_softmax(lg, bm)
@@ -376,9 +405,17 @@ def update_offpolicy(algo, ag, replay, device, gamma, total_steps, cfg):
         loss_a = (ag["log_alpha"] * (ent - h_target))[valid].mean()
         ag["opt_alpha"].zero_grad(); loss_a.backward(); ag["opt_alpha"].step()
     soft_update(ag["q1t"], ag["q1"], tau); soft_update(ag["q2t"], ag["q2"], tau)
+    alpha_v = float(ag["log_alpha"].exp().detach())
     return {"loss_q": float(loss_q.detach()), "grad_q": gn_q,
             "loss_pi": float(loss_pi.detach()), "grad_pi": gn_pi,
-            "alpha": float(ag["log_alpha"].exp().detach()), "entropy": ent_val}
+            "alpha": alpha_v, "entropy": ent_val,
+            "sac_target_entropy": float(h_target.mean().detach()),
+            "mean_env_reward": float(br.mean()),
+            "mean_entropy_bonus": float((alpha * ent).mean()),
+            "mean_bellman_target": float(tgt.mean()),
+            "mean_q1": float(qv1.mean()), "mean_q2": float(qv2.mean()),
+            "mean_q_min": float(torch.min(qv1, qv2).mean()),
+            "critic_td_error": float((qv1 - tgt).abs().mean())}
 
 
 def ppo_update(ag, buf, device, cfg):
@@ -412,39 +449,78 @@ def ppo_update(ag, buf, device, cfg):
         gn = grad_norm(ag["ac"].parameters())
         nn.utils.clip_grad_norm_(ag["ac"].parameters(), 1.0)
         ag["opt"].step()
+        with torch.no_grad():
+            approx_kl = float((LP - logp).mean())
+            clip_frac = float(((ratio - 1.0).abs() > clip).float().mean())
+            ent_pi = float(-(p * torch.log(p + 1e-12)).sum(1).mean())
         last = {"loss_pi": float(pi_loss.detach()),
                 "loss_v": float(0.5 * (val - ret).pow(2).mean().detach()),
-                "grad_pi": gn}
+                "grad_pi": gn, "approx_kl": approx_kl,
+                "clip_frac": clip_frac, "policy_entropy": ent_pi}
     return last
 
 
 # --------------------------------------------------------------------------
 # evaluation / checkpoints
 # --------------------------------------------------------------------------
-def evaluate(algo, ag, env, tasks, device, n=60):
-    rows = []
+def evaluate(algo, ag, env, tasks, device, n=60, prev_actions=None):
+    """Deterministic Dev evaluation with policy diagnostics and per-task rows."""
+    rows, action_hist, ents, maxps = [], {}, [], []
     for t in tasks[:n]:
         env.start(t)
         s, meta = build_state17(env, env.cfg)
-        done = False
+        done, acts = False, []
         while not done:
-            a, _, _ = act_policy(algo, ag, s, meta["feasible_mec_mask"], device,
+            mask = meta["feasible_mec_mask"]
+            a, _, _ = act_policy(algo, ag, s, mask, device,
                                  np.random.default_rng(0), explore=False)
             if a is None:
                 env.step(None)
                 break
+            acts.append(int(a))
+            st = torch.as_tensor(s[None], device=device)
+            with torch.no_grad():
+                if algo == "dqn":
+                    lg = ag["q"](st)[0]
+                else:
+                    lg = ag["pi"](st)[0] if algo in ("td3", "ddpg") else ag["ac"](st)[0]
+                pr = masked_softmax(lg[None], torch.as_tensor(mask[None], device=device))
+            if float(pr.sum()) > 1e-12:
+                ents.append(float(-(pr * torch.log(pr + 1e-12)).sum()))
+                maxps.append(float(pr.max()))
             _, done, _ = env.step(a)
             s, meta = build_state17(env, env.cfg)
-        rows.append({"success": bool(env.success), "failure": env.failure,
+        action_hist[int(t["index"])] = acts
+        rows.append({"task_index": int(t["index"]), "success": bool(env.success),
+                     "failure": env.failure,
                      "d_sum_ms": float(env.cumulative_coll_latency_ms),
                      "energy_j": float(env.cumulative_energy_j),
-                     "steps": int(env.step_idx)})
+                     "steps": int(env.step_idx),
+                     "actions": acts})
+    change_ratio = None
+    if prev_actions:
+        same = tot = 0
+        for k, acts in action_hist.items():
+            if k in prev_actions:
+                for x, y in zip(acts, prev_actions[k]):
+                    tot += 1; same += int(x == y)
+        change_ratio = 1.0 - same / max(tot, 1)
+    hist = np.zeros(N_ACT, int)
+    for acts in action_hist.values():
+        for a in acts:
+            hist[a] += 1
     return {"n": len(rows), "sr": float(np.mean([r["success"] for r in rows])),
             "d_sum_ms": float(np.mean([r["d_sum_ms"] for r in rows])),
             "energy_j": float(np.mean([r["energy_j"] for r in rows])),
             "mean_steps": float(np.mean([r["steps"] for r in rows])),
             "failures": {f: int(sum(r["failure"] == f for r in rows))
-                         for f in sorted({r["failure"] for r in rows})}}
+                         for f in sorted({r["failure"] for r in rows})},
+            "policy_entropy_dev": float(np.mean(ents)) if ents else None,
+            "max_prob_dev": float(np.mean(maxps)) if maxps else None,
+            "action_hist": hist.tolist(),
+            "action_change_ratio": change_ratio,
+            "per_task": rows,
+            "_actions": action_hist}
 
 
 def save_checkpoint(path, algo, ag, cfg, env_cfg, episode, global_step,
@@ -507,8 +583,16 @@ def main():
     total_steps, t0 = 0, time.time()
     updates, last_metrics, best_score = 0, {}, None
 
+    perm_rng = np.random.default_rng(int(cfg["seed"]))
+    perm = perm_rng.permutation(len(train_tasks))
+    ptr, cycle = 0, 0
+    prev_actions = None
     for ep in range(1, int(cfg["episodes"]) + 1):
-        env.start(train_tasks[(ep - 1) % len(train_tasks)])
+        if ptr >= len(perm):
+            perm = perm_rng.permutation(len(train_tasks))
+            ptr, cycle = 0, cycle + 1
+        task_idx = int(perm[ptr]); ptr += 1
+        env.start(train_tasks[task_idx])
         reward.reset(env)
         s, meta = build_state17(env, env_cfg)
         done, ep_r = False, 0.0
@@ -540,7 +624,11 @@ def main():
             total_steps += 1
 
         if args.algorithm == "ppo" and buf["s"]:
+            before = [prm.detach().clone() for prm in ag["ac"].parameters()]
             last_metrics = ppo_update(ag, buf, args.device, cfg)
+            last_metrics["actor_param_delta"] = math.sqrt(sum(
+                float((a - b).pow(2).sum())
+                for a, b in zip(before, ag["ac"].parameters())))
             updates += 1
             for k in buf:
                 buf[k] = []
@@ -569,7 +657,9 @@ def main():
                         total_steps, None, None, False)
 
         if cfg["eval_every"] and ep % int(cfg["eval_every"]) == 0:
-            d = evaluate(args.algorithm, ag, env, dev_tasks, args.device)
+            d = evaluate(args.algorithm, ag, env, dev_tasks, args.device,
+                         prev_actions=prev_actions)
+            prev_actions = d.pop("_actions")
             score = dev_score(d["sr"], d["d_sum_ms"], float(cfg["lambda_quality"]),
                               float(cfg["lambda_latency"]), env_cfg.d_max_ms,
                               env_cfg.max_steps)
