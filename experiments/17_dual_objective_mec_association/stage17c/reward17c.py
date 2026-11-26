@@ -1,48 +1,35 @@
 #!/usr/bin/env python3
-"""Stage 17-C dual-objective training reward.
+"""Stage 17-C-R1 dual-objective training reward.
 
-    r_t = lambda_Q * ( alpha_p * progress_t + terminal_t )
-          - lambda_D * D_coll_t / D_ref
+    r_t = lambda_Q * 1[t is a successful terminal] - lambda_D * D_coll_t / D_max
 
-    progress_t = clip( (d_prev - d_new) / forward_m, -1, +1 )
-    terminal_t = +1 on a successful terminal, -failure_penalty otherwise
-    D_ref      = fixed reference cumulative service latency (ms), shared by
-                 every algorithm and never derived from the current episode
+Summing over an episode:
 
-Properties required by the review:
+    G(tau) = lambda_Q * S(tau) - lambda_D * D_sum(tau) / D_max
 
-  * the Stage-16 `-legacy_e2e/100` reward is NOT used anywhere;
-  * the expert checkpoints' standalone closed-loop SR is NOT used as a reward;
-  * the true target coordinates are used only here, inside the environment, as
-    training feedback - they never enter the agent's state;
-  * progress uses the distance-to-target change, i.e. environment feedback,
-    which the agent cannot observe directly (the 127-dim state contains only
-    belief/match/relative features and the inherited Stage-16 features).
+`D_max` is the *per-service deadline* already validated in Stage 17-B
+(400 ms).  It is read from the environment configuration and never re-typed
+here.  There is NO cumulative-latency reference (D_ref was removed): the
+accumulated normalised cost still maps monotonically to the accumulated raw
+latency because D_max is a fixed constant.
 
-Hard constraints stay in the environment (feasible mask + termination).  The
-energy term is NOT part of the reward: energy is a constraint, not a third
-objective.  `energy_consumption_cost` is exported for logging only.
-
-Discounting: the paper objective is the *undiscounted* sum of D_coll and the
-task success rate.  With gamma < 1 the discounted return weights late latency
-less.  Stage 16 used gamma = 0.99; Stage 17-C keeps that default and exposes
-`gamma` in the config, with the analysis in docs/16.  Do not change it without
-the review deciding so.
+Removed in R1: navigation-progress reward, progress clipping, D_ref, failure
+penalty, terminal bonus.  The only two training terms are the success
+indicator and the normalised per-step service latency.  Energy stays a hard
+constraint of the environment; it is exported for logging only.
 """
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 
-import numpy as np
-
 
 @dataclass
-class DualSignals:
+class DualSignalsR1:
     terminal_success_reward: float
-    navigation_progress_reward: float
     collaborative_service_latency_cost: float
     energy_consumption_cost: float
-    constraint_violation: float
+    energy_budget_violation: int
+    deadline_violation: int
     total_training_reward: float
 
     def to_dict(self) -> dict:
@@ -50,65 +37,49 @@ class DualSignals:
 
 
 @dataclass
-class RewardConfig:
+class RewardConfigR1:
     lambda_quality: float = 1.0
     lambda_latency: float = 1.0
-    d_ref_ms: float = 6000.0
-    progress_weight: float = 0.5
-    terminal_bonus: float = 1.0
-    failure_penalty: float = 0.0
-    progress_clip: float = 1.0
 
 
-class DualObjectiveReward:
-    """Per-episode reward accumulator; call reset() at env.start()."""
+class DualObjectiveRewardR1:
+    """r_t = lambda_Q * success - lambda_D * D_coll / D_max (D_max from env)."""
 
-    def __init__(self, cfg: RewardConfig, forward_m: float = 5.0):
+    def __init__(self, cfg: RewardConfigR1, d_max_ms: float):
+        if d_max_ms <= 0:
+            raise ValueError(f"d_max_ms must be positive, got {d_max_ms}")
         self.cfg = cfg
-        self.forward_m = float(forward_m)
-        self.prev_dist = None
+        self.d_max_ms = float(d_max_ms)
 
     def reset(self, env) -> None:
-        self.prev_dist = float(np.linalg.norm(np.asarray(env.pos, float)
-                                              - np.asarray(env.target, float)))
+        """Kept for interface symmetry; R1 has no per-episode state."""
+        return None
 
-    def step(self, env, info: dict, done: bool) -> DualSignals:
+    def step(self, env, info: dict, done: bool) -> DualSignalsR1:
         cfg = self.cfg
-        dist = float(np.linalg.norm(np.asarray(env.pos, float)
-                                    - np.asarray(env.target, float)))
-        if self.prev_dist is None:
-            self.prev_dist = dist
-        progress = (self.prev_dist - dist) / max(self.forward_m, 1e-9)
-        progress = float(np.clip(progress, -cfg.progress_clip, cfg.progress_clip))
-        self.prev_dist = dist
-
-        terminal = 0.0
-        if done:
-            terminal = cfg.terminal_bonus if env.success else -cfg.failure_penalty
-
-        nav_reward = cfg.progress_weight * progress + terminal
-        d_cost = float(info.get("d_coll_ms", 0.0)) / max(cfg.d_ref_ms, 1e-9)
+        success = 1.0 if (done and bool(env.success)) else 0.0
+        d_cost = float(info.get("d_coll_ms", 0.0)) / self.d_max_ms
         e_cost = float(info.get("e_total_step_j", 0.0)) / max(
             float(getattr(env, "energy_budget_j", 1.0)), 1e-9)
-        violation = 1.0 if info.get("terminated_reason") in (
-            "energy_budget_exhausted", "invalid_mec_action", "no_feasible_mec") else 0.0
-
-        total = cfg.lambda_quality * nav_reward - cfg.lambda_latency * d_cost
-        return DualSignals(
-            terminal_success_reward=terminal,
-            navigation_progress_reward=progress,
+        total = cfg.lambda_quality * success - cfg.lambda_latency * d_cost
+        return DualSignalsR1(
+            terminal_success_reward=success,
             collaborative_service_latency_cost=d_cost,
             energy_consumption_cost=e_cost,
-            constraint_violation=violation,
+            energy_budget_violation=int(info.get("terminated_reason")
+                                        == "energy_budget_exhausted"),
+            deadline_violation=int(info.get("terminated_reason")
+                                   == "invalid_mec_action"
+                                   and info.get("constraint_failure") == "deadline"),
             total_training_reward=float(total),
         )
 
 
 REWARD_EQUATIONS = {
-    "objective": "J = lambda_Q * J_Q - lambda_D * J_D / D_ref",
-    "per_step": "r_t = lambda_Q * (alpha_p * progress_t + terminal_t)"
-                " - lambda_D * D_coll_t / D_ref",
-    "progress": "clip((d_prev - d_new) / forward_m, -1, +1)",
-    "terminal": "+1 success, -failure_penalty failure",
-    "energy": "constraint only (feasible mask + termination), not a reward term",
+    "per_step": "r_t = lambda_Q * 1[success terminal] - lambda_D * D_coll_t / D_max",
+    "episode": "G = lambda_Q * S - lambda_D * D_sum / D_max",
+    "d_max_source": "env cfg d_max_ms (Stage 17-B validated 400 ms)",
+    "removed": ["D_ref", "navigation progress", "progress_weight",
+                "terminal bonus", "failure penalty"],
+    "energy": "hard constraint, logged only",
 }

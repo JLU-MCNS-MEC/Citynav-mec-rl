@@ -1,17 +1,22 @@
 #!/usr/bin/env python3
-"""Stage 17-C: dual-objective DRL trainers on the Stage-17 environment.
+"""Stage 17-C-R1: dual-objective DRL trainers (five algorithms).
 
-The five learners are the Stage-16 implementations (DQN / PPO / discrete TD3 /
-discrete SAC / discrete DDPG).  Update equations, optimizers, learning rates,
-batch size, replay capacity, warm-up, exploration and the TD3 actor delay are
-copied from `experiments/16.../p3/train16.py`; only these change:
+Inheritance: update equations follow Stage 16 (`p3/train16.py`) with these
+R1 changes, all of them required by the review:
 
-  * state         build_state17 (127 dims instead of 74)
-  * action mask   feasible_mec_mask applied identically to all five algorithms
-  * reward        reward17c.DualObjectiveReward (no -legacy_e2e/100)
-  * environment   EpisodeEnv17 (energy / deadline hard constraints)
+  * reward        r_t = lambda_Q * 1[success] - lambda_D * D_coll / D_max
+                  (D_max read from the Stage-17 env config; no D_ref, no
+                  progress reward)
+  * gamma         1.0 for every algorithm (undiscounted episodic objective)
+  * TD3 actor     differentiable policy expectation over feasible actions
+  * SAC target    soft value  sum_m pi(m|s') [minQ' - alpha log pi]
+  * DQN target    masked max, bootstrap 0 on terminal / empty masks
+  * masks         one feasible_mec_mask definition for all five algorithms
+  * config        CLI > train_config.json > code defaults, effective config
+                  printed and stored in every checkpoint
+  * checkpoints   best.pt (Dev dual-objective score) and last.pt
 
-Stage 16's file and checkpoints are not touched.  Not executed in Stage 17-C.
+Not executed in Stage 17-C-R1.
 """
 from __future__ import annotations
 
@@ -42,25 +47,69 @@ from env17 import EpisodeEnv17                                    # noqa: E402
 from state17 import build_state17                                 # noqa: E402
 from train_association_rl import load_tasks_and_split             # noqa: E402
 from nets17 import (N_ACT, STATE17_DIM, ActorCritic17, QNet17,    # noqa: E402
-                    mask_logits, masked_softmax)
-from reward17c import DualObjectiveReward, RewardConfig           # noqa: E402
+                    masked_expectation, masked_max, masked_softmax)
+from reward17c import (DualObjectiveRewardR1, RewardConfigR1)     # noqa: E402
 
-GAMMA_DEFAULT = 0.99          # Stage-16 value; see docs/16 for the analysis
-HIDDEN = 256
-REPLAY_CAP = 50000
-BATCH = 128
-WARMUP = 2000
-PPO_EPOCHS = 4
-PPO_CLIP = 0.2
-GAE_LAMBDA = 0.95
-TAU = 0.005
-TARGET_SYNC = 200             # DQN target net / TD3 actor delay (Stage 16)
+DEFAULTS = {
+    "gamma": 1.0,
+    "episodes": 4000,
+    "seed": 42,
+    "batch": 128,
+    "warmup": 2000,
+    "replay_cap": 50000,
+    "hidden": 256,
+    "lr_dqn": 1e-4,
+    "lr_actor": 3e-4,
+    "tau": 0.005,
+    "target_sync_steps": 200,
+    "ppo_epochs": 4,
+    "ppo_clip": 0.2,
+    "gae_lambda": 0.95,
+    "eval_every": 100,
+    "lambda_quality": 1.0,
+    "lambda_latency": 1.0,
+}
+
+CLI_KEYS = ("gamma", "episodes", "seed", "eval_every")
 
 
+# --------------------------------------------------------------------------
+# configuration
+# --------------------------------------------------------------------------
+def resolve_config(cli: dict, json_path: Path) -> dict:
+    """Precedence: explicit CLI value > train_config.json > DEFAULTS."""
+    cfg = dict(DEFAULTS)
+    if json_path.exists():
+        data = json.loads(json_path.read_text())
+        for k, v in data.items():
+            if k in DEFAULTS and isinstance(v, (int, float, bool)):
+                cfg[k] = v
+            elif k in ("reward",):
+                for rk, rv in v.items():
+                    if rk in ("lambda_quality", "lambda_latency"):
+                        cfg[rk] = rv
+    for k in CLI_KEYS:
+        if cli.get(k) is not None:
+            cfg[k] = cli[k]
+    return cfg
+
+
+def dev_score(sr: float, mean_d_sum_ms: float, lam_q: float, lam_d: float,
+              d_max_ms: float) -> float:
+    """Model-selection score (NOT a new latency constraint)."""
+    return lam_q * sr - lam_d * mean_d_sum_ms / max(d_max_ms, 1e-9)
+
+
+def is_better(score: float, best: float) -> bool:
+    return best is None or score > best
+
+
+# --------------------------------------------------------------------------
+# replay
+# --------------------------------------------------------------------------
 class Replay17:
-    def __init__(self, state_dim=STATE17_DIM, n_act=N_ACT, cap=REPLAY_CAP, seed=42):
-        self.cap = cap
-        self.rng = np.random.default_rng(seed)
+    def __init__(self, state_dim, n_act, cap, seed):
+        self.cap, self.rng = cap, np.random.default_rng(seed)
         self.s = np.zeros((cap, state_dim), np.float32)
         self.m = np.zeros((cap, n_act), np.float32)
         self.a = np.zeros(cap, np.int64)
@@ -94,65 +143,83 @@ def uniform_feasible(mask, rng):
     return int(rng.choice(idx)) if len(idx) else None
 
 
-def soft_update(target, source, tau=TAU):
-    for t_, o_ in zip(target.parameters(), source.parameters()):
-        t_.data.mul_(1 - tau).add_(tau * o_.data)
-
-
-def make_agents(algo, device):
+# --------------------------------------------------------------------------
+# agents
+# --------------------------------------------------------------------------
+def make_agents(algo, device, cfg):
+    hidden = int(cfg["hidden"])
+    lr = float(cfg["lr_actor"])
     if algo == "dqn":
-        q, qt = QNet17().to(device), QNet17().to(device)
+        q, qt = QNet17(hidden=hidden).to(device), QNet17(hidden=hidden).to(device)
         qt.load_state_dict(q.state_dict())
-        return {"q": q, "qt": qt, "opt": torch.optim.Adam(q.parameters(), lr=1e-4)}
+        return {"q": q, "qt": qt,
+                "opt": torch.optim.Adam(q.parameters(), lr=float(cfg["lr_dqn"]))}
     if algo == "ppo":
-        ac = ActorCritic17().to(device)
-        return {"ac": ac, "opt": torch.optim.Adam(ac.parameters(), lr=3e-4)}
+        ac = ActorCritic17(hidden=hidden).to(device)
+        return {"ac": ac, "opt": torch.optim.Adam(ac.parameters(), lr=lr)}
     if algo == "td3":
-        q1, q2 = QNet17().to(device), QNet17().to(device)
-        q1t, q2t = QNet17().to(device), QNet17().to(device)
+        q1, q2 = QNet17(hidden=hidden).to(device), QNet17(hidden=hidden).to(device)
+        q1t, q2t = QNet17(hidden=hidden).to(device), QNet17(hidden=hidden).to(device)
         q1t.load_state_dict(q1.state_dict()); q2t.load_state_dict(q2.state_dict())
-        pi, pit = ActorCritic17().to(device), ActorCritic17().to(device)
+        pi, pit = ActorCritic17(hidden=hidden).to(device), ActorCritic17(hidden=hidden).to(device)
         pit.load_state_dict(pi.state_dict())
         return {"q1": q1, "q2": q2, "q1t": q1t, "q2t": q2t, "pi": pi, "pit": pit,
-                "opt_q": torch.optim.Adam(list(q1.parameters()) + list(q2.parameters()), lr=3e-4),
-                "opt_pi": torch.optim.Adam(pi.parameters(), lr=3e-4)}
+                "opt_q": torch.optim.Adam(list(q1.parameters()) + list(q2.parameters()), lr=lr),
+                "opt_pi": torch.optim.Adam(pi.parameters(), lr=lr)}
     if algo == "ddpg":
-        q, qt = QNet17().to(device), QNet17().to(device)
+        q, qt = QNet17(hidden=hidden).to(device), QNet17(hidden=hidden).to(device)
         qt.load_state_dict(q.state_dict())
-        pi, pit = ActorCritic17().to(device), ActorCritic17().to(device)
+        pi, pit = ActorCritic17(hidden=hidden).to(device), ActorCritic17(hidden=hidden).to(device)
         pit.load_state_dict(pi.state_dict())
         return {"q": q, "qt": qt, "pi": pi, "pit": pit,
-                "opt_q": torch.optim.Adam(q.parameters(), lr=3e-4),
-                "opt_pi": torch.optim.Adam(pi.parameters(), lr=3e-4)}
+                "opt_q": torch.optim.Adam(q.parameters(), lr=lr),
+                "opt_pi": torch.optim.Adam(pi.parameters(), lr=lr)}
     if algo == "sac":
-        q1, q2 = QNet17().to(device), QNet17().to(device)
-        q1t, q2t = QNet17().to(device), QNet17().to(device)
+        q1, q2 = QNet17(hidden=hidden).to(device), QNet17(hidden=hidden).to(device)
+        q1t, q2t = QNet17(hidden=hidden).to(device), QNet17(hidden=hidden).to(device)
         q1t.load_state_dict(q1.state_dict()); q2t.load_state_dict(q2.state_dict())
-        ac = ActorCritic17().to(device)
+        ac = ActorCritic17(hidden=hidden).to(device)
         log_alpha = torch.zeros(1, requires_grad=True, device=device)
         return {"q1": q1, "q2": q2, "q1t": q1t, "q2t": q2t, "ac": ac,
                 "log_alpha": log_alpha,
-                "opt_q": torch.optim.Adam(list(q1.parameters()) + list(q2.parameters()), lr=3e-4),
-                "opt_pi": torch.optim.Adam(ac.parameters(), lr=3e-4),
-                "opt_alpha": torch.optim.Adam([log_alpha], lr=3e-4),
+                "opt_q": torch.optim.Adam(list(q1.parameters()) + list(q2.parameters()), lr=lr),
+                "opt_pi": torch.optim.Adam(ac.parameters(), lr=lr),
+                "opt_alpha": torch.optim.Adam([log_alpha], lr=lr),
+                # Stage-16 definition, kept and documented as a choice
                 "target_entropy": -0.5 * math.log(N_ACT)}
     raise ValueError(algo)
 
 
+def soft_update(target, source, tau):
+    for t_, o_ in zip(target.parameters(), source.parameters()):
+        t_.data.mul_(1 - tau).add_(tau * o_.data)
+
+
 def policy_state(algo, ag):
     if algo == "dqn":
-        return {"q": ag["q"].state_dict()}
+        return {"q": ag["q"].state_dict(), "qt": ag["qt"].state_dict()}
     if algo == "ppo":
         return {"ac": ag["ac"].state_dict()}
     if algo == "td3":
         return {"q1": ag["q1"].state_dict(), "q2": ag["q2"].state_dict(),
-                "pi": ag["pi"].state_dict()}
+                "q1t": ag["q1t"].state_dict(), "q2t": ag["q2t"].state_dict(),
+                "pi": ag["pi"].state_dict(), "pit": ag["pit"].state_dict()}
     if algo == "ddpg":
-        return {"q": ag["q"].state_dict(), "pi": ag["pi"].state_dict()}
+        return {"q": ag["q"].state_dict(), "qt": ag["qt"].state_dict(),
+                "pi": ag["pi"].state_dict(), "pit": ag["pit"].state_dict()}
     return {"q1": ag["q1"].state_dict(), "q2": ag["q2"].state_dict(),
+            "q1t": ag["q1t"].state_dict(), "q2t": ag["q2t"].state_dict(),
             "ac": ag["ac"].state_dict(), "log_alpha": ag["log_alpha"].detach().cpu()}
 
 
+def optimizer_state(algo, ag):
+    keys = [k for k in ag if k.startswith("opt")]
+    return {k: ag[k].state_dict() for k in keys}
+
+
+# --------------------------------------------------------------------------
+# acting
+# --------------------------------------------------------------------------
 def act_policy(algo, ag, s, mask, device, rng, explore=True, total_steps=0):
     st = torch.as_tensor(s[None], device=device)
     mk = torch.as_tensor(mask[None], device=device)
@@ -165,6 +232,8 @@ def act_policy(algo, ag, s, mask, device, rng, explore=True, total_steps=0):
         if algo == "ppo":
             logits, val = ag["ac"](st)
             p = masked_softmax(logits, mk)
+            if float(p.sum()) < 1e-12:
+                return None, None, None
             a = int(torch.multinomial(p[0], 1).item())
             return a, float(torch.log(p[0, a] + 1e-12)), float(val[0])
         if algo in ("td3", "ddpg"):
@@ -174,20 +243,28 @@ def act_policy(algo, ag, s, mask, device, rng, explore=True, total_steps=0):
             return masked_argmax(logits[0].cpu().numpy(), mask), None, None
         logits, _ = ag["ac"](st)              # sac
         p = masked_softmax(logits, mk)
+        if float(p.sum()) < 1e-12:
+            return None, None, None
         return int(torch.multinomial(p[0], 1).item()), None, None
 
 
-def update_offpolicy(algo, ag, replay, device, gamma, total_steps):
-    bs, bm, ba, br, bs2, bm2, bd = replay.sample(BATCH, device)
+# --------------------------------------------------------------------------
+# updates
+# --------------------------------------------------------------------------
+def update_offpolicy(algo, ag, replay, device, gamma, total_steps, cfg):
+    bs, bm, ba, br, bs2, bm2, bd = replay.sample(int(cfg["batch"]), device)
+    tau = float(cfg["tau"])
+    sync = int(cfg["target_sync_steps"])
+
     if algo == "dqn":
         with torch.no_grad():
-            qn = mask_logits(ag["qt"](bs2), bm2).max(1).values
-            tgt = br + gamma * (1 - bd) * qn
+            nxt = masked_max(ag["qt"](bs2), bm2)      # 0 on empty/terminal masks
+            tgt = br + gamma * (1 - bd) * nxt
         qv = ag["q"](bs).gather(1, ba[:, None]).squeeze(1)
         loss = F.smooth_l1_loss(qv, tgt)
         ag["opt"].zero_grad(); loss.backward()
         nn.utils.clip_grad_norm_(ag["q"].parameters(), 1.0); ag["opt"].step()
-        if total_steps % TARGET_SYNC == 0:
+        if total_steps % sync == 0:
             ag["qt"].load_state_dict(ag["q"].state_dict())
         return {"loss": float(loss)}
 
@@ -195,8 +272,10 @@ def update_offpolicy(algo, ag, replay, device, gamma, total_steps):
         with torch.no_grad():
             lg2, _ = ag["pit"](bs2)
             p2 = masked_softmax(lg2, bm2)
+            # target policy smoothing: sample from the masked target policy
             a2 = torch.multinomial(p2, 1).squeeze(1)
-            qn = torch.min(ag["q1t"](bs2), ag["q2t"](bs2)).gather(1, a2[:, None]).squeeze(1)
+            qn = torch.min(ag["q1t"](bs2), ag["q2t"](bs2)).gather(
+                1, a2[:, None]).squeeze(1)
             tgt = br + gamma * (1 - bd) * qn
         qv1 = ag["q1"](bs).gather(1, ba[:, None]).squeeze(1)
         qv2 = ag["q2"](bs).gather(1, ba[:, None]).squeeze(1)
@@ -204,16 +283,16 @@ def update_offpolicy(algo, ag, replay, device, gamma, total_steps):
         ag["opt_q"].zero_grad(); loss_q.backward()
         nn.utils.clip_grad_norm_(list(ag["q1"].parameters()) + list(ag["q2"].parameters()), 1.0)
         ag["opt_q"].step()
-        if total_steps % TARGET_SYNC == 0:      # Stage-16 actor delay
+        if total_steps % sync == 0:
+            # R1 FIX: differentiable expectation over feasible actions.
             lg, _ = ag["pi"](bs)
             p = masked_softmax(lg, bm)
-            a_pi = torch.multinomial(p.detach(), 1).squeeze(1)
-            loss_pi = -torch.min(ag["q1"](bs), ag["q2"](bs)).gather(
-                1, a_pi[:, None]).mean()
+            q = torch.min(ag["q1"](bs), ag["q2"](bs))
+            loss_pi = -masked_expectation(q, p).mean()
             ag["opt_pi"].zero_grad(); loss_pi.backward()
             nn.utils.clip_grad_norm_(ag["pi"].parameters(), 1.0); ag["opt_pi"].step()
-            soft_update(ag["pit"], ag["pi"])
-            soft_update(ag["q1t"], ag["q1"]); soft_update(ag["q2t"], ag["q2"])
+            soft_update(ag["pit"], ag["pi"], tau)
+            soft_update(ag["q1t"], ag["q1"], tau); soft_update(ag["q2t"], ag["q2"], tau)
         return {"loss": float(loss_q)}
 
     if algo == "ddpg":
@@ -229,10 +308,10 @@ def update_offpolicy(algo, ag, replay, device, gamma, total_steps):
         nn.utils.clip_grad_norm_(ag["q"].parameters(), 1.0); ag["opt_q"].step()
         lg, _ = ag["pi"](bs)
         p = masked_softmax(lg, bm)
-        loss_pi = -(p * ag["q"](bs)).sum(1).mean()
+        loss_pi = -masked_expectation(ag["q"](bs), p).mean()   # differentiable
         ag["opt_pi"].zero_grad(); loss_pi.backward()
         nn.utils.clip_grad_norm_(ag["pi"].parameters(), 1.0); ag["opt_pi"].step()
-        soft_update(ag["qt"], ag["q"]); soft_update(ag["pit"], ag["pi"])
+        soft_update(ag["qt"], ag["q"], tau); soft_update(ag["pit"], ag["pi"], tau)
         return {"loss": float(loss_q)}
 
     # sac
@@ -241,9 +320,10 @@ def update_offpolicy(algo, ag, replay, device, gamma, total_steps):
         p2 = masked_softmax(lg2, bm2)
         logp2 = torch.log(p2 + 1e-12)
         alpha = ag["log_alpha"].exp()
-        qn = torch.min(ag["q1t"](bs2), ag["q2t"](bs2)) - alpha * logp2
-        qn = mask_logits(qn, bm2).max(1).values
-        tgt = br + gamma * (1 - bd) * qn
+        qmin = torch.min(ag["q1t"](bs2), ag["q2t"](bs2))
+        # R1 FIX: soft value is the policy expectation, not a max
+        v_next = masked_expectation(qmin - alpha * logp2, p2)
+        tgt = br + gamma * (1 - bd) * v_next
     qv1 = ag["q1"](bs).gather(1, ba[:, None]).squeeze(1)
     qv2 = ag["q2"](bs).gather(1, ba[:, None]).squeeze(1)
     loss_q = F.mse_loss(qv1, tgt) + F.mse_loss(qv2, tgt)
@@ -252,16 +332,17 @@ def update_offpolicy(algo, ag, replay, device, gamma, total_steps):
     p = masked_softmax(lg, bm)
     logp = torch.log(p + 1e-12)
     qpi = torch.min(ag["q1"](bs), ag["q2"](bs))
-    loss_pi = (p * (ag["log_alpha"].exp() * logp - qpi)).sum(1).mean()
+    loss_pi = masked_expectation(ag["log_alpha"].exp() * logp - qpi, p).mean()
     ag["opt_pi"].zero_grad(); loss_pi.backward(); ag["opt_pi"].step()
     loss_a = -(p.detach() * (ag["log_alpha"].exp() * logp.detach()
                              + ag["target_entropy"])).sum(1).mean()
     ag["opt_alpha"].zero_grad(); loss_a.backward(); ag["opt_alpha"].step()
-    soft_update(ag["q1t"], ag["q1"]); soft_update(ag["q2t"], ag["q2"])
+    soft_update(ag["q1t"], ag["q1"], tau); soft_update(ag["q2t"], ag["q2"], tau)
     return {"loss": float(loss_q)}
 
 
-def ppo_update(ag, buf, device, gamma):
+def ppo_update(ag, buf, device, cfg):
+    gamma = float(cfg["gamma"])
     S = torch.as_tensor(np.asarray(buf["s"]), device=device)
     M = torch.as_tensor(np.asarray(buf["m"]), device=device)
     A = torch.as_tensor(np.asarray(buf["a"]), device=device)
@@ -273,24 +354,28 @@ def ppo_update(ag, buf, device, gamma):
     for t in range(len(R) - 1, -1, -1):
         nv = V[t + 1] if t + 1 < len(V) else 0.0
         delta = R[t] + gamma * (1 - D[t]) * nv - V[t]
-        gae = delta + gamma * GAE_LAMBDA * (1 - D[t]) * gae
+        gae = delta + gamma * float(cfg["gae_lambda"]) * (1 - D[t]) * gae
         adv[t] = gae
     ret = adv + V
     if len(adv) > 1:
         adv = (adv - adv.mean()) / (adv.std(unbiased=False) + 1e-8)
-    for _ in range(PPO_EPOCHS):
+    clip = float(cfg["ppo_clip"])
+    for _ in range(int(cfg["ppo_epochs"])):
         logits, val = ag["ac"](S)
         p = masked_softmax(logits, M)
         logp = torch.log(p.gather(1, A[:, None]).squeeze(1) + 1e-12)
         ratio = torch.exp(logp - LP)
         pi_loss = -torch.min(ratio * adv,
-                             torch.clamp(ratio, 1 - PPO_CLIP, 1 + PPO_CLIP) * adv).mean()
+                             torch.clamp(ratio, 1 - clip, 1 + clip) * adv).mean()
         loss = pi_loss + 0.5 * (val - ret).pow(2).mean()
         ag["opt"].zero_grad(); loss.backward()
         nn.utils.clip_grad_norm_(ag["ac"].parameters(), 1.0)
         ag["opt"].step()
 
 
+# --------------------------------------------------------------------------
+# evaluation / checkpoints
+# --------------------------------------------------------------------------
 def evaluate(algo, ag, env, tasks, device, n=60):
     rows = []
     for t in tasks[:n]:
@@ -306,69 +391,94 @@ def evaluate(algo, ag, env, tasks, device, n=60):
             _, done, _ = env.step(a)
             s, meta = build_state17(env, env.cfg)
         rows.append({"success": bool(env.success), "failure": env.failure,
-                     "latency_ms": float(env.cumulative_coll_latency_ms),
+                     "d_sum_ms": float(env.cumulative_coll_latency_ms),
                      "energy_j": float(env.cumulative_energy_j),
                      "steps": int(env.step_idx)})
     return {"n": len(rows), "sr": float(np.mean([r["success"] for r in rows])),
-            "latency_ms": float(np.mean([r["latency_ms"] for r in rows])),
+            "d_sum_ms": float(np.mean([r["d_sum_ms"] for r in rows])),
             "energy_j": float(np.mean([r["energy_j"] for r in rows])),
             "mean_steps": float(np.mean([r["steps"] for r in rows])),
             "failures": {f: int(sum(r["failure"] == f for r in rows))
                          for f in sorted({r["failure"] for r in rows})}}
 
 
+def save_checkpoint(path, algo, ag, cfg, env_cfg, episode, global_step,
+                    dev_metrics, dev_score_value, best):
+    torch.save({
+        "algorithm": algo, "state_dim": STATE17_DIM, "n_act": N_ACT,
+        "policy": policy_state(algo, ag), "optimizers": optimizer_state(algo, ag),
+        "config": cfg, "gamma": float(cfg["gamma"]),
+        "reward": {"lambda_quality": float(cfg["lambda_quality"]),
+                   "lambda_latency": float(cfg["lambda_latency"])},
+        "environment": {"d_max_ms": env_cfg.d_max_ms,
+                        "battery_j": env_cfg.task_energy_budget_j,
+                        "coverage_m": env_cfg.coverage_m,
+                        "v_forward_mps": env_cfg.v_forward_mps},
+        "episode": episode, "global_step": global_step,
+        "dev_metrics": dev_metrics, "dev_score": dev_score_value,
+        "best": bool(best),
+    }, path)
+
+
+# --------------------------------------------------------------------------
+# training loop
+# --------------------------------------------------------------------------
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--algorithm", choices=["dqn", "ppo", "td3", "sac", "ddpg"],
                     required=True)
-    ap.add_argument("--episodes", type=int, default=4000)
-    ap.add_argument("--seed", type=int, default=42)
-    ap.add_argument("--gamma", type=float, default=GAMMA_DEFAULT)
+    ap.add_argument("--episodes", type=int, default=None)
+    ap.add_argument("--seed", type=int, default=None)
+    ap.add_argument("--gamma", type=float, default=None)
+    ap.add_argument("--eval-every", type=int, default=None)
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--config", default=str(ROOT / "configs/default.json"))
     ap.add_argument("--train-config", default=str(HERE / "train_config.json"))
     ap.add_argument("--out", required=True)
-    ap.add_argument("--eval-every", type=int, default=100)
     args = ap.parse_args()
 
+    cfg = resolve_config({"gamma": args.gamma, "episodes": args.episodes,
+                          "seed": args.seed, "eval_every": args.eval_every},
+                         Path(args.train_config))
     torch.set_num_threads(int(os.environ.get("S17C_THREADS", "4")))
-    torch.manual_seed(args.seed); np.random.seed(args.seed); random.seed(args.seed)
+    torch.manual_seed(cfg["seed"]); np.random.seed(cfg["seed"])
+    random.seed(cfg["seed"])
     out = Path(args.out); out.mkdir(parents=True, exist_ok=True)
-    dev = args.device
+    (out / "effective_config.json").write_text(json.dumps(cfg, indent=2))
+    print("[config] " + json.dumps(cfg), flush=True)
 
-    cfg = load_config(args.config)
-    tc = json.loads(Path(args.train_config).read_text())
-    rc = RewardConfig(**tc["reward"])
-    reward = DualObjectiveReward(rc, forward_m=cfg.forward_m)
+    env_cfg = load_config(args.config)
+    reward = DualObjectiveRewardR1(
+        RewardConfigR1(cfg["lambda_quality"], cfg["lambda_latency"]),
+        d_max_ms=env_cfg.d_max_ms)
     train_tasks, dev_tasks = load_tasks_and_split()
-
-    env = EpisodeEnv17(build_deployment_by_map(), dev, load_models(dev),
-                       load_norm(), cfg)
-    ag = make_agents(args.algorithm, dev)
-    replay = Replay17(seed=args.seed)
-    rng = np.random.default_rng(args.seed)
+    env = EpisodeEnv17(build_deployment_by_map(), args.device,
+                       load_models(args.device), load_norm(), env_cfg)
+    ag = make_agents(args.algorithm, args.device, cfg)
+    replay = Replay17(STATE17_DIM, N_ACT, int(cfg["replay_cap"]), int(cfg["seed"]))
+    rng = np.random.default_rng(int(cfg["seed"]))
     buf = {k: [] for k in ("s", "m", "a", "r", "d", "lp", "v")}
     hist, devp = out / "history.jsonl", out / "dev.jsonl"
     total_steps, t0 = 0, time.time()
+    best_score = None
 
-    for ep in range(1, args.episodes + 1):
+    for ep in range(1, int(cfg["episodes"]) + 1):
         env.start(train_tasks[(ep - 1) % len(train_tasks)])
         reward.reset(env)
-        s, meta = build_state17(env, cfg)
+        s, meta = build_state17(env, env_cfg)
         done, ep_r = False, 0.0
         while not done:
             mask = meta["feasible_mec_mask"]
-            a, lp, val = act_policy(args.algorithm, ag, s, mask, dev, rng,
+            a, lp, val = act_policy(args.algorithm, ag, s, mask, args.device, rng,
                                     explore=True, total_steps=total_steps)
             if a is None:
                 _, done, info = env.step(None)
-                sig = reward.step(env, info, done)
-                ep_r += sig.total_training_reward
+                ep_r += reward.step(env, info, done).total_training_reward
                 break
             _, done, info = env.step(a)
             sig = reward.step(env, info, done)
             ep_r += sig.total_training_reward
-            s2, meta2 = build_state17(env, cfg)
+            s2, meta2 = build_state17(env, env_cfg)
             if args.algorithm == "ppo":
                 buf["s"].append(s); buf["m"].append(mask); buf["a"].append(a)
                 buf["r"].append(sig.total_training_reward)
@@ -376,14 +486,14 @@ def main():
             else:
                 replay.add(s, mask, a, sig.total_training_reward, s2,
                            meta2["feasible_mec_mask"], float(done))
-                if replay.size >= WARMUP:
-                    update_offpolicy(args.algorithm, ag, replay, dev, args.gamma,
-                                     total_steps)
+                if replay.size >= int(cfg["warmup"]):
+                    update_offpolicy(args.algorithm, ag, replay, args.device,
+                                     float(cfg["gamma"]), total_steps, cfg)
             s, meta = s2, meta2
             total_steps += 1
 
         if args.algorithm == "ppo" and buf["s"]:
-            ppo_update(ag, buf, dev, args.gamma)
+            ppo_update(ag, buf, args.device, cfg)
             for k in buf:
                 buf[k] = []
 
@@ -401,23 +511,26 @@ def main():
                "elapsed_sec": round(time.time() - t0, 1)}
         with hist.open("a", encoding="utf-8") as f:
             f.write(json.dumps(rec) + "\n")
-        if args.eval_every and ep % args.eval_every == 0:
-            d = evaluate(args.algorithm, ag, env, dev_tasks, dev)
+
+        save_checkpoint(out / "last.pt", args.algorithm, ag, cfg, env_cfg, ep,
+                        total_steps, None, None, False)
+
+        if cfg["eval_every"] and ep % int(cfg["eval_every"]) == 0:
+            d = evaluate(args.algorithm, ag, env, dev_tasks, args.device)
+            score = dev_score(d["sr"], d["d_sum_ms"], float(cfg["lambda_quality"]),
+                              float(cfg["lambda_latency"]), env_cfg.d_max_ms)
+            d["score"] = score
             with devp.open("a", encoding="utf-8") as f:
                 f.write(json.dumps({"episode": ep, **d}) + "\n")
             print(f"[{args.algorithm}] ep {ep} dev SR={d['sr']:.3f} "
-                  f"Dsum={d['latency_ms']:.0f}ms E={d['energy_j']:.0f}J", flush=True)
-            torch.save({"ep": ep, "algorithm": args.algorithm,
-                        "state_dim": STATE17_DIM, "n_act": N_ACT,
-                        "policy": policy_state(args.algorithm, ag),
-                        "reward": rc.__dict__}, out / "checkpoint.pt")
+                  f"Dsum={d['d_sum_ms']:.0f}ms score={score:.4f}", flush=True)
+            if is_better(score, best_score):
+                best_score = score
+                save_checkpoint(out / "best.pt", args.algorithm, ag, cfg, env_cfg,
+                                ep, total_steps, d, score, True)
 
-    torch.save({"ep": args.episodes, "algorithm": args.algorithm,
-                "state_dim": STATE17_DIM, "n_act": N_ACT,
-                "policy": policy_state(args.algorithm, ag),
-                "reward": rc.__dict__, "gamma": args.gamma},
-               out / "final.pt")
-    print(json.dumps({"algorithm": args.algorithm, "episodes": args.episodes,
+    print(json.dumps({"algorithm": args.algorithm, "episodes": cfg["episodes"],
+                      "gamma": cfg["gamma"], "best_dev_score": best_score,
                       "elapsed_sec": round(time.time() - t0, 1)}))
 
 

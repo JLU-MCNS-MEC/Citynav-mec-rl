@@ -1,4 +1,4 @@
-# Stage 17-C · 算法设计与 Stage 16 继承表
+# Stage 17-C · 算法设计与 Stage 16 继承表（R1 更新）
 
 日期：2026-11-26
 本轮**只写代码与文档，不训练、不加载 Checkpoint、不运行 episode**。
@@ -56,10 +56,17 @@
 - 无可行节点时策略返回 `None`，环境记 `no_feasible_mec` 并终止（Stage 17-B E6 已验证）；
 - 掩码只依赖当前状态（覆盖/截止/电量），不引入未来信息。
 
-## 5. 奖励接口
+## 5. 奖励接口（R1）
 
-见 `docs/16`。实现：`stage17c/reward17c.py`。
-`DualSignals` 输出的五个分项与 `train17c.py` 日志一一对应。
+$$
+r_t=\lambda_Q\,\mathbb 1\{\text{success}\}-\lambda_D\,D_t^{coll}/D_{\max}
+$$
+
+$D_{\max}$ 从环境配置读取（400 ms）；没有 $D_{ref}$、没有进展奖励、γ=1。
+详见 `docs/16` 与 `docs/18`；实现：`stage17c/reward17c.py`。
+
+**R1 算法修复**：TD3 Actor 改为可微策略期望；SAC 目标改为策略期望的 soft value；
+DQN 空掩码安全；五算法统一掩码与终止处理；配置优先级与 best/last 保存。
 
 ## 6. Train / Dev 与模型选择
 

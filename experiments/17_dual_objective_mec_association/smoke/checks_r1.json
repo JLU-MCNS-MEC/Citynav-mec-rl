@@ -1,0 +1,82 @@
+{
+  "R1_reward": {
+    "steps": [
+      -0.3,
+      0.8
+    ],
+    "sum": 0.5,
+    "expected": 0.5,
+    "pass": true
+  },
+  "R2_old_reward_removed": {
+    "hits": {
+      "reward17c.py": [],
+      "train17c.py": []
+    },
+    "pass": true
+  },
+  "R3_gamma": {
+    "gamma": 1.0,
+    "batch": 64,
+    "lambda_quality": 2.0,
+    "default_gamma": 1.0,
+    "pass": true
+  },
+  "R4_td3_actor_gradient": {
+    "grad_norm": 9.747519716620445,
+    "finite": true,
+    "param_change": 2.1503920555114746,
+    "pass": true
+  },
+  "R5_sac_soft_value": {
+    "code": 1.8029653346134928,
+    "manual": 1.8029653014064573,
+    "abs_err": 3.320703556575211e-08,
+    "pass": true
+  },
+  "R6_terminal_bootstrap": {
+    "tgt": [
+      1.0,
+      4.800000190734863
+    ],
+    "masked_max_empty": [
+      0.0,
+      0.0
+    ],
+    "pass": true
+  },
+  "R7_action_mask": {
+    "argmax": 1,
+    "excluded_prob": 0.0,
+    "expectation": 5.428571701049805,
+    "pass": true
+  },
+  "R8_config_precedence": {
+    "json_gamma": 1.0,
+    "cli_override": 0.9,
+    "pass": true
+  },
+  "R9_best_selection": {
+    "scores": [
+      [
+        -17.1,
+        true
+      ],
+      [
+        -18.2,
+        false
+      ],
+      [
+        -14.5,
+        true
+      ],
+      [
+        -19.4,
+        false
+      ]
+    ],
+    "best": -14.5,
+    "pass": true,
+    "note": "latency-dominated at lambda_Q=lambda_D=1"
+  }
+}

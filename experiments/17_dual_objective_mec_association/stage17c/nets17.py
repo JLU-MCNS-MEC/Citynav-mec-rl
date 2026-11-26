@@ -56,7 +56,29 @@ def mask_logits(logits: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
 
 
 def masked_softmax(logits: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+    """Softmax restricted to feasible entries.
+
+    An all-zero mask returns an all-zero row (never NaN, never uniform over
+    illegal actions).  Callers must treat such a row as "no feasible action"
+    and let the environment terminate the episode.
+    """
     m = mask_logits(logits, mask)
     p = torch.softmax(m, -1)
     p = torch.nan_to_num(p, nan=0.0, posinf=0.0, neginf=0.0)
-    return p / (p.sum(-1, keepdim=True) + 1e-12)
+    total = p.sum(-1, keepdim=True)
+    feasible = (mask.to(p.device, torch.float32).sum(-1, keepdim=True) > 0.5)
+    p = torch.where(feasible, p / (total + 1e-12), torch.zeros_like(p))
+    return p
+
+
+def masked_max(values: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+    """max over feasible entries; 0 where the mask is empty (terminal/no-op)."""
+    m = mask_logits(values, mask)
+    feasible = (mask.to(values.device, torch.float32).sum(-1) > 0.5)
+    best = m.max(-1).values
+    return torch.where(feasible, best, torch.zeros_like(best))
+
+
+def masked_expectation(values: torch.Tensor, probs: torch.Tensor) -> torch.Tensor:
+    """sum_m pi(m|s) * value(m) with pi already zero on infeasible actions."""
+    return (values * probs).sum(-1)
