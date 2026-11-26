@@ -26,9 +26,10 @@ for p in [ROOT / "src", REPO / "experiments/16_cumulative_e2e_association/p1",
 from baselines import choose                                   # noqa: E402
 from config17 import load_config                               # noqa: E402
 from compute17 import uav_compute_ms                           # noqa: E402
-from energy17 import e_coll_j, e_forward_j, e_motion_j, step_energy_j  # noqa: E402
+from energy17 import (e_coll_j, e_forward_j, e_motion_j,  # noqa: E402
+                     e_turn_j, step_energy_j)
 from env16 import (EpisodeEnv16, build_deployment_by_map,      # noqa: E402
-                   load_models, load_norm)
+                   load_models, load_norm, obstacle_for)
 from env17 import EpisodeEnv17                                 # noqa: E402
 from latency17 import legacy_stage16_e2e_ms, service_latency_ms  # noqa: E402
 from multimodal17 import calculate_uplink_payload_bits         # noqa: E402
@@ -281,27 +282,44 @@ def main():
         cell = info["cell_m"]
         return left + (col + 0.5) * cell, top - (row + 0.5) * cell
 
-    env = EpisodeEnv17(by_map, "cuda", models, norm, free)
-    env.start(tasks[0])
-    info = env.info
-    blocked = np.asarray(info["blocked"])
-    target = None
-    for r in range(blocked.shape[0]):
-        for c in range(1, blocked.shape[1]):
-            if blocked[r, c] and not blocked[r, c - 1]:
-                target = (r, c - 1)
+    # a collision needs a map that actually contains obstacles; the first
+    # Train task's map may have blocked_ratio == 0
+    coll_task, coll_target = None, None
+    for t in train_tasks[:50]:
+        inf = obstacle_for(t["map"])
+        bb = np.asarray(inf["blocked"])
+        if not bb.any():
+            continue
+        for r in range(bb.shape[0]):
+            for c in range(1, bb.shape[1]):
+                if bb[r, c] and not bb[r, c - 1]:
+                    coll_task, coll_target = t, (r, c)
+                    break
+            if coll_target:
                 break
-        if target:
+        if coll_target:
             break
     collision_ok = False
-    if target is not None:
-        x, y = _cell_to_world(info, target[0], target[1])
+    coll_info = {"blocked_ratio": None, "map": None, "reason": "no map with obstacles"}
+    if coll_target is not None:
+        env = EpisodeEnv17(by_map, "cuda", models, norm, free)
+        env.start(coll_task)
+        info = env.info
+        row, bcol = coll_target
+        left, bottom, right, top = info["bounds"]
+        cell = info["cell_m"]
+        x = left + (bcol - 0.2) * cell
+        y = top - (row + 0.5) * cell
         env.pos = np.asarray([x, y], np.float64)
         env.yaw = 0.0
         percept = env.perceive()
         trans = env.transition(1, percept)
         collision_ok = (env.failure == "collision" and trans["aborted"]
                         and not trans["executed"])
+        coll_info = {"map": coll_task["map"],
+                     "blocked_ratio": float(np.asarray(info["blocked"]).mean()),
+                     "pos": [float(x), float(y)], "failure": env.failure,
+                     "aborted": bool(trans["aborted"])}
     env_oob = EpisodeEnv17(by_map, "cuda", models, norm, free)
     env_oob.start(tasks[0])
     left, bottom, right, top = env_oob.info["bounds"]
@@ -318,6 +336,7 @@ def main():
                  and abs(e_fwd["e_motion_j"] - e_forward_j(cfg)) < 1e-9)
     res["E15_aborted_forward_charged"] = {
         "collision_case": bool(collision_ok), "oob_case": bool(oob_ok),
+        "collision_detail": coll_info,
         "e_forward_j": e_fwd["e_forward_j"], "expected": e_forward_j(cfg),
         "pass": bool(collision_ok) and bool(oob_ok) and charge_ok}
 

@@ -1,0 +1,118 @@
+{
+  "E1_trajectory_equal": {
+    "tasks": 10,
+    "ok": 10,
+    "pass": true
+  },
+  "E9_legacy_e2e_independent": {
+    "tasks": 10,
+    "ok": 10,
+    "pass": true,
+    "note": "per-step legacy E2E of Stage 16 vs Stage 17, computed independently"
+  },
+  "E2_single_forward_per_step": {
+    "expert_forwards": 499,
+    "completed_inferences": 499,
+    "pass": true
+  },
+  "E10_payload": {
+    "bits": 4281664,
+    "expected": 4281664,
+    "relation_uploaded": false,
+    "pass": true
+  },
+  "E12_matching": {
+    "flops": 4000000.0,
+    "ratio": 0.00034803448831334716,
+    "negligible": true,
+    "verified": true,
+    "pass": true
+  },
+  "E14_new_latency_objective": {
+    "d_coll_ms": 175.2892723046389,
+    "recomputed": 175.2892723046389,
+    "legacy": 59.46202419149902,
+    "pass": true
+  },
+  "E3_coverage_param": {
+    "reason": "no_feasible_mec",
+    "all_nodes_beyond_radius": true,
+    "cfg_radius": 500.0,
+    "pass": true
+  },
+  "E4_deadline": {
+    "reason": "no_feasible_mec",
+    "all_invalid": true,
+    "pass": true
+  },
+  "E5_motion_refused": {
+    "task": 6370,
+    "node": 0,
+    "budget_j": 135.49209268250024,
+    "service_j": 51.24709268250023,
+    "motion_j": 0.0,
+    "reason": "energy_budget_exhausted",
+    "inference": 1,
+    "executed": 0,
+    "motion_executed": false,
+    "cumulative_j": 51.24709268250023,
+    "energy_balance_ok": true,
+    "pass": true
+  },
+  "E6_none_action": {
+    "ok": true,
+    "error": "",
+    "pass": true
+  },
+  "E7_energy_accounting": {
+    "cases": {
+      "default": {
+        "sum": 40366.40721619496,
+        "cumulative": 40366.40721619496,
+        "reason": "out_of_bounds"
+      },
+      "tiny_budget": {
+        "sum": 0.0,
+        "cumulative": 0.0,
+        "reason": "no_feasible_mec"
+      }
+    },
+    "pass": true
+  },
+  "E8_no_post_termination_charge": {
+    "raised": true,
+    "energy_unchanged": true,
+    "latency_unchanged": true,
+    "attempts_unchanged": true,
+    "records_unchanged": true,
+    "pass": true,
+    "note": "step-record count is NOT required to equal step_idx"
+  },
+  "E13_counters": {
+    "attempts": 141,
+    "inferences": 141,
+    "executed": 140,
+    "records": 141,
+    "sum_model_selection": 141,
+    "records_with_service": 141,
+    "records_executed": 140,
+    "pass": true
+  },
+  "E15_aborted_forward_charged": {
+    "collision_case": true,
+    "oob_case": true,
+    "collision_detail": {
+      "map": "birmingham_block_4",
+      "blocked_ratio": 1.25e-05,
+      "pos": [
+        529.8,
+        473.5
+      ],
+      "failure": "collision",
+      "aborted": true
+    },
+    "e_forward_j": 262.5925536019277,
+    "expected": 262.5925536019277,
+    "pass": true
+  }
+}
