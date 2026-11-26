@@ -1,0 +1,22 @@
+{
+  "gamma": 1.0,
+  "episodes": 1500,
+  "seed": 42,
+  "batch": 128,
+  "warmup": 2000,
+  "replay_cap": 50000,
+  "hidden": 256,
+  "lr_dqn": 0.0001,
+  "lr_actor": 0.0003,
+  "tau": 0.005,
+  "target_sync_steps": 200,
+  "ppo_epochs": 4,
+  "ppo_clip": 0.2,
+  "gae_lambda": 0.95,
+  "eval_every": 100,
+  "sac_eta": 0.5,
+  "policy_delay": 2,
+  "sac_critic_clip": 1.0,
+  "lambda_quality": 1.0,
+  "lambda_latency": 0.5
+}
