@@ -51,6 +51,9 @@ def load_policy(ckpt, algo, device):
 
 
 def greedy(net, kind, s, mask, device):
+    """Deterministic argmax over feasible nodes; None when none is feasible."""
+    if float(np.sum(mask)) < 0.5:
+        return None
     with torch.no_grad():
         x = torch.as_tensor(s[None], device=device)
         logits = net(x)[0] if kind == "q" else net(x)[0]
@@ -79,7 +82,7 @@ def run_episode(env, task, chooser):
     done = False
     while not done:
         a = chooser(env)
-        _, done, _ = env.step(a)
+        _, done, _ = env.step(a)          # env.step(None) terminates cleanly
     return {"success": bool(env.success), "failure": env.failure,
             "d_sum_ms": float(env.cumulative_coll_latency_ms),
             "legacy_e2e_ms": float(np.sum(env.episode_e2e)),

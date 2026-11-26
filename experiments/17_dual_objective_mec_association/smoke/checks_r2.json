@@ -1,0 +1,66 @@
+{
+  "C1_reward": {
+    "success_beats_failure": true,
+    "lower_latency_better_success": true,
+    "lower_latency_better_failure": true,
+    "sign_boundary": true,
+    "step_count_independent": true,
+    "pass": true
+  },
+  "C2_td3_mixed_batch": {
+    "loss": 1.3384039402008057,
+    "finite": true,
+    "pass": true
+  },
+  "C3_sac_temperature": {
+    "entropy_uniform": 1.3862943649291992,
+    "h_target": 0.6931471805599453,
+    "grad_uniform": 0.6931471824645996,
+    "entropy_peak": 0.16770049929618835,
+    "grad_peak": -0.5254466533660889,
+    "pass": true
+  },
+  "C4_deterministic_eval": {
+    "a1": 3,
+    "a2": 3,
+    "empty": null,
+    "pass": true
+  },
+  "C5_gradient_steps": {
+    "finite": {
+      "dqn": true,
+      "ddpg": true,
+      "td3": true,
+      "sac": true
+    },
+    "pass": true
+  },
+  "C6_checkpoint": {
+    "keys": [
+      "algorithm",
+      "best",
+      "config",
+      "dev_metrics",
+      "dev_score",
+      "environment",
+      "episode",
+      "gamma",
+      "global_step",
+      "n_act",
+      "optimizers",
+      "policy",
+      "reward",
+      "state_dim"
+    ],
+    "gamma": 1.0,
+    "score": -0.2,
+    "pass": true
+  },
+  "C7_config": {
+    "gamma": 1.0,
+    "batch": 64,
+    "lambda_latency": 0.5,
+    "eta": 0.5,
+    "pass": true
+  }
+}

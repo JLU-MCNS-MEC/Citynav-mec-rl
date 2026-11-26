@@ -14,14 +14,17 @@
   "ppo_clip": 0.2,
   "gae_lambda": 0.95,
   "eval_every": 100,
+  "sac_eta": 0.5,
   "reward": {
     "lambda_quality": 1.0,
-    "lambda_latency": 1.0
+    "lambda_latency": 0.5
   },
   "notes": {
-    "gamma": "1.0: the paper objective is the undiscounted success rate and undiscounted sum of D_coll.",
-    "reward": "r_t = lambda_Q * 1[success terminal] - lambda_D * D_coll / d_max_ms; d_max_ms is read from configs/default.json (400 ms).",
+    "gamma": "1.0: undiscounted success rate and undiscounted sum of D_coll.",
+    "normaliser": "T_max * D_max = 200 * 400 = 80,000 ms; both read from configs/default.json.",
+    "reward": "r_t = lambda_Q * 1[success terminal] - lambda_D * D_coll_t / (T_max * D_max).",
+    "sac_eta": "H_target(s) = eta * log(K_feasible(s)); eta = 0.5 to be validated in P0.",
     "removed": "No D_ref, no navigation-progress reward, no terminal bonus, no failure penalty.",
-    "weights": "lambda_quality / lambda_latency are trade-off knobs; 1.0/1.0 is a starting point, not a tuned optimum."
+    "weights": "lambda_quality=1.0, lambda_latency=0.5 chosen by the Stage 17-D-P0 review."
   }
 }

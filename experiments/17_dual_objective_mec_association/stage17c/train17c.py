@@ -66,8 +66,9 @@ DEFAULTS = {
     "ppo_clip": 0.2,
     "gae_lambda": 0.95,
     "eval_every": 100,
+    "sac_eta": 0.5,
     "lambda_quality": 1.0,
-    "lambda_latency": 1.0,
+    "lambda_latency": 0.5,
 }
 
 CLI_KEYS = ("gamma", "episodes", "seed", "eval_every")
@@ -84,7 +85,7 @@ def resolve_config(cli: dict, json_path: Path) -> dict:
         for k, v in data.items():
             if k in DEFAULTS and isinstance(v, (int, float, bool)):
                 cfg[k] = v
-            elif k in ("reward",):
+            elif k == "reward":
                 for rk, rv in v.items():
                     if rk in ("lambda_quality", "lambda_latency"):
                         cfg[rk] = rv
@@ -95,9 +96,9 @@ def resolve_config(cli: dict, json_path: Path) -> dict:
 
 
 def dev_score(sr: float, mean_d_sum_ms: float, lam_q: float, lam_d: float,
-              d_max_ms: float) -> float:
+              d_max_ms: float, t_max: int) -> float:
     """Model-selection score (NOT a new latency constraint)."""
-    return lam_q * sr - lam_d * mean_d_sum_ms / max(d_max_ms, 1e-9)
+    return lam_q * sr - lam_d * mean_d_sum_ms / max(d_max_ms * t_max, 1e-9)
 
 
 def is_better(score: float, best: float) -> bool:
@@ -234,6 +235,8 @@ def act_policy(algo, ag, s, mask, device, rng, explore=True, total_steps=0):
             p = masked_softmax(logits, mk)
             if float(p.sum()) < 1e-12:
                 return None, None, None
+            if not explore:
+                return int(p[0].argmax()), None, float(val[0])
             a = int(torch.multinomial(p[0], 1).item())
             return a, float(torch.log(p[0, a] + 1e-12)), float(val[0])
         if algo in ("td3", "ddpg"):
@@ -245,6 +248,8 @@ def act_policy(algo, ag, s, mask, device, rng, explore=True, total_steps=0):
         p = masked_softmax(logits, mk)
         if float(p.sum()) < 1e-12:
             return None, None, None
+        if not explore:
+            return int(p[0].argmax()), None, None
         return int(torch.multinomial(p[0], 1).item()), None, None
 
 
@@ -272,10 +277,15 @@ def update_offpolicy(algo, ag, replay, device, gamma, total_steps, cfg):
         with torch.no_grad():
             lg2, _ = ag["pit"](bs2)
             p2 = masked_softmax(lg2, bm2)
-            # target policy smoothing: sample from the masked target policy
-            a2 = torch.multinomial(p2, 1).squeeze(1)
+            # target policy smoothing, but never sample from a zero row:
+            # terminal / no-feasible samples get bootstrap 0 instead
+            live = (bm2.sum(1) > 0.5) & (bd < 0.5)
+            a2 = torch.zeros(p2.shape[0], dtype=torch.long, device=p2.device)
+            if bool(live.any()):
+                a2[live] = torch.multinomial(p2[live], 1).squeeze(1)
             qn = torch.min(ag["q1t"](bs2), ag["q2t"](bs2)).gather(
                 1, a2[:, None]).squeeze(1)
+            qn = torch.where(live, qn, torch.zeros_like(qn))
             tgt = br + gamma * (1 - bd) * qn
         qv1 = ag["q1"](bs).gather(1, ba[:, None]).squeeze(1)
         qv2 = ag["q2"](bs).gather(1, ba[:, None]).squeeze(1)
@@ -321,7 +331,7 @@ def update_offpolicy(algo, ag, replay, device, gamma, total_steps, cfg):
         logp2 = torch.log(p2 + 1e-12)
         alpha = ag["log_alpha"].exp()
         qmin = torch.min(ag["q1t"](bs2), ag["q2t"](bs2))
-        # R1 FIX: soft value is the policy expectation, not a max
+        # soft value = policy expectation over feasible nodes (zero if none)
         v_next = masked_expectation(qmin - alpha * logp2, p2)
         tgt = br + gamma * (1 - bd) * v_next
     qv1 = ag["q1"](bs).gather(1, ba[:, None]).squeeze(1)
@@ -334,9 +344,16 @@ def update_offpolicy(algo, ag, replay, device, gamma, total_steps, cfg):
     qpi = torch.min(ag["q1"](bs), ag["q2"](bs))
     loss_pi = masked_expectation(ag["log_alpha"].exp() * logp - qpi, p).mean()
     ag["opt_pi"].zero_grad(); loss_pi.backward(); ag["opt_pi"].step()
-    loss_a = -(p.detach() * (ag["log_alpha"].exp() * logp.detach()
-                             + ag["target_entropy"])).sum(1).mean()
-    ag["opt_alpha"].zero_grad(); loss_a.backward(); ag["opt_alpha"].step()
+    # temperature: L_alpha = E[log alpha * (H_pi - H_target)],
+    # H_target(s) = eta * log(K_feasible(s)); rows without feasible nodes are
+    # excluded from the alpha update.
+    ent = -(p.detach() * logp.detach()).sum(1)
+    k_feas = bm.sum(1)
+    h_target = float(cfg.get("sac_eta", 0.5)) * torch.log(k_feas.clamp(min=1.0))
+    valid = k_feas > 0.5
+    if bool(valid.any()):
+        loss_a = (ag["log_alpha"] * (ent - h_target))[valid].mean()
+        ag["opt_alpha"].zero_grad(); loss_a.backward(); ag["opt_alpha"].step()
     soft_update(ag["q1t"], ag["q1"], tau); soft_update(ag["q2t"], ag["q2"], tau)
     return {"loss": float(loss_q)}
 
@@ -450,7 +467,7 @@ def main():
     env_cfg = load_config(args.config)
     reward = DualObjectiveRewardR1(
         RewardConfigR1(cfg["lambda_quality"], cfg["lambda_latency"]),
-        d_max_ms=env_cfg.d_max_ms)
+        d_max_ms=env_cfg.d_max_ms, t_max=env_cfg.max_steps)
     train_tasks, dev_tasks = load_tasks_and_split()
     env = EpisodeEnv17(build_deployment_by_map(), args.device,
                        load_models(args.device), load_norm(), env_cfg)
@@ -518,7 +535,8 @@ def main():
         if cfg["eval_every"] and ep % int(cfg["eval_every"]) == 0:
             d = evaluate(args.algorithm, ag, env, dev_tasks, args.device)
             score = dev_score(d["sr"], d["d_sum_ms"], float(cfg["lambda_quality"]),
-                              float(cfg["lambda_latency"]), env_cfg.d_max_ms)
+                              float(cfg["lambda_latency"]), env_cfg.d_max_ms,
+                              env_cfg.max_steps)
             d["score"] = score
             with devp.open("a", encoding="utf-8") as f:
                 f.write(json.dumps({"episode": ep, **d}) + "\n")
