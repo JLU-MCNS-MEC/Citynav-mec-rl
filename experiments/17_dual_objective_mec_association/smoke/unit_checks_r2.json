@@ -1,0 +1,101 @@
+{
+  "U1_layer4": {
+    "flops": 8174272512.0,
+    "d_ms": 5.4495150080000005,
+    "expected_ms": 5.449515008,
+    "pass": true
+  },
+  "U2_layer2": {
+    "flops": 3318841344.0,
+    "expected_flops": 3318841344.0,
+    "d_ms": 2.212560896,
+    "expected_d_ms": 2.212560896,
+    "ops": 24,
+    "pass": true
+  },
+  "U3_uav_total": {
+    "d_uav_ms": 7.662075904,
+    "expected_ms": 7.662075904,
+    "matching_verified": false,
+    "pass": true
+  },
+  "U4_d_inf": {
+    "values": {
+      "small": 0.4954039,
+      "medium": 1.4978528,
+      "ts": 3.9671126,
+      "tm": 10.0025418,
+      "large": 19.9723981
+    },
+    "max_abs_err": 0.0,
+    "pass": true
+  },
+  "U5_fly_power_independent": {
+    "p3_independent": 157.5555321611566,
+    "p3_implementation": 157.5555321611566,
+    "p5_independent": 143.61349030756,
+    "p5_implementation": 143.61349030756,
+    "expected_p3": 157.56,
+    "expected_p5": 143.61,
+    "pass": true
+  },
+  "U6_forward_energy": {
+    "e_forward_v3_j": 262.5925536019277,
+    "expected": 262.5925,
+    "e_forward_v5_j": 143.61349030756,
+    "expected_v5": 143.61354,
+    "e_forward_default_cfg_j": 262.5925536019277,
+    "pass": true
+  },
+  "U7_turn_hover": {
+    "hover_w": 168.49,
+    "expected_hover_w": 168.49,
+    "e_turn_j": 168.49,
+    "pass": true
+  },
+  "U8_uplink_payload": {
+    "total_bits": 4281664,
+    "expected_bits": 4281664,
+    "total_bytes": 535208,
+    "per_modality": {
+      "current_visual": 3211264,
+      "target_emb": 16384,
+      "history_visual": 1048576,
+      "history_pose": 1536,
+      "history_action": 2048,
+      "history_mask": 512,
+      "belief": 320,
+      "match": 160,
+      "landmarks": 768,
+      "uav_state": 96
+    },
+    "not_uploaded": [
+      "relation"
+    ],
+    "pass": true
+  },
+  "U9_comm_geometry": {
+    "d_vertical_m": 40.0,
+    "expected_vertical_m": 40.0,
+    "d_3d_m_at_500": 501.5974481593781,
+    "expected_d3d": 501.5974481593781,
+    "elevation_deg": 4.573921259900861,
+    "uplink_latency_ms_at_500": 354.16353698961746,
+    "pass": true
+  },
+  "U10_service_latency": {
+    "components": {
+      "d_visual_layer4_ms": 5.4495150080000005,
+      "d_visual_layer2_ms": 2.212560896,
+      "d_matching_ms": 0.0,
+      "d_uav_total_ms": 7.662075904,
+      "d_up_ms": 163.65741713397222,
+      "d_inf_ms": 3.9671126,
+      "d_down_ms": 0.0,
+      "d_coll_ms": 175.28660563797223
+    },
+    "legacy_stage16_e2e_ms": 59.46202419149902,
+    "downlink_disabled": true,
+    "pass": true
+  }
+}

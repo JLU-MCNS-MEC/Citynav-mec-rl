@@ -34,8 +34,8 @@
 | 行为 | Stage 16 | Stage 17 |
 |---|---|---|
 | 覆盖检查 | 仅在状态里给掩码，`step()` 不校验 | `feasible_mec_mask` 强制；选了不可行节点 → `invalid_mec_action` |
-| 动作执行 | 选中节点后立即执行 | **先预览动作 → 校验运动能耗 → 再执行** |
-| 单步时延 | `enc+up+inf` | `enc+up+inf`（下行默认忽略，可配置开启） |
+| 动作执行 | 先感知→前向→执行（一步一次） | **perceive → decide → transition**：同样只做一次编码与一次专家前向，但把生成与转移拆开，以便在执行前校验运动能量 |
+| 单步时延 | `enc(5.45ms)+up(1.6Mbit)+inf` | `D_UAV(7.66ms)+up(4.28Mbit)+inf`，通信几何 50/10 m |
 | 累计指标 | `cumulative_e2e_ms` | 新增 `cumulative_collaborative_service_latency_ms`，旧指标保留为 `legacy_*` |
 | 能量 | 无 | 服务 + 运动；episode 能耗 ≤ 电池容量 |
 | 终止原因 | success / premature_stop / collision / out_of_bounds / step_cap | 上述 + `no_feasible_mec` / `invalid_mec_action` / `energy_budget_exhausted` |

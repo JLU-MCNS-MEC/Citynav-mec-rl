@@ -77,7 +77,8 @@ def episode_record(env, episode: int, task: dict, cfg: Stage17Config) -> Episode
     ne = float(np.linalg.norm(np.asarray(env.pos, np.float64) - target))
     spl = float(env.success) * (min(1.0, l_star / path_len) if path_len > 0 else 0.0)
     comps = {}
-    for name in ("d_enc_ms", "d_up_ms", "d_inf_ms", "d_down_ms", "d_coll_ms",
+    for name in ("d_visual_layer4_ms", "d_visual_layer2_ms", "d_matching_ms",
+                 "d_uav_total_ms", "d_up_ms", "d_inf_ms", "d_down_ms", "d_coll_ms",
                  "e_hover_j", "e_enc_j", "e_tx_j", "e_rx_j",
                  "e_forward_j", "e_turn_j"):
         comps[name] = float(sum(r.get(name, 0.0) for r in env.step_records))

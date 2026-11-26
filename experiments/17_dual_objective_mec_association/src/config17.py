@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
-"""Stage 17-A configuration.
+"""Stage 17 configuration (Stage 17-A-R2).
 
-Every numeric field carries one of three provenance tags in PARAMETERS.md:
+Provenance tags used in docs/11_PARAMETERS_REFERENCES.md:
 
-  INHERITED  copied from Stage 12/14/16 without modification
-  LITERATURE taken from a published model (Zeng et al. 2019)
-  PROVISIONAL introduced here and explicitly flagged for review
-
-Nothing in this file is measured by Stage 17-A: the stage performs no
-simulation, training or evaluation.
+  INHERITED   copied from Stage 12 / 14 / 16 unchanged
+  LITERATURE  published value (Zeng 2019, DJI, IEEE Asilomar 2023, ...)
+  PROVISIONAL introduced here, explicitly flagged for review
 """
 from __future__ import annotations
 
@@ -21,57 +18,63 @@ HERE = Path(__file__).resolve().parent
 
 @dataclass(frozen=True)
 class Stage17Config:
-    # ---- inherited kinematics (Stage 12 protocol / CityNav) -------------
-    forward_m: float = 5.0            # INHERITED protocol.FORWARD_M
-    turn_deg: float = 30.0            # INHERITED protocol.TURN_RAD
-    stop_radius_m: float = 20.0       # INHERITED protocol.STOP_RADIUS
-    max_steps: int = 200              # INHERITED protocol.MAX_STEPS
-    # ---- flight kinematics (PROVISIONAL, user selected v = 3 m/s) --------
-    v_forward_mps: float = 3.0        # PROVISIONAL (backup 5.0)
-    omega_turn_deg_s: float = 30.0    # PROVISIONAL
+    # ---- navigation (INHERITED) -----------------------------------------
+    forward_m: float = 5.0
+    turn_deg: float = 30.0
+    stop_radius_m: float = 20.0
+    max_steps: int = 200
 
-    # ---- compute ---------------------------------------------------------
-    uav_tflops: float = 1.5e12        # INHERITED protocol.UAV_TFLOPS
-    mec_tflops: float = 10.0          # INHERITED env16.MEC_TFLOPS
-    coverage_m: float = 500.0         # INHERITED env16.COVERAGE_M
+    # ---- flight kinematics (user-selected) -------------------------------
+    v_forward_mps: float = 3.0
+    omega_turn_deg_s: float = 30.0
 
-    # ---- propulsion model, Zeng et al. IEEE TWC 2019 ---------------------
-    p0_w: float = 79.86               # LITERATURE
-    pi_w: float = 88.63               # LITERATURE
-    utip_mps: float = 120.0           # LITERATURE
-    v0_mps: float = 4.03              # LITERATURE
-    d0: float = 0.6                   # LITERATURE
-    rho: float = 1.225                # LITERATURE (ISA sea level)
-    rotor_s: float = 0.05             # LITERATURE
-    rotor_a_m2: float = 0.503         # LITERATURE
+    # ---- compute (INHERITED) ---------------------------------------------
+    uav_tflops: float = 1.5e12
+    mec_tflops: float = 10.0
+    layer4_flops: float = 8174272512.0     # measured, encoder_flops.json
+    matching_flops: float | None = None    # NOT verified -> None (see compute17)
 
-    # ---- onboard power ---------------------------------------------------
-    p_enc_w: float = 15.0             # LITERATURE (citation to be inserted)
-    p_tx_w: float = 0.1               # INHERITED protocol.TX_POWER_W
-    p_rx_w: float = 0.0               # irrelevant while include_downlink=False
-    p_aux_w: float = 0.0              # no separate board-level term
+    # ---- deployment (INHERITED) ------------------------------------------
+    coverage_m: float = 500.0
 
-    # ---- energy budget ---------------------------------------------------
-    battery_capacity_wh: float = 100.0     # PROVISIONAL reference pack
-    initial_energy_j: float = 360000.0     # = 100 Wh
-    # REVIEW 2026-11-26: the only energy constraint is "episode energy does
-    # not exceed the battery capacity"; there is no separate task budget.
+    # ---- communication geometry (Stage 17-A-R2) ---------------------------
+    uav_height_m: float = 50.0             # LITERATURE (IEEE TWC 2021)
+    mec_antenna_height_m: float = 10.0     # LITERATURE
+    carrier_hz: float = 2.0e9              # INHERITED
+    bandwidth_hz: float = 5.0e6            # INHERITED
+    p_tx_w: float = 0.1                    # INHERITED protocol.TX_POWER_W
+    feature_bits: int = 32                 # serialisation precision (FP32)
+
+    # ---- propulsion (Zeng et al. IEEE TWC 2019) ---------------------------
+    p0_w: float = 79.86
+    pi_w: float = 88.63
+    utip_mps: float = 120.0
+    v0_mps: float = 4.03
+    d0: float = 0.6
+    rho: float = 1.225
+    rotor_s: float = 0.05
+    rotor_a_m2: float = 0.503
+
+    # ---- onboard power ----------------------------------------------------
+    p_enc_w: float = 15.0                  # LITERATURE (IEEE GRSL 2026)
+    p_aux_w: float = 0.0                   # no separate board-level term
+
+    # ---- energy budget (review 2026-11-26) --------------------------------
+    battery_capacity_wh: float = 100.0     # LITERATURE reference (DJI TB47D 99.9 Wh)
+    initial_energy_j: float = 360000.0
     task_energy_budget_j: float = 360000.0
     battery_safety_margin_j: float = 0.0
 
-    # ---- per-service deadline -------------------------------------------
-    d_max_ms: float = 150.0           # PROVISIONAL: see docs/04
+    # ---- per-service deadline --------------------------------------------
+    d_max_ms: float = 150.0                # PROVISIONAL (re-check in R2)
 
-    # ---- downlink --------------------------------------------------------
-    # REVIEW 2026-11-26: the MEC->UAV action-return delay (and the hover energy
-    # during it) is neglected, per the reviewer's literature support.  The
-    # implementation stays available behind the flag for sensitivity studies.
+    # ---- downlink (review 2026-11-26: neglected) --------------------------
     include_downlink: bool = False
-    downlink_payload_bytes: int = 8   # only used when include_downlink=True
-    mec_tx_power_w: float = 0.1       # only used when include_downlink=True
-    bandwidth_hz: float = 5.0e6       # INHERITED protocol.BANDWIDTH_HZ
+    downlink_payload_bytes: int = 8
+    mec_tx_power_w: float = 0.1
+    p_rx_w: float = 0.0
 
-    # ---- misc ------------------------------------------------------------
+    # ---- enforcement flags -------------------------------------------------
     enforce_coverage: bool = True
     enforce_deadline: bool = True
     enforce_energy: bool = True

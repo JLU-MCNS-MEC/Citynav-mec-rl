@@ -12,11 +12,21 @@
 | 6 | nDTW | **不需要** | 已从 episode 记录中移除 |
 | 7 | OSR / 成功半径 | 保留 OSR，成功半径 20 m | `logger17.episode_record` 输出 `osr` |
 
+## 一-B、R2 新增待确认（P1）
+
+| # | 问题 | 现状 |
+|---|---|---|
+| R1 | **`d_max_ms = 150` 与新负载/几何不匹配**：距离 ≳175 m 时全部节点不可行 | 未改，等待决定（建议 250–400 ms 或压缩负载） |
+| R2 | **Matching FLOPs 未核定** | `matching_flops=None`，`d_matching_verified=false`，按 0 计 |
+| R3 | 碰撞/越界前实际飞行距离的能耗 | 不计（`motion_aborted=true`），需确定口径 |
+| R4 | Target Embedding 缓存协议 | v1 每步计费，缓存接口抛 NotImplementedError |
+| R5 | `history_mask` 传输量 | 按 16×float32=512 bit 计；可压缩为 1 字节 |
+
 ## 二、仍待确认（不影响公式正确性，但影响后续口径）
 
 | # | 问题 | 当前实现 | 需要你确认 |
 |---|---|---|---|
-| A | $D_{max}$ 取值 | 150 ms（PROVISIONAL；忽略下行后 $D_{coll}$ 解析范围约 30–151.5 ms） | 是否先用 150 ms 做可行性扫描，再据分布定值？ |
+| A | $D_{max}$ 取值 | 150 ms（R2 后距离 >≈175 m 全部不可行） | 见 R1 |
 | B | 电池容量 100 Wh | PROVISIONAL | 是否有确定平台型号/容量？ |
 | C | SPL 分母 | $5\times n_{forward}$ | 是否与 Stage 16 修正后的 SPL 口径一致？ |
 | D | OSR 定义 | 成功 或 `min_dist ≤ 20 m` | 是否与 Stage 16 报告一致？ |

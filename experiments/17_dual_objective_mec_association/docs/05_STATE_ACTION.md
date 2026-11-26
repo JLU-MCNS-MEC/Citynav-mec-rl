@@ -9,7 +9,7 @@ Stage 16 状态原样保留（`train16.state_features`，74 维 = 4 全局 + 10 
 | `[0:74]` | Stage-16 状态（UAV 位置、步数、累计 E2E 均值；每节点 dx, dy, 距离, 通信时延, 推理时延, 单步 E2E, 可用标志） | 同 Stage 16 |
 | `[74]` | `normalized_remaining_energy` = 剩余 / 初始 | ✅ |
 | `[75]` | `normalized_consumed_energy` = 累计 / 任务预算 | ✅ |
-| `[76]` | `remaining_energy_j / 1e4` | 缩放到 O(1) 量级 |
+| `[76]` | `remaining_energy_j / 1e5` | 360 kJ 预算映射为 3.6 |
 | `[77:87]` | `candidate_service_latency[m] / D_max`（10） | ✅ |
 | `[87:97]` | `candidate_energy_cost[m] / task_budget`（10） | ✅ |
 | `[97:107]` | `deadline_valid_mask`（10） | 0/1 |

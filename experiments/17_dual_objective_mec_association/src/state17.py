@@ -6,7 +6,8 @@ Stage 16 state (74 dims) is kept verbatim; constraint features are appended:
     [ 0 : 74]   Stage-16 state (train16.state_features)
     [74]        normalized_remaining_energy    = remaining / initial
     [75]        normalized_consumed_energy     = cumulative / task_budget
-    [76]        remaining_energy_j / 1e4       (raw quantity, scaled)
+    [76]        remaining_energy_j / 1e5       (raw quantity, scaled so the
+                                                default 360 kJ budget maps to 3.6)
     [77: 87]    candidate_service_latency      (10, / d_max_ms)
     [87: 97]    candidate_energy_cost          (10, / task_budget)
     [97:107]    deadline_valid_mask            (10, 0/1)
@@ -50,7 +51,7 @@ def build_state17(env, cfg: Stage17Config) -> tuple[np.ndarray, dict]:
     consumed_norm = env.cumulative_energy_j / max(cfg.task_energy_budget_j, 1e-9)
     extra = np.concatenate([
         np.asarray([remaining_norm, consumed_norm,
-                    env.remaining_energy_j / 1e4], np.float32),
+                    env.remaining_energy_j / 1e5], np.float32),
         masks["candidate_service_latency_ms"] / max(cfg.d_max_ms, 1e-9),
         masks["candidate_energy_cost_j"] / max(cfg.task_energy_budget_j, 1e-9),
         masks["deadline_valid_mask"],
@@ -77,7 +78,7 @@ STATE17_LAYOUT = {
     "stage16_state": (0, 74),
     "normalized_remaining_energy": (74, 75),
     "normalized_consumed_energy": (75, 76),
-    "remaining_energy_j_scaled_1e4": (76, 77),
+    "remaining_energy_j_scaled_1e5": (76, 77),
     "candidate_service_latency": (77, 87),
     "candidate_energy_cost": (87, 97),
     "deadline_valid_mask": (97, 107),

@@ -19,7 +19,9 @@ $$
 $$
 
 - $\mathrm{SR}$：任务级导航成功率（成功半径 20 m，Stop 时判定，规则继承 Stage 16）；
-- $D_{coll}$：单次端边协同推理服务时延（编码 + 上行 + 推理 + 下行）。
+- $D_{coll}=D_{UAV}+D_{up}+D_{inf}$：单次服务时延。$D_{UAV}$ 含 UAV 本地 layer4 编码、
+  layer2 视觉匹配编码与匹配计算；$D_{up}$ 为完整多模态上行；$D_{inf}$ 为 MEC 冻结专家推理。
+  MEC→UAV 动作返回时延按审核决定忽略。
 
 **导航动作本身的物理时间（Forward 5 m、Turn 30°）不计入 $D_{sum}$。** 这一点与 Stage 16 的"累计 E2E"口径一致，但 Stage 16 缺下行分量（见审计 H.1）。
 
@@ -68,7 +70,7 @@ $$
 | 维度 | Stage 16 | Stage 17-A |
 |---|---|---|
 | 目标 | 单目标：最小化累计 E2E | 双目标：SR 与 $D_{sum}$ |
-| 时延 | enc + up + inf | enc + up + inf + **down** |
+| 时延 | enc + up(1.6 Mbit) + inf | **D_UAV(layer4+layer2+matching) + up(4.28 Mbit) + inf** |
 | 能量 | 无 | 服务能耗 + 运动能耗 + 任务预算 |
 | 截止时间 | 无 | 单次服务 $D_{max}$ 约束 |
 | 覆盖 | 仅提供掩码，不强制 | **强制**，越界节点不可选 |
