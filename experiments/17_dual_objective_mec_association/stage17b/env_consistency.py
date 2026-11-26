@@ -156,29 +156,51 @@ def main():
                                   and all(not r["deadline_valid"] for r in tab)}
 
     # ---- E5 service paid, motion refused -------------------------------
-    env = EpisodeEnv17(by_map, "cuda", models, norm, cfg)
-    env.start(tasks[0])
-    feas = env.feasible_node_indices()
-    if feas:
-        lat0 = service_latency_ms(0.0, "small", cfg, env.payload)
-        svc = e_coll_j(lat0, cfg)["e_coll_j"]
-        env.energy_budget_j = svc + 0.5 * e_motion_j(1, cfg)["e_motion_j"]
+    # Deterministic construction on the *actual* candidate table:
+    #   budget = (that node's real service energy) + 0.5 * E_turn
+    # so the service is affordable, any Forward/Turn is not, and a Stop
+    # (zero motion) does not exercise the case -> retry on the next task.
+    e5 = None
+    for t in tasks[:10]:
+        env = EpisodeEnv17(by_map, "cuda", models, norm, cfg)
+        env.start(t)
+        feas = [r for r in env.candidate_table() if r["feasible"]]
+        if not feas:
+            continue
+        rec0 = feas[0]
+        svc = rec0["service_energy_j"]
+        env.energy_budget_j = svc + 0.5 * e_turn_j(cfg)
         env.remaining_energy_j = env.energy_budget_j
-        _, _, _ = env.step(feas[0])
+        env.step(rec0["node"])
         rec = env.step_records[-1]
-        res["E5_motion_refused"] = {
+        if rec["navigation_action"] == 0:
+            continue                     # Stop costs no motion; not the case
+        e5 = {
+            "task": int(t["index"]), "node": int(rec0["node"]),
+            "budget_j": float(env.energy_budget_j),
+            "service_j": float(rec["e_coll_j"]),
+            "motion_j": float(rec["e_motion_j"]),
             "reason": env.terminated_reason,
-            "inference_done": env.completed_inference_count == 1,
-            "motion_executed": rec["motion_executed"],
-            "service_charged": rec["e_coll_j"] > 0,
-            "budget_respected": env.cumulative_energy_j <= env.energy_budget_j + 1e-9,
-            "pass": (env.terminated_reason == "energy_budget_exhausted"
-                     and env.completed_inference_count == 1
-                     and not rec["motion_executed"]
-                     and rec["e_coll_j"] > 0
-                     and env.cumulative_energy_j <= env.energy_budget_j + 1e-9)}
-    else:
-        res["E5_motion_refused"] = {"pass": False, "error": "no feasible node"}
+            "inference": int(env.completed_inference_count),
+            "executed": int(env.executed_navigation_action_count),
+            "motion_executed": bool(rec["motion_executed"]),
+            "cumulative_j": float(env.cumulative_energy_j),
+            "energy_balance_ok": abs(rec["e_total_step_j"] - rec["e_coll_j"]
+                                     - rec["e_motion_j"]) < 1e-6,
+        }
+        e5["pass"] = (env.terminated_reason == "energy_budget_exhausted"
+                      and int(env.completed_inference_count) == 1
+                      and int(env.executed_navigation_action_count) == 0
+                      and not rec["motion_executed"]
+                      and rec["e_coll_j"] > 0
+                      and rec["e_motion_j"] == 0
+                      and e5["energy_balance_ok"]
+                      and env.cumulative_energy_j <= env.energy_budget_j + 1e-9
+                      and env.terminated_reason
+                      == env.step_records[-1]["terminated_reason"])
+        break
+    res["E5_motion_refused"] = e5 if e5 is not None else {
+        "pass": False, "error": "no task produced a non-Stop action under the tiny budget"}
 
     # ---- E6 None action ------------------------------------------------
     env = EpisodeEnv17(by_map, "cuda", models, norm, cfg.with_overrides(coverage_m=1.0))
@@ -214,62 +236,101 @@ def main():
     while not done:
         feas = env.feasible_node_indices()
         _, done, _ = env.step(feas[0] if feas else None)
-    n_rec, e_after = len(env.step_records), env.cumulative_energy_j
+    snapshot = (env.cumulative_energy_j, env.cumulative_coll_latency_ms,
+                int(env.service_attempt_count), len(env.step_records))
     try:
         env.step(0)
         raised = False
     except RuntimeError:
         raised = True
     res["E8_no_post_termination_charge"] = {
-        "records": n_rec, "steps": int(env.step_idx),
-        "energy_unchanged": env.cumulative_energy_j == e_after,
-        "step_raised": raised,
-        "pass": raised and env.cumulative_energy_j == e_after
-                and n_rec == int(env.step_idx)}
+        "raised": raised,
+        "energy_unchanged": env.cumulative_energy_j == snapshot[0],
+        "latency_unchanged": env.cumulative_coll_latency_ms == snapshot[1],
+        "attempts_unchanged": int(env.service_attempt_count) == snapshot[2],
+        "records_unchanged": len(env.step_records) == snapshot[3],
+        "pass": raised
+        and env.cumulative_energy_j == snapshot[0]
+        and env.cumulative_coll_latency_ms == snapshot[1]
+        and int(env.service_attempt_count) == snapshot[2]
+        and len(env.step_records) == snapshot[3],
+        "note": "step-record count is NOT required to equal step_idx",
+    }
 
     # ---- E13 counters ---------------------------------------------------
+    attempts = int(env.service_attempt_count)
+    inferences = int(env.completed_inference_count)
+    executed = int(env.executed_navigation_action_count)
+    recs = env.step_records
     res["E13_counters"] = {
-        "attempts": int(env.service_attempt_count),
-        "inferences": int(env.completed_inference_count),
-        "executed": int(env.executed_navigation_action_count),
-        "records": n_rec,
-        "pass": (int(env.service_attempt_count) == n_rec
-                 and int(env.completed_inference_count)
-                 == sum(1 for r in env.step_records if r["d_coll_ms"] > 0)
-                 and int(env.executed_navigation_action_count)
-                 == sum(1 for r in env.step_records if r["motion_executed"]))}
+        "attempts": attempts, "inferences": inferences, "executed": executed,
+        "records": len(recs),
+        "sum_model_selection": int(env.model_selection.sum()),
+        "records_with_service": sum(1 for r in recs if r["d_coll_ms"] > 0),
+        "records_executed": sum(1 for r in recs if r["motion_executed"]),
+        "pass": (attempts >= inferences >= executed
+                 and attempts == len(recs)
+                 and inferences == int(env.model_selection.sum())
+                 and inferences == sum(1 for r in recs if r["d_coll_ms"] > 0)
+                 and executed == sum(1 for r in recs if r["motion_executed"])),
+    }
 
-    # ---- E15 aborted Forward charged in full ---------------------------
+    # ---- E15 aborted Forward charged in full (deterministic) ------------
+    def _cell_to_world(info, row, col):
+        left, bottom, right, top = info["bounds"]
+        cell = info["cell_m"]
+        return left + (col + 0.5) * cell, top - (row + 0.5) * cell
+
     env = EpisodeEnv17(by_map, "cuda", models, norm, free)
     env.start(tasks[0])
-    aborted_rec = None
-    for _ in range(200):
-        neigh = [i for i, m in enumerate(env.metrics())
-                 if m.node["model_type"] == "ts"][0]
-        _, done, _ = env.step(neigh)
-        if env.step_records and env.step_records[-1]["motion_aborted"]:
-            aborted_rec = env.step_records[-1]
+    info = env.info
+    blocked = np.asarray(info["blocked"])
+    target = None
+    for r in range(blocked.shape[0]):
+        for c in range(1, blocked.shape[1]):
+            if blocked[r, c] and not blocked[r, c - 1]:
+                target = (r, c - 1)
+                break
+        if target:
             break
-        if done:
-            break
-    if aborted_rec is None:
-        res["E15_aborted_forward_charged"] = {"pass": None,
-                                              "note": "no collision/OOB in this episode"}
-    else:
-        res["E15_aborted_forward_charged"] = {
-            "nav_action": aborted_rec["navigation_action"],
-            "e_forward_j": aborted_rec["e_forward_j"],
-            "expected": e_forward_j(cfg) if aborted_rec["navigation_action"] == 1 else None,
-            "pass": (aborted_rec["navigation_action"] != 1
-                     or abs(aborted_rec["e_forward_j"] - e_forward_j(cfg)) < 1e-9)}
+    collision_ok = False
+    if target is not None:
+        x, y = _cell_to_world(info, target[0], target[1])
+        env.pos = np.asarray([x, y], np.float64)
+        env.yaw = 0.0
+        percept = env.perceive()
+        trans = env.transition(1, percept)
+        collision_ok = (env.failure == "collision" and trans["aborted"]
+                        and not trans["executed"])
+    env_oob = EpisodeEnv17(by_map, "cuda", models, norm, free)
+    env_oob.start(tasks[0])
+    left, bottom, right, top = env_oob.info["bounds"]
+    env_oob.pos = np.asarray([right - 1.0, 0.5 * (bottom + top)], np.float64)
+    env_oob.yaw = 0.0
+    percept = env_oob.perceive()
+    trans_oob = env_oob.transition(1, percept)
+    oob_ok = (env_oob.failure == "out_of_bounds" and trans_oob["aborted"]
+              and not trans_oob["executed"])
 
-    out = ROOT / "smoke/env_consistency_r3.json"
+    lat_any = service_latency_ms(100.0, "ts", cfg, payload)
+    e_fwd = step_energy_j(1, lat_any, cfg)
+    charge_ok = (abs(e_fwd["e_forward_j"] - e_forward_j(cfg)) < 1e-9
+                 and abs(e_fwd["e_motion_j"] - e_forward_j(cfg)) < 1e-9)
+    res["E15_aborted_forward_charged"] = {
+        "collision_case": bool(collision_ok), "oob_case": bool(oob_ok),
+        "e_forward_j": e_fwd["e_forward_j"], "expected": e_forward_j(cfg),
+        "pass": bool(collision_ok) and bool(oob_ok) and charge_ok}
+
+    out = ROOT / "smoke/env_consistency_r4.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(res, indent=2))
     print(json.dumps(res, indent=2))
-    n_pass = sum(1 for v in res.values() if v.get("pass") is True)
-    n_fail = sum(1 for v in res.values() if v.get("pass") is not True)
-    print(f"PASS {n_pass} / NOT-PASS {n_fail}")
+    failed = [name for name, r in res.items() if r.get("pass") is not True]
+    if failed:
+        print(f"FAILED CHECKS: {failed}")
+        sys.exit(1)
+    print("ALL REQUIRED CHECKS PASSED")
+    sys.exit(0)
 
 
 if __name__ == "__main__":

@@ -241,12 +241,16 @@ class EpisodeEnv17(EpisodeEnv16):
             "uplink_payload_bits": 0, "uplink_payload_bytes": 0,
             "uplink_rate_bps": 0.0,
             "e_hover_j": 0.0, "e_enc_j": 0.0, "e_tx_j": 0.0, "e_rx_j": 0.0,
-            "e_forward_j": 0.0, "e_turn_j": 0.0, "e_total_step_j": 0.0,
+            "e_forward_j": 0.0, "e_turn_j": 0.0,
+            "e_coll_j": 0.0, "e_motion_j": 0.0, "e_total_step_j": 0.0,
             "battery_remaining_j": float(self.remaining_energy_j),
             "deadline_valid": False, "energy_valid": False, "coverage_valid": False,
             "feasible_mec_count": int(n_feasible),
             "motion_executed": False, "motion_aborted": False,
             "terminated_reason": reason,
+            "service_attempt_count": int(self.service_attempt_count),
+            "completed_inference_count": int(self.completed_inference_count),
+            "executed_navigation_action_count": int(self.executed_navigation_action_count),
         })
 
     def _terminate(self, reason: str, failure: str | None = None):
@@ -274,6 +278,7 @@ class EpisodeEnv17(EpisodeEnv16):
             "e_hover_j": energy["e_hover_j"], "e_enc_j": energy["e_enc_j"],
             "e_tx_j": energy["e_tx_j"], "e_rx_j": energy["e_rx_j"],
             "e_forward_j": energy["e_forward_j"], "e_turn_j": energy["e_turn_j"],
+            "e_coll_j": energy["e_coll_j"], "e_motion_j": energy["e_motion_j"],
             "e_total_step_j": energy["e_total_step_j"],
             "battery_remaining_j": float(self.remaining_energy_j),
             "deadline_valid": bool(rec["deadline_valid"]) if rec else False,
@@ -283,6 +288,9 @@ class EpisodeEnv17(EpisodeEnv16):
             "motion_executed": bool(motion_executed),
             "motion_aborted": bool(aborted),
             "terminated_reason": self.terminated_reason,
+            "service_attempt_count": int(self.service_attempt_count),
+            "completed_inference_count": int(self.completed_inference_count),
+            "executed_navigation_action_count": int(self.executed_navigation_action_count),
         })
 
     def step(self, node):
@@ -345,15 +353,19 @@ class EpisodeEnv17(EpisodeEnv16):
                       - coll["e_coll_j"] - motion["e_motion_j"] >= 0)
 
         if not affordable:
+            # the inference completed -> the MEC was used even though the
+            # navigation action will be refused
+            self.model_selection[node] += 1
             energy = {**coll, "e_forward_j": 0.0, "e_turn_j": 0.0,
                       "e_motion_j": 0.0, "e_total_step_j": coll["e_coll_j"]}
             self.cumulative_energy_j += energy["e_total_step_j"]
             self.remaining_energy_j -= energy["e_total_step_j"]
             self.cumulative_coll_latency_ms += latency["d_coll_ms"]
             self.energy_budget_violation_count += 1
+            # reason first, then the record, so both carry the same termination
+            self._terminate("energy_budget_exhausted")
             self._record(node, rec, nav_action, energy, latency, False,
                          n_feasible, False)
-            self._terminate("energy_budget_exhausted")
             return 0.0, True, {"terminated_reason": self.terminated_reason,
                                "d_coll_ms": latency["d_coll_ms"],
                                "e_total_step_j": energy["e_total_step_j"]}
