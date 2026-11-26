@@ -191,6 +191,14 @@ def make_agents(algo, device, cfg):
     raise ValueError(algo)
 
 
+def grad_norm(params) -> float:
+    tot = 0.0
+    for prm in params:
+        if prm.grad is not None:
+            tot += float(prm.grad.detach().pow(2).sum())
+    return math.sqrt(tot)
+
+
 def soft_update(target, source, tau):
     for t_, o_ in zip(target.parameters(), source.parameters()):
         t_.data.mul_(1 - tau).add_(tau * o_.data)
@@ -268,10 +276,11 @@ def update_offpolicy(algo, ag, replay, device, gamma, total_steps, cfg):
         qv = ag["q"](bs).gather(1, ba[:, None]).squeeze(1)
         loss = F.smooth_l1_loss(qv, tgt)
         ag["opt"].zero_grad(); loss.backward()
+        gn = grad_norm(ag["q"].parameters())
         nn.utils.clip_grad_norm_(ag["q"].parameters(), 1.0); ag["opt"].step()
         if total_steps % sync == 0:
             ag["qt"].load_state_dict(ag["q"].state_dict())
-        return {"loss": float(loss)}
+        return {"loss_q": float(loss.detach()), "grad_q": gn}
 
     if algo == "td3":
         with torch.no_grad():
@@ -291,6 +300,7 @@ def update_offpolicy(algo, ag, replay, device, gamma, total_steps, cfg):
         qv2 = ag["q2"](bs).gather(1, ba[:, None]).squeeze(1)
         loss_q = F.smooth_l1_loss(qv1, tgt) + F.smooth_l1_loss(qv2, tgt)
         ag["opt_q"].zero_grad(); loss_q.backward()
+        gn_q = grad_norm(list(ag["q1"].parameters()) + list(ag["q2"].parameters()))
         nn.utils.clip_grad_norm_(list(ag["q1"].parameters()) + list(ag["q2"].parameters()), 1.0)
         ag["opt_q"].step()
         if total_steps % sync == 0:
@@ -300,10 +310,13 @@ def update_offpolicy(algo, ag, replay, device, gamma, total_steps, cfg):
             q = torch.min(ag["q1"](bs), ag["q2"](bs))
             loss_pi = -masked_expectation(q, p).mean()
             ag["opt_pi"].zero_grad(); loss_pi.backward()
+            gn_pi = grad_norm(ag["pi"].parameters())
             nn.utils.clip_grad_norm_(ag["pi"].parameters(), 1.0); ag["opt_pi"].step()
             soft_update(ag["pit"], ag["pi"], tau)
             soft_update(ag["q1t"], ag["q1"], tau); soft_update(ag["q2t"], ag["q2"], tau)
-        return {"loss": float(loss_q)}
+            return {"loss_q": float(loss_q.detach()), "grad_q": gn_q,
+                    "loss_pi": float(loss_pi.detach()), "grad_pi": gn_pi}
+        return {"loss_q": float(loss_q.detach()), "grad_q": gn_q}
 
     if algo == "ddpg":
         with torch.no_grad():
@@ -315,14 +328,17 @@ def update_offpolicy(algo, ag, replay, device, gamma, total_steps, cfg):
         qv = ag["q"](bs).gather(1, ba[:, None]).squeeze(1)
         loss_q = F.smooth_l1_loss(qv, tgt)
         ag["opt_q"].zero_grad(); loss_q.backward()
+        gn_q = grad_norm(ag["q"].parameters())
         nn.utils.clip_grad_norm_(ag["q"].parameters(), 1.0); ag["opt_q"].step()
         lg, _ = ag["pi"](bs)
         p = masked_softmax(lg, bm)
         loss_pi = -masked_expectation(ag["q"](bs), p).mean()   # differentiable
         ag["opt_pi"].zero_grad(); loss_pi.backward()
+        gn_pi = grad_norm(ag["pi"].parameters())
         nn.utils.clip_grad_norm_(ag["pi"].parameters(), 1.0); ag["opt_pi"].step()
         soft_update(ag["qt"], ag["q"], tau); soft_update(ag["pit"], ag["pi"], tau)
-        return {"loss": float(loss_q)}
+        return {"loss_q": float(loss_q.detach()), "grad_q": gn_q,
+                "loss_pi": float(loss_pi.detach()), "grad_pi": gn_pi}
 
     # sac
     with torch.no_grad():
@@ -337,13 +353,18 @@ def update_offpolicy(algo, ag, replay, device, gamma, total_steps, cfg):
     qv1 = ag["q1"](bs).gather(1, ba[:, None]).squeeze(1)
     qv2 = ag["q2"](bs).gather(1, ba[:, None]).squeeze(1)
     loss_q = F.mse_loss(qv1, tgt) + F.mse_loss(qv2, tgt)
-    ag["opt_q"].zero_grad(); loss_q.backward(); ag["opt_q"].step()
+    ag["opt_q"].zero_grad(); loss_q.backward()
+    gn_q = grad_norm(list(ag["q1"].parameters()) + list(ag["q2"].parameters()))
+    ag["opt_q"].step()
     lg, _ = ag["ac"](bs)
     p = masked_softmax(lg, bm)
     logp = torch.log(p + 1e-12)
     qpi = torch.min(ag["q1"](bs), ag["q2"](bs))
     loss_pi = masked_expectation(ag["log_alpha"].exp() * logp - qpi, p).mean()
-    ag["opt_pi"].zero_grad(); loss_pi.backward(); ag["opt_pi"].step()
+    ag["opt_pi"].zero_grad(); loss_pi.backward()
+    gn_pi = grad_norm(ag["ac"].parameters())
+    ag["opt_pi"].step()
+    ent_val = float(-(p.detach() * logp.detach()).sum(1).mean())
     # temperature: L_alpha = E[log alpha * (H_pi - H_target)],
     # H_target(s) = eta * log(K_feasible(s)); rows without feasible nodes are
     # excluded from the alpha update.
@@ -355,7 +376,9 @@ def update_offpolicy(algo, ag, replay, device, gamma, total_steps, cfg):
         loss_a = (ag["log_alpha"] * (ent - h_target))[valid].mean()
         ag["opt_alpha"].zero_grad(); loss_a.backward(); ag["opt_alpha"].step()
     soft_update(ag["q1t"], ag["q1"], tau); soft_update(ag["q2t"], ag["q2"], tau)
-    return {"loss": float(loss_q)}
+    return {"loss_q": float(loss_q.detach()), "grad_q": gn_q,
+            "loss_pi": float(loss_pi.detach()), "grad_pi": gn_pi,
+            "alpha": float(ag["log_alpha"].exp().detach()), "entropy": ent_val}
 
 
 def ppo_update(ag, buf, device, cfg):
@@ -386,8 +409,13 @@ def ppo_update(ag, buf, device, cfg):
                              torch.clamp(ratio, 1 - clip, 1 + clip) * adv).mean()
         loss = pi_loss + 0.5 * (val - ret).pow(2).mean()
         ag["opt"].zero_grad(); loss.backward()
+        gn = grad_norm(ag["ac"].parameters())
         nn.utils.clip_grad_norm_(ag["ac"].parameters(), 1.0)
         ag["opt"].step()
+        last = {"loss_pi": float(pi_loss.detach()),
+                "loss_v": float(0.5 * (val - ret).pow(2).mean().detach()),
+                "grad_pi": gn}
+    return last
 
 
 # --------------------------------------------------------------------------
@@ -477,7 +505,7 @@ def main():
     buf = {k: [] for k in ("s", "m", "a", "r", "d", "lp", "v")}
     hist, devp = out / "history.jsonl", out / "dev.jsonl"
     total_steps, t0 = 0, time.time()
-    best_score = None
+    updates, last_metrics, best_score = 0, {}, None
 
     for ep in range(1, int(cfg["episodes"]) + 1):
         env.start(train_tasks[(ep - 1) % len(train_tasks)])
@@ -504,13 +532,16 @@ def main():
                 replay.add(s, mask, a, sig.total_training_reward, s2,
                            meta2["feasible_mec_mask"], float(done))
                 if replay.size >= int(cfg["warmup"]):
-                    update_offpolicy(args.algorithm, ag, replay, args.device,
-                                     float(cfg["gamma"]), total_steps, cfg)
+                    last_metrics = update_offpolicy(
+                        args.algorithm, ag, replay, args.device,
+                        float(cfg["gamma"]), total_steps, cfg)
+                    updates += 1
             s, meta = s2, meta2
             total_steps += 1
 
         if args.algorithm == "ppo" and buf["s"]:
-            ppo_update(ag, buf, args.device, cfg)
+            last_metrics = ppo_update(ag, buf, args.device, cfg)
+            updates += 1
             for k in buf:
                 buf[k] = []
 
@@ -525,6 +556,11 @@ def main():
                "executed": int(env.executed_navigation_action_count),
                "model_selection": env.model_selection.astype(int).tolist(),
                "total_steps": total_steps,
+               "updates": updates,
+               "replay_size": replay.size,
+               **{k: last_metrics.get(k) for k in
+                  ("loss_q", "loss_pi", "loss_v", "grad_q", "grad_pi",
+                   "alpha", "entropy")},
                "elapsed_sec": round(time.time() - t0, 1)}
         with hist.open("a", encoding="utf-8") as f:
             f.write(json.dumps(rec) + "\n")

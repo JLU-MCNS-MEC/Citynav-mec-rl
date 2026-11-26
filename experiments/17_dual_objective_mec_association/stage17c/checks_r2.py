@@ -83,9 +83,9 @@ def main():
     out = train17c.update_offpolicy("td3", ag, replay, "cpu", 1.0, 200,
                                     {"batch": B, "tau": 0.005,
                                      "target_sync_steps": 200})
-    res["C2_td3_mixed_batch"] = {"loss": out["loss"],
-                                 "finite": math.isfinite(out["loss"]),
-                                 "pass": math.isfinite(out["loss"])}
+    res["C2_td3_mixed_batch"] = {"loss": out["loss_q"],
+                                 "finite": math.isfinite(out["loss_q"]),
+                                 "pass": math.isfinite(out["loss_q"])}
 
     # C3 SAC temperature direction --------------------------------------
     log_alpha = torch.zeros(1, requires_grad=True)
@@ -134,7 +134,7 @@ def main():
         o = train17c.update_offpolicy(algo, agx, rp, "cpu", 1.0, 200,
                                       {"batch": 8, "tau": 0.005,
                                        "target_sync_steps": 200, "sac_eta": 0.5})
-        steps[algo] = math.isfinite(o["loss"])
+        steps[algo] = math.isfinite(o["loss_q"])
     res["C5_gradient_steps"] = {"finite": steps, "pass": all(steps.values())}
 
     # C6 checkpoint round-trip ------------------------------------------
