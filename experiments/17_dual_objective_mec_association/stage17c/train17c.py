@@ -75,6 +75,17 @@ DEFAULTS = {
 
 CLI_KEYS = ("gamma", "episodes", "seed", "eval_every")
 
+METRIC_KEYS = (
+    "loss_q", "loss_pi", "loss_v", "grad_q", "grad_pi",
+    "alpha", "entropy", "sac_target_entropy", "mean_env_reward",
+    "mean_entropy_bonus", "mean_bellman_target", "mean_q1", "mean_q2",
+    "mean_q_min", "critic_td_error",
+    "approx_kl", "clip_frac", "policy_entropy", "actor_param_delta",
+    "actor_logits_std", "actor_max_prob", "actor_entropy",
+    "q_action_std", "q_action_range",
+    "critic_updates", "actor_updates", "target_updates",
+)
+
 
 # --------------------------------------------------------------------------
 # configuration
@@ -350,7 +361,7 @@ def update_offpolicy(algo, ag, replay, device, gamma, total_steps, cfg):
         gn_pi = grad_norm(ag["pi"].parameters())
         before = [prm.detach().clone() for prm in ag["pi"].parameters()]
         nn.utils.clip_grad_norm_(ag["pi"].parameters(), 1.0); ag["opt_pi"].step()
-        delta = math.sqrt(sum(float((a - b).pow(2).sum())
+        delta = math.sqrt(sum(float((a - b).detach().pow(2).sum())
                               for a, b in zip(before, ag["pi"].parameters())))
         soft_update(ag["qt"], ag["q"], tau); soft_update(ag["pit"], ag["pi"], tau)
         # DDPG diagnostics (logits saturation vs flat critic)
@@ -524,7 +535,7 @@ def evaluate(algo, ag, env, tasks, device, n=60, prev_actions=None):
 
 
 def save_checkpoint(path, algo, ag, cfg, env_cfg, episode, global_step,
-                    dev_metrics, dev_score_value, best):
+                    dev_metrics, dev_score_value, best, state=None):
     torch.save({
         "algorithm": algo, "state_dim": STATE17_DIM, "n_act": N_ACT,
         "policy": policy_state(algo, ag), "optimizers": optimizer_state(algo, ag),
@@ -538,6 +549,9 @@ def save_checkpoint(path, algo, ag, cfg, env_cfg, episode, global_step,
         "episode": episode, "global_step": global_step,
         "dev_metrics": dev_metrics, "dev_score": dev_score_value,
         "best": bool(best),
+        "counters": {k: ag[k] for k in ("critic_updates", "actor_updates",
+                                        "target_updates") if k in ag},
+        "state": state or {},
     }, path)
 
 
@@ -556,11 +570,23 @@ def main():
     ap.add_argument("--config", default=str(ROOT / "configs/default.json"))
     ap.add_argument("--train-config", default=str(HERE / "train_config.json"))
     ap.add_argument("--out", required=True)
+    ap.add_argument("--resume", default="", help="checkpoint to continue from")
     args = ap.parse_args()
 
     cfg = resolve_config({"gamma": args.gamma, "episodes": args.episodes,
                           "seed": args.seed, "eval_every": args.eval_every},
                          Path(args.train_config))
+    resume_sd = None
+    if args.resume:
+        resume_sd = torch.load(args.resume, map_location="cpu", weights_only=False)
+        saved = dict(resume_sd.get("config", {}))
+        saved.update({k: v for k, v in {
+            "episodes": args.episodes if args.episodes is not None else None,
+            "gamma": args.gamma, "seed": args.seed,
+            "eval_every": args.eval_every}.items() if v is not None})
+        cfg = {**cfg, **saved}
+        print(f"[resume] from {args.resume} at episode {resume_sd.get('episode')}",
+              flush=True)
     torch.set_num_threads(int(os.environ.get("S17C_THREADS", "4")))
     torch.manual_seed(cfg["seed"]); np.random.seed(cfg["seed"])
     random.seed(cfg["seed"])
@@ -576,6 +602,20 @@ def main():
     env = EpisodeEnv17(build_deployment_by_map(), args.device,
                        load_models(args.device), load_norm(), env_cfg)
     ag = make_agents(args.algorithm, args.device, cfg)
+    start_ep = 0
+    if resume_sd is not None:
+        pol = resume_sd["policy"]
+        for key in ("q", "qt", "q1", "q2", "q1t", "q2t", "pi", "pit", "ac"):
+            if key in pol:
+                ag[key].load_state_dict(pol[key])
+        if "log_alpha" in pol:
+            with torch.no_grad():
+                ag["log_alpha"].copy_(pol["log_alpha"].to(args.device))
+        for k, sd in resume_sd.get("optimizers", {}).items():
+            ag[k].load_state_dict(sd)
+        for k, v in resume_sd.get("counters", {}).items():
+            ag[k] = v
+        start_ep = int(resume_sd.get("episode", 0))
     replay = Replay17(STATE17_DIM, N_ACT, int(cfg["replay_cap"]), int(cfg["seed"]))
     rng = np.random.default_rng(int(cfg["seed"]))
     buf = {k: [] for k in ("s", "m", "a", "r", "d", "lp", "v")}
@@ -587,7 +627,18 @@ def main():
     perm = perm_rng.permutation(len(train_tasks))
     ptr, cycle = 0, 0
     prev_actions = None
-    for ep in range(1, int(cfg["episodes"]) + 1):
+    if resume_sd is not None:
+        st = resume_sd.get("state", {})
+        total_steps = int(resume_sd.get("global_step", 0))
+        if st.get("perm"):
+            perm = np.asarray(st["perm"], np.int64)
+            ptr = int(st.get("ptr", 0)); cycle = int(st.get("cycle", 0))
+            perm_rng.bit_generator.state = st["perm_rng"]
+        if st.get("torch_rng") is not None:
+            torch.set_rng_state(torch.as_tensor(st["torch_rng"], dtype=torch.uint8))
+        if st.get("np_rng") is not None:
+            rng.bit_generator.state = st["np_rng"]
+    for ep in range(start_ep + 1, int(cfg["episodes"]) + 1):
         if ptr >= len(perm):
             perm = perm_rng.permutation(len(train_tasks))
             ptr, cycle = 0, cycle + 1
@@ -627,7 +678,7 @@ def main():
             before = [prm.detach().clone() for prm in ag["ac"].parameters()]
             last_metrics = ppo_update(ag, buf, args.device, cfg)
             last_metrics["actor_param_delta"] = math.sqrt(sum(
-                float((a - b).pow(2).sum())
+                float((a - b).detach().pow(2).sum())
                 for a, b in zip(before, ag["ac"].parameters())))
             updates += 1
             for k in buf:
@@ -646,15 +697,17 @@ def main():
                "total_steps": total_steps,
                "updates": updates,
                "replay_size": replay.size,
-               **{k: last_metrics.get(k) for k in
-                  ("loss_q", "loss_pi", "loss_v", "grad_q", "grad_pi",
-                   "alpha", "entropy")},
+               **{k: last_metrics.get(k) for k in METRIC_KEYS},
                "elapsed_sec": round(time.time() - t0, 1)}
         with hist.open("a", encoding="utf-8") as f:
             f.write(json.dumps(rec) + "\n")
 
+        state = {"perm": perm.tolist(), "ptr": ptr, "cycle": cycle,
+                 "perm_rng": perm_rng.bit_generator.state,
+                 "torch_rng": torch.get_rng_state().tolist(),
+                 "np_rng": rng.bit_generator.state}
         save_checkpoint(out / "last.pt", args.algorithm, ag, cfg, env_cfg, ep,
-                        total_steps, None, None, False)
+                        total_steps, None, None, False, state)
 
         if cfg["eval_every"] and ep % int(cfg["eval_every"]) == 0:
             d = evaluate(args.algorithm, ag, env, dev_tasks, args.device,
@@ -671,7 +724,7 @@ def main():
             if is_better(score, best_score):
                 best_score = score
                 save_checkpoint(out / "best.pt", args.algorithm, ag, cfg, env_cfg,
-                                ep, total_steps, d, score, True)
+                                ep, total_steps, d, score, True, state)
 
     print(json.dumps({"algorithm": args.algorithm, "episodes": cfg["episodes"],
                       "gamma": cfg["gamma"], "best_dev_score": best_score,
