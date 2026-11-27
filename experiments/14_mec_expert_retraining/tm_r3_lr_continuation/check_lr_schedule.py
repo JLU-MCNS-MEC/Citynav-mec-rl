@@ -5,7 +5,7 @@ from pathlib import Path
 import torch
 
 HERE = Path(__file__).resolve().parent
-STEPS = 19608          # updates per epoch measured in Stage 14 TM
+STEPS = 9804           # optimizer updates per epoch (Stage 14 TM history)
 EPOCHS = 18            # epochs 2..19
 TOTAL = STEPS * EPOCHS
 

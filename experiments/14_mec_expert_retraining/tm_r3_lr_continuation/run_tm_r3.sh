@@ -4,6 +4,7 @@ set -u
 SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
 cd "$SCRIPT_DIR/.." || exit 1   # experiments/14_mec_expert_retraining
 PY=/home/jlu-mcns/miniconda3/envs/citynav-mec/bin/python
+export CITYNAV_DATA=${CITYNAV_DATA:-/home/20261024_1/Workspace/DATA}
 R3=tm_r3_lr_continuation
 # --- smoke: 5 optimizer steps on a 64-state slice, separate output dir ---
 $PY stability_revision/train_stable.py \
