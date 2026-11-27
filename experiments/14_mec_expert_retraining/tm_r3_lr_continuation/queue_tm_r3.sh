@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Wait until the GPU has >=25 GB free (Stage 17 has priority), then start TM R3.
 set -u
-cd "$(dirname "$0")/../.." || exit 1
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
+cd "$SCRIPT_DIR/.." || exit 1
 NEED=25000
 while true; do
   free=$(nvidia-smi --query-gpu=memory.free --format=csv,noheader,nounits | head -1 | tr -d ' ')
