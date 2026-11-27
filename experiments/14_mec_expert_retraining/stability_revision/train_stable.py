@@ -299,6 +299,14 @@ def main() -> int:
     ap.add_argument("--resume", default="",
                     help="path to a last.pt to continue training from "
                          "(restores model, optimizer, RNG, best, history)")
+    ap.add_argument("--scheduler", choices=["onecycle", "cosine_cont"],
+                    default="onecycle",
+                    help="onecycle = original Stage-14 schedule; cosine_cont = "
+                         "low-LR continuation without warmup (Stage 14-R3)")
+    ap.add_argument("--lr-end", type=float, default=5e-7,
+                    help="cosine_cont final LR (eta_min)")
+    ap.add_argument("--min-epochs", type=int, default=0,
+                    help="do not early-stop before this epoch (0 = patience only)")
     ap.add_argument("--grad-checkpoint", action="store_true",
                     help="per-layer gradient checkpointing (activation-memory "
                          "trade; does not alter architecture/params/batch/LR)")
@@ -339,7 +347,10 @@ def main() -> int:
     config = {
         "stage": "14-R2-stability", "model": name, "key": key,
         "seed": args.seed, "lr": args.lr, "weight_decay": args.weight_decay,
-        "optimizer": "AdamW", "scheduler": "OneCycleLR",
+        "optimizer": "AdamW",
+        "scheduler": ("OneCycleLR" if args.scheduler == "onecycle"
+                      else "CosineAnnealingLR-continuation"),
+        "lr_end": args.lr_end, "min_epochs": args.min_epochs,
         "warmup_ratio": args.warmup, "anneal": "cos",
         "clip": args.clip, "skip_gn": args.skip_gn,
         "precision": "bf16-autocast", "epochs": args.epochs,
@@ -411,12 +422,23 @@ def main() -> int:
 
     remaining_epochs = max(1, args.epochs - start_epoch)
     total_updates = max(1, remaining_epochs * updates_per_epoch)
-    scheduler = torch.optim.lr_scheduler.OneCycleLR(
-        optimizer, max_lr=args.lr, total_steps=total_updates,
-        pct_start=args.warmup, anneal_strategy="cos", cycle_momentum=False)
-    print(f"[{name}] schedule: {remaining_epochs} remaining epochs x "
-          f"{updates_per_epoch} updates = {total_updates} steps, "
-          f"warmup {int(args.warmup*total_updates)}", flush=True)
+    if args.scheduler == "onecycle":
+        scheduler = torch.optim.lr_scheduler.OneCycleLR(
+            optimizer, max_lr=args.lr, total_steps=total_updates,
+            pct_start=args.warmup, anneal_strategy="cos", cycle_momentum=False)
+        print(f"[{name}] schedule: OneCycle {remaining_epochs} epochs x "
+              f"{updates_per_epoch} updates, warmup "
+              f"{int(args.warmup*total_updates)}", flush=True)
+    else:
+        # Stage 14-R3: continuation at a low LR, cosine decay 5e-6 -> 5e-7,
+        # no warmup, and the optimizer state (AdamW moments) is resumed as-is.
+        for g in optimizer.param_groups:
+            g["lr"] = args.lr
+        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+            optimizer, T_max=total_updates, eta_min=args.lr_end)
+        print(f"[{name}] schedule: cosine_cont {args.lr:.1e} -> "
+              f"{args.lr_end:.1e} over {total_updates} updates, no warmup",
+              flush=True)
     config["resume"] = resume_info
     config["remaining_epochs"] = remaining_epochs
     (run_dir / "config.json").write_text(json.dumps(config, indent=2) + "\n")
@@ -589,8 +611,12 @@ def main() -> int:
                           "lr": round(rec["lr"], 8), "best": round(best, 4),
                           "skips": total_skips, "sec": rec["seconds"]}), flush=True)
         if n_best_epochs >= args.patience:
-            print(f"early stop (patience {args.patience})", flush=True)
-            break
+            if args.min_epochs and epoch + 1 < args.min_epochs:
+                print(f"[{name}] patience reached at epoch {epoch} but "
+                      f"min_epochs={args.min_epochs}; continuing", flush=True)
+            else:
+                print(f"early stop (patience {args.patience})", flush=True)
+                break
 
     trace.close()
     attn_diag.close()
