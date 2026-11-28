@@ -97,15 +97,16 @@ N_LM = 8
 
 STAGE14_CONTROLLERS = {
     "small": "small_preset_mlp",
+    "small1g": "small1g_preset_mlp",
     "medium": "medium_preset_gca",
     "ts": "ts_preset_transformer_s",
     "tm": "tm_preset_transformer_m",
     "large": "large_preset_transformer_l",
 }
 NAMES = {"small": "Small", "medium": "Medium", "ts": "Transformer-S",
-         "tm": "Transformer-M", "large": "Large"}
+         "tm": "Transformer-M", "large": "Large", "small1g": "Small-1G"}
 # 五种 Stage 14 预设全部使用 landmarks/states 几何输入
-GEOM_MODELS = ("small", "medium", "ts", "tm", "large")
+GEOM_MODELS = ("small", "small1g", "medium", "ts", "tm", "large")
 
 
 def build_model(name: str, device: str):

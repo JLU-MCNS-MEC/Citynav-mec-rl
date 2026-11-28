@@ -1,0 +1,20 @@
+{
+  "stage": "14-small-1g",
+  "purpose": "Small preset with token MLP 2048->2432->2048 (one-gig FLOPs class)",
+  "model": "small1g",
+  "base": "Stage 14 SmallPreset (unchanged); new class branch build_model('small1g') = SmallPreset(tok=2432)",
+  "architecture": {"d": 512, "token_hidden": 2432, "head_h": 2048, "dropout": 0.1,
+                   "tokens": 49, "outputs": 4},
+  "params": 20740996,
+  "gflops_2xmacs": 0.997762048,
+  "latency_ms_at_10tflops": 0.0997762048,
+  "training": {"lr": 0.0003, "weight_decay": 0.01, "warmup": 0.03, "optimizer": "AdamW",
+               "scheduler": "OneCycleLR", "precision": "bf16", "batch": 128, "accum": 1,
+               "clip": 1.0, "seed": 42, "epochs": 20, "patience": 10,
+               "selection": "Train-internal Dev Macro-F1",
+               "data": "same teacher trajectories / split / labels as Stage 14"},
+  "eval": {"split": "val_seen", "tasks": 2498, "denominator": 2498,
+           "harness": "eval_val_seen.py (Small is NOT normalised)",
+           "step_cap": 200, "success_radius_m": 20.0},
+  "isolation": "no Stage 12/14/16 history overwritten; Stage 17 P3 remains paused"
+}
