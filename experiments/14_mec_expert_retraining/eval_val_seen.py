@@ -371,7 +371,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--ckpt", required=True)
     parser.add_argument("--model", required=True,
-                        choices=["small", "medium", "ts", "tm", "large"])
+                        choices=sorted(STAGE14_CONTROLLERS))
     parser.add_argument("--manifest", required=True)
     parser.add_argument("--out-dir", default="")
     parser.add_argument("--task-file", default="")

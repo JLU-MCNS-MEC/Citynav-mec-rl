@@ -13,7 +13,10 @@ NEW=HERE/"runs/small1g/seed42/history.jsonl"
 OLD=EXP14/"results/Small/training_history.jsonl"
 FIG=HERE/"figures"
 
-def f1_new(r): return float(r.get("dev_macro_f1", float("nan")))
+def f1_new(r):
+    if "dev_macro_f1" in r:
+        return float(r["dev_macro_f1"])
+    return float(r.get("dev", {}).get("macro_f1", float("nan")))
 def f1_old(r): return float(r["dev"].get("macro_f1", float("nan")))
 
 def load(p):
@@ -26,14 +29,14 @@ def main():
     for e in range(20):
         o=f1_old(old[e]) if e in old else None
         if e in newby:
-            r=newby[e]; n=f1_new(r); loss=r.get("train_loss"); lr=r.get("lr"); sec=r.get("sec")
+            r=newby[e]; n=f1_new(r); loss=r.get("train_loss"); lr=r.get("lr"); sec=r.get("sec", r.get("seconds"))
             st="本次训练"
         else:
             n=loss=lr=sec=None; st="Pending"
         rows.append((e,o,n,loss,lr,sec,st))
     best_ep=max(newby,key=lambda e:f1_new(newby[e])) if newby else None
     best=max((f1_new(r) for r in new),default=None)
-    durs=[float(r.get("sec",0)) for r in new if r.get("sec")][-3:]
+    durs=[float(r.get("sec", r.get("seconds",0))) for r in new][-3:]
     rem=max(0,19-max(newby)) if newby else 20
     eta=(np.mean(durs)/60*rem) if durs else None
     L=["# Small-1G · 训练进度","",f"更新：{time.strftime('%Y-%m-%d %H:%M:%S')}","",
