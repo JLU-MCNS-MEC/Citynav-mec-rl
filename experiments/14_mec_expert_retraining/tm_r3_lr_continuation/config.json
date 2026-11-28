@@ -2,8 +2,15 @@
   "stage": "14-R3",
   "purpose": "Transformer-M low-LR continuation (does the Epoch-1 best miss a later low-LR gain?)",
   "model": "tm",
-  "architecture": {"hidden": 2048, "layers": 10, "heads": 16, "ffn": 7424,
-                   "tokens": 104, "params": 498600000, "gflops": 100.025418},
+  "architecture": {
+    "hidden": 2048,
+    "layers": 10,
+    "heads": 16,
+    "ffn": 7424,
+    "tokens": 104,
+    "params": 498600000,
+    "gflops": 100.025418
+  },
   "resume_from": "stability_revision/runs/tm/seed42/checkpoints_stability_2ep/last.pt",
   "resume_sha256": "6aa879ce78fab90906280b1fb0f00007b99ec7a68693bb2babc1075265b00e04",
   "reference_best_sha256": "2135bd090dee7aff356bd5dfea743548e8daec26c877772c9d64003290d48aad",
@@ -22,6 +29,19 @@
   "patience": 10,
   "loss": "cross_entropy, 4-class, no class weight, no label smoothing",
   "selection": "Dev Macro-F1 (Train-internal Dev split, same as Stage 14)",
-  "not_modified": ["network", "FLOPs", "data", "encoder", "navigation task",
-                   "Stage 14 historical checkpoints/logs", "Stage 17 experts"]
+  "not_modified": [
+    "network",
+    "FLOPs",
+    "data",
+    "encoder",
+    "navigation task",
+    "Stage 14 historical checkpoints/logs",
+    "Stage 17 experts"
+  ],
+  "early_stopping": "disabled (patience=0) per review 2026-11-27: train the full 20 epochs",
+  "resume_after_epoch": 11,
+  "resume_checkpoint": "tm_r3_lr_continuation/runs/tm/seed42/checkpoints/last.pt",
+  "schedule_offset_steps": 98040,
+  "schedule_total_steps": 176472,
+  "updates_per_epoch": 9804
 }

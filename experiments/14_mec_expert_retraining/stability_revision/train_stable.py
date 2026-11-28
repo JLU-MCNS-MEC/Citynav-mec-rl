@@ -305,6 +305,12 @@ def main() -> int:
                          "low-LR continuation without warmup (Stage 14-R3)")
     ap.add_argument("--lr-end", type=float, default=5e-7,
                     help="cosine_cont final LR (eta_min)")
+    ap.add_argument("--sched-total-steps", type=int, default=0,
+                    help="cosine_cont: total updates of the ORIGINAL schedule "
+                         "(used with --sched-offset-steps to continue it exactly)")
+    ap.add_argument("--sched-offset-steps", type=int, default=0,
+                    help="cosine_cont: updates already consumed by the "
+                         "original schedule at the resume point")
     ap.add_argument("--min-epochs", type=int, default=0,
                     help="do not early-stop before this epoch (0 = patience only)")
     ap.add_argument("--grad-checkpoint", action="store_true",
@@ -434,11 +440,15 @@ def main() -> int:
         # no warmup, and the optimizer state (AdamW moments) is resumed as-is.
         for g in optimizer.param_groups:
             g["lr"] = args.lr
+        total = args.sched_total_steps or total_updates
         scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
-            optimizer, T_max=total_updates, eta_min=args.lr_end)
+            optimizer, T_max=total, eta_min=args.lr_end)
+        if args.sched_offset_steps:
+            for _ in range(int(args.sched_offset_steps)):
+                scheduler.step()
         print(f"[{name}] schedule: cosine_cont {args.lr:.1e} -> "
-              f"{args.lr_end:.1e} over {total_updates} updates, no warmup",
-              flush=True)
+              f"{args.lr_end:.1e} over {total} updates, offset "
+              f"{args.sched_offset_steps}, no warmup", flush=True)
     config["resume"] = resume_info
     config["remaining_epochs"] = remaining_epochs
     (run_dir / "config.json").write_text(json.dumps(config, indent=2) + "\n")
@@ -610,7 +620,7 @@ def main() -> int:
                           "pred": [dev["per_class"][c]["predicted"] for c in CLASSES],
                           "lr": round(rec["lr"], 8), "best": round(best, 4),
                           "skips": total_skips, "sec": rec["seconds"]}), flush=True)
-        if n_best_epochs >= args.patience:
+        if args.patience > 0 and n_best_epochs >= args.patience:
             if args.min_epochs and epoch + 1 < args.min_epochs:
                 print(f"[{name}] patience reached at epoch {epoch} but "
                       f"min_epochs={args.min_epochs}; continuing", flush=True)
