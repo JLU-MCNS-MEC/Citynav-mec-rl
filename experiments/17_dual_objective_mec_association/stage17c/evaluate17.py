@@ -118,14 +118,17 @@ def main():
     ap.add_argument("--split", choices=["dev"], default="dev")
     ap.add_argument("--n", type=int, default=60)
     ap.add_argument("--device", default="cuda")
+    ap.add_argument("--pool", choices=["v1", "v2"], default="v1")
     ap.add_argument("--out", default="")
     args = ap.parse_args()
 
     cfg = load_config(ROOT / "configs/default.json")
     _, dev_tasks = load_tasks_and_split()
     tasks = dev_tasks[: args.n]
-    env = EpisodeEnv17(build_deployment_by_map(), args.device,
-                       load_models(args.device), load_norm(), cfg)
+    from pool17 import load_pool
+    pool = load_pool(args.pool, args.device)
+    env = EpisodeEnv17(build_deployment_by_map(), args.device, pool.models,
+                       load_norm(), cfg, flops_map=pool.flops)
     res = {}
 
     if args.ckpt:

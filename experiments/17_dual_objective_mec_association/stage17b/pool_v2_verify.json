@@ -1,0 +1,87 @@
+{
+  "V1_load_and_shapes": {
+    "shapes": {
+      "small": [
+        1,
+        4
+      ],
+      "medium": [
+        1,
+        4
+      ],
+      "ts": [
+        1,
+        4
+      ],
+      "tm": [
+        1,
+        4
+      ],
+      "large": [
+        1,
+        4
+      ]
+    },
+    "params": {
+      "small": 2239236,
+      "medium": 166011908,
+      "ts": 211181060,
+      "tm": 498567684,
+      "large": 1034877444
+    },
+    "pass": true
+  },
+  "V2_deployment": {
+    "maps": 24,
+    "per_model": {
+      "small": 2,
+      "medium": 2,
+      "ts": 2,
+      "tm": 2,
+      "large": 2
+    },
+    "tflops": [
+      10.0
+    ],
+    "pass": true
+  },
+  "V4_small_equivalence": {
+    "max_abs_diff": 0.0,
+    "pass": true
+  },
+  "V5_tm_equivalence": {
+    "max_abs_diff": 0.0,
+    "pass": true,
+    "ckpt_epoch": 15
+  },
+  "V6_latency": {
+    "d_inf_ms": {
+      "small": 0.0004473344,
+      "medium": 1.4978528,
+      "ts": 3.9671126,
+      "tm": 10.0025418,
+      "large": 19.9723981
+    },
+    "small_expected": 0.0004473344,
+    "pass": true
+  },
+  "V7_no_illegal_connection": {
+    "feasible": 10,
+    "failure": "",
+    "pass": true
+  },
+  "V8_single_expert_forward": {
+    "calls": 1,
+    "pass": true
+  },
+  "V9_single_encoding": {
+    "calls": 1,
+    "pass": true
+  },
+  "V10_constraints_unchanged": {
+    "d_max_ms": 400.0,
+    "battery_j": 360000.0,
+    "coverage_m": 500.0,
+    "pass": true
+  }
+}

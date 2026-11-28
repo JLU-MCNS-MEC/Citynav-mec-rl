@@ -49,10 +49,12 @@ NORMALIZED_MODELS = {"ts", "tm", "large"}
 
 
 class EpisodeEnv17(EpisodeEnv16):
-    def __init__(self, by_map, device, models, norm, cfg: Stage17Config, **kw):
+    def __init__(self, by_map, device, models, norm, cfg: Stage17Config,
+                 flops_map=None, **kw):
         kw.setdefault("record_steps", True)
         super().__init__(by_map, device, models, norm, reward_variant="A", **kw)
         self.cfg = cfg
+        self.flops_map = dict(flops_map) if flops_map else None
         self.payload = calculate_uplink_payload_bits(cfg)
         self.uav_compute = uav_compute_ms(cfg)
 
@@ -82,7 +84,8 @@ class EpisodeEnv17(EpisodeEnv16):
         c = self.cfg
         rows = []
         for i, m in enumerate(self.metrics()):
-            lat = service_latency_ms(m.distance, m.node["model_type"], c, self.payload)
+            lat = service_latency_ms(m.distance, m.node["model_type"], c,
+                                     self.payload, self.flops_map)
             cost = e_coll_j(lat, c)["e_coll_j"]
             cov = (m.distance <= c.coverage_m) if c.enforce_coverage else True
             dead = (lat["d_coll_ms"] <= c.d_max_ms) if c.enforce_deadline else True

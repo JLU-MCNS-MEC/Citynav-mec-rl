@@ -570,6 +570,7 @@ def main():
     ap.add_argument("--config", default=str(ROOT / "configs/default.json"))
     ap.add_argument("--train-config", default=str(HERE / "train_config.json"))
     ap.add_argument("--out", required=True)
+    ap.add_argument("--pool", choices=["v1", "v2"], default="v1")
     ap.add_argument("--resume", default="", help="checkpoint to continue from")
     args = ap.parse_args()
 

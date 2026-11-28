@@ -1,0 +1,33 @@
+{
+  "checkpoint": "/mnt/hdd2t/workspaces/Citynav-mec-rl-fixed50m/experiments/11_teacher_geometry_ablation/11B_transformer_m_v4/results/runs_small/seed42/best.pt",
+  "dev_states": 25089,
+  "macro_f1": 0.5936952225239909,
+  "accuracy": 0.7882737454661405,
+  "per_class": {
+    "Stop": {
+      "precision": 0.8138424821002387,
+      "recall": 0.9216216216216216,
+      "f1": 0.8643852978453739,
+      "support": 370
+    },
+    "Forward": {
+      "precision": 0.7972221005126408,
+      "recall": 0.9702447608382658,
+      "f1": 0.8752645757167596,
+      "support": 18753
+    },
+    "TurnLeft": {
+      "precision": 0.6596685082872928,
+      "recall": 0.20299217953077184,
+      "f1": 0.31045241809672386,
+      "support": 2941
+    },
+    "TurnRight": {
+      "precision": 0.6836518046709129,
+      "recall": 0.21289256198347106,
+      "f1": 0.3246785984371061,
+      "support": 3025
+    }
+  },
+  "note": "Train-internal Dev (seed42, dev_frac=0.02), no normalisation (Small)"
+}

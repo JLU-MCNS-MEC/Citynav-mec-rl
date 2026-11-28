@@ -1,0 +1,53 @@
+{
+  "version": "v2",
+  "created": "2026-11-28",
+  "note": "Stage 17 expert pool V2: Stage-11 SmallMEC4 replaces Stage-14 SmallPreset; TM replaced by Stage-14-R3 continuation. Large stays at the original Stage-14 checkpoint until R4 is reviewed.",
+  "experts": {
+    "small": {
+      "loader": "stage11_small_mec4",
+      "checkpoint": "experiments/11_teacher_geometry_ablation/11B_transformer_m_v4/results/runs_small/seed42/best.pt",
+      "sha256": "79b01bd55cd959e5537e8c2df3f7e1872c8b8ef4d99826d28f232088c4d4584d",
+      "gflops": 0.004473344,
+      "dev_macro_f1": 0.5936952225239909
+    },
+    "medium": {
+      "loader": "stage14_preset",
+      "checkpoint": "experiments/14_mec_expert_retraining/checkpoints/Medium/best.pt",
+      "sha256": "68f9250f795f7d8f7fda97ab61a97532e41a10abbef291340dc45957703bc2e6",
+      "gflops": 14.978528,
+      "dev_macro_f1": 0.6025
+    },
+    "ts": {
+      "loader": "stage14_preset",
+      "checkpoint": "experiments/14_mec_expert_retraining/stability_revision/runs/ts/seed42/checkpoints/best.pt",
+      "sha256": "9f9596164cbd8dc9e5128ac65846604d27e2c501af43b084c51ddf86ef22306b",
+      "gflops": 39.671126,
+      "dev_macro_f1": 0.65
+    },
+    "tm": {
+      "loader": "stage14_preset",
+      "checkpoint": "experiments/14_mec_expert_retraining/tm_r3_lr_continuation/runs/tm/seed42/checkpoints/best.pt",
+      "sha256": "abbfbfe89de6236f6ad5f831c13d409eb92e161763235fc4f264c973d68760d6",
+      "gflops": 100.025418,
+      "dev_macro_f1": 0.6407
+    },
+    "large": {
+      "loader": "stage14_preset",
+      "checkpoint": "experiments/14_mec_expert_retraining/stability_revision/runs/large/seed42/checkpoints/best.pt",
+      "sha256": "025ede7a2bba02cd8988bb6bb0f816290c2a745f3e331680a23d92749f7742ea",
+      "gflops": 199.723981,
+      "dev_macro_f1": 0.6105
+    }
+  },
+  "deployment": {
+    "nodes": 10,
+    "per_model": 2,
+    "mec_tflops": 10.0,
+    "coverage_m": 500.0
+  },
+  "unchanged": {
+    "d_max_ms": 400.0,
+    "battery_j": 360000.0,
+    "reward": "lambda_Q=1.0, lambda_D=0.5, gamma=1.0"
+  }
+}

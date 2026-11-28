@@ -34,9 +34,14 @@ from config17 import Stage17Config          # noqa: E402
 from multimodal17 import calculate_uplink_payload_bits  # noqa: E402
 
 
-def d_inf_ms(model_type: str, cfg: Stage17Config) -> float:
-    """MEC inference: measured FLOPs / 10 TFLOPS."""
-    return MODEL_GFLOPS_MEASURED[model_type] / cfg.mec_tflops
+def d_inf_ms(model_type: str, cfg: Stage17Config, flops_map=None) -> float:
+    """MEC inference: FLOPs / 10 TFLOPS.
+
+    `flops_map` comes from the active expert pool (pool17.PoolSpec.flops) so a
+    V2 expert can never be charged the V1 FLOPs.
+    """
+    f = (flops_map or MODEL_GFLOPS_MEASURED)[model_type]
+    return float(f) / cfg.mec_tflops
 
 
 def d_down_ms(distance_m: float, cfg: Stage17Config) -> float:
@@ -56,13 +61,14 @@ def _downlink_snr(distance_m: float, cfg: Stage17Config):
 
 
 def service_latency_ms(distance_m: float, model_type: str,
-                       cfg: Stage17Config, payload: dict | None = None) -> dict:
+                       cfg: Stage17Config, payload: dict | None = None,
+                       flops_map=None) -> dict:
     """All components of one collaborative service, in milliseconds."""
     if payload is None:
         payload = calculate_uplink_payload_bits(cfg)
     comp = uav_compute_ms(cfg)
     up = uplink_latency_ms(payload["uplink_payload_bits"], distance_m, cfg)
-    inf = d_inf_ms(model_type, cfg)
+    inf = d_inf_ms(model_type, cfg, flops_map)
     down = d_down_ms(distance_m, cfg)
     return {
         "d_visual_layer4_ms": comp["d_visual_layer4_ms"],
