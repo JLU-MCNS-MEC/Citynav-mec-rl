@@ -49,13 +49,13 @@ from train_10d import gpu_snapshot, metrics, restore_rng, rng_state, set_seed  #
 from train_11b import build_blank_mask, collate11, to_model_batch11  # noqa: E402
 from v5fix_contract import BLANK_FRAC  # noqa: E402
 
-KEYS = ["small", "small1g", "medium", "ts", "tm", "large"]
+KEYS = ["small", "medium", "ts", "tm", "large"]
 CLASSES = ["Stop", "Forward", "TurnLeft", "TurnRight"]
 DATA = HERE.parents[1] / "experiments/11_teacher_geometry_ablation" \
     "/11B_transformer_m_v4/results/data/train_seen_memmap"
 LR = 3e-4
 WD = 0.01
-BATCH_CFG = {"small": (128, 1), "small1g": (128, 1), "medium": (128, 1), "ts": (128, 1),
+BATCH_CFG = {"small": (128, 1), "medium": (128, 1), "ts": (128, 1),
              "tm": (128, 1), "large": (64, 2)}
 
 
@@ -236,7 +236,8 @@ def main() -> int:
         loader = DataLoader(ds, batch_size=batch, shuffle=False,
                             num_workers=args.workers, collate_fn=collate11,
                             persistent_workers=args.workers > 0,
-                            prefetch_factor=4 if args.workers else None)
+                            prefetch_factor=4 if args.workers else None,
+                            pin_memory=True)
         model.train()
         optimizer.zero_grad(set_to_none=True)
         total, count, correct, gnorm_sum, updates, micro = 0.0, 0, 0, 0.0, 0, 0

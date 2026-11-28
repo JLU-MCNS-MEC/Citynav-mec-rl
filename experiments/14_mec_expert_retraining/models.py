@@ -194,10 +194,6 @@ class TransformerPreset(nn.Module):
 def build_model(name: str) -> nn.Module:
     if name == "small":
         return SmallPreset()
-    if name == "small1g":
-        # Stage 14 small_1g_experiment: identical to SmallPreset except the
-        # token MLP hidden width 2048 -> 2432 (2048->2432->2048).
-        return SmallPreset(tok=2432)
     if name == "medium":
         return MediumPreset()
     if name == "ts":
@@ -211,5 +207,4 @@ def build_model(name: str) -> nn.Module:
 
 
 MODEL_NAMES = {"small": "Small", "medium": "Medium", "ts": "Transformer-S",
-               "tm": "Transformer-M", "large": "Large",
-               "small1g": "Small-1G"}
+               "tm": "Transformer-M", "large": "Large"}
